@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'climatevisitor',
-    'users'
+    'users',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
