@@ -112,8 +112,8 @@ class UserProfile(models.Model):
         return f"Profile for {self.user.username}"
 
 
-
 class UserVisit(models.Model):
+    id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='visits')
     location_name = models.CharField(max_length=255)
     visit_datetime = models.DateTimeField(auto_now_add=True)
@@ -121,9 +121,8 @@ class UserVisit(models.Model):
     def __str__(self):
         return f"{self.user.username} visited {self.location_name} at {self.visit_datetime}"
 
-
-
 class CollectedItem(models.Model):
+    id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='collected_items')
     location_name = models.CharField(max_length=255)
     item_key = models.CharField(max_length=50)
