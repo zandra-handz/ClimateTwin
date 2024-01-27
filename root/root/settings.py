@@ -15,8 +15,12 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-GOOGLE_MAPS_API_KEY = 'AIzaSyBAW09hdzlszciQ4fTiZjfxcVMlEkF5Iqk'
-OPEN_MAP_API_KEY = "54a19c0e6cd35fb9f2d1ec6a87f22dba"
+AUTH_USER_MODEL = 'users.BadRainbowzUser'
+
+
+GOOGLE_MAPS_API_KEY = 'ADD GOOGLE MAPS KEY HERE'
+OPEN_MAP_API_KEY = 'ADD OPEN STEET MAP KEY HERE'
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -38,11 +42,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'climatevisitor',
     'users',
+    'climatevisitor',
     'rest_framework',
     'rest_framework.authtoken',
-    'djoser' #must be placed after rest_framework
+    #must be placed after rest_framework
+    'allauth',
+    'allauth.account',
+    'djoser',
+    #'djoser.urls.authtoken',
+    'templated_email',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'root.urls'
@@ -75,6 +85,27 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'root.wsgi.application'
 
+DJOSER = {
+    'USER_ID_FIELD': 'username',
+    'SERIALIZERS': {
+        'user_create': 'users.serializers.CustomUserCreateSerializer',
+    },
+
+    #(Retype is in time out until I figure out why it's overriding my custom user)
+    #'USER_CREATE_PASSWORD_RETYPE': True,
+
+    'SEND_CONFIRMATION_EMAIL': True,
+    'SEND_ACTIVATION_EMAIL': True,
+
+    #Use custom email:
+    'EMAIL': {
+        'activation': 'users.email.ActivationEmail',
+        'confirmation': 'users.email.ConfirmationEmail',
+    },
+    'ACTIVATION_URL': 'users/activate/{uid}/{token}',
+    'SEND_CONFIRMATION_EMAIL': True,
+    'PASSWORD_RESET_CONFIRM_URL': '#/reset/{uid}/{token}',
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -120,9 +151,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'users.BadRainbowzUser'
 
-DJOSER={"USER_ID_FIELD":"username"}
+
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -158,3 +189,28 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication'
     ]
 }
+
+
+
+
+AUTHENTICATION_BACKENDS = (
+    # ...
+    'allauth.account.auth_backends.AuthenticationBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+TEMPLATED_EMAIL_BACKEND = 'templated_email.backends.vanilla_django.TemplateBackend'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'ADD APP EMAIL HERE'
+EMAIL_HOST_PASSWORD = 'ADD EMAIL PASSWORD HERE'
+DEFAULT_FROM_EMAIL = 'ADD APP EMAIL HERE'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+
