@@ -16,12 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
+#http://127.0.0.1:8000/#/activate/Nw/c1f76q-af6408c556d882b5de0aee38033ee102
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('climatevisitor/', include('climatevisitor.urls')),
     path('climatevisitor/visited/', include('climatevisitor.urls')),
+    
+    # Djoser URLs
     path('auth/', include('djoser.urls')),
-    path('auth/', include('djoser.urls.authtoken'))
+    path('auth/', include('djoser.urls.authtoken')),
+    
+    # Allauth URLs
+    path('auth/', include('allauth.urls')),
+    path('users/', include('users.urls')),
 ]
-

@@ -1,0 +1,38 @@
+{% load i18n %}
+
+{% block subject %}
+{% blocktrans %}Account activation on {{site.name }}{% endblocktrans %}
+{% endblock subject %}
+
+{% block text_body %}
+{% blocktrans %}Please finish activating your new account on {{ site_name }}.{% endblocktrans %}
+
+{% trans "Go here:" %}
+{{ protocol }}://{{ domain }}/{{ url|safe }}
+
+{% trans "Thanks for using my site!" %}
+{% blocktrans %}The {{ site_name }} admin{% endblocktrans %}
+{% endblock text_body %}
+
+{% block html_body %}
+<p>{% blocktrans %}Hi there! Please finish activating your new account on {{ site_name }}.{% endblocktrans %}</p>
+
+
+<!-- whne a front end is hook up, this link can be changed to a page that sends the POST request -->
+
+<p><a href="{{ protocol }}://{{ domain }}/{{ url|safe }}">{{ protocol }}://{{ domain }}/{{ url|safe }}</a></p>
+
+
+<!-- alternative  button option:
+
+<form method="post" action="{{ protocol }}://{{ domain }}/{{ url|safe }}">
+  {% csrf_token %}
+  <input type="submit" value="{% trans 'Activate Account' %}">
+</form>
+-->
+
+
+<p>{% trans "Thank you for using my site!" %}</p>
+<p>{% blocktrans %}The {{ site_name }} admin{% endblocktrans %}</p>
+{% endblock html_body %}
+
