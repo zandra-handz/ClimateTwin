@@ -17,7 +17,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 AUTH_USER_MODEL = 'users.BadRainbowzUser'
 
-
 GOOGLE_MAPS_API_KEY = 'ADD GOOGLE MAPS KEY HERE'
 OPEN_MAP_API_KEY = 'ADD OPEN STEET MAP KEY HERE'
 
