@@ -67,7 +67,7 @@ from bisect import insort, bisect, bisect_left
 
 from geopy.distance import geodesic
 
-class OpenStreetMapAPI:
+class OpenMapAPI:
     endpoint = "https://overpass-api.de/api/interpreter"
 
     @staticmethod
@@ -103,7 +103,7 @@ class OpenStreetMapAPI:
         }
 
         try:
-            response = requests.get(OpenStreetMapAPI.endpoint, params=params)
+            response = requests.get(OpenMapAPI.endpoint, params=params)
             response.raise_for_status()  # Raise an error for bad responses (e.g., 404, 500)
 
             # Check if the response content is not empty
@@ -119,7 +119,7 @@ class OpenStreetMapAPI:
                     tags = {tag.attrib['k']: tag.attrib['v'] for tag in node.findall('tag')}
 
                     # Calculate distance for each ruin
-                    distance = OpenStreetMapAPI.haversine_distance(
+                    distance = OpenMapAPI.haversine_distance(
                         float(node.attrib['lat']), float(node.attrib['lon']), latitude, longitude
                     )
 
@@ -129,7 +129,7 @@ class OpenStreetMapAPI:
                     direction_deg = (degrees(direction_rad) + 360) % 360
 
                     # Convert direction_deg to direction_word
-                    direction = OpenStreetMapAPI.get_direction_word(direction_deg)
+                    direction = OpenMapAPI.get_direction_word(direction_deg)
 
                     index_to_insert = bisect_left([entry['distance_miles'] for entry in data], distance)
                     data.insert(index_to_insert, {
@@ -186,7 +186,7 @@ class OpenStreetMapAPI:
 
     @staticmethod
     def get_nearest_ruin(latitude, longitude, radius):
-        ruins_data = OpenStreetMapAPI.find_ancient_ruins(latitude, longitude, radius)
+        ruins_data = OpenMapAPI.find_ancient_ruins(latitude, longitude, radius)
         if ruins_data:
             # Return the information of the nearest ruin (first in the sorted list)
             ruins_data = [ruins_data[0]]
@@ -302,7 +302,7 @@ class OpenStreetMapAPI:
                 name = 'Mystery Location'
 
             # Call the compare_wind_to_ruin function to get wind compass information
-            wind_compass_info = OpenStreetMapAPI.compare_wind_to_ruin(
+            wind_compass_info = OpenMapAPI.compare_wind_to_ruin(
                 wind_direction_deg, ruin['direction_deg'], ruin.get('direction', 'Unknown')
             )
 

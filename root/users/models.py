@@ -98,7 +98,7 @@ class UserProfile(models.Model):
     last_name = models.CharField(_('last name'), max_length=30, blank=True, default='')
     date_of_birth = models.DateField(_('date of birth'), blank=True, null=True)
     #profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
-    gender = models.CharField(_('gender'), max_length=10, choices=[('NB', 'Non Binary'), ('M', 'Male'), ('F', 'Female'), ('O', 'Other')], blank=True, default='')
+    gender = models.CharField(_('gender'), max_length=10, choices=[('NB', 'Non-Binary'), ('M', 'Male'), ('F', 'Female'), ('O', 'Other'), ('No answer', 'Uninterested in answering this')], blank=True, default='')
 
     def __str__(self):
         return f"Profile for {self.user.username}"

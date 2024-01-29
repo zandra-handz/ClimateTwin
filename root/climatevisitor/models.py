@@ -3,7 +3,55 @@ from users.models import BadRainbowzUser
 
 
 # Create your models here.
+
 class ClimateTwinLocation(models.Model):
+    user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
+    creation_date = models.DateTimeField(auto_now_add=True)
+    last_accessed = models.DateTimeField(auto_now=True)
+    name = models.CharField(max_length=255, default="")
+    temperature = models.FloatField(default=0.0)
+    description = models.CharField(max_length=255, default="")
+    wind_speed = models.FloatField(default=0.0)
+    wind_direction = models.IntegerField(default=0)
+    humidity = models.IntegerField(default=0)
+    pressure = models.IntegerField(default=0)
+    cloudiness = models.IntegerField(default=0)
+    sunrise_timestamp = models.BigIntegerField(default=0)
+    sunset_timestamp = models.BigIntegerField(default=0)
+    latitude = models.FloatField(default=0.0)
+    longitude = models.FloatField(default=0.0)
+
+    wind_friends = models.CharField(max_length=255, default="")
+    details = models.TextField(default="")
+    experience = models.TextField(default="")
+    wind_speed_interaction = models.TextField(default="")
+    pressure_interaction = models.TextField(default="")
+    humidity_interaction = models.TextField(default="")
+    stronger_wind_interaction = models.CharField(max_length=255, default="")
+
+    @classmethod
+    def create_from_dicts(cls, user, climate_twin, weather_messages):
+
+        address = list(climate_twin.keys())[0]
+        climate_data = climate_twin[address]
+        
+        interaction = list(weather_messages.keys())[0]
+        interaction_data = weather_messages[interaction]
+
+        weather_data = cls(user=user, name=address, **climate_data, **interaction_data)
+        return weather_data
+
+
+    class Meta:
+        verbose_name = "Location"
+        verbose_name_plural = "Locations"
+
+    def __str__(self):
+        return f"Location: {str(self.name)}, {self.pk}"
+
+
+
+class ClimateTwinDiscoveryLocation(models.Model):
     user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, default='Unnamed Ruin')
     direction_degree = models.FloatField(default=0.0)
@@ -20,11 +68,11 @@ class ClimateTwinLocation(models.Model):
     last_accessed = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = "Location"
-        verbose_name_plural = "Locations"
+        verbose_name = "Discovery Location"
+        verbose_name_plural = "Discovery Locations"
 
     def __str__(self):
-        return f"Location: {str(self.name)}, {self.pk}"
+        return f"Discovery Location: {str(self.name)}, {self.pk}"
 
 
 

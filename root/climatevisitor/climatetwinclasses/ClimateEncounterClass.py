@@ -145,10 +145,10 @@ class ClimateEncounter:
                 "wind_friends": self.wind_relationship,
                 "details": nature_of_wind_output,
                 "experience": experience_of_second_wind_output,
-                "wind_speed": wind_output,
-                "pressure": pressure_output,
-                "humidity": humidity_output,
-                "stronger_wind": stronger_wind_output
+                "wind_speed_interaction": wind_output,
+                "pressure_interaction": pressure_output,
+                "humidity_interaction": humidity_output,
+                "stronger_wind_interaction": stronger_wind_output
             }
         }
 

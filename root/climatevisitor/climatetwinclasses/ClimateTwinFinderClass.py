@@ -15,21 +15,20 @@ class ClimateTwinFinder:
 
     def __init__(self, address, units='imperial'):
 
-        self.origin_lat = 0
-        self.origin_lon = 0
         self.api_key = open_map_api_key
         self.google_api_key = google_api_key
+        self.origin_lat = 0
+        self.origin_lon = 0
         self.google_key_count = 0
         self.key_count = 0
         self.high_variance_count = 0
         self.address = address
         self.home_climate = None
         self.units = units
-        self.weather_info = self.get_weather_for_origin()
-        self.similar_climates = self.configure_similar_climates_dict()
+        self.weather_info = None 
+        self.similar_places = self.configure_similar_places_dict()
         self.search_cycle = 0
         self.climate_twin = None
-
 
         coordinates = self.validate_address(address)
 
@@ -41,9 +40,10 @@ class ClimateTwinFinder:
             print(self.origin_lat)
 
             print("Address validated!")
+            self.weather_info = self.get_weather(self.origin_lat, self.origin_lon)
 
-        if not self.get_weather_for_origin():
-            raise ValueError(f"Could not get weather details.")
+            if not self.weather_info:
+                raise ValueError(f"Could not get weather details.")
 
         self.get_home_climate()
 
@@ -51,7 +51,7 @@ class ClimateTwinFinder:
 
         #not super comfortable having this in here in case the google key calls get out of hand
         while not result:
-            self.find_similar_climates()
+            self.find_similar_places()
             result = self.find_climate_twin()
 
 
@@ -100,15 +100,13 @@ class ClimateTwinFinder:
         return self.get_coordinates(address)
 
 
-    def configure_similar_climates_dict(self):
-        self.similar_climates = {}
-        self.similar_climates['name'] = []
+    def configure_similar_places_dict(self):
+        self.similar_places = {}
+        self.similar_places['name'] = []
 
-        return self.similar_climates
+        return self.similar_places
 
 
-    def get_weather_for_origin(self):
-        return self.get_weather(self.origin_lat, self.origin_lon)
 
 
     def get_weather(self, lat, lon):
@@ -165,7 +163,7 @@ class ClimateTwinFinder:
         base_url = "https://maps.googleapis.com/maps/api/geocode/json"
         params = {
             "address": address,
-            "key": self.google_api_key,
+            "key": self.google_api_key
         }
 
         response = requests.get(base_url, params=params)
@@ -174,6 +172,7 @@ class ClimateTwinFinder:
 
         if data["status"] == "OK":
             location = data["results"][0]["geometry"]["location"]
+            print(f"COORDINATES: {location}")
             return location['lat'], location['lng']
         else:
             print(f"Error: Unable to retrieve coordinates for {address}")
@@ -265,14 +264,14 @@ class ClimateTwinFinder:
 
 
 
-    def find_similar_climates(self):
+    def find_similar_places(self):
 
-        self.configure_similar_climates_dict()
+        self.configure_similar_places_dict()
 
-        similar_climates = self.search_random_cities()
+        similar_places = self.search_random_cities()
 
-        if similar_climates:
-            return similar_climates
+        if similar_places:
+            return similar_places
 
         else:
             return
@@ -290,7 +289,7 @@ class ClimateTwinFinder:
         num_places = 5
         high_variance = 0
 
-        while num_places > len(self.similar_climates['name']):
+        while num_places > len(self.similar_places['name']):
             cities = self.get_coordinates_list()
 
             for idx, point in cities.iterrows():
@@ -302,7 +301,7 @@ class ClimateTwinFinder:
                     print(temperature_difference)
 
                     if temperature_difference < 3:
-                        # Process and add the new entry to self.similar_climates
+                        # Process and add the new entry to self.similar_places
                         new_entry = {
                             'name': [f'climate twin candidate'],
                             'temperature': weather['temperature'],
@@ -331,17 +330,17 @@ class ClimateTwinFinder:
                     print("missing weather data")
 
                 # Check if we have found the desired number of places
-                if num_places <= len(self.similar_climates['name']):
+                if num_places <= len(self.similar_places['name']):
                     break
 
-        return self.similar_climates
+        return self.similar_places
 
 
 
     def process_new_entry(self, new_entry):
-        # Process and add the new entry to self.similar_climates
-        if 'similar_climates' not in self.__dict__:
-            self.similar_climates = {
+        # Process and add the new entry to self.similar_places
+        if 'similar_places' not in self.__dict__:
+            self.similar_places = {
                 'name': [],
                 'temperature': [],
                 'description': [],
@@ -357,20 +356,20 @@ class ClimateTwinFinder:
             }
 
         for key, value in new_entry.items():
-            if key not in self.similar_climates:
-                self.similar_climates[key] = []
-            self.similar_climates[key].append(value)
+            if key not in self.similar_places:
+                self.similar_places[key] = []
+            self.similar_places[key].append(value)
 
-        print(f"Found {len(self.similar_climates['name'])}")
+        print(f"Found {len(self.similar_places['name'])}")
 
 
 
 
     def humidity_comparer(self):
-        print(self.similar_climates)
+        print(self.similar_places)
         difference = 100
         closest = 0
-        for value in self.similar_climates['humidity']:
+        for value in self.similar_places['humidity']:
             new_difference = value - self.weather_info['humidity']
             new_difference = abs(new_difference)
             if new_difference < difference:
@@ -422,8 +421,8 @@ class ClimateTwinFinder:
 
     def find_climate_twin(self):
         closest_humidity = self.humidity_comparer()
-
-        places_semifinalists = self.similar_climates
+        print(f"CLOSEST HUMIDITY = {closest_humidity}")
+        places_semifinalists = self.similar_places
         climate_twin = {}
 
         for name, temp, desc, wind_speed, wind_direction, humidity, pressure, cloudiness, sunrise_timestamp, sunset_timestamp, latitude, longitude in zip(
@@ -434,9 +433,14 @@ class ClimateTwinFinder:
 
             if humidity == closest_humidity:
                 results = self.reverse_geocode(latitude, longitude)
+                print(f"GEOCODE RESULTS: {results}")
                 country = results['country']
-                if country is None or not country.strip() or "None":
+                if country is None: # or not country.strip() or "None":
+                    print("FIND CLIMATE TWIN RETURNED FALSE ON COUNTRY CHECK")
                     return False
+                location_name = results['location_name']
+                location_name = results['location_name']
+                location_name = results['location_name']
                 location_name = results['location_name']
                 city = results['city']
 
@@ -453,6 +457,7 @@ class ClimateTwinFinder:
                     if country:
                         complete_address = f"Uncharted location in {country}"
                     else:
+                        print("FIND CLIMATE TWIN RETURNED FALSE")
                         return False
 
                 address_str = complete_address
@@ -481,8 +486,8 @@ class ClimateTwinFinder:
         return True
 
 
-    def print_similar_climates(self):
-        places = self.similar_climates
+    def print_similar_places(self):
+        places = self.similar_places
         if places:
             keys = list(places.keys())
             values = list(places.values())
@@ -495,5 +500,4 @@ class ClimateTwinFinder:
                 row_values = [str(values[j][i]) for j in range(len(keys))]
                 row = "\t".join(row_values)
                 print(row)
-
 
