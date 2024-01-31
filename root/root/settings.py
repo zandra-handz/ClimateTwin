@@ -100,11 +100,23 @@ DJOSER = {
     'EMAIL': {
         'activation': 'users.email.ActivationEmail',
         'confirmation': 'users.email.ConfirmationEmail',
+        'username-reset': 'users.email.UsernameResetEmail',
+        'password-reset': 'users.email.PasswordResetEmail',
+        #'password_changed_confirmation':
+        #'username_changed_confirmation':
     },
     'ACTIVATION_URL': 'users/activate/{uid}/{token}',
     'SEND_CONFIRMATION_EMAIL': True,
-    'PASSWORD_RESET_CONFIRM_URL': '#/reset/{uid}/{token}',
+    'PASSWORD_RESET_CONFIRM_URL': 'users/password/reset/confirm/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': 'users/username/reset/confirm/{uid}/{token}',
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
+    'USERNAME_CHANGED_EMAIL_CONFIRMATION': True,
+    'LOGOUT_ON_PASSWORD_CHANGE': True,
 }
+
+#for front-end development
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

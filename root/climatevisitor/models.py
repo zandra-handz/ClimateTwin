@@ -66,6 +66,8 @@ class ClimateTwinDiscoveryLocation(models.Model):
     street_view_image = models.URLField(blank=True, null=True, default='')
     creation_date = models.DateTimeField(auto_now_add=True)
     last_accessed = models.DateTimeField(auto_now=True)
+    origin_location = models.ForeignKey(ClimateTwinLocation, on_delete=models.CASCADE, null=True, blank=True)
+
 
     class Meta:
         verbose_name = "Discovery Location"
@@ -75,31 +77,3 @@ class ClimateTwinDiscoveryLocation(models.Model):
         return f"Discovery Location: {str(self.name)}, {self.pk}"
 
 
-
-'''
-To inititialize:
-
-from django.utils import timezone
-
-location_instance = ClimateTwinLocation(
-    user=user,  # Replace with the actual user instance
-    name=str(formatted_ruin),  # Store the formatted_ruin as a string in the 'name' field
-    direction_deg=formatted_ruin.get('direction_deg', 0.0),
-    direction=formatted_ruin.get('direction', 'Unknown'),
-    miles_away=formatted_ruin.get('miles_away', 0.0),
-    location_id=formatted_ruin.get('id', ''),
-    latitude=formatted_ruin.get('latitude', 0.0),
-    longitude=formatted_ruin.get('longitude', 0.0),
-    tags=formatted_ruin.get('tags', {}),
-    wind_compass=formatted_ruin.get('wind_compass', ''),
-    wind_agreement_score=formatted_ruin.get('wind_agreement_score', 0),
-    street_view_image=formatted_ruin.get('street_view_image', ''),
-    creation_date=timezone.now(),
-    last_accessed=timezone.now()
-)
-
-# Save the instance
-location_instance.save()
-
-
-'''

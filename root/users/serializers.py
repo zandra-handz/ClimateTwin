@@ -1,5 +1,5 @@
 
-from .models import BadRainbowzUser, CollectedItem, UserProfile, UserSettings, UserVisit
+from .models import BadRainbowzUser, ItemInbox, Treasure, UserProfile, UserSettings, UserVisit
 from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 
@@ -18,10 +18,10 @@ class BadRainbowzUserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'password', 'email', 'phone_number', 'addresses']
 
 
-class CollectedItemSerializer(serializers.ModelSerializer):
+class TreasureSerializer(serializers.ModelSerializer):
 
     class Meta(object):
-        model = CollectedItem
+        model = Treasure
         fields = "__all__"
 
 

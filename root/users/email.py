@@ -18,3 +18,17 @@ class ActivationEmail(email.ActivationEmail):
 class ConfirmationEmail(email.ConfirmationEmail):
     template_name = 'users/ConfirmationEmail.html'
 
+class PasswordResetEmail(email.PasswordResetEmail):
+    template_name = 'users/PasswordReset.html'
+
+class PasswordResetConfirmationEmail(email.PasswordResetConfirmationEmail):
+    template_name = 'users/PasswordResetConfirmationEmail.html'
+
+class UsernameResetEmail(email.UsernameResetEmail):
+    template_name = 'users/UsernameResetEmail.html'
+
+class UsernameResetConfirmationEmail(email.UsernameChangedConfirmationEmail):
+    template_name = 'users/UsernameResetConfirmationEmail.html'
+
+
+

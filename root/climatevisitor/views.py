@@ -3,7 +3,7 @@ from rest_framework import generics, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from .models import ClimateTwinLocation
-from .serializers import ClimateTwinLocationSerializer
+from .serializers import ClimateTwinLocationSerializer, ClimateTwinDiscoveryLocationSerializer
 
 # Create your views here.
 def index(request):
@@ -11,7 +11,6 @@ def index(request):
 
 def endpoints(request):
     return render(request, 'endpoints.html', {})
-
 
 
 
@@ -79,6 +78,36 @@ def go(request):
             osm_api = OpenMapAPI()
             osm_results = osm_api.find_ancient_ruins(climate_twin_weather_profile.latitude, climate_twin_weather_profile.longitude, radius=100000, num_results=15)
             nearby_ruins = osm_api.format_ruins_with_wind_compass_for_post(osm_results, climate_twin_weather_profile.wind_direction)
+
+            # Save each ruin as an instance of ClimateTwinDiscoveryLocation
+            for name, ruin in nearby_ruins.items():
+                formatted_ruin = {
+                    "name": name,
+                    "user": request.user.id,
+                    "direction_degree": ruin['direction_deg'],
+                    "direction": ruin.get('direction'),
+                    "miles_away": round(ruin['miles_away']),
+                    "location_id": ruin['id'],
+                    "latitude": ruin['latitude'],
+                    "longitude": (ruin['longitude']),
+                    "tags": ruin["tags"],
+                    "wind_compass": (ruin['wind_compass']),
+                    "wind_agreement_score": (round(ruin['wind_agreement_score'])),
+                    "street_view_image": ruin.get("street_view_image", ''),
+                    "origin_location": climate_twin_location_instance.id,
+                }
+
+                serializer = ClimateTwinDiscoveryLocationSerializer(data=formatted_ruin)
+                if serializer.is_valid():
+                    # Create an instance of ClimateTwinDiscoveryLocation using the serializer's create method
+                    discovery_location_instance = serializer.save(
+                            user=user_instance  
+                        )
+                
+                else:
+                    # Return detailed information about validation errors
+                    return Response({'error': 'Invalid data', 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
             return Response({

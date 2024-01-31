@@ -24,7 +24,7 @@ class BadRainbowzUser(AbstractUser):
     login_attempts = models.PositiveIntegerField(default=0)
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ('email',)  # Add username?
+    REQUIRED_FIELDS = ('email',)  
 
     objects = CustomUserManager()
 
@@ -104,6 +104,20 @@ class UserProfile(models.Model):
         return f"Profile for {self.user.username}"
 
 
+
+
+class UserFriendz(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='friends')
+    friend = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='friend_of')
+    nickname = models.CharField(max_length=255)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.friend.username} ({self.nickname})"
+
+
+
 class UserVisit(models.Model):
     id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='visits')
@@ -114,12 +128,61 @@ class UserVisit(models.Model):
         return f"{self.user.username} visited {self.location_name} at {self.visit_datetime}"
 
 
-class CollectedItem(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='collected_items')
+
+class Treasure(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='treasures')
     location_name = models.CharField(max_length=255)
     item_key = models.CharField(max_length=50)
     item_value = models.CharField(max_length=255)
+    
+    # Gift-related fields
+    message = models.TextField(null=True, blank=True)
+    giver = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True, blank=True, related_name='sent_gifts')
+    recipient = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True, blank=True, related_name='received_gifts')
+    created_on = models.DateTimeField(auto_now_add=True)
+    owned_since = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.user.username} collected {self.item_key} at {self.location_name}"
+        if self.recipient:
+            return f"Gifted item from {self.giver.username} to {self.recipient.username} at {self.location_name} (created on {self.created_on})"
+        else:
+            return f"Collected item by {self.user.username} at {self.location_name} (created on {self.created_on}, owned since {self.owned_since})"
+
+    @classmethod
+    def collect_item(cls, user, location_name, item_key, item_value):
+        # Create a Treasure instance for collecting an item
+        return cls.objects.create(
+            user=user,
+            location_name=location_name,
+            item_key=item_key,
+            item_value=item_value
+        )
+
+    def give_as_gift(self, message, giver, recipient):
+        # Update the fields for gifting
+        self.message = message
+        self.giver = giver
+        self.recipient = recipient
+        
+        # Set owned_since to the current timestamp every time the item is saved
+        self.owned_since = self.owned_since
+        self.save()
+
+
+
+class ItemInbox(models.Model):
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, related_name='inbox')
+    items = models.ManyToManyField('Treasure', related_name='user_items')
+
+    class Meta:
+        verbose_name = "Inbox"
+        verbose_name_plural = "Inboxes"
+
+    def __str__(self):
+        return f"Inbox for {self.user.username}"
+
+    
+
+
+
+
