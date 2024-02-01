@@ -313,6 +313,13 @@ class OpenMapAPI:
                 size="600x300"  # You can adjust the size as needed
             )
 
+            harmony_check = False
+
+            if (round(wind_compass_info['wind_agreement_score'])) < 45:
+                harmony_check = True
+            else:
+                harmony_check = False
+
             formatted_ruin = {
                 "direction_deg": ruin['direction_deg'],
                 "direction": ruin.get('direction', 'Unknown'),
@@ -323,6 +330,7 @@ class OpenMapAPI:
                 "tags": tags,
                 "wind_compass": (wind_compass_info['status']),
                 "wind_agreement_score": (round(wind_compass_info['wind_agreement_score'])),
+                "wind_harmony": harmony_check
             }
 
             # Add street view image to the formatted_ruin dictionary if available

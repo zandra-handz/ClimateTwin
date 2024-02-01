@@ -1,9 +1,12 @@
 from django.shortcuts import render
 from rest_framework import generics, viewsets
 from rest_framework.decorators import api_view, permission_classes
+from django.core.serializers.json import DjangoJSONEncoder
+from django.forms.models import model_to_dict
+import json
 from rest_framework.permissions import IsAuthenticated
-from .models import ClimateTwinLocation
-from .serializers import ClimateTwinLocationSerializer, ClimateTwinDiscoveryLocationSerializer
+from .models import ClimateTwinLocation, ClimateTwinDiscoveryLocation, ClimateTwinExploreDiscoveryLocation
+from .serializers import ClimateTwinLocationSerializer, ClimateTwinDiscoveryLocationSerializer, ClimateTwinExploreDiscoveryLocationSerializer
 
 # Create your views here.
 def index(request):
@@ -67,20 +70,20 @@ def go(request):
 
             user_instance = request.user
 
-            # Assuming you have climate_places.climate_twin and weather_messages available
             climate_twin_location_instance = ClimateTwinLocation.create_from_dicts(
                 user_instance, climate_places.climate_twin, weather_messages
             )
 
-            # Save the instance to the database
             climate_twin_location_instance.save()
 
             osm_api = OpenMapAPI()
             osm_results = osm_api.find_ancient_ruins(climate_twin_weather_profile.latitude, climate_twin_weather_profile.longitude, radius=100000, num_results=15)
             nearby_ruins = osm_api.format_ruins_with_wind_compass_for_post(osm_results, climate_twin_weather_profile.wind_direction)
 
-            # Save each ruin as an instance of ClimateTwinDiscoveryLocation
             for name, ruin in nearby_ruins.items():
+
+
+
                 formatted_ruin = {
                     "name": name,
                     "user": request.user.id,
@@ -89,23 +92,22 @@ def go(request):
                     "miles_away": round(ruin['miles_away']),
                     "location_id": ruin['id'],
                     "latitude": ruin['latitude'],
-                    "longitude": (ruin['longitude']),
+                    "longitude": ruin['longitude'],
                     "tags": ruin["tags"],
-                    "wind_compass": (ruin['wind_compass']),
+                    "wind_compass": ruin['wind_compass'],
                     "wind_agreement_score": (round(ruin['wind_agreement_score'])),
+                    "wind_harmony": ruin['wind_harmony'],
                     "street_view_image": ruin.get("street_view_image", ''),
                     "origin_location": climate_twin_location_instance.id,
                 }
 
                 serializer = ClimateTwinDiscoveryLocationSerializer(data=formatted_ruin)
                 if serializer.is_valid():
-                    # Create an instance of ClimateTwinDiscoveryLocation using the serializer's create method
                     discovery_location_instance = serializer.save(
                             user=user_instance  
                         )
                 
                 else:
-                    # Return detailed information about validation errors
                     return Response({'error': 'Invalid data', 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -129,7 +131,6 @@ class ClimateTwinLocationsView(generics.ListCreateAPIView):
     serializer_class = ClimateTwinLocationSerializer
 
     def get_queryset(self):
-        # Filter locations based on the logged-in user
         return ClimateTwinLocation.objects.filter(user=self.request.user)
     
 class ClimateTwinLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
@@ -137,7 +138,6 @@ class ClimateTwinLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAP
     serializer_class = ClimateTwinLocationSerializer
 
     def get_queryset(self):
-        # Filter locations based on the logged-in user
         return ClimateTwinLocation.objects.filter(user=self.request.user)
 
 class ClimateTwinLocationViewSet(viewsets.ModelViewSet):
@@ -145,5 +145,78 @@ class ClimateTwinLocationViewSet(viewsets.ModelViewSet):
     serializer_class = ClimateTwinLocationSerializer
 
     def get_queryset(self):
-        # Filter locations based on the logged-in user
         return ClimateTwinLocation.objects.filter(user=self.request.user)
+
+
+class ClimateTwinDiscoveryLocationsView(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ClimateTwinDiscoveryLocationSerializer
+
+    def get_queryset(self):
+        return ClimateTwinDiscoveryLocation.objects.filter(user=self.request.user)
+    
+class ClimateTwinDiscoveryLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ClimateTwinDiscoveryLocationSerializer
+
+    def get_queryset(self):
+        return ClimateTwinDiscoveryLocation.objects.filter(user=self.request.user)
+
+class ClimateTwinDiscoveryLocationViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ClimateTwinDiscoveryLocationSerializer
+
+    def get_queryset(self):
+        return ClimateTwinDiscoveryLocation.objects.filter(user=self.request.user)
+
+
+class ClimateTwinExploreDiscoveryLocationsView(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ClimateTwinExploreDiscoveryLocationSerializer
+
+    def get_queryset(self):
+        return ClimateTwinExploreDiscoveryLocation.objects.filter(user=self.request.user)
+    
+class ClimateTwinExploreDiscoveryLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ClimateTwinExploreDiscoveryLocationSerializer
+
+    def get_queryset(self):
+        return ClimateTwinExploreDiscoveryLocation.objects.filter(user=self.request.user)
+
+class ClimateTwinExploreDiscoveryLocationViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ClimateTwinExploreDiscoveryLocationSerializer
+
+    def get_queryset(self):
+        return ClimateTwinExploreDiscoveryLocation.objects.filter(user=self.request.user)
+
+
+@api_view(['POST', 'GET', 'OPTIONS'])
+#@throttle_classes([AnonRateThrottle, UserRateThrottle])
+#@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def collect(request):
+    if request.method == 'OPTIONS':
+        return Response(status=status.HTTP_200_OK)
+
+    if request.method == 'GET':
+        user = request.user 
+
+        try:
+            # Retrieve the most recently created ClimateTwinExploreDiscoveryLocation instance by the user
+            latest_explore_location = ClimateTwinExploreDiscoveryLocation.objects.filter(user=user).latest('creation_date')
+            location_id = latest_explore_location.explore_location.id
+            
+            location = ClimateTwinDiscoveryLocation.objects.get(id=location_id)
+            serializer = ClimateTwinDiscoveryLocationSerializer(location)
+            serialized_data = serializer.data
+
+            return Response({'key_value_pairs': serialized_data, 'message': 'Select key-value pair and add a note.'}, status=status.HTTP_200_OK)
+
+        except ClimateTwinExploreDiscoveryLocation.DoesNotExist:
+            return Response({'detail': 'Explore location not found for the user.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+    return Response({'detail': 'Method not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+

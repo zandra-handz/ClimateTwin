@@ -22,6 +22,7 @@ class ClimateTwinLocation(models.Model):
     longitude = models.FloatField(default=0.0)
 
     wind_friends = models.CharField(max_length=255, default="")
+    special_harmony = models.BooleanField(default=False)
     details = models.TextField(default="")
     experience = models.TextField(default="")
     wind_speed_interaction = models.TextField(default="")
@@ -63,6 +64,7 @@ class ClimateTwinDiscoveryLocation(models.Model):
     tags = models.JSONField(default=dict)
     wind_compass = models.CharField(max_length=255, default='')
     wind_agreement_score = models.IntegerField(default=0)
+    wind_harmony = models.BooleanField(default=False)
     street_view_image = models.URLField(blank=True, null=True, default='')
     creation_date = models.DateTimeField(auto_now_add=True)
     last_accessed = models.DateTimeField(auto_now=True)
@@ -76,4 +78,19 @@ class ClimateTwinDiscoveryLocation(models.Model):
     def __str__(self):
         return f"Discovery Location: {str(self.name)}, {self.pk}"
 
+
+
+class ClimateTwinExploreDiscoveryLocation(models.Model):
+    user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
+    explore_location = models.ForeignKey(ClimateTwinDiscoveryLocation, on_delete=models.CASCADE)
+    creation_date = models.DateTimeField(auto_now_add=True)
+    last_accessed = models.DateTimeField(auto_now=True)
+
+
+    class Meta:
+        verbose_name = "Explored Discovery Location"
+        verbose_name_plural = "Explored Discovery Locations"
+
+    def __str__(self):
+        return f"Explored Discovery Location: {str(self.name)}, {self.pk}"
 
