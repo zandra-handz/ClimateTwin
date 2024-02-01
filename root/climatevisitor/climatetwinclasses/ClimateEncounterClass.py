@@ -18,6 +18,13 @@ class ClimateEncounter:
         self.apparent_wind_speed = self.get_apparent_wind_speed()
         self.apparent_wind_direction = self.get_apparent_wind_direction()
 
+        self.special_relationship = False
+        
+        if self.wind_relationship == "Same-Heart":
+            self.special_relationship = True
+        else:
+            self.special_relationship = False
+
 
 
 
@@ -103,6 +110,8 @@ class ClimateEncounter:
 
     def get_apparent_wind_direction(self):
         # Calculate apparent wind direction
+        print(self.wind_speed1)
+        print(self.wind_speed2)
         cos_alpha = (self.wind_speed1**2 + self.apparent_wind_speed**2 - self.wind_speed2**2) / (2 * self.wind_speed1 * self.apparent_wind_speed)
         alpha_rad = math.acos(cos_alpha)
         alpha_deg = math.degrees(alpha_rad)
@@ -139,10 +148,12 @@ class ClimateEncounter:
         nature_of_wind_output = self.get_nature_of_wind_relationship_output()
         experience_of_second_wind_output = self.get_experience_of_second_wind_output()
         stronger_wind_output = self.get_stronger_wind()
+        
 
         return {
             "Interaction": {
                 "wind_friends": self.wind_relationship,
+                "special_harmony": self.special_relationship,
                 "details": nature_of_wind_output,
                 "experience": experience_of_second_wind_output,
                 "wind_speed_interaction": wind_output,
