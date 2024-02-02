@@ -6,6 +6,7 @@ from django.forms.models import model_to_dict
 import json
 from rest_framework.permissions import IsAuthenticated
 from .models import ClimateTwinLocation, ClimateTwinDiscoveryLocation, ClimateTwinExploreDiscoveryLocation
+from users.models import Treasure
 from .serializers import ClimateTwinLocationSerializer, ClimateTwinDiscoveryLocationSerializer, ClimateTwinExploreDiscoveryLocationSerializer
 
 # Create your views here.
@@ -212,11 +213,65 @@ def collect(request):
             serializer = ClimateTwinDiscoveryLocationSerializer(location)
             serialized_data = serializer.data
 
-            return Response({'key_value_pairs': serialized_data, 'message': 'Select key-value pair and add a note.'}, status=status.HTTP_200_OK)
+            return Response({'key_value_pairs': serialized_data, 'message': 'Select an item and add a note.'}, status=status.HTTP_200_OK)
+
+        except ClimateTwinExploreDiscoveryLocation.DoesNotExist:
+            return Response({'detail': 'Explore location not found for the user.'}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'POST':
+        user = request.user 
+
+        note = request.data.get('note', None)
+        item = request.data.get('item', None)
+        third_data = request.data.get('third_data', None)
+
+
+        if not item:
+            return Response({'error': 'Item is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        try:
+            # Retrieve the most recently created ClimateTwinExploreDiscoveryLocation instance by the user
+            latest_explore_location = ClimateTwinExploreDiscoveryLocation.objects.filter(user=user).latest('creation_date')
+            location_dict = latest_explore_location.to_dict()
+
+            # Check if the entered item is in the dictionary
+            #if item in location_dict.values():
+            if item in location_dict.keys():
+                item_value = location_dict[item]
+                return Response({"detail": f"Item '{item}' is present in the dictionary with value: {item_value}",
+                                "choices": location_dict}, status=status.HTTP_200_OK)
+            else:
+                return Response({"detail": f"Item '{item}' not found in the dictionary.", 'choices': location_dict}, status=status.HTTP_404_NOT_FOUND)
 
         except ClimateTwinExploreDiscoveryLocation.DoesNotExist:
             return Response({'detail': 'Explore location not found for the user.'}, status=status.HTTP_404_NOT_FOUND)
 
 
+    return Response({'detail': 'Method not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+@api_view(['POST', 'GET', 'OPTIONS'])
+#@throttle_classes([AnonRateThrottle, UserRateThrottle])
+#@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def item_choices(request):
+    if request.method == 'OPTIONS':
+        return Response(status=status.HTTP_200_OK)
+
+    if request.method == 'GET':
+        user = request.user 
+
+        
+        try:
+            # Retrieve the most recently created ClimateTwinExploreDiscoveryLocation instance by the user
+            latest_explore_location = ClimateTwinExploreDiscoveryLocation.objects.filter(user=user).latest('creation_date')
+            location_dict = latest_explore_location.to_dict()
+
+            return Response({'choices': location_dict, 'message': 'choose one.'}, status=status.HTTP_200_OK)
+
+        except ClimateTwinExploreDiscoveryLocation.DoesNotExist:
+            return Response({'detail': 'Explore location not found for the user.'}, status=status.HTTP_404_NOT_FOUND)
+        
     return Response({'detail': 'Method not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
