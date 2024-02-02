@@ -9,6 +9,7 @@ urlpatterns = [
     path('api-token-auth/', obtain_auth_token),
     path("go/", views.go, name="go"),
     path("collect/", views.collect, name="collect"),
+    path("item-choices/", views.item_choices, name="item-choices"),
     path('visited/', views.ClimateTwinLocationsView.as_view(), name='visited-locations'),
     path('visited/<int:pk>', views.ClimateTwinLocationView.as_view(), name='visited-location'),
     path('visited/viewset/', views.ClimateTwinLocationViewSet.as_view({'get':'list'})),
