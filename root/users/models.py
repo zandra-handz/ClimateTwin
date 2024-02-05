@@ -1,10 +1,14 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from .managers import CustomUserManager
 from .utils import get_coordinates
+
 
 # Create your models here.
 class BadRainbowzUser(AbstractUser):
@@ -106,12 +110,16 @@ class UserProfile(models.Model):
 
 
 
-class UserFriendz(models.Model):
+class UserFriendship(models.Model):
     id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='friends')
     friend = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='friend_of')
-    nickname = models.CharField(max_length=255)
+    nickname = models.CharField(max_length=255, default='')
     created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        verbose_name = "User friendship"
+        verbose_name_plural = "User friendships"
 
     def __str__(self):
         return f"{self.user.username} - {self.friend.username} ({self.nickname})"
@@ -119,9 +127,10 @@ class UserFriendz(models.Model):
 
 
 class UserVisit(models.Model):
-    id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='visits')
     location_name = models.CharField(max_length=255)
+    location_latitude = models.FloatField(default=0.0)
+    location_longitude = models.FloatField(default=0.0)
     visit_datetime = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -131,11 +140,20 @@ class UserVisit(models.Model):
 
 class Treasure(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='treasures')
+    original_user = models.CharField(max_length=50, default='')
+    miles_traveled_to_collect = models.FloatField(default=0.0)
     location_name = models.CharField(max_length=255)
-    item_key = models.CharField(max_length=50)
-    item_value = models.CharField(max_length=255)
-    
-    # Gift-related fields
+    found_at_latitude = models.FloatField(default=0.0)
+    found_at_longitude = models.FloatField(default=0.0)
+    descriptor = models.CharField(max_length=50, default="Mystery Item")  #type of item found, must be entered
+    description = models.CharField(max_length=600, null=True, blank=True) #description of item
+    item_name = models.CharField(max_length=255, default='') #data item most associated with found item
+    item_category = models.CharField(max_length=255, default='') #data item category
+
+    add_data = models.JSONField(default=dict, null=True, blank=True)
+    pending = models.BooleanField(default=False)
+
+    # Gift-related fields.
     message = models.TextField(null=True, blank=True)
     giver = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True, blank=True, related_name='sent_gifts')
     recipient = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True, blank=True, related_name='received_gifts')
@@ -144,35 +162,52 @@ class Treasure(models.Model):
 
     def __str__(self):
         if self.recipient:
-            return f"Gifted item from {self.giver.username} to {self.recipient.username} at {self.location_name} (created on {self.created_on})"
+            return f"Gifted {self.descriptor} from {self.location_name} to {self.recipient.username} on {self.owned_since}"
         else:
-            return f"Collected item by {self.user.username} at {self.location_name} (created on {self.created_on}, owned since {self.owned_since})"
+            return f"Collected {self.descriptor} from {self.location_name} by {self.user.username} on {self.created_on}"
 
     @classmethod
-    def collect_item(cls, user, location_name, item_key, item_value):
-        # Create a Treasure instance for collecting an item
+    def collect_item(cls, user, location_name, miles_traveled_to_collect, found_at_latitude, found_at_longitude, item_name, item_category, descriptor, description, add_data):
+        
         return cls.objects.create(
             user=user,
+            original_user=user,
             location_name=location_name,
-            item_key=item_key,
-            item_value=item_value
+            miles_traveled_to_collect=miles_traveled_to_collect,
+            found_at_latitude=found_at_latitude,
+            found_at_longitude=found_at_longitude,
+            item_name=item_name,
+            item_category=item_category,
+            descriptor=descriptor,
+            description=description,
+            add_data=add_data
         )
 
     def give_as_gift(self, message, giver, recipient):
-        # Update the fields for gifting
+        # Update the fields for gifting (not in use right now).
         self.message = message
         self.giver = giver
         self.recipient = recipient
-        
-        # Set owned_since to the current timestamp every time the item is saved
-        self.owned_since = self.owned_since
+        self.pending = True
         self.save()
 
+    def accept(self, message, recipient):
+        self.giver = self.user
+        self.user = recipient
+        self.recipient = recipient 
+        self.message = message
+        self.owned_since = timezone.now() 
+        self.pending = False
+        self.save()
 
+    def discard(self):
+        self.delete()
 
-class ItemInbox(models.Model):
+    
+
+class Inbox(models.Model): # not in use, will probably be used for inbox settings.
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, related_name='inbox')
-    items = models.ManyToManyField('Treasure', related_name='user_items')
+    items = GenericRelation('Item')
 
     class Meta:
         verbose_name = "Inbox"
@@ -181,8 +216,60 @@ class ItemInbox(models.Model):
     def __str__(self):
         return f"Inbox for {self.user.username}"
 
+
+class Item(models.Model):  # change name to InboxItem.
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    reverse_relation = GenericRelation('Item')
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Inbox Item ({self.content_type}): {self.content_object}"
+
+
+class Message(models.Model):
+    sender = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='sent_messages')
+    recipient = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='received_messages')
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
     
+    # GenericForeignKey to associate any object with the message.
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, default=1)
+    object_id = models.PositiveIntegerField(default=1)
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    sent = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Message from {self.sender} to {self.recipient}"
 
 
+class FriendRequest(models.Model):
+    sender = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='sent_friend_requests')
+    recipient = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='received_friend_requests')
+    message = models.TextField()
+    is_accepted = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Friend request from {self.sender.username} to {self.recipient.username}"
 
 
+class GiftRequest(models.Model):
+    treasure = models.ForeignKey(Treasure, on_delete=models.CASCADE, related_name='request_to_gift')
+    sender = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='sent_gift_requests')
+    recipient = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='received_gift_requests')
+    message = models.TextField()
+    is_accepted = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Gift request from {self.sender.username} to {self.recipient.username}"
