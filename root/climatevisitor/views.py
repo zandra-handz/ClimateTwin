@@ -1,13 +1,21 @@
-from django.shortcuts import render
-from rest_framework import generics, viewsets
-from rest_framework.decorators import api_view, permission_classes
+from .climatetwinclasses.ClimateEncounterClass import ClimateEncounter
+from .climatetwinclasses.ClimateObjectClass import ClimateObject
+from .climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
+from .models import ClimateTwinLocation, ClimateTwinDiscoveryLocation, ClimateTwinExploreDiscoveryLocation
+from .serializers import ClimateTwinLocationSerializer, ClimateTwinDiscoveryLocationSerializer, ClimateTwinExploreDiscoveryLocationSerializer
+from .climatetwinclasses.OpenMapAPIClass import OpenMapAPI
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
+from django.shortcuts import render
 import json
+from rest_framework import generics, status, viewsets
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.decorators import api_view, authentication_classes, throttle_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .models import ClimateTwinLocation, ClimateTwinDiscoveryLocation, ClimateTwinExploreDiscoveryLocation
-from users.models import Treasure
-from .serializers import ClimateTwinLocationSerializer, ClimateTwinDiscoveryLocationSerializer, ClimateTwinExploreDiscoveryLocationSerializer
+from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
+from users.models import Treasure, UserVisit
+
 
 # Create your views here.
 def index(request):
@@ -16,17 +24,6 @@ def index(request):
 def endpoints(request):
     return render(request, 'endpoints.html', {})
 
-
-
-from rest_framework.decorators import api_view, authentication_classes, throttle_classes, permission_classes
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
-from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
-from rest_framework.response import Response
-from rest_framework import status
-from .climatetwinclasses.ClimateEncounterClass import ClimateEncounter
-from .climatetwinclasses.ClimateObjectClass import ClimateObject
-from .climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
-from .climatetwinclasses.OpenMapAPIClass import OpenMapAPI
 
 
 @api_view(['POST', 'GET', 'OPTIONS'])
@@ -76,6 +73,12 @@ def go(request):
             )
 
             climate_twin_location_instance.save()
+
+            user_visit_record_instance = UserVisit(user=user_instance, location_name=climate_twin_location_instance.name, 
+                                                   location_latitude=climate_twin_location_instance.latitude,
+                                                   location_longitude=climate_twin_location_instance.longitude,
+                                                   visit_datetime=climate_twin_location_instance.creation_date)
+            user_visit_record_instance.save()
 
             osm_api = OpenMapAPI()
             osm_results = osm_api.find_ancient_ruins(climate_twin_weather_profile.latitude, climate_twin_weather_profile.longitude, radius=100000, num_results=15)
@@ -220,10 +223,10 @@ def collect(request):
 
     if request.method == 'POST':
         user = request.user 
-
-        note = request.data.get('note', None)
+        descriptor = request.data.get('descriptor', None)
+        description = request.data.get('description', None)
         item = request.data.get('item', None)
-        third_data = request.data.get('third_data', None)
+        add_data = request.data.get('third_data', None)
 
 
         if not item:
@@ -236,11 +239,29 @@ def collect(request):
             location_dict = latest_explore_location.to_dict()
 
             # Check if the entered item is in the dictionary
-            #if item in location_dict.values():
             if item in location_dict.keys():
-                item_value = location_dict[item]
-                return Response({"detail": f"Item '{item}' is present in the dictionary with value: {item_value}",
-                                "choices": location_dict}, status=status.HTTP_200_OK)
+                item_name = location_dict[item]
+                item_category = item
+
+                # Create and save a Treasure instance using collect_item function
+                
+                treasure_instance = Treasure.collect_item(
+                    user=user,
+                    location_name=location_dict['explore_location__name'],
+                    miles_traveled_to_collect=location_dict['explore_location__miles_away'],
+                    found_at_latitude=location_dict['explore_location__latitude'],
+                    found_at_longitude=location_dict['explore_location__longitude'],
+                    item_name=item_name,
+                    item_category=item_category,
+                    descriptor=descriptor,
+                    description=description,
+                    add_data=add_data
+                )
+
+                
+
+                return Response({"detail": f"Item '{item}' is present in the dictionary with value: {item_name}",
+                                "choices": location_dict, "treasure_id": treasure_instance.id}, status=status.HTTP_200_OK)
             else:
                 return Response({"detail": f"Item '{item}' not found in the dictionary.", 'choices': location_dict}, status=status.HTTP_404_NOT_FOUND)
 
