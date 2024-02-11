@@ -3,7 +3,7 @@ from djoser import utils
 from djoser.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 
-class ActivationEmail(email.ActivationEmail):
+class BadRainbowzActivationEmail(email.ActivationEmail):
     template_name = 'users/ActivationEmail.html'
 
     def get_context_data(self):
@@ -21,14 +21,14 @@ class ConfirmationEmail(email.ConfirmationEmail):
 class PasswordResetEmail(email.PasswordResetEmail):
     template_name = 'users/PasswordReset.html'
 
-class PasswordResetConfirmationEmail(email.PasswordResetConfirmationEmail):
-    template_name = 'users/PasswordResetConfirmationEmail.html'
+#class PasswordResetConfirmationEmail(email.PasswordResetConfirmationEmail):
+   # template_name = 'users/PasswordResetConfirmationEmail.html'
 
 class UsernameResetEmail(email.UsernameResetEmail):
     template_name = 'users/UsernameResetEmail.html'
 
-class UsernameResetConfirmationEmail(email.UsernameChangedConfirmationEmail):
-    template_name = 'users/UsernameResetConfirmationEmail.html'
+#class UsernameResetConfirmationEmail(email.UsernameChangedConfirmationEmail):
+  #  template_name = 'users/UsernameResetConfirmationEmail.html'
 
 
 

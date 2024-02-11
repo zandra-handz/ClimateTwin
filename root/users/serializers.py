@@ -1,13 +1,14 @@
 
 from . import models
+from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 
 
-#class CustomUserCreateSerializer(UserCreateSerializer):
+class CustomUserCreateSerializer(UserCreateSerializer):
 
-   # class Meta(UserCreateSerializer.Meta):
-     #   model = BadRainbowzUser
-     #   fields = ['id', 'username', 'password', 'email', 'phone_number', 'addresses'] 
+    class Meta(UserCreateSerializer.Meta):
+        model = models.BadRainbowzUser
+        fields = ['id', 'username', 'password', 'email', 'phone_number', 'addresses'] 
 
 
 class BadRainbowzUserSerializer(serializers.ModelSerializer):
@@ -101,4 +102,5 @@ class ItemSerializer(serializers.ModelSerializer):
         model = models.Item
         fields = "__all__"
 
+        
         

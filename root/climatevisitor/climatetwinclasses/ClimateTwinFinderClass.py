@@ -1,16 +1,49 @@
 from django.conf import settings
 import geopandas as gpd
-from geopy.geocoders import GoogleV3
-from geopy.exc import GeocoderTimedOut
 import numpy as np 
 import requests
 
 
+# Actual keys are in settings.py
 google_api_key = settings.GOOGLE_MAPS_API_KEY
 open_map_api_key = settings.OPEN_MAP_API_KEY
 
 
 class ClimateTwinFinder:
+
+    """
+
+    This class performs the search via instance initialization.
+
+    The rundown:
+
+    - Loads Open Weather Map and Google Map keys
+    - Loads address
+    - Loads units to measure distance in
+    - Loads similar_places with empty dict with additioanl top level key 'name' added
+    - Checks if address is valid using Google Maps call https://maps.googleapis.com/maps/api/geocode/json and assigns results to 'coordinates'
+    - If not coordinates, raises invalid address ValueError
+    - Loads coordinates into origin_lat and origin_lon; if not coordinates, raises invalid address ValueError
+    - Loads weather_info by running get_weather function which uses Open Weather Map call https://api.openweathermap.org/data/2.5/weather; if not weather_info, raises ValueError
+    - Updates home_climate by running get_home_climate(), which combines address and weather_info 
+    - Sets 'successful' variable for twin climate finder function to False
+    - Inside 'successful' variable While loop:
+        - Runs completion_checker_similar_places() until five candidate places are found
+        - Sets 'successful' variable to managing_function_to_find_climate_twin() result
+        - managing_function_to_find_climate_location() identifies location(s) with closest humidity and checks for sufficient data
+          (specifically, country value; if no country value, this suggests the location is not a populated area and the function returns False)
+        - If successful, climate_twin was loaded with data and the While loop terminates
+        - If not successful, similar_places gets reset and the While loop tries again.
+
+    
+    Areas of possible improvement:
+
+    - Some functions are likely unnecessary and weird middlemen left over from previous versions, that can be removed as long as stil readable
+    - Search algorithm completion time varies more widely than I like.
+    
+
+        
+    """
 
 
     def __init__(self, address, units='imperial'):
@@ -40,6 +73,7 @@ class ClimateTwinFinder:
             print(self.origin_lat)
 
             print("Address validated!")
+
             self.weather_info = self.get_weather(self.origin_lat, self.origin_lon)
 
             if not self.weather_info:
@@ -47,14 +81,22 @@ class ClimateTwinFinder:
 
         self.get_home_climate()
 
-        result = False
+        successful = False
 
-        #not super comfortable having this in here in case the google key calls get out of hand
-        while not result:
-            self.find_similar_places()
-            result = self.find_climate_twin()
+        # May remove in case the google key calls get out of hand
+        while not successful:
+
+            # Finds five candidate places
+            five_locations_found = self.completion_checker_similar_places()
+
+            if five_locations_found:
+            # Selects one or more with closest humidity, returns False if no value for country
+                successful = self.managing_function_to_find_climate_twin()
+
+            self.configure_similar_places_dict()
 
 
+        # Debug statements
         self.print_home_climate_profile_concise()
         self.print_climate_twin_profile_concise()
         self.print_algorithm_data()
@@ -63,9 +105,8 @@ class ClimateTwinFinder:
     def __str__(self):
         return f"Weather twins for {self.address}"
 
-    def print_climate_profile(self, location):
-        pass
 
+    # Debug function
     def print_climate_twin_profile_concise(self):
         for name, data in self.climate_twin.items():
 
@@ -77,6 +118,8 @@ class ClimateTwinFinder:
             print(f"Cloudiness: {data['cloudiness']}%")
             print("\n")
 
+
+    # Debug function
     def print_home_climate_profile_concise(self):
         for name, data in self.home_climate.items():
 
@@ -89,6 +132,7 @@ class ClimateTwinFinder:
             print("\n")
 
 
+    # Debug function
     def print_algorithm_data(self):
         print(f"OpenWeatherMap calls: {self.key_count}")
         print(f"GoogleMap calls: {self.google_key_count}")
@@ -105,8 +149,6 @@ class ClimateTwinFinder:
         self.similar_places['name'] = []
 
         return self.similar_places
-
-
 
 
     def get_weather(self, lat, lon):
@@ -149,14 +191,15 @@ class ClimateTwinFinder:
 
             return info
         else:
-            #print(f"Error: Unable to retrieve weather data for {lat}, {lon}")
+            # Debug statement
+            print(f"Error: Unable to retrieve weather data for {lat}, {lon}")
             return None
 
 
     def get_home_climate(self):
-        data = self.weather_info
+        weather_info = self.weather_info
         address = self.address
-        self.home_climate = {address: data}
+        self.home_climate = {address: weather_info}
 
 
     def get_coordinates(self, address):
@@ -190,7 +233,7 @@ class ClimateTwinFinder:
 
 
 
-    def generate_random_points_within_country(self):
+    def generate_random_coords_in_a_country_list(self):
         world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
         # Exclude ocean areas from the dataset
@@ -231,9 +274,7 @@ class ClimateTwinFinder:
 
 
 
-
-
-
+    # Old approach that has been sidelined
     def generate_random_points_within_country_old(self):
         world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
@@ -263,36 +304,27 @@ class ClimateTwinFinder:
         return points_within_country
 
 
+    # Finds twin location or returns None
+    def completion_checker_similar_places(self):
 
-    def find_similar_places(self):
+        result = self.search_random_coords_in_a_country()
 
-        self.configure_similar_places_dict()
-
-        similar_places = self.search_random_cities()
-
-        if similar_places:
-            return similar_places
+        if result:
+            return True
 
         else:
             return
 
 
-
-
-    def get_coordinates_list(self):
-        return self.generate_random_points_within_country()
-
-
-
-    def search_random_cities(self):
+    def search_random_coords_in_a_country(self):
         base_url = "https://api.openweathermap.org/data/2.5/find"
         num_places = 5
         high_variance = 0
 
         while num_places > len(self.similar_places['name']):
-            cities = self.get_coordinates_list()
+            random_coords = self.generate_random_coords_in_a_country_list()
 
-            for idx, point in cities.iterrows():
+            for idx, point in random_coords.iterrows():
                 latitude, longitude = point.geometry.y, point.geometry.x
 
                 weather = self.get_weather(latitude, longitude)
@@ -323,6 +355,7 @@ class ClimateTwinFinder:
                             self.high_variance_count += 1
                             print(f"High variance: {high_variance}")
                             if high_variance > 3:
+
                                 # Reset high_variance and break to get new coordinates
                                 high_variance = 0
                                 break
@@ -333,11 +366,12 @@ class ClimateTwinFinder:
                 if num_places <= len(self.similar_places['name']):
                     break
 
-        return self.similar_places
+        return True
 
 
 
     def process_new_entry(self, new_entry):
+
         # Process and add the new entry to self.similar_places
         if 'similar_places' not in self.__dict__:
             self.similar_places = {
@@ -361,7 +395,6 @@ class ClimateTwinFinder:
             self.similar_places[key].append(value)
 
         print(f"Found {len(self.similar_places['name'])}")
-
 
 
 
@@ -417,9 +450,7 @@ class ClimateTwinFinder:
 
 
 
-
-
-    def find_climate_twin(self):
+    def managing_function_to_find_climate_twin(self):
         closest_humidity = self.humidity_comparer()
         print(f"CLOSEST HUMIDITY = {closest_humidity}")
         places_semifinalists = self.similar_places
@@ -476,7 +507,6 @@ class ClimateTwinFinder:
                     'longitude': longitude
                 }
 
-
                 #this return ensures only one location; comment out to allow for multiple
                 self.climate_twin = climate_twin
                 return True
@@ -486,6 +516,7 @@ class ClimateTwinFinder:
         return True
 
 
+    # Debug function
     def print_similar_places(self):
         places = self.similar_places
         if places:

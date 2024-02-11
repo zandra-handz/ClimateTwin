@@ -4,16 +4,22 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from djoser.views import UserViewSet
-from rest_framework import generics, viewsets
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import generics, throttling, viewsets
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.decorators import api_view, authentication_classes, permission_classes, throttle_classes
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 
 
- 
+@swagger_auto_schema(operation_id='activateUser', auto_schema=None)
 class ActivateUser(UserViewSet):
+
+    
+    @swagger_auto_schema(operation_id='getSerializerForActivate')
     def get_serializer(self, *args, **kwargs):
         serializer_class = self.get_serializer_class()
         kwargs.setdefault('context', self.get_serializer_context())
@@ -22,101 +28,136 @@ class ActivateUser(UserViewSet):
         kwargs['data'] = {"uid": self.kwargs['uid'], "token": self.kwargs['token']}
  
         return serializer_class(*args, **kwargs)
- 
+    
     def activation(self, request, uid, token, *args, **kwargs):
         super().activation(request, *args, **kwargs)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@swagger_auto_schema(operation_id='resetUsername')
 class UsernameReset(UserViewSet):
     pass
 
+
+@swagger_auto_schema(operation_id='resetPassword')
 class PasswordReset(UserViewSet):
- 
     pass
    
 
+@swagger_auto_schema(operation_id='listTreasures')
 class TreasuresView(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = serializers.TreasureSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     def get_queryset(self):
         return models.Treasure.objects.filter(user=self.request.user)
     
+
+@swagger_auto_schema(operation_id='treasureOperations')
 class TreasureView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = serializers.TreasureSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     def get_queryset(self):
         return models.Treasure.objects.filter(user=self.request.user)
 
 
+@swagger_auto_schema(operation_id='listUserProfile')
 class UserProfileView(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = serializers.UserProfileSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     def get_queryset(self):
         return models.UserProfile.objects.filter(user=self.request.user)
     
     
+@swagger_auto_schema(operation_id='editUserProfile')
 class EditUserProfileView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = serializers.UserProfileSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     def get_object(self):
         return models.UserProfile.objects.get(user=self.request.user)
     
 
+@swagger_auto_schema(operation_id='listUserSettings')
 class UserSettingsView(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = serializers.UserSettingsSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     def get_queryset(self):
         return models.UserSettings.objects.filter(user=self.request.user)
-    
 
+
+@swagger_auto_schema(operation_id='editUserSettings')
 class ChangeUserSettingsView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = serializers.UserSettingsSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     def get_object(self):
         return models.UserSettings.objects.get(user=self.request.user)
 
 
+@swagger_auto_schema(operation_id='listUserVisits')
 class UserVisitsView(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = serializers.UserVisitSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     def get_queryset(self):
         return models.UserVisit.objects.filter(user=self.request.user)
     
 
+@swagger_auto_schema(operation_id='userVisitOperations')
 class UserVisitView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = serializers.UserVisitSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     def get_queryset(self):
         return models.UserVisit.objects.filter(user=self.request.user)
 
 
+@swagger_auto_schema(operation_id='listInbox')
 class InboxView(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [AllowAny]
+    serializer_class = serializers.InboxSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
     queryset = models.Inbox.objects.all()
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # Retrieve all items associated with the user
         return models.Item.objects.filter(user=self.request.user)
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        serializer = serializers.ItemSerializer(queryset, many=True)  # Replace with your actual serializer
+        serializer = serializers.ItemSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    
+
+@swagger_auto_schema(operation_id='itemOperations')
 class ItemDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = models.Item.objects.all()
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = serializers.ItemSerializer
-    permission_classes = [IsAuthenticated]
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    queryset = models.Item.objects.all()
 
     def get(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -135,33 +176,40 @@ class ItemDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Response({'success': 'Inbox item deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
 
 
+@swagger_auto_schema(operation_id='messageOperations')
 class MessageView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = models.Message.objects.all()
-    serializer_class = serializers.MessageSerializer
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [AllowAny]
+    serializer_class = serializers.MessageSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    queryset = models.Message.objects.all()
 
     def perform_destroy(self, instance):
-        # Add any additional logic here if needed
         instance.delete()
         return Response({'success': 'Message deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
 
 
+@swagger_auto_schema(operation_id='createMessage')
 class CreateMessageView(generics.CreateAPIView):
-    queryset = models.Message.objects.all()
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
     serializer_class = serializers.MessageSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    queryset = models.Message.objects.all()
 
     def perform_create(self, serializer):
         serializer.save(sender=self.request.user)
 
 
-
 @api_view(['POST'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@throttle_classes([AnonRateThrottle, UserRateThrottle])
+@swagger_auto_schema(operation_id='sendMessage')
 def send_message(request):
-    # Extract the message_id from the POST data
     message_id = request.data.get('message_id')
     
-    # Retrieve the message based on the message_id
     message = get_object_or_404(models.Message, id=message_id)
 
 
@@ -171,21 +219,23 @@ def send_message(request):
     if message.sender != request.user:
         return Response({'error': 'You do not have permission to send this message.'}, status=status.HTTP_403_FORBIDDEN)
 
-    # Optionally, mark the message as sent or handle other logic
     message.sent = True
     message.save()
 
-    # Create the inbox item for the recipient
     inbox_item = models.Item.objects.create(content_object=message, user=message.recipient)
     inbox_item.save()
     
     return Response({'success': 'Message sent successfully.'}, status=status.HTTP_200_OK)
 
 
+@swagger_auto_schema(operation_id='createFriendRequest')
 class SendFriendRequestView(generics.CreateAPIView):
-    queryset = models.FriendRequest.objects.all()
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = serializers.FriendRequestSerializer
-    permission_classes = [IsAuthenticated]
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    queryset = models.FriendRequest.objects.all()
 
     def perform_create(self, serializer):
         sender = self.request.user
@@ -218,10 +268,14 @@ class SendFriendRequestView(generics.CreateAPIView):
         return Response({'success': 'Friend request sent successfully.'}, status=status.HTTP_201_CREATED)
 
 
+@swagger_auto_schema(operation_id='friendRequestOperations')
 class FriendRequestDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = models.FriendRequest.objects.all()
-    serializer_class = serializers.FriendRequestSerializer
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [AllowAny]
+    serializer_class = serializers.FriendRequestSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    queryset = models.FriendRequest.objects.all()
 
     def get_object(self):
         friend_request_id = self.kwargs['item_view_id']
@@ -229,9 +283,15 @@ class FriendRequestDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         instance = self.get_object()
+        rejected = self.request.data.get('is_rejected')
         accepted = self.request.data.get('is_accepted')
 
         print(f"Accepted: {accepted}")
+
+        if rejected:
+            instance.delete()
+
+            return Response({'success': 'Friend request rejected successfully!'}, status=status.HTTP_200_OK)
 
         if accepted:
             user = self.request.user
@@ -257,25 +317,37 @@ class FriendRequestDetailView(generics.RetrieveUpdateDestroyAPIView):
             return Response({'success': 'Friend request updated successfully!'}, status=status.HTTP_200_OK)
 
 
+@swagger_auto_schema(operation_id='listUserFriendships')
 class UserFriendshipsView(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = serializers.UserFriendshipSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     def get_queryset(self):
         return models.UserFriendship.objects.filter(user=self.request.user)
     
+
+@swagger_auto_schema(operation_id='userFriendshipOperations')
 class UserFriendshipView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = serializers.UserFriendshipSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     def get_queryset(self):
         return models.UserFriendship.objects.filter(user=self.request.user)
 
 
+@swagger_auto_schema(operation_id='createGiftRequest')
 class SendGiftRequestView(generics.CreateAPIView):
-    queryset = models.GiftRequest.objects.all()
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = serializers.GiftRequestSerializer
-    permission_classes = [IsAuthenticated]
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    queryset = models.GiftRequest.objects.all()
+    
 
     def perform_create(self, serializer):
         sender = self.request.user
@@ -321,11 +393,14 @@ class SendGiftRequestView(generics.CreateAPIView):
         return Response({'success': 'Friend request sent successfully.'}, status=status.HTTP_201_CREATED)
 
 
-
+@swagger_auto_schema(operation_id='giftRequest')
 class GiftRequestDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = models.GiftRequest.objects.all()
-    serializer_class = serializers.GiftRequestSerializer
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [AllowAny]
+    serializer_class = serializers.GiftRequestSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    queryset = models.GiftRequest.objects.all()
 
     def get_object(self):
         gift_request_id = self.kwargs['item_view_id']
@@ -333,10 +408,16 @@ class GiftRequestDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         instance = self.get_object()
+        rejected = self.request.data.get('is_rejected')
         accepted = self.request.data.get('is_accepted')
         message = self.request.data.get('message')
 
         print(f"Accepted: {accepted}")
+
+        if rejected:
+            instance.delete()
+
+            return Response({'success': 'Gift request rejected successfully!'}, status=status.HTTP_200_OK)
 
         if accepted:
             user = self.request.user
@@ -351,6 +432,7 @@ class GiftRequestDetailView(generics.RetrieveUpdateDestroyAPIView):
             instance.delete()
 
             return Response({'success': 'Gift request accepted successfully!'}, status=status.HTTP_200_OK)
+        
         else:
             
             serializer.save()

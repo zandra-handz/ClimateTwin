@@ -1,51 +1,90 @@
 from .climatetwinclasses.ClimateEncounterClass import ClimateEncounter
 from .climatetwinclasses.ClimateObjectClass import ClimateObject
 from .climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
+from coreapi import Field
 from .models import ClimateTwinLocation, ClimateTwinDiscoveryLocation, ClimateTwinExploreDiscoveryLocation
 from .serializers import ClimateTwinLocationSerializer, ClimateTwinDiscoveryLocationSerializer, ClimateTwinExploreDiscoveryLocationSerializer
 from .climatetwinclasses.OpenMapAPIClass import OpenMapAPI
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
 from django.shortcuts import render
+from django.utils import timezone
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 import json
-from rest_framework import generics, status, viewsets
+from rest_framework import generics, status, throttling, viewsets
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
-from rest_framework.decorators import api_view, authentication_classes, throttle_classes, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, authentication_classes, parser_classes, throttle_classes, permission_classes, schema
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.schemas import AutoSchema, ManualSchema
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from users.models import Treasure, UserVisit
 
-
 # Create your views here.
+@swagger_auto_schema(operation_id='index')
+@throttle_classes([AnonRateThrottle, UserRateThrottle])
 def index(request):
     return render(request, 'index.html', {})
 
+
+@swagger_auto_schema(operation_id='endpoints')
+@throttle_classes([AnonRateThrottle, UserRateThrottle])
 def endpoints(request):
     return render(request, 'endpoints.html', {})
 
 
 
-@api_view(['POST', 'GET', 'OPTIONS'])
-#@throttle_classes([AnonRateThrottle, UserRateThrottle])
-#@authentication_classes([SessionAuthentication, TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def go(request):
-    if request.method == 'OPTIONS':
-        return Response(status=status.HTTP_200_OK)
 
-    if request.method == 'GET':
-        #if not request.user.is_authenticated:
-        #   return Response({'detail': 'Authentication credentials were not provided.'}, status=status.HTTP_401_UNAUTHORIZED)
-        return Response({'message': 'Enter address'}, status=status.HTTP_200_OK)
+@swagger_auto_schema(method='post', operation_id='createGo', request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'address': openapi.Schema(type=openapi.TYPE_STRING, description="User's current address. Must be a valid address.")
+        },
+        required=['address'],
+    ))
+@api_view(['POST', 'GET'])
+#@throttle_classes([AnonRateThrottle, UserRateThrottle])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([AllowAny])
+def go(request):
+    """
+    Returns a randomized matching climate location and nearby historical sites and pictures if any. 
+    
+    Uses a utils package that uses Google Map API, Open Street Map, geopandas, math and numpy.
+
+    **How the search logic works**: validates user address and if valid, gets address weather data. Picks a random country and generates 
+    a list of coordinates inside that country to compare user weather data against. Loops through this list looking for weather 
+    data that meets a specific criteria and makes a new list of candidate locations, keeping track of high variances; if too many high 
+    variances, the loop will break and the function to select a random country will get called again. If not enough candidate locations are
+    found by the end of the loop, the function to select a random country will also get called again. When enough candidate locations are found,
+    this candidate list is looped through (O1) to find the closest matching location. (If this selection is missing certain
+    data, then the search will begin again from the beginning. I've mostly prevented uninhabited/ocean coordinates from getting
+    returned by the time the algorithm gets to this stage, but a few still seem to slip through the cracks.)
+    
+    From here, weather and wind interactions between home and twin location are calculated, then nearby historical locations within
+    a hardcoded radius are found. The results are returned.
+    
+    **Note**: Makes two Google Maps calls per POST. User limit of two POSTs per day.
+
+    """
 
     if request.method == 'POST':
-        address = request.data.get('address', None)
+        user = request.user
+        user_address = request.data.get('address', None)
 
-        if not address:
+        if not user_address:
             return Response({'error': 'Address is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-        climate_places = ClimateTwinFinder(address)
+        # Check if user has hit daily limit
+        if user: 
+            today = timezone.now().date()
+            daily_count = ClimateTwinLocation.objects.filter(user=user, creation_date__date=today).count()
+            if daily_count >= 2:
+                return Response({'error': 'You have reached the daily limit of visits.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create 
+        climate_places = ClimateTwinFinder(user_address)
 
         if climate_places.climate_twin:
             home_weather_profile = ClimateObject(climate_places.home_climate)
@@ -130,77 +169,127 @@ def go(request):
     return Response({'detail': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
+
+
+@swagger_auto_schema(operation_id='listTwinLocation')
 class ClimateTwinLocationsView(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = ClimateTwinLocationSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     def get_queryset(self):
         return ClimateTwinLocation.objects.filter(user=self.request.user)
-    
+
+@swagger_auto_schema(operation_id='twinLocationOperations')  
 class ClimateTwinLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = ClimateTwinLocationSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     def get_queryset(self):
         return ClimateTwinLocation.objects.filter(user=self.request.user)
 
+'''
 class ClimateTwinLocationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = ClimateTwinLocationSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     def get_queryset(self):
         return ClimateTwinLocation.objects.filter(user=self.request.user)
+'''
 
-
+@swagger_auto_schema(operation_id='listDiscoveryLocation', operation_description='hihihihiihihihihihi')
 class ClimateTwinDiscoveryLocationsView(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = ClimateTwinDiscoveryLocationSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     def get_queryset(self):
         return ClimateTwinDiscoveryLocation.objects.filter(user=self.request.user)
     
+
+@swagger_auto_schema(operation_id='discoveryLocationOptions')
 class ClimateTwinDiscoveryLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = ClimateTwinDiscoveryLocationSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     def get_queryset(self):
         return ClimateTwinDiscoveryLocation.objects.filter(user=self.request.user)
 
+'''
 class ClimateTwinDiscoveryLocationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = ClimateTwinDiscoveryLocationSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     def get_queryset(self):
         return ClimateTwinDiscoveryLocation.objects.filter(user=self.request.user)
+'''
 
-
+@swagger_auto_schema(operation_id='listExploreLocation')
 class ClimateTwinExploreDiscoveryLocationsView(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = ClimateTwinExploreDiscoveryLocationSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     def get_queryset(self):
         return ClimateTwinExploreDiscoveryLocation.objects.filter(user=self.request.user)
     
+
+@swagger_auto_schema(operation_id='exploreLocationOptions')
 class ClimateTwinExploreDiscoveryLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = ClimateTwinExploreDiscoveryLocationSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     def get_queryset(self):
         return ClimateTwinExploreDiscoveryLocation.objects.filter(user=self.request.user)
 
+    
+
+'''
 class ClimateTwinExploreDiscoveryLocationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = ClimateTwinExploreDiscoveryLocationSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     def get_queryset(self):
         return ClimateTwinExploreDiscoveryLocation.objects.filter(user=self.request.user)
+'''
 
 
-@api_view(['POST', 'GET', 'OPTIONS'])
-#@throttle_classes([AnonRateThrottle, UserRateThrottle])
-#@authentication_classes([SessionAuthentication, TokenAuthentication])
-@permission_classes([IsAuthenticated])
+
+#@swagger_auto_schema(method='get', operation_id='getCollectLocation')
+#@swagger_auto_schema(method='post', operation_id='createCollect')
+#@swagger_auto_schema(method='options', operation_id='optionsCollect')
+
+@swagger_auto_schema(method='post', operation_id='collectTreasure', request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'item': openapi.Schema(type=openapi.TYPE_STRING, description="Key of one data item from location to serve as item base (see climatevisitor/item-choice)."),
+            'descriptor': openapi.Schema(type=openapi.TYPE_STRING, description="Name of item."),
+            'description': openapi.Schema(type=openapi.TYPE_STRING, description="Description of item, or notes about collecting it."),
+            'third_data': openapi.Schema(type=openapi.TYPE_STRING, description="Additional data.")
+        },
+        required=['item'],
+    ))
+@api_view(['POST'])
+@throttle_classes([AnonRateThrottle, UserRateThrottle])
+
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([AllowAny])
 def collect(request):
+    """
+    Creates a treasure item from the user's current exploration site and saves as a Treasure instance belonging to user.
+    """
     if request.method == 'OPTIONS':
         return Response(status=status.HTTP_200_OK)
 
@@ -260,25 +349,30 @@ def collect(request):
 
                 
 
-                return Response({"detail": f"Item '{item}' is present in the dictionary with value: {item_name}",
-                                "choices": location_dict, "treasure_id": treasure_instance.id}, status=status.HTTP_200_OK)
+                return Response({"detail": f"Success! Item '{item}' is present in the dictionary with value: {item_name}",
+                                "treasure": treasure_instance.id}, status=status.HTTP_200_OK)
             else:
                 return Response({"detail": f"Item '{item}' not found in the dictionary.", 'choices': location_dict}, status=status.HTTP_404_NOT_FOUND)
 
         except ClimateTwinExploreDiscoveryLocation.DoesNotExist:
             return Response({'detail': 'Explore location not found for the user.'}, status=status.HTTP_404_NOT_FOUND)
 
-
     return Response({'detail': 'Method not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-@api_view(['POST', 'GET', 'OPTIONS'])
-#@throttle_classes([AnonRateThrottle, UserRateThrottle])
-#@authentication_classes([SessionAuthentication, TokenAuthentication])
-@permission_classes([IsAuthenticated])
+
+@swagger_auto_schema(method='get', operation_id='getItemChoices')
+@api_view(['GET'])
+@throttle_classes([AnonRateThrottle, UserRateThrottle])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([AllowAny])
 def item_choices(request):
-    if request.method == 'OPTIONS':
-        return Response(status=status.HTTP_200_OK)
+    """
+    Returns all data from the user's most recently chosen exploration site that can be used as the item base to build an item. 
+    
+    Use this endpoint to populate a dropdown/selection menu.
+
+    """
 
     if request.method == 'GET':
         user = request.user 
