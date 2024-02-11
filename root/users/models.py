@@ -96,6 +96,7 @@ class UserSettings(models.Model):
         return f"Settings for {self.user.username}"
 
 
+
 class UserProfile(models.Model):
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, related_name='profile')
     first_name = models.CharField(_('first name'), max_length=30, blank=True, default='')
@@ -106,7 +107,6 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"Profile for {self.user.username}"
-
 
 
 
@@ -257,6 +257,7 @@ class FriendRequest(models.Model):
     recipient = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='received_friend_requests')
     message = models.TextField()
     is_accepted = models.BooleanField(default=False)
+    is_rejected = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -269,6 +270,7 @@ class GiftRequest(models.Model):
     recipient = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='received_gift_requests')
     message = models.TextField()
     is_accepted = models.BooleanField(default=False)
+    is_rejected = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

@@ -20,6 +20,7 @@ AUTH_USER_MODEL = 'users.BadRainbowzUser'
 GOOGLE_MAPS_API_KEY = 'ADD GOOGLE MAPS KEY HERE'
 OPEN_MAP_API_KEY = 'ADD OPEN STEET MAP KEY HERE'
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -45,12 +46,14 @@ INSTALLED_APPS = [
     'climatevisitor',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_swagger',
     #must be placed after rest_framework
     'allauth',
     'allauth.account',
     'djoser',
     #'djoser.urls.authtoken',
     'templated_email',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -82,6 +85,26 @@ TEMPLATES = [
     },
 ]
 
+from .api_info import info 
+
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+    #  'Basic': {
+     #       'type': 'basic'
+     # },
+        'api_key': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization'
+        }
+    },
+    'DEFAULT_INFO': info, 
+}
+
+REDOC_SETTINGS = {
+   'LAZY_RENDERING': False,
+}
+
 WSGI_APPLICATION = 'root.wsgi.application'
 
 DJOSER = {
@@ -98,7 +121,7 @@ DJOSER = {
 
     #Use custom email:
     'EMAIL': {
-        'activation': 'users.email.ActivationEmail',
+        'activation': 'users.email.BadRainbowzActivationEmail',
         'confirmation': 'users.email.ConfirmationEmail',
         'username-reset': 'users.email.UsernameResetEmail',
         'password-reset': 'users.email.PasswordResetEmail',
@@ -197,8 +220,10 @@ REST_FRAMEWORK = {
     
     'DEFAULT_AUTHENTICATION_CLASSES' : [
         'rest_framework.authentication.TokenAuthentication',
+        
         'rest_framework.authentication.SessionAuthentication'
-    ]
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 }
 
 
