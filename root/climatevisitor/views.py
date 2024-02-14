@@ -15,6 +15,7 @@ import json
 from rest_framework import generics, status, throttling, viewsets
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.decorators import api_view, authentication_classes, parser_classes, throttle_classes, permission_classes, schema
+from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.schemas import AutoSchema, ManualSchema
@@ -36,14 +37,14 @@ def endpoints(request):
 
 
 
-@swagger_auto_schema(method='post', operation_id='createGo', request_body=openapi.Schema(
+@swagger_auto_schema(method='post', order=1, operation_id='createGo', operation_dscription="Main feature of app", request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
             'address': openapi.Schema(type=openapi.TYPE_STRING, description="User's current address. Must be a valid address.")
         },
         required=['address'],
     ))
-@api_view(['POST', 'GET'])
+@api_view(['POST'])
 #@throttle_classes([AnonRateThrottle, UserRateThrottle])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([AllowAny])
@@ -58,7 +59,7 @@ def go(request):
     data that meets a specific criteria and makes a new list of candidate locations, keeping track of high variances; if too many high 
     variances, the loop will break and the function to select a random country will get called again. If not enough candidate locations are
     found by the end of the loop, the function to select a random country will also get called again. When enough candidate locations are found,
-    this candidate list is looped through (O1) to find the closest matching location. (If this selection is missing certain
+    this candidate list is looped through (O(1)) to find the closest matching location. (If this selection is missing certain
     data, then the search will begin again from the beginning. I've mostly prevented uninhabited/ocean coordinates from getting
     returned by the time the algorithm gets to this stage, but a few still seem to slip through the cracks.)
     
@@ -169,107 +170,140 @@ def go(request):
     return Response({'detail': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-
-
-@swagger_auto_schema(operation_id='listTwinLocation')
 class ClimateTwinLocationsView(generics.ListCreateAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [AllowAny]
     serializer_class = ClimateTwinLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
+    @swagger_auto_schema(operation_id='listTwinLocations', operation_description="Returns climate twin locations.")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+    
+    @swagger_auto_schema(operation_id='createTwinLocationDirectly', auto_schema=None)
+    def post(self, request, *args, **kwargs):
+        raise MethodNotAllowed('POST')
+
     def get_queryset(self):
         return ClimateTwinLocation.objects.filter(user=self.request.user)
 
-@swagger_auto_schema(operation_id='twinLocationOperations')  
+
 class ClimateTwinLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [AllowAny]
     serializer_class = ClimateTwinLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
+    @swagger_auto_schema(operation_id='getTwinLocation', operation_description="Returns twin location.")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    @swagger_auto_schema(operation_id='updateTwinLocation', auto_schema=None)
+    def put(self, request, *args, **kwargs):
+        raise MethodNotAllowed('PUT')
+
+    @swagger_auto_schema(operation_id='partialUpdateTwinLocation', auto_schema=None)
+    def patch(self, request, *args, **kwargs):
+        raise MethodNotAllowed('PATCH')
+
+    @swagger_auto_schema(operation_id='deleteTwinLocation', operation_description="Deletes twin location.")
+    def delete(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+
     def get_queryset(self):
         return ClimateTwinLocation.objects.filter(user=self.request.user)
 
-'''
-class ClimateTwinLocationViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    serializer_class = ClimateTwinLocationSerializer
-    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
-    def get_queryset(self):
-        return ClimateTwinLocation.objects.filter(user=self.request.user)
-'''
-
-@swagger_auto_schema(operation_id='listDiscoveryLocation', operation_description='hihihihiihihihihihi')
 class ClimateTwinDiscoveryLocationsView(generics.ListCreateAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [AllowAny]
     serializer_class = ClimateTwinDiscoveryLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
+    @swagger_auto_schema(operation_id='listDiscoveryLocations', operation_description="Returns discovery locations.")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+    
+    @swagger_auto_schema(operation_id='createDiscoveryLocationDirectly', auto_schema=None)
+    def post(self, request, *args, **kwargs):
+        raise MethodNotAllowed('POST')
+
     def get_queryset(self):
         return ClimateTwinDiscoveryLocation.objects.filter(user=self.request.user)
     
 
-@swagger_auto_schema(operation_id='discoveryLocationOptions')
+
 class ClimateTwinDiscoveryLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [AllowAny]
     serializer_class = ClimateTwinDiscoveryLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
+    @swagger_auto_schema(operation_id='getDiscoveryLocation', operation_description="Returns discovery location.")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    @swagger_auto_schema(operation_id='updateDiscoveryLocation', auto_schema=None)
+    def put(self, request, *args, **kwargs):
+        raise MethodNotAllowed('PUT')
+
+    @swagger_auto_schema(operation_id='partialUpdateDiscoveryLocation', auto_schema=None)
+    def patch(self, request, *args, **kwargs):
+        raise MethodNotAllowed('PATCH')
+
+    @swagger_auto_schema(operation_id='deleteDiscoveryLocation', operation_description="Deletes discovery location.")
+    def delete(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+
     def get_queryset(self):
         return ClimateTwinDiscoveryLocation.objects.filter(user=self.request.user)
 
-'''
-class ClimateTwinDiscoveryLocationViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    serializer_class = ClimateTwinDiscoveryLocationSerializer
-    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
-    def get_queryset(self):
-        return ClimateTwinDiscoveryLocation.objects.filter(user=self.request.user)
-'''
 
-@swagger_auto_schema(operation_id='listExploreLocation')
 class ClimateTwinExploreDiscoveryLocationsView(generics.ListCreateAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [AllowAny]
     serializer_class = ClimateTwinExploreDiscoveryLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
+    @swagger_auto_schema(operation_id='listExploreLocations', operation_description="Returns explore locations.")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+    
+    @swagger_auto_schema(operation_id='createExploreLocation', operation_description="Creates explore location.")
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
     def get_queryset(self):
         return ClimateTwinExploreDiscoveryLocation.objects.filter(user=self.request.user)
     
 
-@swagger_auto_schema(operation_id='exploreLocationOptions')
+
 class ClimateTwinExploreDiscoveryLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [AllowAny]
     serializer_class = ClimateTwinExploreDiscoveryLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
+    @swagger_auto_schema(operation_id='getExploreLocation', operation_description="Returns explore location.")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    @swagger_auto_schema(operation_id='updateExploreLocation', auto_schema=None)
+    def put(self, request, *args, **kwargs):
+        raise MethodNotAllowed('PUT')
+
+    @swagger_auto_schema(operation_id='partialUpdateExploreLocation', auto_schema=None)
+    def patch(self, request, *args, **kwargs):
+        raise MethodNotAllowed('PATCH')
+
+    @swagger_auto_schema(operation_id='deleteExploreLocation', operation_description="Deletes explore location.")
+    def delete(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+
     def get_queryset(self):
         return ClimateTwinExploreDiscoveryLocation.objects.filter(user=self.request.user)
 
-    
-
-'''
-class ClimateTwinExploreDiscoveryLocationViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    serializer_class = ClimateTwinExploreDiscoveryLocationSerializer
-    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
-
-    def get_queryset(self):
-        return ClimateTwinExploreDiscoveryLocation.objects.filter(user=self.request.user)
-'''
-
-
-
-#@swagger_auto_schema(method='get', operation_id='getCollectLocation')
-#@swagger_auto_schema(method='post', operation_id='createCollect')
-#@swagger_auto_schema(method='options', operation_id='optionsCollect')
 
 @swagger_auto_schema(method='post', operation_id='collectTreasure', request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
@@ -371,7 +405,6 @@ def item_choices(request):
     Returns all data from the user's most recently chosen exploration site that can be used as the item base to build an item. 
     
     Use this endpoint to populate a dropdown/selection menu.
-
     """
 
     if request.method == 'GET':
@@ -379,7 +412,6 @@ def item_choices(request):
 
         
         try:
-            # Retrieve the most recently created ClimateTwinExploreDiscoveryLocation instance by the user
             latest_explore_location = ClimateTwinExploreDiscoveryLocation.objects.filter(user=user).latest('creation_date')
             location_dict = latest_explore_location.to_dict()
 
