@@ -109,13 +109,21 @@ class UserProfile(models.Model):
         return f"Profile for {self.user.username}"
 
 
+class Friendship(models.Model):
+    initiator = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='friendships_started')
+    reciprocator = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="friendships_accepted")
+    created_at = models.DateTimeField(default=timezone.now)
 
-class UserFriendship(models.Model):
+
+
+class FriendProfile(models.Model):
     id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='friends')
     friend = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='friend_of')
     nickname = models.CharField(max_length=255, default='')
     created_at = models.DateTimeField(default=timezone.now)
+    friendship = models.ForeignKey(Friendship, on_delete=models.CASCADE, related_name="friendship")
+
 
     class Meta:
         verbose_name = "User friendship"
@@ -207,7 +215,7 @@ class Treasure(models.Model):
 
 class Inbox(models.Model): # not in use, will probably be used for inbox settings.
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, related_name='inbox')
-    items = GenericRelation('Item')
+    items = GenericRelation('InboxItem')
 
     class Meta:
         verbose_name = "Inbox"
@@ -217,7 +225,7 @@ class Inbox(models.Model): # not in use, will probably be used for inbox setting
         return f"Inbox for {self.user.username}"
 
 
-class Item(models.Model):  # change name to InboxItem.
+class InboxItem(models.Model):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
@@ -226,7 +234,7 @@ class Item(models.Model):  # change name to InboxItem.
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
 
-    reverse_relation = GenericRelation('Item')
+    reverse_relation = GenericRelation('InboxItem')
 
     class Meta:
         ordering = ['-created_at']
@@ -262,6 +270,7 @@ class FriendRequest(models.Model):
 
     def __str__(self):
         return f"Friend request from {self.sender.username} to {self.recipient.username}"
+    
 
 
 class GiftRequest(models.Model):

@@ -87,19 +87,25 @@ class GiftRequestSerializer(serializers.ModelSerializer):
         model = models.GiftRequest
         fields = "__all__"
 
-class UserFriendshipSerializer(serializers.ModelSerializer):
+class FriendshipSerializer(serializers.ModelSerializer):
 
     class Meta(object):
-        model = models.UserFriendship
+        model = models.Friendship
+        fields = "__all__"
+
+class FriendProfileSerializer(serializers.ModelSerializer):
+
+    class Meta(object):
+        model = models.FriendProfile
         fields = "__all__"
 
 
-class ItemSerializer(serializers.ModelSerializer):
+class InboxItemSerializer(serializers.ModelSerializer):
 
     content_object = MessageSerializer()
 
     class Meta(object):
-        model = models.Item
+        model = models.InboxItem
         fields = "__all__"
 
         

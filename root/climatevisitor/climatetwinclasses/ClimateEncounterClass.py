@@ -108,21 +108,33 @@ class ClimateEncounter:
         return apparent_wind_speed
 
 
+
     def get_apparent_wind_direction(self):
+        # Check if wind_speed1 is zero
+        if self.wind_speed1 == 0:
+            # If wind_speed1 is zero, apparent wind direction is wind_direction2
+            return self.wind_direction2
+        
         # Calculate apparent wind direction
-        print(self.wind_speed1)
-        print(self.wind_speed2)
         cos_alpha = (self.wind_speed1**2 + self.apparent_wind_speed**2 - self.wind_speed2**2) / (2 * self.wind_speed1 * self.apparent_wind_speed)
+        
+        # Ensure cos_alpha is within valid range to avoid math.acos domain error
+        cos_alpha = max(-1, min(1, cos_alpha))
+        
+        # Calculate the angle in radians
         alpha_rad = math.acos(cos_alpha)
+        
+        # Convert radians to degrees
         alpha_deg = math.degrees(alpha_rad)
 
         # Determine the sign of the angle based on the relative direction of the winds
         if 0 <= self.angular_difference <= 180:
             apparent_wind_direction = (self.wind_direction1 + alpha_deg) % 360
-            return apparent_wind_direction
         else:
             apparent_wind_direction = (self.wind_direction1 - alpha_deg) % 360
-            return apparent_wind_direction
+        
+        return apparent_wind_direction
+
 
 
     def get_stronger_wind(self):
