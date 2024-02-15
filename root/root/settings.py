@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-ulk_hius7lv6hv#tm72-+(%^^@0xtz1ze=pzxy$9yil*fo%=!-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['climatetwin-lzyyd.ondigitalocean.app']
 
 
 # Application definition
