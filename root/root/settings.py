@@ -17,8 +17,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 AUTH_USER_MODEL = 'users.BadRainbowzUser'
 
-GOOGLE_MAPS_API_KEY = 'ADD GOOGLE MAPS KEY HERE'
-OPEN_MAP_API_KEY = 'ADD OPEN STEET MAP KEY HERE'
+GOOGLE_MAPS_API_KEY = 'AIzaSyBAW09hdzlszciQ4fTiZjfxcVMlEkF5Iqk'
+OPEN_MAP_API_KEY = '54a19c0e6cd35fb9f2d1ec6a87f22dba'
 
 
 # Quick-start development settings - unsuitable for production
@@ -242,9 +242,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'ADD APP EMAIL HERE'
-EMAIL_HOST_PASSWORD = 'ADD EMAIL PASSWORD HERE'
-DEFAULT_FROM_EMAIL = 'ADD APP EMAIL HERE'
+EMAIL_HOST_USER = 'climatetwin@gmail.com'
+EMAIL_HOST_PASSWORD = 'isntimickcpnodic'
+DEFAULT_FROM_EMAIL = 'climatetwin@gmail.com'
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True

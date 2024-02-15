@@ -103,6 +103,7 @@ class EditUserProfileView(generics.RetrieveUpdateAPIView, generics.DestroyAPIVie
     serializer_class = serializers.UserProfileSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
+
     @swagger_auto_schema(operation_id='getUserProfile', operation_description="Returns user profile.")
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
@@ -119,9 +120,9 @@ class EditUserProfileView(generics.RetrieveUpdateAPIView, generics.DestroyAPIVie
     def delete(self, request, *args, **kwargs):
         raise MethodNotAllowed('DELETE')
 
-    def get_object(self):
-        return models.UserProfile.objects.get(user=self.request.user)
-    
+    def get_queryset(self):
+        return models.UserProfile.objects.filter(user=self.request.user)
+
 
 
 class UserSettingsView(generics.CreateAPIView):
@@ -156,9 +157,9 @@ class ChangeUserSettingsView(generics.RetrieveUpdateAPIView):
     def patch(self, request, *args, **kwargs):
         return super().patch(request, *args, **kwargs)
 
-    def get_object(self):
-        return models.UserSettings.objects.get(user=self.request.user)
-
+    def get_queryset(self):
+        return models.UserSettings.objects.filter(user=self.request.user)
+    
 
 class UserVisitsView(generics.ListAPIView):
     authentication_classes = [TokenAuthentication, SessionAuthentication]
@@ -200,14 +201,14 @@ class InboxView(generics.ListAPIView):
 
     queryset = models.Inbox.objects.all()
 
-    def get_queryset(self):
-        return models.InboxItem.objects.filter(user=self.request.user)
-
     @swagger_auto_schema(operation_id='getInboxItems', operation_description="Returns inbox items.")
     def get(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         serializer = serializers.InboxItemSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def get_queryset(self):
+        return models.InboxItem.objects.filter(user=self.request.user)
 
 
 
