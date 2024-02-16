@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from django.core.management.utils import get_random_secret_key
+
+import dj_database_url
+import os
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,14 +30,18 @@ OPEN_MAP_API_KEY = '54a19c0e6cd35fb9f2d1ec6a87f22dba'
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ulk_hius7lv6hv#tm72-+(%^^@0xtz1ze=pzxy$9yil*fo%=!-'
+#SECRET_KEY = 'django-insecure-ulk_hius7lv6hv#tm72-+(%^^@0xtz1ze=pzxy$9yil*fo%=!-'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
+#DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
+
 
 ALLOWED_HOSTS = []
-
-
+#ALLOWED_HOSTS = ['climatetwin-lzyyd.ondigitalocean.app']
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 # Application definition
 
 INSTALLED_APPS = [
@@ -84,6 +93,17 @@ TEMPLATES = [
         },
     },
 ]
+
+
+
+'''
+username = doadmin
+password = AVNS_0B6B9eD5iKeP76zLmNh
+host = climatetwindev-do-user-15838008-0.c.db.ondigitalocean.com
+port = 25060
+database = defaultdb
+sslmode = REQUIRED
+'''  
 
 from .api_info import info 
 
@@ -151,21 +171,49 @@ DATABASES = {
     }
 }
 '''
+# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
+
+#DEVELOPMENT_MODE = True
+
+if DEVELOPMENT_MODE is True:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'ClimateTwin',
+            'USER': 'root',
+            'PASSWORD': 'root123',
+            'HOST': '127.0.0.1',
+            'PORT': '3306',
+            'OPTIONS': {
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+            }
+        }
+    }
+elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
+    if os.getenv("DATABASE_URL", None) is None:
+        raise Exception("DATABASE_URL environment variable not defined")
+    DATABASES = {
+        "default": dj_database_url.parse(os.environ.get("DATABASE_URL")),
+    }
+
+'''
+
+
+
+# Use this for DigitalOcean dev deployment if issue with DigitalOcean database environment variable
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ClimateTwin',
-        'USER': 'root',
-        'PASSWORD': 'root123',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
-        }
+        'NAME': 'defaultdb',
+        'USER': 'doadmin',
+        'PASSWORD': 'AVNS_0B6B9eD5iKeP76zLmNh',
+        'HOST': 'climatetwindev-do-user-15838008-0.c.db.ondigitalocean.com',
+        'PORT': '25060',
     }
 }
-
+'''
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
