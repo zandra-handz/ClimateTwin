@@ -38,8 +38,6 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', get_random_secret_key())
 #DEBUG = True
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-
-ALLOWED_HOSTS = []
 #ALLOWED_HOSTS = ['climatetwin-lzyyd.ondigitalocean.app']
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 # Application definition
@@ -170,7 +168,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-'''
+
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
@@ -201,7 +199,6 @@ elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
 '''
 
 
-
 # Use this for DigitalOcean dev deployment if issue with DigitalOcean database environment variable
 DATABASES = {
     'default': {
@@ -214,6 +211,7 @@ DATABASES = {
     }
 }
 '''
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
