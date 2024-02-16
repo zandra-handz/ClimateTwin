@@ -192,6 +192,18 @@ if DEVELOPMENT_MODE is True:
             }
         }
     }
+else:
+    DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'defaultdb',
+        'USER': 'doadmin',
+        'PASSWORD': 'AVNS_0B6B9eD5iKeP76zLmNh',
+        'HOST': 'climatetwindev-do-user-15838008-0.c.db.ondigitalocean.com',
+        'PORT': '25060',
+    }
+}
+    '''
 elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
     if os.getenv("DATABASE_URL", None) is None:
         raise Exception("DATABASE_URL environment variable not defined")
@@ -199,7 +211,7 @@ elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
         "default": dj_database_url.parse(os.environ.get("DATABASE_URL")),
     }
 
-'''
+
 
 
 # Use this for DigitalOcean dev deployment if issue with DigitalOcean database environment variable
