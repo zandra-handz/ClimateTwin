@@ -159,7 +159,7 @@ DJOSER = {
 
 #for front-end development
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = False
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
