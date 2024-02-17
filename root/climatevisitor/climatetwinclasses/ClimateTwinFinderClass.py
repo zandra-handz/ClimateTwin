@@ -332,7 +332,7 @@ class ClimateTwinFinder:
                     temperature_difference = abs(weather['temperature'] - self.weather_info['temperature'])
                     print(temperature_difference)
 
-                    if temperature_difference < 3:
+                    if temperature_difference < 4:
                         # Process and add the new entry to self.similar_places
                         new_entry = {
                             'name': [f'climate twin candidate'],
@@ -350,11 +350,11 @@ class ClimateTwinFinder:
                         }
                         self.process_new_entry(new_entry)
                     else:
-                        if temperature_difference > 10:
+                        if temperature_difference > 14:
                             high_variance += 1
                             self.high_variance_count += 1
                             print(f"High variance: {high_variance}")
-                            if high_variance > 1:
+                            if high_variance > 2:
 
                                 # Reset high_variance and break to get new coordinates
                                 high_variance = 0
