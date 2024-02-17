@@ -323,11 +323,14 @@ class ClimateTwinExploreDiscoveryLocationsView(generics.ListCreateAPIView):
     
     @swagger_auto_schema(operation_id='createExploreLocation', operation_description="Creates explore location.")
     def post(self, request, *args, **kwargs):
-        explore_location_creation_date = request.data.get('explore_location', {}).get('creation_date')
-        if explore_location_creation_date:
-            explore_location_creation_date = timezone.make_aware(explore_location_creation_date)
+        explore_location_pk = request.data.get('explore_location')
+        try:
+            explore_location = ClimateTwinDiscoveryLocation.objects.get(pk=explore_location_pk)
+            explore_location_creation_date = explore_location.creation_date
             if (timezone.now() - explore_location_creation_date).total_seconds() >= 7200:
                 return Response({'error': 'The explore location must have been created within the last two hours.'}, status=status.HTTP_400_BAD_REQUEST)
+        except ClimateTwinDiscoveryLocation.DoesNotExist:
+            return Response({'error': 'The explore location does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
         return super().post(request, *args, **kwargs)
 
     def get_queryset(self):
