@@ -78,10 +78,10 @@ def go(request):
             return Response({'error': 'Address is required'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Check if user has hit daily limit
-        if user: 
+        if user and not (user.is_staff or user.is_superuser): 
             today = timezone.now().date()
             daily_count = ClimateTwinLocation.objects.filter(user=user, creation_date__date=today).count()
-            if daily_count >= 2:
+            if daily_count >= 3:
                 return Response({'error': 'You have reached the daily limit of visits.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Create 
@@ -212,6 +212,22 @@ class ClimateTwinLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAP
 
     def get_queryset(self):
         return ClimateTwinLocation.objects.filter(user=self.request.user)
+
+
+
+class CurrentClimateTwinLocationView(generics.ListAPIView):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [AllowAny]
+    serializer_class = ClimateTwinLocationSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    @swagger_auto_schema(operation_id='getLatestTwinLocation', operation_description="Returns the most recently added twin location.")
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return ClimateTwinLocation.objects.filter(user=self.request.user).order_by('-creation_date')[:1]
 
 
 class ClimateTwinDiscoveryLocationsView(generics.ListCreateAPIView):
