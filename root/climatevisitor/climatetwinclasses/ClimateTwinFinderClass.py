@@ -354,7 +354,7 @@ class ClimateTwinFinder:
                             high_variance += 1
                             self.high_variance_count += 1
                             print(f"High variance: {high_variance}")
-                            if high_variance > 3:
+                            if high_variance > 1:
 
                                 # Reset high_variance and break to get new coordinates
                                 high_variance = 0
