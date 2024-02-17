@@ -16,9 +16,10 @@ class ClimateTwinDiscoveryLocationSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+
 class ClimateTwinExploreDiscoveryLocationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ClimateTwinDiscoveryLocation
+        model = ClimateTwinExploreDiscoveryLocation
         fields = '__all__'
         read_only_fields = ['user']  # Mark the user field as read-only
 
@@ -26,5 +27,4 @@ class ClimateTwinExploreDiscoveryLocationSerializer(serializers.ModelSerializer)
         # Automatically associate the user with the object during creation
         validated_data['user'] = self.context['request'].user
         return super().create(validated_data)
-
 
