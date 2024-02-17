@@ -301,6 +301,7 @@ class CurrentDiscoveryLocationsView(generics.ListAPIView):
         else:
             return None
 
+
 class CreateExploreLocationView(generics.CreateAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [AllowAny]
@@ -323,7 +324,7 @@ class CreateExploreLocationView(generics.CreateAPIView):
         return models.ClimateTwinExploreDiscoveryLocation.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(user_id=self.request.user.id)  # Save user ID implicitly
 
 
 
