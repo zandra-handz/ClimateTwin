@@ -164,7 +164,7 @@ def go(request):
     return Response({'detail': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-class ClimateTwinLocationsView(generics.ListCreateAPIView):
+class TwinLocationsView(generics.ListAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [AllowAny]
     serializer_class = serializers.ClimateTwinLocationSerializer
@@ -173,16 +173,12 @@ class ClimateTwinLocationsView(generics.ListCreateAPIView):
     @swagger_auto_schema(operation_id='listTwinLocations', operation_description="Returns climate twin locations.")
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
-    
-    @swagger_auto_schema(operation_id='createTwinLocationDirectly', auto_schema=None)
-    def post(self, request, *args, **kwargs):
-        raise MethodNotAllowed('POST')
 
     def get_queryset(self):
         return models.ClimateTwinLocation.objects.filter(user=self.request.user)
 
 
-class ClimateTwinLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
+class TwinLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [AllowAny]
     serializer_class = serializers.ClimateTwinLocationSerializer
@@ -209,7 +205,7 @@ class ClimateTwinLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAP
 
 
 
-class CurrentClimateTwinLocationView(generics.ListAPIView):
+class CurrentTwinLocationView(generics.ListAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [AllowAny]
     serializer_class = serializers.ClimateTwinLocationSerializer
@@ -235,7 +231,7 @@ class CurrentClimateTwinLocationView(generics.ListAPIView):
             return None
         
 
-class ClimateTwinDiscoveryLocationsView(generics.ListCreateAPIView):
+class DiscoveryLocationsView(generics.ListCreateAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [AllowAny]
     serializer_class = serializers.ClimateTwinDiscoveryLocationSerializer
@@ -254,7 +250,7 @@ class ClimateTwinDiscoveryLocationsView(generics.ListCreateAPIView):
     
 
 
-class ClimateTwinDiscoveryLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
+class DiscoveryLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [AllowAny]
     serializer_class = serializers.ClimateTwinDiscoveryLocationSerializer
@@ -280,7 +276,7 @@ class ClimateTwinDiscoveryLocationView(generics.RetrieveUpdateAPIView, generics.
         return models.ClimateTwinDiscoveryLocation.objects.filter(user=self.request.user)
 
 
-class CurrentClimateTwinDiscoveryLocationsView(generics.ListAPIView):
+class CurrentDiscoveryLocationsView(generics.ListAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [AllowAny]
     serializer_class = serializers.ClimateTwinDiscoveryLocationSerializer
@@ -305,18 +301,11 @@ class CurrentClimateTwinDiscoveryLocationsView(generics.ListAPIView):
         else:
             return None
 
-
-
-
-class ClimateTwinExploreDiscoveryLocationsView(generics.ListCreateAPIView):
+class CreateExploreLocationView(generics.CreateAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [AllowAny]
     serializer_class = serializers.ClimateTwinExploreDiscoveryLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
-
-    @swagger_auto_schema(operation_id='listExploreLocations', operation_description="Returns explore locations.")
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
     
     @swagger_auto_schema(operation_id='createExploreLocation', operation_description="Creates explore location.")
     def post(self, request, *args, **kwargs):
@@ -337,7 +326,23 @@ class ClimateTwinExploreDiscoveryLocationsView(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
 
-class ClimateTwinExploreDiscoveryLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
+
+class ExploreLocationsView(generics.ListAPIView):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [AllowAny]
+    serializer_class = serializers.ClimateTwinExploreDiscoveryLocationSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    @swagger_auto_schema(operation_id='listExploreLocations', operation_description="Returns explore locations.")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return models.ClimateTwinExploreDiscoveryLocation.objects.filter(user=self.request.user)
+
+
+
+class ExploreLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [AllowAny]
     serializer_class = serializers.ClimateTwinExploreDiscoveryLocationSerializer
@@ -363,7 +368,7 @@ class ClimateTwinExploreDiscoveryLocationView(generics.RetrieveUpdateAPIView, ge
         return models.ClimateTwinExploreDiscoveryLocation.objects.filter(user=self.request.user)
 
 
-class CurrentClimateTwinExploreDiscoverLocationView(generics.ListAPIView):
+class CurrentExploreLocationView(generics.ListAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [AllowAny]
     serializer_class = serializers.ClimateTwinExploreDiscoveryLocationSerializer
