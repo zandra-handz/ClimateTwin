@@ -221,14 +221,25 @@ class CurrentClimateTwinLocationView(generics.ListAPIView):
     serializer_class = ClimateTwinLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
-    @swagger_auto_schema(operation_id='getLatestTwinLocation', operation_description="Returns the most recently added twin location.")
+    @swagger_auto_schema(operation_id='getCurrentTwinLocation', operation_description="Returns the most recent twin location.")
 
     def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
+        latest_location = self.get_latest_location()
+        if not latest_location:
+            return Response({'detail': 'You are not visiting anywhere right now.'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = self.get_serializer(latest_location)
+        return Response(serializer.data)
 
-    def get_queryset(self):
-        return ClimateTwinLocation.objects.filter(user=self.request.user).order_by('-creation_date')[:1]
+    def get_latest_location(self):
+        user = self.request.user
+        latest_location = ClimateTwinLocation.objects.filter(user=user).order_by('-creation_date').first()
 
+        # Check if the latest location exists and if it was created within the last two hours
+        if latest_location and (timezone.now() - latest_location.creation_date).total_seconds() < 7200: 
+            return latest_location
+        else:
+            return None
+        
 
 class ClimateTwinDiscoveryLocationsView(generics.ListCreateAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -275,6 +286,30 @@ class ClimateTwinDiscoveryLocationView(generics.RetrieveUpdateAPIView, generics.
         return ClimateTwinDiscoveryLocation.objects.filter(user=self.request.user)
 
 
+class CurrentClimateTwinDiscoveryLocationsView(generics.ListAPIView):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [AllowAny]
+    serializer_class = ClimateTwinDiscoveryLocationSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    @swagger_auto_schema(operation_id='listCurrentDiscoveryLocations', operation_description="Returns current discovery locations.")
+    def get(self, request, *args, **kwargs):
+        latest_location = self.get_latest_location(request.user)
+        if not latest_location:
+            return Response({'detail': 'You are not visiting anywhere right now.'}, status=status.HTTP_404_NOT_FOUND)
+        discovery_locations = ClimateTwinDiscoveryLocation.objects.filter(origin_location=latest_location)
+        serializer = self.get_serializer(discovery_locations, many=True)
+        return Response(serializer.data)
+
+    def get_queryset(self):
+        return ClimateTwinDiscoveryLocation.objects.filter(user=self.request.user)
+
+    def get_latest_location(self, user):
+        latest_location = ClimateTwinLocation.objects.filter(user=user).order_by('-creation_date').first()
+        if latest_location and (timezone.now() - latest_location.creation_date).total_seconds() < 7200: 
+            return latest_location
+        else:
+            return None
 
 class ClimateTwinExploreDiscoveryLocationsView(generics.ListCreateAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]

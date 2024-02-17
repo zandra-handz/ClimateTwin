@@ -53,6 +53,7 @@ class ClimateTwinLocation(models.Model):
 
 
 
+
 class ClimateTwinDiscoveryLocation(models.Model):
     user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, default='Unnamed Ruin')
