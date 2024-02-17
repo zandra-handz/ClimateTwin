@@ -245,7 +245,7 @@ class ClimateTwinFinder:
         # Create a spatial index
         spatial_index = land_only.sindex
 
-        # Generate 10 random points within one randomly selected country
+        # Generate random points within one randomly selected country
         num_points = 14
         recalculations = 0
 
