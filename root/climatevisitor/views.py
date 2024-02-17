@@ -323,11 +323,18 @@ class ClimateTwinExploreDiscoveryLocationsView(generics.ListCreateAPIView):
     
     @swagger_auto_schema(operation_id='createExploreLocation', operation_description="Creates explore location.")
     def post(self, request, *args, **kwargs):
+        explore_location_creation_date = request.data.get('explore_location', {}).get('creation_date')
+        if explore_location_creation_date:
+            explore_location_creation_date = timezone.make_aware(explore_location_creation_date)
+            if (timezone.now() - explore_location_creation_date).total_seconds() >= 7200:
+                return Response({'error': 'The explore location must have been created within the last two hours.'}, status=status.HTTP_400_BAD_REQUEST)
         return super().post(request, *args, **kwargs)
 
     def get_queryset(self):
         return ClimateTwinExploreDiscoveryLocation.objects.filter(user=self.request.user)
-    
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class ClimateTwinExploreDiscoveryLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
@@ -356,6 +363,30 @@ class ClimateTwinExploreDiscoveryLocationView(generics.RetrieveUpdateAPIView, ge
         return ClimateTwinExploreDiscoveryLocation.objects.filter(user=self.request.user)
 
 
+
+class CurrentClimateTwinExploreDiscoverLocationView(generics.ListAPIView):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [AllowAny]
+    serializer_class = ClimateTwinExploreDiscoveryLocationSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    @swagger_auto_schema(operation_id='getCurrentExploreDiscoverLocation', operation_description="Returns the most recent explore location.")
+    def get(self, request, *args, **kwargs):
+        latest_location = self.get_latest_location(request.user)
+        if not latest_location:
+            return Response({'detail': 'You are not exploring any locations right now.'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = self.get_serializer(latest_location)
+        return Response(serializer.data)
+
+    def get_latest_location(self, user):
+        latest_location = ClimateTwinExploreDiscoveryLocation.objects.filter(user=user).order_by('-creation_date').first()
+        if latest_location and (timezone.now() - latest_location.explore_location.creation_date).total_seconds() < 7200: 
+            return latest_location
+        else:
+            return None
+
+
+
 @swagger_auto_schema(method='post', operation_id='collectTreasure', request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
@@ -366,6 +397,7 @@ class ClimateTwinExploreDiscoveryLocationView(generics.RetrieveUpdateAPIView, ge
         },
         required=['item'],
     ))
+
 @api_view(['POST'])
 @throttle_classes([AnonRateThrottle, UserRateThrottle])
 
