@@ -382,7 +382,7 @@ class CurrentClimateTwinExploreDiscoverLocationView(generics.ListAPIView):
         latest_location = models.ClimateTwinExploreDiscoveryLocation.objects.filter(user=user).order_by('-creation_date').first()
         
         if latest_location and latest_location.explore_location.original_location_id == most_recent_climate_twin_location.pk and \
-           (timezone.now() - latest_location.explore_location.creation_date).total_seconds() < 7200: 
+           (timezone.now() - latest_location.creation_date).total_seconds() < 7200: 
             return latest_location
         else:
             return None
