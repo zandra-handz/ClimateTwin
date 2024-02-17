@@ -305,6 +305,9 @@ class CurrentClimateTwinDiscoveryLocationsView(generics.ListAPIView):
         else:
             return None
 
+
+
+
 class ClimateTwinExploreDiscoveryLocationsView(generics.ListCreateAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [AllowAny]
