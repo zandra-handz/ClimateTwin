@@ -525,6 +525,10 @@ class SendGiftRequestView(generics.CreateAPIView):
 
         return Response({'success': 'Gift request sent successfully.'}, status=status.HTTP_201_CREATED)
 
+    def perform_create(self, serializer):
+        # Automatically populate sender with the user ID
+        serializer.save(sender=self.request.user)
+
 
 
 class GiftRequestDetailView(generics.RetrieveUpdateAPIView):
