@@ -513,7 +513,6 @@ class SendGiftRequestView(generics.CreateAPIView):
         return Response({'success': 'Gift request sent successfully.'}, status=status.HTTP_201_CREATED)
 
 
-
 class GiftRequestDetailView(generics.RetrieveUpdateAPIView):
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [AllowAny]
@@ -530,7 +529,16 @@ class GiftRequestDetailView(generics.RetrieveUpdateAPIView):
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
-    @swagger_auto_schema(operation_id="replyGiftRequest", operation_description="Updates is_rejected or is_accepted on gift request, changes user of treasure if accepted, deletes request either way.")
+    @swagger_auto_schema(operation_id="replyGiftRequest", operation_description="Updates is_rejected or is_accepted on gift request, changes user of treasure if accepted, deletes request either way.",
+                         request_body=openapi.Schema(
+                             type=openapi.TYPE_OBJECT,
+                             properties={
+                                 'is_accepted': openapi.Schema(type=openapi.TYPE_BOOLEAN),
+                                 'is_rejected': openapi.Schema(type=openapi.TYPE_BOOLEAN),
+                                 'message': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_HIDDEN)
+                             }
+                         ),
+                         responses={200: 'Success', 400: 'Bad Request'})
     def put(self, request, *args, **kwargs):
         instance = self.get_object()
         accepted = request.data.get('is_accepted')
@@ -539,7 +547,7 @@ class GiftRequestDetailView(generics.RetrieveUpdateAPIView):
         if accepted is not None:
             user = request.user
             treasure = instance.treasure
-            treasure.accept(recipient=user)
+            treasure.accept(recipient=user, message=request.data.get('message'))
 
             treasure.pending = False
             treasure.save()
@@ -547,7 +555,7 @@ class GiftRequestDetailView(generics.RetrieveUpdateAPIView):
             instance.delete()
 
             return Response({'success': 'Gift request accepted successfully!'}, status=status.HTTP_200_OK)
-        
+
         if rejected is not None:
             treasure = instance.treasure
             treasure.pending = False
