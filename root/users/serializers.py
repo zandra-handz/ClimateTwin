@@ -83,15 +83,27 @@ class FriendRequestSerializer(serializers.ModelSerializer):
 
 class GiftRequestSerializer(serializers.ModelSerializer):
     sender = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    is_accepted = serializers.BooleanField(default=False, required=False)
+    is_rejected = serializers.BooleanField(default=False, required=False)
 
     class Meta:
         model = models.GiftRequest
-        fields = ['message', 'is_accepted', 'is_rejected', 'treasure', 'sender', 'recipient']
+        fields = ['message', 'is_accepted', 'is_rejected', 'treasure', 'recipient']
 
     def create(self, validated_data):
-        # Remove 'sender' from validated data before creating the instance
-        validated_data.pop('sender', None)
+        # Remove 'is_accepted' and 'is_rejected' from validated data before creating the instance
+        validated_data.pop('is_accepted', None)
+        validated_data.pop('is_rejected', None)
+
         return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        # Update 'is_accepted' and 'is_rejected' fields if provided
+        instance.is_accepted = validated_data.get('is_accepted', instance.is_accepted)
+        instance.is_rejected = validated_data.get('is_rejected', instance.is_rejected)
+        instance.save()
+        return instance
+
 
 
 class FriendshipSerializer(serializers.ModelSerializer):
