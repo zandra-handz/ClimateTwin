@@ -88,7 +88,7 @@ class GiftRequestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.GiftRequest
-        fields = ['message', 'is_accepted', 'is_rejected', 'treasure', 'recipient']
+        fields = ['sender', 'message', 'is_accepted', 'is_rejected', 'treasure', 'recipient']
 
     def create(self, validated_data):
         # Remove 'is_accepted' and 'is_rejected' from validated data before creating the instance
