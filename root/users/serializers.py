@@ -82,10 +82,17 @@ class FriendRequestSerializer(serializers.ModelSerializer):
 
 
 class GiftRequestSerializer(serializers.ModelSerializer):
+    sender = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
-    class Meta(object):
+    class Meta:
         model = models.GiftRequest
-        fields = "__all__"
+        fields = ['message', 'is_accepted', 'is_rejected', 'treasure', 'sender', 'recipient']
+
+    def create(self, validated_data):
+        # Remove 'sender' from validated data before creating the instance
+        validated_data.pop('sender', None)
+        return super().create(validated_data)
+
 
 class FriendshipSerializer(serializers.ModelSerializer):
 
