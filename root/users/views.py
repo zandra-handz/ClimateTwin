@@ -482,22 +482,14 @@ class SendGiftRequestView(generics.CreateAPIView):
     
     @swagger_auto_schema(operation_id='createGiftRequest')
     def post(self, request, *args, **kwargs):
-        sender = self.request.user
-        recipient_id = self.request.data.get('recipient')
-        message = self.request.data.get('message')
-        treasure_id = self.request.data.get('treasure')
-        recipient_id = recipient_id.id if hasattr(recipient_id, 'id') else recipient_id
-
         try:
+            recipient_id = request.data.get('recipient')
+            message = request.data.get('message')
+            treasure_id = request.data.get('treasure')
             recipient = models.BadRainbowzUser.objects.get(pk=recipient_id)
-        except models.BadRainbowzUser.DoesNotExist:
-            raise PermissionDenied("Recipient user does not exist.")
-        
-        try:
-            treasure = models.Treasure.objects.get(pk=treasure_id, user=sender)
-            
+            treasure = models.Treasure.objects.get(pk=treasure_id, user=request.user)
 
-            existing_request = models.GiftRequest.objects.filter(sender=sender, recipient=recipient, treasure=treasure)
+            existing_request = models.GiftRequest.objects.filter(sender=request.user, recipient=recipient, treasure=treasure)
             if existing_request.exists():
                 return Response({'error': 'Duplicate request.'}, status=status.HTTP_400_BAD_REQUEST)
             
@@ -508,9 +500,9 @@ class SendGiftRequestView(generics.CreateAPIView):
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
 
-            gift_request = serializer.save(sender=sender, recipient=recipient, treasure=treasure)
+            gift_request = serializer.save(recipient=recipient, treasure=treasure)
 
-            gift_request_message = models.Message.objects.create(sender=sender, recipient=recipient, content=message)
+            gift_request_message = models.Message.objects.create(sender=request.user, recipient=recipient, content=message)
             gift_request_message.content_object = gift_request
             gift_request_message.save()
 
@@ -520,14 +512,13 @@ class SendGiftRequestView(generics.CreateAPIView):
             treasure.pending = True
             treasure.save()
 
+        except models.BadRainbowzUser.DoesNotExist:
+            raise PermissionDenied("Recipient user does not exist.")
         except models.Treasure.DoesNotExist:
             raise ValidationError("Treasure with the provided ID does not exist.")
 
         return Response({'success': 'Gift request sent successfully.'}, status=status.HTTP_201_CREATED)
 
-    def perform_create(self, serializer):
-        # Automatically populate sender with the user ID
-        serializer.save(sender=self.request.user)
 
 
 
