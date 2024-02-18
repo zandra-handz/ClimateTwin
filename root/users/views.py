@@ -471,7 +471,6 @@ class DeleteFriendshipView(generics.DestroyAPIView):
         user = self.request.user
         return models.Friendship.objects.filter(Q(initiator=user) | Q(reciprocator=user))
 
-
 class SendGiftRequestView(generics.CreateAPIView):
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [AllowAny]
@@ -483,39 +482,28 @@ class SendGiftRequestView(generics.CreateAPIView):
     @swagger_auto_schema(operation_id='createGiftRequest')
     def post(self, request, *args, **kwargs):
         try:
-            recipient_id = request.data.get('recipient')
-            message = request.data.get('message')
-            treasure_id = request.data.get('treasure')
-            recipient = models.BadRainbowzUser.objects.get(pk=recipient_id)
-            treasure = models.Treasure.objects.get(pk=treasure_id, user=request.user)
-
-            existing_request = models.GiftRequest.objects.filter(sender=request.user, recipient=recipient, treasure=treasure)
-            if existing_request.exists():
-                return Response({'error': 'Duplicate request.'}, status=status.HTTP_400_BAD_REQUEST)
-            
-            existing_gift = models.GiftRequest.objects.filter(treasure=treasure)
-            if existing_gift.exists():
-                return Response ({'error': 'You have already sent a gift request for this item to someone else.'}, status=status.HTTP_400_BAD_REQUEST)
-
-            # Remove 'is_accepted' and 'is_rejected' from request data
-            request_data = request.data.copy()
-            request_data.pop('is_accepted', None)
-            request_data.pop('is_rejected', None)
-
-            serializer = self.get_serializer(data=request_data)
+            serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
 
-            gift_request = serializer.save(recipient=recipient, treasure=treasure)
+            gift_request = serializer.save(
+                sender=request.user,
+                recipient=models.BadRainbowzUser.objects.get(pk=request.data['recipient']),
+                treasure=models.Treasure.objects.get(pk=request.data['treasure'], user=request.user)
+            )
 
-            gift_request_message = models.Message.objects.create(sender=request.user, recipient=recipient, content=message)
+            gift_request_message = models.Message.objects.create(
+                sender=request.user,
+                recipient=gift_request.recipient,
+                content=request.data['message']
+            )
             gift_request_message.content_object = gift_request
             gift_request_message.save()
 
-            inbox_item = models.InboxItem.objects.create(content_object=gift_request_message, user=recipient)
+            inbox_item = models.InboxItem.objects.create(content_object=gift_request_message, user=gift_request.recipient)
             inbox_item.save()
 
-            treasure.pending = True
-            treasure.save()
+            gift_request.treasure.pending = True
+            gift_request.treasure.save()
 
         except models.BadRainbowzUser.DoesNotExist:
             raise PermissionDenied("Recipient user does not exist.")
@@ -526,11 +514,10 @@ class SendGiftRequestView(generics.CreateAPIView):
 
 
 
-
 class GiftRequestDetailView(generics.RetrieveUpdateAPIView):
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [AllowAny]
-    serializer_class = serializers.GiftRequestSerializer
+    serializer_class = serializers.AcceptRejectGiftRequestSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     queryset = models.GiftRequest.objects.all()
@@ -546,22 +533,13 @@ class GiftRequestDetailView(generics.RetrieveUpdateAPIView):
     @swagger_auto_schema(operation_id="replyGiftRequest", operation_description="Updates is_rejected or is_accepted on gift request, changes user of treasure if accepted, deletes request either way.")
     def put(self, request, *args, **kwargs):
         instance = self.get_object()
-        rejected = self.request.data.get('is_rejected')
-        accepted = self.request.data.get('is_accepted')
-        message = self.request.data.get('message')
+        accepted = request.data.get('is_accepted')
+        rejected = request.data.get('is_rejected')
 
-        print(f"Accepted: {accepted}")
-
-        if rejected:
-            instance.delete()
-            return Response({'success': 'Gift request rejected successfully!'}, status=status.HTTP_200_OK)
-
-        if accepted:
-            user = self.request.user
-            friend = instance.sender
-
+        if accepted is not None:
+            user = request.user
             treasure = instance.treasure
-            treasure.accept(recipient=user, message=message)
+            treasure.accept(recipient=user)
 
             treasure.pending = False
             treasure.save()
@@ -570,13 +548,12 @@ class GiftRequestDetailView(generics.RetrieveUpdateAPIView):
 
             return Response({'success': 'Gift request accepted successfully!'}, status=status.HTTP_200_OK)
         
-        else:
-            # Not needed?
-            serializer = self.get_serializer(instance, data=request.data, partial=True)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response({'success': 'Gift request updated successfully!'}, status=status.HTTP_200_OK)
+        if rejected is not None:
+            treasure = instance.treasure
+            treasure.pending = False
+            treasure.save()
 
-    @swagger_auto_schema(operation_id="partialUpdateGiftRequest", operation_description="Updates gift request via PATCH", auto_schema=None)
-    def patch(self, request, *args, **kwargs):
-        raise MethodNotAllowed('PATCH')
+            instance.delete()
+            return Response({'success': 'Gift request rejected successfully!'}, status=status.HTTP_200_OK)
+
+        return Response({'error': 'You must provide either "is_accepted" or "is_rejected" field.'}, status=status.HTTP_400_BAD_REQUEST)
