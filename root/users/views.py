@@ -529,16 +529,7 @@ class GiftRequestDetailView(generics.RetrieveUpdateAPIView):
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
-    @swagger_auto_schema(operation_id="replyGiftRequest", operation_description="Updates is_rejected or is_accepted on gift request, changes user of treasure if accepted, deletes request either way.",
-                         request_body=openapi.Schema(
-                             type=openapi.TYPE_OBJECT,
-                             properties={
-                                 'is_accepted': openapi.Schema(type=openapi.TYPE_BOOLEAN),
-                                 'is_rejected': openapi.Schema(type=openapi.TYPE_BOOLEAN),
-                                 'message': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_HIDDEN)
-                             }
-                         ),
-                         responses={200: 'Success', 400: 'Bad Request'})
+    @swagger_auto_schema(operation_id="replyGiftRequest", operation_description="Updates is_rejected or is_accepted on gift request, changes user of treasure if accepted, deletes request either way.")
     def put(self, request, *args, **kwargs):
         instance = self.get_object()
         accepted = request.data.get('is_accepted')
