@@ -497,7 +497,12 @@ class SendGiftRequestView(generics.CreateAPIView):
             if existing_gift.exists():
                 return Response ({'error': 'You have already sent a gift request for this item to someone else.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            serializer = self.get_serializer(data=request.data)
+            # Remove 'is_accepted' and 'is_rejected' from request data
+            request_data = request.data.copy()
+            request_data.pop('is_accepted', None)
+            request_data.pop('is_rejected', None)
+
+            serializer = self.get_serializer(data=request_data)
             serializer.is_valid(raise_exception=True)
 
             gift_request = serializer.save(recipient=recipient, treasure=treasure)
