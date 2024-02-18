@@ -100,9 +100,11 @@ class GiftRequestSerializer(serializers.ModelSerializer):
 
 
 class AcceptRejectGiftRequestSerializer(serializers.ModelSerializer):
+    message = serializers.HiddenField(default="Your message here")
+
     class Meta:
         model = models.GiftRequest
-        fields = ['is_accepted', 'is_rejected']
+        fields = ['is_accepted', 'is_rejected', 'message']
 
     def validate(self, data):
         return data
