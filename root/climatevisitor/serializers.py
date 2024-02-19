@@ -16,6 +16,22 @@ class HomeLocationSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+
+class CurrentLocationMatchSerializer(serializers.Serializer):
+    twin_instance = ClimateTwinLocationSerializer()
+    home_instance = HomeLocationSerializer(required=False)  # Make home_instance optional
+
+class MatchPerformanceSerializer(serializers.ListSerializer):
+    def to_representation(self, data):
+        """
+        Serialize list of tuples containing twin instance and its associated home instance.
+        """
+        return [{
+            'twin_instance': twin_instance_serializer.data,
+            'home_instance': home_instance_serializer.data if home_instance_serializer else None
+        } for twin_instance_serializer, home_instance_serializer in data]
+
+
 class ClimateTwinDiscoveryLocationSerializer(serializers.ModelSerializer):
 
     class Meta(object):
