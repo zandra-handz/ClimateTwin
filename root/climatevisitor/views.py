@@ -82,6 +82,17 @@ def go(request):
         # Create 
         climate_places = ClimateTwinFinder(user_address)
 
+       
+
+        if climate_places.home_climate:
+            # Create or update the home location
+            home_location_serializer = serializers.HomeLocationSerializer(data=climate_places.home_climate, context={'request': request})
+            if home_location_serializer.is_valid():
+                home_location_instance = home_location_serializer.save()
+            else:
+                print(home_location_serializer.errors)
+                home_location_instance = None
+
         if climate_places.climate_twin:
             home_weather_profile = ClimateObject(climate_places.home_climate)
             climate_twin_weather_profile = ClimateObject(climate_places.climate_twin)
@@ -104,10 +115,12 @@ def go(request):
             user_instance = request.user
 
             climate_twin_location_instance = models.ClimateTwinLocation.create_from_dicts(
-                user_instance, climate_places.climate_twin, weather_messages
+                user_instance, climate_places.climate_twin, weather_messages,
+                home_location=home_location_instance
             )
 
             climate_twin_location_instance.save()
+ 
 
             user_visit_record_instance = UserVisit(user=user_instance, location_name=climate_twin_location_instance.name, 
                                                    location_latitude=climate_twin_location_instance.latitude,
@@ -162,6 +175,47 @@ def go(request):
             return Response({'error': 'error'}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response({'detail': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+class HomeLocationsView(generics.ListAPIView):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [AllowAny]
+    serializer_class = serializers.HomeLocationSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    @swagger_auto_schema(operation_id='listHomeLocations', operation_description="Returns home locations.")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return models.HomeLocation.objects.filter(user=self.request.user)
+
+
+class HomeLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [AllowAny]
+    serializer_class = serializers.HomeLocationSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    @swagger_auto_schema(operation_id='getHomeLocation', operation_description="Returns home location.")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    @swagger_auto_schema(operation_id='updateHomeLocation', auto_schema=None)
+    def put(self, request, *args, **kwargs):
+        raise MethodNotAllowed('PUT')
+
+    @swagger_auto_schema(operation_id='partialUpdateHomeLocation', auto_schema=None)
+    def patch(self, request, *args, **kwargs):
+        raise MethodNotAllowed('PATCH')
+
+    @swagger_auto_schema(operation_id='deleteHomeLocation', operation_description="Deletes home location.")
+    def delete(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return models.HomeLocation.objects.filter(user=self.request.user)
+
 
 
 class TwinLocationsView(generics.ListAPIView):

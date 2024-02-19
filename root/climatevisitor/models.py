@@ -5,6 +5,32 @@ from users.models import BadRainbowzUser
 
 # Create your models here.
 
+class HomeLocation(models.Model):
+    user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
+    creation_date = models.DateTimeField(auto_now_add=True)
+    last_accessed = models.DateTimeField(auto_now=True)
+    name = models.CharField(max_length=255, default="")
+    temperature = models.FloatField(default=0.0)
+    description = models.CharField(max_length=255, default="")
+    wind_speed = models.FloatField(default=0.0)
+    wind_direction = models.IntegerField(default=0)
+    humidity = models.IntegerField(default=0)
+    pressure = models.IntegerField(default=0)
+    cloudiness = models.IntegerField(default=0)
+    sunrise_timestamp = models.BigIntegerField(default=0)
+    sunset_timestamp = models.BigIntegerField(default=0)
+    latitude = models.FloatField(default=0.0)
+    longitude = models.FloatField(default=0.0)
+
+    class Meta:
+        verbose_name = "Home Location"
+        verbose_name_plural = "Home Locations"
+
+    def __str__(self):
+        return f"Home Location: {str(self.name)}, {self.pk}"
+
+
+
 class ClimateTwinLocation(models.Model):
     user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
     creation_date = models.DateTimeField(auto_now_add=True)
@@ -22,6 +48,8 @@ class ClimateTwinLocation(models.Model):
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
 
+    home_location = models.ForeignKey(HomeLocation, on_delete=models.CASCADE, null=True, blank=True)
+
     wind_friends = models.CharField(max_length=255, default="")
     special_harmony = models.BooleanField(default=False)
     details = models.TextField(default="")
@@ -31,17 +59,29 @@ class ClimateTwinLocation(models.Model):
     humidity_interaction = models.TextField(default="")
     stronger_wind_interaction = models.CharField(max_length=255, default="")
 
-    @classmethod
-    def create_from_dicts(cls, user, climate_twin, weather_messages):
 
+    @classmethod
+    def create_from_dicts(cls, user, climate_twin, weather_messages, home_location=None):
         address = list(climate_twin.keys())[0]
         climate_data = climate_twin[address]
         
         interaction = list(weather_messages.keys())[0]
         interaction_data = weather_messages[interaction]
 
-        weather_data = cls(user=user, name=address, **climate_data, **interaction_data)
-        return weather_data
+        # Prepare data for the instance
+        data = {
+            'user': user,
+            'name': address,
+            **climate_data,
+            **interaction_data
+        }
+
+        # Add home_location if provided
+        if home_location:
+            data['home_location'] = home_location
+
+        # Create and return the instance
+        return cls(**data)
 
 
     class Meta:

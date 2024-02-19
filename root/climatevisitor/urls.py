@@ -17,6 +17,8 @@ urlpatterns = [
     path('item-choices/', views.item_choices, name="item-choices"),
 
     # Access all data associated with user
+    path('locations/home', views.HomeLocationsView.as_view(), name='home-locations'),
+    path('locations/home/<int:pk>', views.HomeLocationView.as_view(), name='home-location'),
     path('locations/twins', views.TwinLocationsView.as_view(), name='twin-locations'),
     path('locations/twin/<int:pk>', views.TwinLocationView.as_view(), name='twin-location'),
     path('locations/nearby/', views.DiscoveryLocationsView.as_view(), name='ancient-ruins-found'),
