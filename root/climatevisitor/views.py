@@ -669,9 +669,19 @@ def item_choices(request):
         
         try:
             latest_explore_location = models.ClimateTwinExploreDiscoveryLocation.objects.filter(user=user).latest('creation_date')
-            location_dict = latest_explore_location.to_dict()
+    
+            latest_climate_twin_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-creation_date').first()
 
-            return Response({'choices': location_dict, 'message': 'choose one.'}, status=status.HTTP_200_OK)
+            explore_location = latest_explore_location.explore_location
+            if explore_location.origin_location_id == latest_climate_twin_location.pk and \
+               (timezone.now() - latest_explore_location.creation_date).total_seconds() < 7200: 
+
+                location_dict = latest_explore_location.to_dict()
+                return Response({'choices': location_dict, 'message': 'choose one.'}, status=status.HTTP_200_OK)
+
+
+            else:
+                return Response({'detail': 'You must be at an explore site to collect a treasure.'}, status=status.HTTP_400_BAD_REQUEST)
 
         except models.ClimateTwinExploreDiscoveryLocation.DoesNotExist:
             return Response({'detail': 'Explore location not found for the user.'}, status=status.HTTP_404_NOT_FOUND)
