@@ -305,11 +305,18 @@ class CurrentLocationMatchView(generics.ListAPIView):
             return Response({'detail': 'You are not visiting anywhere right now.'}, status=status.HTTP_404_NOT_FOUND)
 
         # Fetch associated home location data if it exists
-        home_location_instance = latest_location.home_location
+        home_location_data = None
+        if latest_location.home_location:
+            home_location_serializer = serializers.HomeLocationSerializer(latest_location.home_location)
+            home_location_data = home_location_serializer.data
 
         # Serialize the most recent twin location along with its associated home location data
-        serializer = self.get_serializer((latest_location, home_location_instance))
-        return Response(serializer.data)
+        serializer = self.get_serializer(latest_location)
+        data = serializer.data
+        if home_location_data:
+            data['home_location'] = home_location_data
+
+        return Response(data)
 
     def get_latest_location(self):
         user = self.request.user
@@ -336,24 +343,28 @@ class MatchPerformanceView(generics.ListAPIView):
         if not twin_locations:
             return Response({'detail': 'You have not visited any twin locations yet.'}, status=status.HTTP_404_NOT_FOUND)
 
-        data = [(self.get_serializer(twin_instance), self.get_home_location_serializer(twin_instance)) for twin_instance in twin_locations]
+        # Serialize each twin location along with its associated home location data if it exists
+        data = []
+        for location in twin_locations:
+            # Fetch associated home location data if it exists
+            home_location_data = None
+            if location.home_location:
+                home_location_serializer = serializers.HomeLocationSerializer(location.home_location)
+                home_location_data = home_location_serializer.data
 
-        serializer = serializers.MatchPerformanceSerializer(data=data, many=True)
-        serializer.is_valid()  # Ensure data is valid before serialization
-        return Response(serializer.data)
+            # Serialize the twin location along with its associated home location data
+            serializer = self.get_serializer(location)
+            location_data = serializer.data
+            if home_location_data:
+                location_data['home_location'] = home_location_data
+            data.append(location_data)
+
+        return Response(data)
 
     def get_all_locations(self):
         user = self.request.user
         twin_locations = models.ClimateTwinLocation.objects.filter(user=user)
         return twin_locations
-
-    def get_home_location_serializer(self, twin_instance):
-        """
-        Get the serializer for the associated home instance.
-        """
-        if twin_instance.home_location:
-            return serializers.HomeLocationSerializer(twin_instance.home_location)
-        return None
 
 
 class DiscoveryLocationsView(generics.ListCreateAPIView):
