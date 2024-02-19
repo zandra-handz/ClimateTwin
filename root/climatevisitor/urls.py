@@ -23,8 +23,11 @@ urlpatterns = [
     path('locations/twin/<int:pk>', views.TwinLocationView.as_view(), name='twin-location'),
     path('locations/nearby/', views.DiscoveryLocationsView.as_view(), name='ancient-ruins-found'),
     path('locations/nearby<int:pk>', views.DiscoveryLocationView.as_view(), {'delete': 'destroy'}, name='delete-discovery-location'),
-    path('locations/explore/', views.ExploreLocationsView.as_view(), name='explored-locations'),
+    path('locations/explored/', views.ExploreLocationsView.as_view(), name='explored-locations'),
     path('explore-location/<int:pk>', views.ExploreLocationView.as_view(), name='explored-location'),
+
+    path('performance/compare-locations', views.MatchPerformanceView.as_view(), name='compare-locations'),
+    path('performance/compare-locations/current', views.CurrentLocationMatchView.as_view(), name='compare-current-location'),
 
     path('api-token-auth/', obtain_auth_token)
 ]

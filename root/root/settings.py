@@ -110,9 +110,6 @@ from .api_info import info
 
 SWAGGER_SETTINGS = {
    'SECURITY_DEFINITIONS': {
-    #  'Basic': {
-     #       'type': 'basic'
-     # },
         'api_key': {
             'type': 'apiKey',
             'in': 'header',

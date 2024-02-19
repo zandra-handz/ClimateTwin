@@ -85,13 +85,19 @@ def go(request):
        
 
         if climate_places.home_climate:
-            # Create or update the home location
-            home_location_serializer = serializers.HomeLocationSerializer(data=climate_places.home_climate, context={'request': request})
+            
+            address = list(climate_places.home_climate.keys())[0]
+            home_data = climate_places.home_climate[address]
+            home_data["name"] = address
+            home_data["user"] = request.user.id
+
+            home_location_serializer = serializers.HomeLocationSerializer(data=home_data)
             if home_location_serializer.is_valid():
                 home_location_instance = home_location_serializer.save()
             else:
-                print(home_location_serializer.errors)
                 home_location_instance = None
+                print("Error:", home_location_serializer.errors)
+
 
         if climate_places.climate_twin:
             home_weather_profile = ClimateObject(climate_places.home_climate)
@@ -284,6 +290,82 @@ class CurrentTwinLocationView(generics.ListAPIView):
         else:
             return None
         
+
+
+class CurrentLocationMatchView(generics.ListAPIView):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [AllowAny]
+    serializer_class = serializers.ClimateTwinLocationSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    @swagger_auto_schema(operation_id='getCurrentLocationMatch', operation_description="Returns the most recent location match.")
+    def get(self, request, *args, **kwargs):
+        latest_location = self.get_latest_location()
+        if not latest_location:
+            return Response({'detail': 'You have not visited any twin locations yet.'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Fetch associated home location data if it exists
+        home_location_data = None
+        if latest_location.home_location:
+            home_location_serializer = serializers.HomeLocationSerializer(latest_location.home_location)
+            home_location_data = home_location_serializer.data
+
+        # Serialize the most recent twin location along with its associated home location data
+        serializer = self.get_serializer(latest_location)
+        data = serializer.data
+        if home_location_data:
+            data['home_location'] = home_location_data
+
+        return Response(data)
+
+    def get_latest_location(self):
+        user = self.request.user
+        latest_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-creation_date').first()
+
+        # Check if the latest location exists and if it was created within the last two hours
+        if latest_location and (timezone.now() - latest_location.creation_date).total_seconds() < 7200: 
+            return latest_location
+        else:
+            return None
+        
+
+ 
+
+class MatchPerformanceView(generics.ListAPIView):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [AllowAny]
+    serializer_class = serializers.ClimateTwinLocationSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    @swagger_auto_schema(operation_id='listLocationMatches', operation_description="Returns all location matches.")
+    def get(self, request, *args, **kwargs):
+        twin_locations = self.get_all_locations()
+        if not twin_locations:
+            return Response({'detail': 'You have not visited any twin locations yet.'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Serialize each twin location along with its associated home location data if it exists
+        data = []
+        for location in twin_locations:
+            # Fetch associated home location data if it exists
+            home_location_data = None
+            if location.home_location:
+                home_location_serializer = serializers.HomeLocationSerializer(location.home_location)
+                home_location_data = home_location_serializer.data
+
+            # Serialize the twin location along with its associated home location data
+            serializer = self.get_serializer(location)
+            location_data = serializer.data
+            if home_location_data:
+                location_data['home_location'] = home_location_data
+            data.append(location_data)
+
+        return Response(data)
+
+    def get_all_locations(self):
+        user = self.request.user
+        twin_locations = models.ClimateTwinLocation.objects.filter(user=user)
+        return twin_locations
+
 
 class DiscoveryLocationsView(generics.ListCreateAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
