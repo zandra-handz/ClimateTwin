@@ -15,15 +15,6 @@ class HomeLocationSerializer(serializers.ModelSerializer):
         model = models.HomeLocation
         fields = "__all__"
 
-    def create(self, validated_data):
-        # Get the current user from the context
-        user = self.context['request'].user
-        # Add the current user to the validated data
-        validated_data['user'] = user
-        # Create and return the instance
-        return super().create(validated_data)
-
-
 
 class ClimateTwinDiscoveryLocationSerializer(serializers.ModelSerializer):
 

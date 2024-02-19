@@ -1,7 +1,7 @@
+from . import models
 from django.contrib import admin
-from .models import ClimateTwinLocation, ClimateTwinDiscoveryLocation, ClimateTwinExploreDiscoveryLocation
-
 # Register your models here.
-admin.site.register(ClimateTwinLocation)
-admin.site.register(ClimateTwinDiscoveryLocation)
-admin.site.register(ClimateTwinExploreDiscoveryLocation)
+admin.site.register(models.HomeLocation)
+admin.site.register(models.ClimateTwinLocation)
+admin.site.register(models.ClimateTwinDiscoveryLocation)
+admin.site.register(models.ClimateTwinExploreDiscoveryLocation)
