@@ -9,6 +9,7 @@ urlpatterns = [
 
     # Play the game
     path('go/', views.go, name='go'),
+    path('launchpad-data/', views.MostRecentHomeLocationView.as_view(), name='most-recent-home-location'),
     path('currently-visiting/', views.CurrentTwinLocationView.as_view(), name='currently-visiting-location'),
     path('currently-nearby/', views.CurrentDiscoveryLocationsView.as_view(), name='current-nearby-locations'),
     path('explore/', views.CreateExploreLocationView.as_view(), name='create-explore-location'),

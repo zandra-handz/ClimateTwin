@@ -289,6 +289,31 @@ class CurrentTwinLocationView(generics.ListAPIView):
             return latest_location
         else:
             return None
+
+class MostRecentHomeLocationView(generics.ListAPIView):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [AllowAny]
+    serializer_class = serializers.HomeLocationSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    @swagger_auto_schema(operation_id='getMostRecentHomeLocation', operation_description="Returns the most recent home location.")
+
+    def get(self, request, *args, **kwargs):
+        latest_location = self.get_latest_location()
+        if not latest_location:
+            return Response({'detail': 'No recent home weather reading.'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = self.get_serializer(latest_location)
+        return Response(serializer.data)
+
+    def get_latest_location(self):
+        user = self.request.user
+        latest_location = models.HomeLocation.objects.filter(user=user).order_by('-creation_date').first()
+
+        # Check if the latest location exists and if it was created within the last two hours
+        if latest_location and (timezone.now() - latest_location.creation_date).total_seconds() < 7200: 
+            return latest_location
+        else:
+            return None
         
 
 
