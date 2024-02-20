@@ -208,5 +208,5 @@ class ClimateTwinExploreDiscoveryLocation(models.Model):
         return fields_dict
 
     def __str__(self):
-        return f"Explored Discovery Location: {str(self.name)}, {self.pk}"
+        return f"Explored Discovery Location: {str(self.explore_location)}, {self.pk}"
 
