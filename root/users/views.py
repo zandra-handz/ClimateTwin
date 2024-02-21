@@ -83,7 +83,7 @@ class TreasureView(generics.RetrieveAPIView, generics.DestroyAPIView):
 
 
 
-class UserProfileView(generics.CreateAPIView):
+class UserProfileView(generics.ListCreateAPIView):
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [AllowAny]
     serializer_class = serializers.UserProfileSerializer
@@ -92,6 +92,10 @@ class UserProfileView(generics.CreateAPIView):
     @swagger_auto_schema(operation_id='createUserProfile', operation_description="Creates user profile.")
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
+
+    @swagger_auto_schema(operation_id='getUserProfile', operation_description="Returns user profile.")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
         return models.UserProfile.objects.filter(user=self.request.user)
@@ -104,7 +108,7 @@ class EditUserProfileView(generics.RetrieveUpdateAPIView, generics.DestroyAPIVie
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
 
-    @swagger_auto_schema(operation_id='getUserProfile', operation_description="Returns user profile.")
+    @swagger_auto_schema(operation_id='getUserProfileToEdit', operation_description="Returns user profile in edit view.")
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
@@ -125,7 +129,7 @@ class EditUserProfileView(generics.RetrieveUpdateAPIView, generics.DestroyAPIVie
 
 
 
-class UserSettingsView(generics.CreateAPIView):
+class UserSettingsView(generics.ListCreateAPIView):
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [AllowAny]
     serializer_class = serializers.UserSettingsSerializer
@@ -134,6 +138,10 @@ class UserSettingsView(generics.CreateAPIView):
     @swagger_auto_schema(operation_id='createUserSettings', operation_description="Creates user settings.")
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
+
+    @swagger_auto_schema(operation_id='getUserSettings', operation_description="Returns user settings.")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
         return models.UserSettings.objects.filter(user=self.request.user)
@@ -145,11 +153,11 @@ class ChangeUserSettingsView(generics.RetrieveUpdateAPIView):
     serializer_class = serializers.UserSettingsSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
-    @swagger_auto_schema(operation_id='getUserSettings', operation_description="Returns user settings.")
+    @swagger_auto_schema(operation_id='getUserSettingsToChnage', operation_description="Returns user settings in change view.")
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
-    @swagger_auto_schema(operation_id='updateUserSettings', operation_description="Updates user profile.")
+    @swagger_auto_schema(operation_id='updateUserSettings', operation_description="Updates user settings.")
     def put(self, request, *args, **kwargs):
         return super().put(request, *args, **kwargs)
 

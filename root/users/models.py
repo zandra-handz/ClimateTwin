@@ -262,6 +262,7 @@ class Message(models.Model):
 
 
 class FriendRequest(models.Model):
+    special_type = models.CharField(max_length=50, default='friend_request', editable=False)
     sender = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='sent_friend_requests')
     recipient = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='received_friend_requests')
     message = models.TextField()
@@ -275,6 +276,7 @@ class FriendRequest(models.Model):
 
 
 class GiftRequest(models.Model):
+    special_type = models.CharField(max_length=50, default='gift_request', editable=False)
     treasure = models.ForeignKey(Treasure, on_delete=models.CASCADE, related_name='request_to_gift')
     sender = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='sent_gift_requests')
     recipient = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='received_gift_requests')
