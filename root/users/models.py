@@ -166,7 +166,8 @@ class Treasure(models.Model):
     giver = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True, blank=True, related_name='sent_gifts')
     recipient = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True, blank=True, related_name='received_gifts')
     created_on = models.DateTimeField(auto_now_add=True)
-    owned_since = models.DateTimeField(null=True, blank=True)
+    owned_since = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
 
     def __str__(self):
         if self.recipient:
