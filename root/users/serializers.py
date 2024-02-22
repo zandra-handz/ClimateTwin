@@ -86,7 +86,8 @@ class GiftRequestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.GiftRequest
-        fields = ['special_type', 'sender', 'message', 'treasure', 'recipient']
+        fields = ['id', 'special_type', 'sender', 'message', 'treasure', 'recipient']
+        read_only_fields = ['id']
 
     def create(self, validated_data):
         # Automatically set the sender field to the current user
