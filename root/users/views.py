@@ -1,6 +1,7 @@
 from . import models
 from . import serializers
 from django.core.exceptions import ValidationError
+from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
@@ -497,6 +498,7 @@ class DeleteFriendshipView(generics.DestroyAPIView):
         user = self.request.user
         return models.Friendship.objects.filter(Q(initiator=user) | Q(reciprocator=user))
 
+
 class SendGiftRequestView(generics.CreateAPIView):
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [AllowAny]
@@ -574,7 +576,9 @@ class GiftRequestDetailView(generics.RetrieveUpdateAPIView):
             treasure.pending = False
             treasure.save()
 
-            instance.delete()
+            with transaction.atomic():
+                instance.delete()
+
 
             return Response({'success': 'Gift request accepted successfully!'}, status=status.HTTP_200_OK)
 
@@ -583,7 +587,9 @@ class GiftRequestDetailView(generics.RetrieveUpdateAPIView):
             treasure.pending = False
             treasure.save()
 
-            instance.delete()
+            with transaction.atomic():
+                instance.delete()
+
             return Response({'success': 'Gift request rejected successfully!'}, status=status.HTTP_200_OK)
 
         return Response({'error': 'You must provide either "is_accepted" or "is_rejected" field.'}, status=status.HTTP_400_BAD_REQUEST)
