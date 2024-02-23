@@ -70,7 +70,16 @@ class MessageSerializer(serializers.ModelSerializer):
             return FriendRequestSerializer(obj.content_object).data
         # Handle other content_object types if needed
         if isinstance(obj.content_object, models.GiftRequest):
-            return GiftRequestSerializer(obj.content_object).data
+            # Serialize the GiftRequest object
+            gift_request_data = GiftRequestSerializer(obj.content_object).data
+            # Include the associated Treasure data
+            treasure_data = {
+                'treasure_descriptor': obj.content_object.treasure.descriptor,
+                'treasure_description': obj.content_object.treasure.description
+            }
+            # Merge the GiftRequest data with the Treasure data
+            gift_request_data.update(treasure_data)
+            return gift_request_data
         return None
 
 
