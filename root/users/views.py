@@ -508,13 +508,17 @@ class SendGiftRequestView(generics.CreateAPIView):
     @swagger_auto_schema(operation_id='createGiftRequest')
     def post(self, request, *args, **kwargs):
         try:
+
+            treasure_pk = request.data.get('treasure') # This should get the PK
+            treasure = models.Treasure.objects.get(pk=treasure_pk, user=request.user)
+
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
 
             gift_request = serializer.save(
                 sender=request.user,
                 recipient=models.BadRainbowzUser.objects.get(pk=request.data['recipient']),
-                treasure=models.Treasure.objects.get(pk=request.data['treasure'], user=request.user)
+                treasure=treasure
             )
 
             gift_request_message = models.Message.objects.create(
