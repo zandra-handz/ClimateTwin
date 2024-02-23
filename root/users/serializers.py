@@ -94,8 +94,7 @@ class FriendRequestSerializer(serializers.ModelSerializer):
 
 class GiftRequestSerializer(serializers.ModelSerializer):
     sender = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
-    treasure = TreasureSerializer() 
+    treasure = serializers.PrimaryKeyRelatedField(queryset=models.Treasure.objects.all(), write_only=True)
 
     class Meta:
         model = models.GiftRequest
@@ -103,7 +102,6 @@ class GiftRequestSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
     def create(self, validated_data):
-        # Automatically set sender field to current user
         validated_data['sender'] = self.context['request'].user
         return super().create(validated_data)
 
