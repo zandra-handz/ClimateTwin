@@ -1,3 +1,16 @@
+from datetime import datetime
+
+
+def format_date(dt):
+    current_year = datetime.now().year
+    if dt.year == current_year:
+        formatted_date = dt.strftime('%B %#d')
+    else:
+        formatted_date = dt.strftime('%B %#d, %Y')
+
+    return formatted_date
+
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -161,12 +174,15 @@ class Treasure(models.Model):
     add_data = models.JSONField(default=dict, null=True, blank=True)
     pending = models.BooleanField(default=False)
 
-    # Gift-related fields.
+    # Gift-related fields
     message = models.TextField(null=True, blank=True)
     giver = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True, blank=True, related_name='sent_gifts')
     recipient = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True, blank=True, related_name='received_gifts')
     created_on = models.DateTimeField(auto_now_add=True)
     owned_since = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    class Meta:
+        ordering = ['-owned_since']
 
 
     def __str__(self):
@@ -226,24 +242,7 @@ class Inbox(models.Model): # not in use, will probably be used for inbox setting
         return f"Inbox for {self.user.username}"
 
 
-class InboxItem(models.Model):
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
-
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    is_read = models.BooleanField(default=False)
-
-    reverse_relation = GenericRelation('InboxItem')
-
-    class Meta:
-        ordering = ['-created_at']
-
-    def __str__(self):
-        return f"Inbox Item ({self.content_type}): {self.content_object}"
-
-
+# Are requests saved as messages getting deleted?
 class Message(models.Model):
     sender = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='sent_messages')
     recipient = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='received_messages')
@@ -258,11 +257,48 @@ class Message(models.Model):
     sent = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Message from {self.sender} to {self.recipient}"
+        return f"Message {self.id} from {self.sender} to {self.recipient}"
 
+# Test this (2/22)
+class InboxItem(models.Model):
+
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    message = models.ForeignKey(Message, on_delete=models.CASCADE, default=None, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    #reverse_relation = GenericRelation('InboxItem')
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+
+        if self.message:
+            sender = self.message.sender
+
+            if self.message.content_object:# and self.message.content_object.special_type:
+                message_type = self.message.content_object.special_type
+
+            else:
+                message_type = self.message.content_type
+        else:
+            message_type = "empty message"
+            sender = "unknown sender"
+
+        if self.is_read:
+            read_status = "Read"
+        else:
+            read_status = "Unread"
+
+        date = self.created_at 
+        date = format_date(date)
+
+
+        return f"{read_status} {message_type} from {sender} on {date} (Id: {self.id})"
 
 class FriendRequest(models.Model):
-    special_type = models.CharField(max_length=50, default='friend_request', editable=False)
+    special_type = models.CharField(max_length=50, default='friend request', editable=False)
     sender = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='sent_friend_requests')
     recipient = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='received_friend_requests')
     message = models.TextField()
@@ -271,12 +307,12 @@ class FriendRequest(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Friend request from {self.sender.username} to {self.recipient.username}"
+        return f"Friend request {self.id} from {self.sender.username} to {self.recipient.username}"
     
 
 
 class GiftRequest(models.Model):
-    special_type = models.CharField(max_length=50, default='gift_request', editable=False)
+    special_type = models.CharField(max_length=50, default='gift request', editable=False)
     treasure = models.ForeignKey(Treasure, on_delete=models.CASCADE, related_name='request_to_gift')
     sender = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='sent_gift_requests')
     recipient = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='received_gift_requests')
@@ -284,6 +320,20 @@ class GiftRequest(models.Model):
     is_accepted = models.BooleanField(default=False)
     is_rejected = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # Use GenericRelation with the name 'outer_message'
+    outer_message = GenericRelation(Message, null=True, default=None)
+
+    def delete(self, *args, **kwargs):
+        # First, delete the associated message if it exists
+        try:
+            message = self.outer_message.get()
+            message.delete()
+        except Message.DoesNotExist:
+            pass  # Message doesn't exist, nothing to delete
+
+        # Call the superclass delete method to delete the GiftRequest instance
+        super(GiftRequest, self).delete(*args, **kwargs)
 
     def __str__(self):
         return f"Gift request from {self.sender.username} to {self.recipient.username}"

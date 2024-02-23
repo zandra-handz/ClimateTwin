@@ -75,14 +75,27 @@ class MessageSerializer(serializers.ModelSerializer):
 
 
 class FriendRequestSerializer(serializers.ModelSerializer):
+    sender = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
-    class Meta(object):
+    class Meta:
         model = models.FriendRequest
-        fields = "__all__"
+        fields = ['id', 'special_type', 'sender', 'message','recipient']
+        read_only_fields = ['id']
+
+    def create(self, validated_data):
+        # Automatically set sender field to current user
+        validated_data['sender'] = self.context['request'].user
+        return super().create(validated_data)
+
+    def validate(self, data):
+        # Perform additional validation here if needed
+        return data
 
 
 class GiftRequestSerializer(serializers.ModelSerializer):
     sender = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    treasure = TreasureSerializer() 
 
     class Meta:
         model = models.GiftRequest
@@ -90,14 +103,13 @@ class GiftRequestSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
     def create(self, validated_data):
-        # Automatically set the sender field to the current user
+        # Automatically set sender field to current user
         validated_data['sender'] = self.context['request'].user
         return super().create(validated_data)
 
     def validate(self, data):
-        # Perform additional validation if needed
+        # Perform additional validation here if needed
         return data
-    
 
 
 class AcceptRejectGiftRequestSerializer(serializers.ModelSerializer):
@@ -126,8 +138,6 @@ class FriendProfileSerializer(serializers.ModelSerializer):
 
 
 class InboxItemSerializer(serializers.ModelSerializer):
-
-    content_object = MessageSerializer()
 
     class Meta(object):
         model = models.InboxItem
