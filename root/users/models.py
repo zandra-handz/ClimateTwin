@@ -207,8 +207,11 @@ class Treasure(models.Model):
 
     def __str__(self):
 
-        owned_since = self.owned_since
-        owned_since = format_date(owned_since)
+        if self.owned_since:
+            owned_since = self.owned_since
+            owned_since = format_date(owned_since)
+        else:
+            owned_since = "No data"
 
         date_found = self.created_on
         date_found = format_date(date_found)
