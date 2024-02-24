@@ -16,7 +16,9 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
+from django.db.models.signals import post_save
 from django.db import models
+from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from .managers import CustomUserManager
@@ -89,6 +91,11 @@ class BadRainbowzUser(AbstractUser):
 
         self.addresses.append(new_address_entry)
         self.save()
+
+    def create_user_profile_and_settings(sender, instance, created, **kwargs):
+        if created:
+            UserProfile.objects.create(user=instance)
+            UserSettings.objects.create(user=instance)
 
 
 class UserSettings(models.Model):
@@ -305,6 +312,19 @@ class FriendRequest(models.Model):
     is_accepted = models.BooleanField(default=False)
     is_rejected = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    outer_message = GenericRelation(Message, null=True, default=None)
+
+    def delete(self, *args, **kwargs):
+        # First, delete the associated message if it exists
+        try:
+            message = self.outer_message.get()
+            message.delete()
+        except Message.DoesNotExist:
+            pass  # Message doesn't exist, nothing to delete
+
+        # Call the superclass delete method to delete the GiftRequest instance
+        super(FriendRequest, self).delete(*args, **kwargs)
 
     def __str__(self):
         return f"Friend request {self.id} from {self.sender.username} to {self.recipient.username}"

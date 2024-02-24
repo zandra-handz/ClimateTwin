@@ -347,12 +347,9 @@ class SendFriendRequestView(generics.CreateAPIView):
     @swagger_auto_schema(operation_id='createFriendRequest')
     def post(self, request, *args, **kwargs):
         sender = self.request.user
-        #recipient_id = self.request.data.get('recipient')
         message = self.request.data.get('message')
-        #recipient_id = recipient_id.id if hasattr(recipient_id, 'id') else recipient_id
 
         try:
-            #recipient = models.BadRainbowzUser.objects.get(pk=recipient_id)
             recipient = models.BadRainbowzUser.objects.get(pk=request.data['recipient'])
         except models.BadRainbowzUser.DoesNotExist:
             raise PermissionDenied("Recipient user does not exist.")
@@ -362,7 +359,7 @@ class SendFriendRequestView(generics.CreateAPIView):
             return Response({'error': 'Friend request already sent.'}, status=status.HTTP_400_BAD_REQUEST)
         
         #this should be friendship model
-        existing_friendship = models.Friendship.objects.filter(initiator=sender, reciprocator=recipient)
+        existing_friendship = models.Friendship.objects.filter(initiator=request.user, reciprocator=recipient)
         if existing_friendship.exists():
             return Response ({'error': 'You are already friends with this person.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -370,14 +367,14 @@ class SendFriendRequestView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        friend_request = serializer.save(sender=sender, recipient=recipient)
+        friend_request = serializer.save(sender=request.user, recipient=recipient)
 
-        friend_request_message = models.Message.objects.create(sender=sender, recipient=recipient, content=message)
+        friend_request_message = models.Message.objects.create(sender=request.user, recipient=recipient, content=message)
         friend_request_message.content_object = friend_request
         friend_request_message.save()
 
 
-        inbox_item = models.InboxItem.objects.create(content_object=friend_request_message, user=recipient)
+        inbox_item = models.InboxItem.objects.create(user=recipient, message=friend_request_message)
         inbox_item.save()
 
         return Response({'success': 'Friend request sent successfully.'}, status=status.HTTP_201_CREATED)
@@ -387,8 +384,9 @@ class SendFriendRequestView(generics.CreateAPIView):
 class FriendRequestDetailView(generics.RetrieveUpdateAPIView):
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [AllowAny]
-    serializer_class = serializers.FriendRequestSerializer
+    serializer_class = serializers.AcceptRejectFriendRequestSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
 
     queryset = models.FriendRequest.objects.all()
 
@@ -408,37 +406,33 @@ class FriendRequestDetailView(generics.RetrieveUpdateAPIView):
         rejected = request.data.get('is_rejected')
         accepted = request.data.get('is_accepted')
 
-        if rejected:
-            instance.delete()
-            return Response({'success': 'Friend request rejected successfully!'}, status=status.HTTP_200_OK)
 
-        if accepted:
+        if accepted is not None:
             user = request.user
             friend = instance.sender
-
             friendship = models.Friendship.objects.create(initiator=friend, reciprocator=user)
 
-            print(f"User: {user}, Friend: {friend}")
-
             friend_friendship_profile = models.FriendProfile.objects.create(user=user, friend=friend, friendship=friendship)
-            print(f"Friend Friendship Profile: {friend_friendship_profile}")
             friend_friendship_profile.save()
 
             user_friendship_profile = models.FriendProfile.objects.create(user=friend, friend=user, friendship=friendship)
-            print(f"User Friendship Profile: {user_friendship_profile}")
             user_friendship_profile.save()
 
-            instance.delete()
-            print("Request deleted")
+            with transaction.atomic():
+                instance.delete()
 
             return Response({'success': 'Friend request accepted successfully!'}, status=status.HTTP_200_OK)
         
-        else:
-            # Not needed?
-            serializer = self.get_serializer(instance, data=request.data, partial=True)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response({'success': 'Friend request updated successfully!'}, status=status.HTTP_200_OK)
+        if rejected is not None: 
+
+            with transaction.atomic():
+                instance.delete()
+
+            return Response({'success': 'Friend request rejected successfully!'}, status=status.HTTP_200_OK)
+
+        return Response({'error': 'You must provide either "is_accepted" or "is_rejected" field.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
     @swagger_auto_schema(operation_id="partialUpdateFriendRequest", operation_description="Updates friend request via PATCH", auto_schema=None)
     def patch(self, request, *args, **kwargs):

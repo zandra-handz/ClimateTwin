@@ -92,12 +92,10 @@ class FriendRequestSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
     def create(self, validated_data):
-        # Automatically set sender field to current user
         validated_data['sender'] = self.context['request'].user
         return super().create(validated_data)
 
     def validate(self, data):
-        # Perform additional validation here if needed
         return data
 
 
@@ -129,6 +127,16 @@ class AcceptRejectGiftRequestSerializer(serializers.ModelSerializer):
     def validate(self, data):
         return data
 
+
+class AcceptRejectFriendRequestSerializer(serializers.ModelSerializer):
+    message = serializers.HiddenField(default="Your message here")
+
+    class Meta:
+        model = models.FriendRequest
+        fields = ['is_accepted', 'is_rejected', 'message']
+
+    def validate(self, data):
+        return data
 
 
 class FriendshipSerializer(serializers.ModelSerializer):
