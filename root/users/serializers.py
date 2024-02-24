@@ -4,6 +4,19 @@ from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 
 
+class StrLinkSerializer(serializers.Serializer):
+    def __init__(self, view_name, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        self.fields['str'] = serializers.StringRelatedField(source='__str__')
+        self.fields['hyperlink'] = serializers.HyperlinkedIdentityField(
+            view_name=view_name,
+            read_only=True
+        )
+
+
+
+
 class CustomUserCreateSerializer(UserCreateSerializer):
 
     class Meta(UserCreateSerializer.Meta):
@@ -59,6 +72,7 @@ class InboxSerializer(serializers.ModelSerializer):
         
 class MessageSerializer(serializers.ModelSerializer):
     content_object = serializers.SerializerMethodField()
+    inbox_item_message = StrLinkSerializer
 
     class Meta:
         model = models.Message
@@ -152,11 +166,38 @@ class FriendProfileSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+
+
 class InboxItemSerializer(serializers.ModelSerializer):
 
     class Meta(object):
         model = models.InboxItem
         fields = "__all__"
 
-        
-        
+class UserSummarySerializer(serializers.ModelSerializer):
+
+    friends = serializers.StringRelatedField(many=True)
+    treasures = serializers.StringRelatedField(many=True)
+    visits = serializers.StringRelatedField(many=True)
+    inbox_items = serializers.StringRelatedField(many=True)
+
+
+    class Meta(object):
+
+        model = models.BadRainbowzUser
+        # Limit info for demo purposes
+        exclude = ['password', 'is_superuser', 'is_staff', 'username', 'email']
+
+
+class UserLinksSerializer(serializers.ModelSerializer):
+
+    friends = StrLinkSerializer(view_name='friend', many=True)
+    treasures = StrLinkSerializer(view_name='treasure', many=True)
+    visits = StrLinkSerializer(view_name='visited-place', many=True)
+    inbox_items = StrLinkSerializer(view_name='inbox-item-detail', many=True)
+
+
+    class Meta(object):
+
+        model = models.BadRainbowzUser
+        exclude = ['password', 'is_superuser', 'is_staff', 'username', 'email']

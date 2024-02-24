@@ -39,4 +39,4 @@ class ClimateTwinExploreDiscoveryLocationSerializer(serializers.ModelSerializer)
         # Automatically associate the user with the object during creation
         validated_data['user'] = self.context['request'].user
         return super().create(validated_data)
-
+    

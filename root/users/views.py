@@ -154,7 +154,7 @@ class ChangeUserSettingsView(generics.RetrieveUpdateAPIView):
     serializer_class = serializers.UserSettingsSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
-    @swagger_auto_schema(operation_id='getUserSettingsToChnage', operation_description="Returns user settings in change view.")
+    @swagger_auto_schema(operation_id='getUserSettingsToChange', operation_description="Returns user settings in change view.")
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
@@ -587,3 +587,33 @@ class GiftRequestDetailView(generics.RetrieveUpdateAPIView):
             return Response({'success': 'Gift request rejected successfully!'}, status=status.HTTP_200_OK)
 
         return Response({'error': 'You must provide either "is_accepted" or "is_rejected" field.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserSummaryView(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [AllowAny]
+    serializer_class = serializers.UserSummarySerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    @swagger_auto_schema(operation_id='listUserSummary', operation_description="Returns user summary.")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+    
+
+    def get_queryset(self):
+        return models.BadRainbowzUser.objects.filter(username=self.request.user.username)
+
+
+class UserLinksView(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [AllowAny]
+    serializer_class = serializers.UserLinksSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    @swagger_auto_schema(operation_id='listUserLinks', operation_description="Returns user links.")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+    
+
+    def get_queryset(self):
+        return models.BadRainbowzUser.objects.filter(username=self.request.user.username)

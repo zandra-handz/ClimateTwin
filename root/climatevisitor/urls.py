@@ -27,8 +27,10 @@ urlpatterns = [
     path('locations/explored/', views.ExploreLocationsView.as_view(), name='explored-locations'),
     path('explore-location/<int:pk>', views.ExploreLocationView.as_view(), name='explored-location'),
 
-    path('performance/compare-locations', views.MatchPerformanceView.as_view(), name='compare-locations'),
-    path('performance/compare-locations/current', views.CurrentLocationMatchView.as_view(), name='compare-current-location'),
+    # View data related to algorithm performance
+    path('performance/compare/full-locations', views.MatchPerformanceView.as_view(), name='compare-locations'),
+    path('performance/compare/full-locations/current', views.CurrentLocationMatchView.as_view(), name='compare-current-location'),
+    path('performance/compare/key-data/', views.key_data, name='compare-key-data'),
 
     path('api-token-auth/', obtain_auth_token)
 ]
