@@ -26,6 +26,8 @@ urlpatterns = [
     path('change-settings/<int:pk>', views.ChangeUserSettingsView.as_view(), name='change-settings'),
     path('visited-places/', views.UserVisitsView.as_view(), name='visited-places'),
     path('visited-place/<int:pk>', views.UserVisitView.as_view(), name='visited-place'),
+    path('summary', views.UserSummaryView.as_view(), name='summary'),
+    path('links', views.UserLinksView.as_view(), name='links'),
     
 
 ] 

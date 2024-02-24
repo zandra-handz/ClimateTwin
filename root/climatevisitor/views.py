@@ -688,3 +688,35 @@ def item_choices(request):
         
     return Response({'detail': 'Method not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+
+@swagger_auto_schema(method='get', operation_id='getClimateTwinPerformance')
+@api_view(['GET'])
+@throttle_classes([AnonRateThrottle, UserRateThrottle])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([AllowAny])
+def key_data(request):
+    # Get all ClimateTwinLocation instances with a home_location
+
+    if request.method == 'GET':
+        user = request.user 
+        climate_twin_locations_with_home = models.ClimateTwinLocation.objects.filter(home_location__isnull=False)
+
+        performance_data = []
+        for twin_location in climate_twin_locations_with_home:
+            home_location = twin_location.home_location
+            temperature_difference = twin_location.temperature - home_location.temperature
+            humidity_difference = twin_location.humidity - home_location.humidity
+            performance_data.append({
+                'home_location_name': home_location.name,
+                'home_location_temperature': home_location.temperature,
+                'twin_location_temperature': twin_location.temperature,
+                'home_location_humidity': home_location.humidity,
+                'twin_location_humidity': twin_location.humidity,
+                'twin_location_name': twin_location.name,
+                'temperature_difference': temperature_difference,
+                'humidity_difference': humidity_difference
+            })
+
+        return Response({'detail': performance_data}, status=status.HTTP_200_OK)
+
+    return Response({'detail': 'Method not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)

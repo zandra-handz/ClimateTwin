@@ -4,12 +4,11 @@ from datetime import datetime
 def format_date(dt):
     current_year = datetime.now().year
     if dt.year == current_year:
-        formatted_date = dt.strftime('%B %#d')
+        formatted_date = dt.strftime('%B %#d at %#I:%M %p')
     else:
-        formatted_date = dt.strftime('%B %#d, %Y')
+        formatted_date = dt.strftime('%B %#d %Y at %#I:%M %p')
 
     return formatted_date
-
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
@@ -134,6 +133,11 @@ class Friendship(models.Model):
     reciprocator = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="friendships_accepted")
     created_at = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        date = self.created_at 
+        date = format_date(date)
+
+        return f"Friendship formed between {self.initiator} and {self.reciprocator} on {date}"
 
 
 class FriendProfile(models.Model):
@@ -150,7 +154,11 @@ class FriendProfile(models.Model):
         verbose_name_plural = "User friendships"
 
     def __str__(self):
-        return f"{self.user.username} - {self.friend.username} ({self.nickname})"
+
+        date = self.created_at 
+        date = format_date(date)
+
+        return f"{self.friend.username} ({self.nickname}) since {self.created_at}"
 
 
 
@@ -161,8 +169,13 @@ class UserVisit(models.Model):
     location_longitude = models.FloatField(default=0.0)
     visit_datetime = models.DateTimeField(auto_now_add=True)
 
+
     def __str__(self):
-        return f"{self.user.username} visited {self.location_name} at {self.visit_datetime}"
+
+        date = self.visit_datetime 
+        date = format_date(date)
+
+        return f"{self.user.username} visited {self.location_name} on {date}"
 
 
 
@@ -193,10 +206,17 @@ class Treasure(models.Model):
 
 
     def __str__(self):
+
+        owned_since = self.owned_since
+        owned_since = format_date(owned_since)
+
+        date_found = self.created_on
+        date_found = format_date(date_found)
+
         if self.recipient:
-            return f"Gifted {self.descriptor} from {self.location_name} to {self.recipient.username} on {self.owned_since}"
+            return f"Given a {self.descriptor} from {self.location_name} on {owned_since}"
         else:
-            return f"Collected {self.descriptor} from {self.location_name} by {self.user.username} on {self.created_on}"
+            return f"Found {self.descriptor} in {self.location_name} on {date_found}"
 
     @classmethod
     def collect_item(cls, user, location_name, miles_traveled_to_collect, found_at_latitude, found_at_longitude, item_name, item_category, descriptor, description, add_data):
@@ -264,17 +284,19 @@ class Message(models.Model):
     sent = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Message {self.id} from {self.sender} to {self.recipient}"
 
-# Test this (2/22)
+        date = self.timestamp 
+        date = format_date(date)
+
+        return f"Message {self.id} from {self.sender} to {self.recipient} on {date}"
+
+
 class InboxItem(models.Model):
 
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    message = models.ForeignKey(Message, on_delete=models.CASCADE, default=None, null=True)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='inbox_items')
+    message = models.ForeignKey(Message, on_delete=models.CASCADE, default=None, null=True, related_name='inbox_item_for_message')
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
-
-    #reverse_relation = GenericRelation('InboxItem')
 
     class Meta:
         ordering = ['-created_at']
@@ -298,11 +320,12 @@ class InboxItem(models.Model):
         else:
             read_status = "Unread"
 
+
         date = self.created_at 
         date = format_date(date)
 
 
-        return f"{read_status} {message_type} from {sender} on {date} (Id: {self.id})"
+        return f"{read_status} {message_type} from {sender}, sent on {date} (Id: {self.id})"
 
 class FriendRequest(models.Model):
     special_type = models.CharField(max_length=50, default='friend request', editable=False)
@@ -316,14 +339,13 @@ class FriendRequest(models.Model):
     outer_message = GenericRelation(Message, null=True, default=None)
 
     def delete(self, *args, **kwargs):
-        # First, delete the associated message if it exists
+
         try:
             message = self.outer_message.get()
             message.delete()
         except Message.DoesNotExist:
-            pass  # Message doesn't exist, nothing to delete
+            pass  
 
-        # Call the superclass delete method to delete the GiftRequest instance
         super(FriendRequest, self).delete(*args, **kwargs)
 
     def __str__(self):
@@ -341,18 +363,15 @@ class GiftRequest(models.Model):
     is_rejected = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # Use GenericRelation with the name 'outer_message'
     outer_message = GenericRelation(Message, null=True, default=None)
 
     def delete(self, *args, **kwargs):
-        # First, delete the associated message if it exists
         try:
             message = self.outer_message.get()
             message.delete()
         except Message.DoesNotExist:
-            pass  # Message doesn't exist, nothing to delete
+            pass  
 
-        # Call the superclass delete method to delete the GiftRequest instance
         super(GiftRequest, self).delete(*args, **kwargs)
 
     def __str__(self):
