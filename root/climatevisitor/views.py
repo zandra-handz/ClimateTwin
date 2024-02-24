@@ -8,6 +8,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+import json
 from rest_framework import generics, status, throttling
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.decorators import api_view, authentication_classes, parser_classes, throttle_classes, permission_classes, schema
@@ -689,13 +690,14 @@ def item_choices(request):
     return Response({'detail': 'Method not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
+# For current demo
+
 @swagger_auto_schema(method='get', operation_id='getClimateTwinPerformance')
 @api_view(['GET'])
 @throttle_classes([AnonRateThrottle, UserRateThrottle])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([AllowAny])
-def key_data(request):
-    # Get all ClimateTwinLocation instances with a home_location
+def key_data(request): 
 
     if request.method == 'GET':
         user = request.user 
@@ -717,6 +719,7 @@ def key_data(request):
                 'humidity_difference': humidity_difference
             })
 
-        return Response({'detail': performance_data}, status=status.HTTP_200_OK)
+
+        return Response(json.dumps({'detail': performance_data}), status=status.HTTP_200_OK)
 
     return Response({'detail': 'Method not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
