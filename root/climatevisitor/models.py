@@ -7,7 +7,6 @@ from users.models import BadRainbowzUser
 
 class HomeLocation(models.Model):
     user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
-    creation_date = models.DateTimeField(auto_now_add=True)
     last_accessed = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=255, default="")
     temperature = models.FloatField(default=0.0)
@@ -21,8 +20,11 @@ class HomeLocation(models.Model):
     sunset_timestamp = models.BigIntegerField(default=0)
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
+    created_on = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        ordering = ['-created_on']
+
         verbose_name = "Home Location"
         verbose_name_plural = "Home Locations"
 
@@ -33,8 +35,6 @@ class HomeLocation(models.Model):
 
 class ClimateTwinLocation(models.Model):
     user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
-    creation_date = models.DateTimeField(auto_now_add=True)
-    last_accessed = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=255, default="")
     temperature = models.FloatField(default=0.0)
     description = models.CharField(max_length=255, default="")
@@ -58,6 +58,9 @@ class ClimateTwinLocation(models.Model):
     pressure_interaction = models.TextField(default="")
     humidity_interaction = models.TextField(default="")
     stronger_wind_interaction = models.CharField(max_length=255, default="")
+
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_accessed = models.DateTimeField(auto_now=True)
 
 
     @classmethod
@@ -85,6 +88,8 @@ class ClimateTwinLocation(models.Model):
 
 
     class Meta:
+        ordering = ['-created_on']
+        
         verbose_name = "Location"
         verbose_name_plural = "Locations"
 
@@ -108,12 +113,15 @@ class ClimateTwinDiscoveryLocation(models.Model):
     wind_agreement_score = models.IntegerField(default=0)
     wind_harmony = models.BooleanField(default=False)
     street_view_image = models.URLField(blank=True, null=True, default='')
-    creation_date = models.DateTimeField(auto_now_add=True)
+    created_on = models.DateTimeField(auto_now_add=True)
     last_accessed = models.DateTimeField(auto_now=True)
+
     origin_location = models.ForeignKey(ClimateTwinLocation, on_delete=models.CASCADE, null=True, blank=True)
 
 
     class Meta:
+        ordering = ['-created_on']
+
         verbose_name = "Discovery Location"
         verbose_name_plural = "Discovery Locations"
 
@@ -125,11 +133,13 @@ class ClimateTwinDiscoveryLocation(models.Model):
 class ClimateTwinExploreDiscoveryLocation(models.Model):
     user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
     explore_location = models.ForeignKey(ClimateTwinDiscoveryLocation, on_delete=models.CASCADE)
-    creation_date = models.DateTimeField(auto_now_add=True)
+    created_on = models.DateTimeField(auto_now_add=True)
     last_accessed = models.DateTimeField(auto_now=True)
 
 
     class Meta:
+        ordering = ['-created_on']
+
         verbose_name = "Explored Discovery Location"
         verbose_name_plural = "Explored Discovery Locations"
 

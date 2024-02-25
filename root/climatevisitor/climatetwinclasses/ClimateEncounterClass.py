@@ -32,7 +32,6 @@ class ClimateEncounter:
         return abs(self.wind_direction1 - self.wind_direction2) % 360
 
     def categorize_wind_direction(self):
-        #angle = self.calculate_angular_difference() % 360
 
         if self.angular_difference <= 10 or self.angular_difference >= 350:
             return "Same-Heart"

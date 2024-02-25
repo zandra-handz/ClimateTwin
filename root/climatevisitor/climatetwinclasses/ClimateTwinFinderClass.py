@@ -83,7 +83,7 @@ class ClimateTwinFinder:
 
         successful = False
 
-        # May remove in case the google key calls get out of hand
+        # May handle differently in future
         while not successful:
 
             # Finds five candidate places
@@ -332,7 +332,7 @@ class ClimateTwinFinder:
                     temperature_difference = abs(weather['temperature'] - self.weather_info['temperature'])
                     print(temperature_difference)
 
-                    if temperature_difference < 4:
+                    if temperature_difference < 3.5:
                         # Process and add the new entry to self.similar_places
                         new_entry = {
                             'name': [f'climate twin candidate'],

@@ -21,23 +21,19 @@ info = openapi.Info(
         
 
         **Authentication**
-        -Uses Djoser/token authentication.
+        -Uses token authentication.
 
 
-        
         **Instructions to test**
         -auth/token/login and enter 'sara' and 'string1234'.
         -Copy token, click on Authorize button on the top right, and enter 'Token' + the token string you copied.
         -Now you should be able to test the endpoints! All data is dummy data.
 
 
-        **User Experience**
-        
-
         """,
-        terms_of_service="https://www.jaseci.org",
-        contact=openapi.Contact(email="badrainbowz@gmail.com"),
-        license=openapi.License(name="Awesome IP")
+        #terms_of_service="https://www.jaseci.org",
+        contact=openapi.Contact(email="badrainbowz@gmail.com")
+        #license=openapi.License(name="Awesome IP")
 )
 
 #python manage.py generate_swagger --format yaml > api_documentation.yaml

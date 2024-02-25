@@ -76,7 +76,7 @@ def go(request):
         # Check if user has hit daily limit
         if user and not (user.is_staff or user.is_superuser): 
             today = timezone.now().date()
-            daily_count = models.ClimateTwinLocation.objects.filter(user=user, creation_date__date=today).count()
+            daily_count = models.ClimateTwinLocation.objects.filter(user=user, created_on__date=today).count()
             if daily_count >= 3:
                 return Response({'error': 'You have reached the daily limit of visits.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -132,7 +132,7 @@ def go(request):
             user_visit_record_instance = UserVisit(user=user_instance, location_name=climate_twin_location_instance.name, 
                                                    location_latitude=climate_twin_location_instance.latitude,
                                                    location_longitude=climate_twin_location_instance.longitude,
-                                                   visit_datetime=climate_twin_location_instance.creation_date)
+                                                   visit_created_on=climate_twin_location_instance.created_on)
             user_visit_record_instance.save()
 
             osm_api = OpenMapAPI()
@@ -170,7 +170,7 @@ def go(request):
                     return Response({'error': 'Invalid data', 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-            return Response({"detail": "Success! Twin location found.",
+            return Response({'detail': 'Success! Twin location found.',
                 'home_climate': climate_places.home_climate,
                 'climate_twin': climate_places.climate_twin,
                 'weather_messages' : weather_messages,
@@ -283,10 +283,10 @@ class CurrentTwinLocationView(generics.ListAPIView):
 
     def get_latest_location(self):
         user = self.request.user
-        latest_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-creation_date').first()
+        latest_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-created_on').first()
 
         # Check if the latest location exists and if it was created within the last two hours
-        if latest_location and (timezone.now() - latest_location.creation_date).total_seconds() < 7200: 
+        if latest_location and (timezone.now() - latest_location.created_on).total_seconds() < 7200: 
             return latest_location
         else:
             return None
@@ -308,10 +308,10 @@ class MostRecentHomeLocationView(generics.ListAPIView):
 
     def get_latest_location(self):
         user = self.request.user
-        latest_location = models.HomeLocation.objects.filter(user=user).order_by('-creation_date').first()
+        latest_location = models.HomeLocation.objects.filter(user=user).order_by('-created_on').first()
 
         # Check if the latest location exists and if it was created within the last two hours
-        if latest_location and (timezone.now() - latest_location.creation_date).total_seconds() < 7200: 
+        if latest_location and (timezone.now() - latest_location.created_on).total_seconds() < 7200: 
             return latest_location
         else:
             return None
@@ -346,10 +346,10 @@ class CurrentLocationMatchView(generics.ListAPIView):
 
     def get_latest_location(self):
         user = self.request.user
-        latest_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-creation_date').first()
+        latest_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-created_on').first()
 
         # Check if the latest location exists and if it was created within the last two hours
-        if latest_location and (timezone.now() - latest_location.creation_date).total_seconds() < 7200: 
+        if latest_location and (timezone.now() - latest_location.created_on).total_seconds() < 7200: 
             return latest_location
         else:
             return None
@@ -457,8 +457,8 @@ class CurrentDiscoveryLocationsView(generics.ListAPIView):
         return models.ClimateTwinDiscoveryLocation.objects.filter(user=self.request.user)
 
     def get_latest_location(self, user):
-        latest_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-creation_date').first()
-        if latest_location and (timezone.now() - latest_location.creation_date).total_seconds() < 7200: 
+        latest_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-created_on').first()
+        if latest_location and (timezone.now() - latest_location.created_on).total_seconds() < 7200: 
             return latest_location
         else:
             return None
@@ -475,7 +475,7 @@ class CreateExploreLocationView(generics.CreateAPIView):
         explore_location_pk = request.data.get('explore_location')
         try:
             explore_location = models.ClimateTwinDiscoveryLocation.objects.get(pk=explore_location_pk)
-            explore_location_creation_date = explore_location.creation_date
+            explore_location_creation_date = explore_location.created_on
             if (timezone.now() - explore_location_creation_date).total_seconds() >= 7200:
                 return Response({'error': 'The explore location must have been created within the last two hours.'}, status=status.HTTP_400_BAD_REQUEST)
         except models.ClimateTwinDiscoveryLocation.DoesNotExist:
@@ -541,21 +541,21 @@ class CurrentExploreLocationView(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         latest_location = self.get_latest_location(request.user)
         if not latest_location:
-            return Response({'detail': 'You are not exploring any locations right now.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail': 'You are not exploring any locations right now. Pick an explore location to collect treasure!'}, status=status.HTTP_404_NOT_FOUND)
         serializer = self.get_serializer(latest_location)
         return Response(serializer.data)
 
     def get_latest_location(self, user):
-        most_recent_climate_twin_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-creation_date').first()
+        most_recent_climate_twin_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-created_on').first()
         if not most_recent_climate_twin_location:
             return None
         
-        latest_location = models.ClimateTwinExploreDiscoveryLocation.objects.filter(user=user).order_by('-creation_date').first()
+        latest_location = models.ClimateTwinExploreDiscoveryLocation.objects.filter(user=user).order_by('-created_on').first()
         
         if latest_location:
             explore_location = latest_location.explore_location
             if explore_location.origin_location_id == most_recent_climate_twin_location.pk and \
-               (timezone.now() - latest_location.creation_date).total_seconds() < 7200: 
+               (timezone.now() - latest_location.created_on).total_seconds() < 7200: 
                 return latest_location
         
         return None
@@ -589,7 +589,7 @@ def collect(request):
 
         try:
             # Retrieve the most recently created ClimateTwinExploreDiscoveryLocation instance by the user
-            latest_explore_location = models.ClimateTwinExploreDiscoveryLocation.objects.filter(user=user).latest('creation_date')
+            latest_explore_location = models.ClimateTwinExploreDiscoveryLocation.objects.filter(user=user).latest('created_on')
             location_id = latest_explore_location.explore_location.id
             
             location = models.ClimateTwinDiscoveryLocation.objects.get(id=location_id)
@@ -614,16 +614,12 @@ def collect(request):
 
 
         try:
-            # Retrieve the most recently created ClimateTwinExploreDiscoveryLocation instance by the user
-            latest_explore_location = models.ClimateTwinExploreDiscoveryLocation.objects.filter(user=user).latest('creation_date')
+            latest_explore_location = models.ClimateTwinExploreDiscoveryLocation.objects.filter(user=user).latest('created_on')
             location_dict = latest_explore_location.to_dict()
 
-            # Check if the entered item is in the dictionary
             if item in location_dict.keys():
                 item_name = location_dict[item]
                 item_category = item
-
-                # Create and save a Treasure instance using collect_item function
                 
                 treasure_instance = Treasure.collect_item(
                     user=user,
@@ -669,20 +665,20 @@ def item_choices(request):
 
         
         try:
-            latest_explore_location = models.ClimateTwinExploreDiscoveryLocation.objects.filter(user=user).latest('creation_date')
+            latest_explore_location = models.ClimateTwinExploreDiscoveryLocation.objects.filter(user=user).latest('created_on')
     
-            latest_climate_twin_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-creation_date').first()
+            latest_climate_twin_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-created_on').first()
 
             explore_location = latest_explore_location.explore_location
             if explore_location.origin_location_id == latest_climate_twin_location.pk and \
-               (timezone.now() - latest_explore_location.creation_date).total_seconds() < 7200: 
+               (timezone.now() - latest_explore_location.created_on).total_seconds() < 7200: 
 
                 location_dict = latest_explore_location.to_dict()
                 return Response({'choices': location_dict, 'message': 'choose one.'}, status=status.HTTP_200_OK)
 
 
             else:
-                return Response({'detail': 'You must be at an explore site to collect a treasure.'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'detail': 'You must be at an explore site to collect a treasure.'}, status=status.HTTP_404_NOT_FOUND)
 
         except models.ClimateTwinExploreDiscoveryLocation.DoesNotExist:
             return Response({'detail': 'Explore location not found for the user.'}, status=status.HTTP_404_NOT_FOUND)
@@ -707,13 +703,10 @@ def key_data(request):
         for twin_location in climate_twin_locations_with_home:
             home_location = twin_location.home_location
             temperature_difference = twin_location.temperature - home_location.temperature
+            temperature_difference = round(temperature_difference, 2)
             humidity_difference = twin_location.humidity - home_location.humidity
             performance_data.append({
                 'home_location_name': home_location.name,
-                'home_location_temperature': home_location.temperature,
-                'twin_location_temperature': twin_location.temperature,
-                'home_location_humidity': home_location.humidity,
-                'twin_location_humidity': twin_location.humidity,
                 'twin_location_name': twin_location.name,
                 'temperature_difference': temperature_difference,
                 'humidity_difference': humidity_difference
