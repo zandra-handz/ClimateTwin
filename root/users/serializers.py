@@ -76,17 +76,16 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Message
-        fields = ['id', 'sender', 'recipient', 'content', 'timestamp', 'content_object']
+        fields = ['id', 'sender', 'recipient', 'content', 'created_on', 'content_object']
 
     def get_content_object(self, obj):
-        # Here, you can customize how the content_object is serialized
+        
         if isinstance(obj.content_object, models.FriendRequest):
             return FriendRequestSerializer(obj.content_object).data
-        # Handle other content_object types if needed
+      
         if isinstance(obj.content_object, models.GiftRequest):
-            # Serialize the GiftRequest object
+            
             gift_request_data = GiftRequestSerializer(obj.content_object).data
-            # Include the associated Treasure data
             treasure_data = {
                 'treasure_descriptor': obj.content_object.treasure.descriptor,
                 'treasure_description': obj.content_object.treasure.description

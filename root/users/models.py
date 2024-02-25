@@ -36,7 +36,7 @@ class BadRainbowzUser(AbstractUser):
     is_active_user = models.BooleanField(default=True)
     is_inactive_user = models.BooleanField(default=False)
     is_banned_user = models.BooleanField(default=False)
-    created_at = models.DateTimeField(default=timezone.now)
+    created_on = models.DateTimeField(default=timezone.now)
     last_updated_at = models.DateTimeField(auto_now=True)
     last_login_at = models.DateTimeField(blank=True, null=True)
     login_attempts = models.PositiveIntegerField(default=0)
@@ -102,7 +102,7 @@ class UserSettings(models.Model):
     receive_notifications = models.BooleanField(default=False)
     language_preference = models.CharField(max_length=10, choices=[('en', 'English'), ('es', 'Spanish')], blank=True)
 
-    # Accessibility settings.
+    # Accessibility settings options for front end
     large_text = models.BooleanField(default=False)
     high_contrast_mode = models.BooleanField(default=False)
     screen_reader = models.BooleanField(default=False)
@@ -131,10 +131,10 @@ class UserProfile(models.Model):
 class Friendship(models.Model):
     initiator = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='friendships_started')
     reciprocator = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="friendships_accepted")
-    created_at = models.DateTimeField(default=timezone.now)
+    created_on = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        date = self.created_at 
+        date = self.created_on 
         date = format_date(date)
 
         return f"Friendship formed between {self.initiator} and {self.reciprocator} on {date}"
@@ -145,21 +145,21 @@ class FriendProfile(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='friends')
     friend = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='friend_of')
     nickname = models.CharField(max_length=255, default='')
-    created_at = models.DateTimeField(default=timezone.now)
+    created_on = models.DateTimeField(default=timezone.now)
     friendship = models.ForeignKey(Friendship, on_delete=models.CASCADE, related_name="friendship")
 
-
     class Meta:
+        ordering = ['-created_on']
+
         verbose_name = "User friendship"
         verbose_name_plural = "User friendships"
 
     def __str__(self):
 
-        date = self.created_at 
+        date = self.created_on 
         date = format_date(date)
 
-        return f"{self.friend.username} ({self.nickname}) since {self.created_at}"
-
+        return f"{self.friend.username} ({self.nickname}) since {self.created_on}"
 
 
 class UserVisit(models.Model):
@@ -167,12 +167,15 @@ class UserVisit(models.Model):
     location_name = models.CharField(max_length=255)
     location_latitude = models.FloatField(default=0.0)
     location_longitude = models.FloatField(default=0.0)
-    visit_datetime = models.DateTimeField(auto_now_add=True)
+    visit_created_on = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-visit_created_on']
 
 
     def __str__(self):
 
-        date = self.visit_datetime 
+        date = self.visit_created_on
         date = format_date(date)
 
         return f"{self.user.username} visited {self.location_name} on {date}"
@@ -272,19 +275,23 @@ class Inbox(models.Model): # not in use, will probably be used for inbox setting
         return f"Inbox for {self.user.username}"
 
 
-# Are requests saved as messages getting deleted?
+
 class Message(models.Model):
     sender = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='sent_messages')
     recipient = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='received_messages')
     content = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+    created_on = models.DateTimeField(auto_now_add=True)
     
-    # GenericForeignKey to associate any object with the message.
+    # GenericForeignKey to associate any object with the message
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, default=1)
     object_id = models.PositiveIntegerField(default=1)
     content_object = GenericForeignKey('content_type', 'object_id')
 
+    # Is this set up yet?
     sent = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-created_on']
 
     def __str__(self):
 
@@ -298,11 +305,11 @@ class InboxItem(models.Model):
 
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='inbox_items')
     message = models.ForeignKey(Message, on_delete=models.CASCADE, default=None, null=True, related_name='inbox_item_for_message')
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_on = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ['-created_on']
 
     def __str__(self):
 
@@ -324,7 +331,7 @@ class InboxItem(models.Model):
             read_status = "Unread"
 
 
-        date = self.created_at 
+        date = self.created_on 
         date = format_date(date)
 
 
@@ -337,9 +344,12 @@ class FriendRequest(models.Model):
     message = models.TextField()
     is_accepted = models.BooleanField(default=False)
     is_rejected = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_on = models.DateTimeField(auto_now_add=True)
 
     outer_message = GenericRelation(Message, null=True, default=None)
+
+    class Meta:
+        ordering = ['-created_on']
 
     def delete(self, *args, **kwargs):
 
@@ -364,9 +374,12 @@ class GiftRequest(models.Model):
     message = models.TextField()
     is_accepted = models.BooleanField(default=False)
     is_rejected = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_on = models.DateTimeField(auto_now_add=True)
 
     outer_message = GenericRelation(Message, null=True, default=None)
+
+    class Meta:
+        ordering = ['-created_on']
 
     def delete(self, *args, **kwargs):
         try:
