@@ -120,7 +120,7 @@ class ClimateTwinDiscoveryLocation(models.Model):
 
 
     class Meta:
-        ordering = ['-created_on']
+        ordering = ['-id']
 
         verbose_name = "Discovery Location"
         verbose_name_plural = "Discovery Locations"

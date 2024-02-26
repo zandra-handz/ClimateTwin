@@ -5,7 +5,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('endpoints/', views.endpoints, name='endpoints'),
+    #path('endpoints/', views.endpoints, name='endpoints'),
 
     # Play the game
     path('go/', views.go, name='go'),
