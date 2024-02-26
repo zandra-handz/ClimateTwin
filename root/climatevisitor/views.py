@@ -449,7 +449,7 @@ class CurrentDiscoveryLocationsView(generics.ListAPIView):
         latest_location = self.get_latest_location(request.user)
         if not latest_location:
             return Response({'detail': 'You are not visiting anywhere right now.'}, status=status.HTTP_404_NOT_FOUND)
-        discovery_locations = models.ClimateTwinDiscoveryLocation.objects.filter(origin_location=latest_location)
+        discovery_locations = models.ClimateTwinDiscoveryLocation.objects.filter(origin_location=latest_location).order_by('miles_away')
         serializer = self.get_serializer(discovery_locations, many=True)
         return Response(serializer.data)
 
