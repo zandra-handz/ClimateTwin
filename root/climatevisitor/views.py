@@ -709,7 +709,8 @@ def key_data(request):
                 'home_location_name': home_location.name,
                 'twin_location_name': twin_location.name,
                 'temperature_difference': temperature_difference,
-                'humidity_difference': humidity_difference
+                'humidity_difference': humidity_difference,
+                'date_and_time': twin_location.created_on
             })
 
 

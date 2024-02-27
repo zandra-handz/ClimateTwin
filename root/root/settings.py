@@ -43,6 +43,9 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 # Application definition
 
+CELERY_BROKER_URL = 'redis://10.108.0.3:6379/0'
+
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

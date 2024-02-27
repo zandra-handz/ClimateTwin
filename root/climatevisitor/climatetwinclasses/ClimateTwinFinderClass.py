@@ -1,3 +1,4 @@
+from climatevisitor.tasks import send_coordinate_update 
 from django.conf import settings
 import geopandas as gpd
 import numpy as np 
@@ -326,6 +327,9 @@ class ClimateTwinFinder:
 
             for idx, point in random_coords.iterrows():
                 latitude, longitude = point.geometry.y, point.geometry.x
+
+                # Send to celery task
+                send_coordinate_update.delay(latitude, longitude)
 
                 weather = self.get_weather(latitude, longitude)
                 if weather:
