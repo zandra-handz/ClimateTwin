@@ -321,6 +321,7 @@ class ClimateTwinFinder:
         base_url = "https://api.openweathermap.org/data/2.5/find"
         num_places = 5
         high_variance = 0
+        celery_fail_count = 0
 
         while num_places > len(self.similar_places['name']):
             random_coords = self.generate_random_coords_in_a_country_list()
@@ -328,12 +329,14 @@ class ClimateTwinFinder:
             for idx, point in random_coords.iterrows():
                 latitude, longitude = point.geometry.y, point.geometry.x
 
-               # try:
-                    # Send to celery task
-                #    send_coordinate_update.delay(latitude, longitude)
-                #except Exception as e:
-                 #   print(f"Error sending to Celery task: {e}")
-                  #  continue
+                if celery_fail_count < 3:
+                    try:
+                        # Send to celery task
+                        send_coordinate_update.delay(latitude, longitude)
+                    except Exception as e:
+                        print(f"Error sending to Celery task: {e}")
+                        celery_fail_count += 1
+                        continue
 
                 weather = self.get_weather(latitude, longitude)
                 if weather:
