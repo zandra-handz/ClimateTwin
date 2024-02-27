@@ -328,12 +328,12 @@ class ClimateTwinFinder:
             for idx, point in random_coords.iterrows():
                 latitude, longitude = point.geometry.y, point.geometry.x
 
-                try:
+               # try:
                     # Send to celery task
-                    send_coordinate_update.delay(latitude, longitude)
-                except Exception as e:
-                    print(f"Error sending to Celery task: {e}")
-                    continue
+                #    send_coordinate_update.delay(latitude, longitude)
+                #except Exception as e:
+                 #   print(f"Error sending to Celery task: {e}")
+                  #  continue
 
                 weather = self.get_weather(latitude, longitude)
                 if weather:
