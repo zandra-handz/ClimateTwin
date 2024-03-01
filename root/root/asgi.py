@@ -1,16 +1,23 @@
-"""
-ASGI config for root project.
-
-It exposes the ASGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/5.0/howto/deployment/asgi/
-"""
+# ASGI config
 
 import os
 
 from django.core.asgi import get_asgi_application
+from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.auth import AuthMiddlewareStack
+from django.urls import path
+from climatevisitor.consumers import AnimationConsumer
+from climatevisitor.routing import websocket_urlpatterns # Correct import
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'root.settings')
 
-application = get_asgi_application()
+# Get the Django ASGI application
+django_asgi_app = get_asgi_application()
+
+# Define the ProtocolTypeRouter for ASGI
+application = ProtocolTypeRouter({
+    "http": django_asgi_app,  # For HTTP requests
+    "websocket": AuthMiddlewareStack(
+        URLRouter(websocket_urlpatterns)  # Correct usage of routing
+    ),  # For WebSocket requests
+})

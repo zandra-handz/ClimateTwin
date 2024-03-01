@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClimateTwin API Demo</title>
+    <style>
+        * {
+            /* Global styles for all elements */
+            font-family: 'Poppins', Arial, sans-serif; /* Set default font */
+            /* Add other global styles here */
+        }
+
+
+        /* Basic CSS styles */
+        body {
+            font-family: 'Poppins', sans-serif; /* Use Poppins as default font */
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .container {
+            display: block;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 20px;
+            max-width: 900px; /* Max width for responsiveness */
+            margin: 0 auto; /* Center the container */
+            padding: 20px; /* Add padding for better spacing */
+        }
+        .header {
+            font-size: 24px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .sections {
+            display: flex;
+            flex-wrap: wrap; /* Allow sections to wrap on smaller screens */
+            justify-content: space-between;
+            margin-bottom: 20px; /* Add margin between sections */
+        }
+
+        .go-section {
+            display: inline-block;
+            white-space: nowrap;/* Allow sections to wrap on smaller screens */
+            justify-content: center;
+            margin-bottom: 20px; /* Add margin between sections */
+            width: 100%;
+        }
+
+        .section {
+            width: calc(33.33% - 8px); /* Three equally sized sections */
+            margin-bottom: 20px; /* Add margin between sections */
+
+        }
+        .form-group {
+            font-size: 12px;
+            margin-bottom: 10px;
+            border-radius: 20px;
+        }
+        .form-group input {
+            width: calc(100% - 88px); /* NUMBERS I PLAYED AROUND WITH THAT MUST BE EXACT LOL */
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+        }
+        .form-group button {
+            width: 100%;
+            min-width: 70px;
+            height: 46px;
+            padding: 8px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            overflow: hidden; /* Hide any overflow text */
+            white-space: nowrap; /* Prevent text from wrapping */
+            text-overflow: ellipsis;
+        }
+
+
+        .form-group .go-button {
+            width: 30px;
+            height: 30px;
+            padding: 6px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+            border-radius: 20px;
+            overflow: hidden; /* Hide any overflow text */
+            white-space: nowrap; /* Prevent text from wrapping */
+            text-overflow: ellipsis;
+        }
+
+        .form-group button:focus {
+            background-color: #0056b3;
+            border-radius: 20px;
+            overflow: hidden; /* Hide any overflow text */
+            white-space: nowrap; /* Prevent text from wrapping */
+            text-overflow: ellipsis;
+        }
+
+
+        #giftFriendsRadio {
+            width: 100px; /* Adjust the width as needed */
+        }
+
+        .radio-label {
+            font-size: 16px; /* Adjust as needed */
+
+        }
+
+
+        .radio-label input[type="radio"] {
+            /* Adjust as needed */
+            margin-right: 8px;
+            margin-bottom: 7px;
+            vertical-align: middle;
+        }
+
+
+        .result-container, .result-bottom-container {
+            width: 100%;
+        }
+
+        .summary-text-container {
+            margin-bottom: 10px;
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border: 1px solid white;
+            border-radius: 40px;
+            font-size: 13px;
+
+        }
+
+        .result, .result-bottom {
+            margin-bottom: 10px;
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border: 1px solid white;
+            border-radius: 40px;
+            font-size: 13px;
+            overflow: hidden; /* Hide any overflow text */
+             /* Prevent text from wrapping */
+            text-overflow: ellipsis;
+        }
+
+        .result-wrapper, .result-bottom-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .result, .result-bottom {
+            flex: 1;
+            padding: 20px;
+            margin-right: 10px;
+        }
+
+        .loading-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100%;
+        }
+
+        .spinner {
+          border: 4px solid rgba(0, 0, 0, 0.1);
+          border-left-color: #007bff; /* Blue color */
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+          animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+
+        .treasure-button {
+            background-color: limegreen;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            padding: 6px 13px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .treasure-button:hover {
+            background-color: darkgreen;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            padding: 6px 13px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .explore-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            padding: 6px 13px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .explore-button:hover {
+            background-color: #0056b3;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            padding: 6px 13px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .gift-button {
+            background-color: orange;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            padding: 6px 13px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .gift-button:hover {
+            background-color: darkorange;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            padding: 6px 13px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+
+        .popup-menu {
+            /* Other styles... */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 9999;
+            width: 300px; /* Adjust width as needed */
+        }
+
+        .popup-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .popup-menu-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #777;
+            margin: 0;
+            padding: 0;
+        }
+
+        .popup-menu-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .popup-menu form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .popup-menu input,
+        .popup-menu button {
+            margin-bottom: 10px;
+            border-radius: 20px;
+        }
+
+        .popup-menu form .form-group textarea,
+        .popup-content form .form-group textarea {
+            width: calc(100% - 16px); /* Adjusting width for padding */
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            resize: vertical; /* Allow vertical resizing */
+        }
+
+        .popup-menu button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            padding: 9px 20px;
+            cursor: pointer;
+        }
+
+        .popup-menu button:hover {
+            background-color: #0056b3;
+            border-radius: 20px;
+            color: #fff;
+        }
+
+        .popup-menu-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-radius: 20px;
+            font-size: 16px;
+            color: #777;
+        }
+
+        .popup-menu-close:hover {
+            border-radius: 20px;
+            color: #333;
+        }
+
+        .inbox-item-close {
+            top: 10px;
+            right: 10px;
+            background: blue;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            color: white;
+            margin: 0;
+            padding: 6;
+        }
+
+
+        .summary-text-container {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 2;
+        border-radius: 20px;
+        }
+
+
+    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700&display=swap">
+</head>
+<body>
+    <div class="container">
+        <div class="header">ClimateTwin API Demo</div>
+        <div class="go-section">
+            <form id="addressForm">
+                <div class="form-group">
+                    <input type="text" id="address" name="address" placeholder="Enter address" required>
+
+                    <button class="go-button" type="submit">Go!</button>
+                </div>
+            </form>
+        </div>
+        <div class="sections">
+             <div class="section">
+                <div class="form-group">
+                    <button id="homeWeatherBtn">Home</button>
+                </div>
+                <div class="form-group">
+                    <button id="currentlyVisitingBtn">Twin</button>
+                </div>
+            </div>
+            <div class="section">
+                <div class="form-group">
+                    <button id="currentlyNearbyBtn">Nearby</button>
+                </div>
+                <div class="form-group">
+                    <button id="currentlyExploringBtn">Exploring</button>
+                </div>
+            </div>
+            <div class="section">
+                <div class="form-group">
+                    <button id="itemChoicesBtn">Collect Treasure</button>
+                </div>
+                <div class="form-group">
+                    <button id="viewTreasuresBtn">Treasures</button>
+                </div>
+            </div>
+        </div>
+        <div class="sections">
+            <div class="result-container">
+                <div id="climate-updates-container"></div>
+            
+                
+                <div id="result"></div>
+            </div>
+        </div>
+
+    </div>
+    <div class="container">
+        <div class="sections">
+            <div class="section">
+                <div class="form-group">
+                    <button id="userInboxBtn">Inbox</button>
+                </div>
+                <div class="form-group">
+                    <button id="userSettingsBtn">Settings</button>
+                </div>
+            </div>
+            <div class="section">
+                <div class="form-group">
+                    <button id="userProfileBtn">Profile</button>
+                </div>
+                <div class="form-group">
+                    <button id="userFriendProfilesBtn">Friends</button>
+                </div>
+            </div>
+            <div class="section">
+                <div class="form-group">
+                    <button id="userSummaryBtn">User Summary</button>
+                </div>
+                <div class="form-group">
+                    <button id="userPerfDataBtn">Performance</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="container">
+        <div class="sections">
+            <!-- Your second display box -->
+            <div class="result-bottom-container">
+                <div id="result-bottom"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Popup menu HTML -->
+    <div class="popup-menu" id="popupMenu" style="display: none;">
+        <div class="popup-menu-header">
+            <h2 class="popup-menu-title">What did you find?</h2>
+            <button class="popup-menu-close" id="popupCloseBtn">Close</button>
+        </div>
+        <form id="popupForm">
+            <!-- Input fields for the form -->
+            <input type="hidden" id="itemInput" name="item">
+            <div class="form-group">
+                <input type="text" id="descriptorInput" name="descriptor" placeholder="Descriptor">
+            </div>
+            <div class="form-group">
+                <textarea id="descriptionInput" name="description" placeholder="Description"></textarea>
+            </div>
+            <div class="form-group">
+                <textarea id="thirdDataInput" name="third_data" placeholder="Additional Data"></textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit">Collect Treasure</button>
+            </div>
+        </form>
+    </div>
+
+
+
+    <div class="popup-menu" id="giftTreasurePopup" style="display: none;">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h2 class="popup-title">Send to a friend</h2>
+                <button class="popup-menu-close" id="popupGiftCloseBtn">Close</button>
+            </div>
+            <form id="popupGiftForm">
+                <!-- Input fields for the form -->
+                <input type="hidden" id="treasureIdInput" name="treasureId">
+                    <div class="form-group">
+                        <div id="giftFriendsRadio"></div>
+                            <!-- Radio buttons for friends will be dynamically populated here -->
+                        </div>
+                    <div class="form-group">
+                    <textarea id="messageInput" name="message" placeholder="Enter your message"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit">Send Gift</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    <script src="{% static 'climatevisitor/js/coordinatesloader.js' %}"></script>
+    <script>
+        // Call displayLoading function with the appropriate result container ID
+        displayLoading('climate-updates-container');
+    </script>
+    
+
+    <script>
+        // ClimateTwin API endpoint
+        var endpoint = "/climatevisitor/";
+        var userEndpoint = "/users/";
+
+        // User auth token
+        var token = "ace6c0b2577a0eb08cedeea947ef3d597f9f67e9";
+
+        // Function to make GET requests
+        function makeGetRequest(url, callback) {
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Token ' + token
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                callback(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+
+        // Custom function to format treasures data
+        function formatTreasures(data) {
+            var resultContainer = document.getElementById('result');
+            resultContainer.innerHTML = ''; // Clear previous results
+
+            if (data.length > 0) {
+                data.forEach(treasure => {
+                    // Create a div for each treasure
+                    var div = document.createElement('div');
+                    div.classList.add('result');
+
+                    // Extract and format the desired keys for treasures
+                    var keysToDisplay = ["id", "descriptor", "description", "add_data", "miles_traveled_to_collect", "item_name", "item_category", "owned_since", "pending", "original_user", "found_at_latitude", "found_at_longitude", "giver", "recipient", "message"];
+                    keysToDisplay.forEach(key => {
+                        if (key in treasure) {
+                            // Create a paragraph element for each key-value pair
+                            var paragraph = document.createElement('p');
+
+                            // Format key as bold
+                            var boldKey = document.createElement('strong');
+                            boldKey.innerText = key + ': ';
+
+                            // Append key-value pair to the paragraph
+                            paragraph.appendChild(boldKey);
+                            paragraph.appendChild(document.createTextNode(treasure[key]));
+
+                            // Append the paragraph to the result container
+                            div.appendChild(paragraph);
+                        }
+                    });
+
+                    // Add a button for giving treasure to a friend
+                    var giftButton = document.createElement('button');
+                    giftButton.innerText = 'Give Treasure to a Friend';
+                    giftButton.classList.add('gift-button');
+
+                    // Set the treasure ID as a data attribute
+                    giftButton.setAttribute('data-treasure-id', treasure.id);
+
+                    // Add event listener to the gift button
+                    giftButton.addEventListener('click', function() {
+                        var treasureId = this.getAttribute('data-treasure-id');
+                        getFriendsAndDisplayTreasurePopup(treasureId); // Corrected function call
+                    });
+
+                    // Append the button to the div
+                    div.appendChild(giftButton);
+
+                    // Append the div to the result container
+                    resultContainer.appendChild(div);
+                });
+            } else {
+                resultContainer.innerText = 'No treasures available.';
+            }
+        }
+
+
+        // Function to handle explore button click
+        function exploreLocation(locationId) {
+            // Prepare data for the POST request
+            var data = {
+                explore_location: locationId // Pass the ID of the location
+            };
+
+            // Make a POST request to the explore endpoint
+            fetch(endpoint + 'explore/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Token ' + token
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle response as needed
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        // Event listener for explore buttons (currently nearby)
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('explore-button')) {
+                // Extract location ID from the button's data attribute
+                var locationId = event.target.dataset.locationId;
+                exploreLocation(locationId);
+            }
+        });
+
+/*
+        // Function to display loading spinner and fetch socket data
+        function displayLoading(resultContainerId) {
+            var resultContainer = document.getElementById(resultContainerId);
+            // Clear existing content
+            resultContainer.innerHTML = '';
+            // Create a div to contain the spinner
+            var loadingDiv = document.createElement('div');
+            loadingDiv.classList.add('loading-container');
+            // Add the spinner inside the div
+            loadingDiv.innerHTML = '<div class="spinner"></div>';
+            // Append the loading div to the result container
+            resultContainer.appendChild(loadingDiv);
+
+            // WebSocket connection
+            const socket = new WebSocket('ws://localhost:8000/ws/climate-twin/'); // Replace with your WebSocket URL
+
+            // Event listener for WebSocket open
+            socket.onopen = function(event) {
+                console.log('WebSocket connection opened');
+            };
+
+            // Event listener for WebSocket messages
+            socket.onmessage = function(event) {
+                const update = JSON.parse(event.data);
+                replaceUpdate(update); // Call replaceUpdate to display the socket output
+            };
+
+            // Event listener for WebSocket close
+            socket.onclose = function(event) {
+                console.log('WebSocket connection closed');
+            };
+
+            // Event listener for WebSocket errors
+            socket.onerror = function(error) {
+                console.error('WebSocket error:', error);
+            };
+        }
+
+        // Function to append new update to the container
+        function replaceUpdate(update) {
+            const container = document.getElementById('climate-updates-container');
+            const updateElement = document.createElement('div');
+            updateElement.textContent = `Latitude: ${update.latitude}, Longitude: ${update.longitude}`;
+            container.innerHTML = ''; // Clear the container's content
+            container.appendChild(updateElement);
+        }
+
+
+*/
+
+
+        // Function to display result in the specified result container
+        function displayResult(resultContainerId, data) {
+            var resultContainer = document.getElementById(resultContainerId);
+            // Remove previous loading containers
+            resultContainer.querySelectorAll('.loading-container').forEach(container => container.remove());
+            resultContainer.innerHTML = ''; // Clear previous results
+
+            // Check if data is a dictionary (object)
+            if (typeof data === 'object' && data !== null && !Array.isArray(data)) {
+                // Create a div for the single dictionary (currently-visiting response)
+                var div = document.createElement('div');
+                div.classList.add('result');
+
+                // Iterate over the keys of the dictionary
+                Object.keys(data).forEach(key => {
+                    // Create a paragraph element for each key-value pair
+                    var paragraph = document.createElement('p');
+
+                    // Format key as bold
+                    var boldKey = document.createElement('strong');
+                    boldKey.innerText = key + ': ';
+
+                    // Append key-value pair to the paragraph
+                    paragraph.appendChild(boldKey);
+
+                    // Check if the value is an object and not an array
+                    if (typeof data[key] === 'object' && !Array.isArray(data[key])) {
+                        // Recursively format the nested object
+                        formatNestedObject(paragraph, data[key]);
+                    } else {
+                        paragraph.appendChild(document.createTextNode(data[key]));
+                    }
+
+                    // Append the paragraph to the result container
+                    div.appendChild(paragraph);
+                });
+
+                // Append the div to the result container
+                resultContainer.appendChild(div);
+            } else if (Array.isArray(data)) {
+                // If data is an array, display as usual (for currently-nearby response)
+                if (data.length > 0) {
+                    data.forEach((item, index) => {
+                        // Create a div for each object
+                        var div = document.createElement('div');
+                        div.classList.add('result');
+
+                        // Extract and format the desired keys for currently-nearby response
+                        var keysToDisplay = ["id", "name", "direction", "miles_away", "wind_compass", "latitude", "longitude"];
+                        keysToDisplay.forEach(key => {
+                            if (key in item) {
+                                // Create a paragraph element for each key-value pair
+                                var paragraph = document.createElement('p');
+
+                                // Format key as bold
+                                var boldKey = document.createElement('strong');
+                                boldKey.innerText = key + ': ';
+
+                                // Append key-value pair to the paragraph
+                                paragraph.appendChild(boldKey);
+                                paragraph.appendChild(document.createTextNode(item[key]));
+
+                                // Append the paragraph to the result container
+                                div.appendChild(paragraph);
+                            }
+                        });
+
+                        // Add a button for exploring location
+                        var exploreButton = document.createElement('button');
+                        exploreButton.innerText = 'Explore Location';
+                        exploreButton.classList.add('explore-button');
+
+                        // Set the location ID as a data attribute
+                        exploreButton.setAttribute('data-location-id', item.id);
+
+                        exploreButton.addEventListener('click', function() {
+                            // Handle button click
+                            var locationId = this.getAttribute('data-location-id');
+                            exploreLocation(locationId);
+                        });
+
+                        // Append the explore button to the div
+                        div.appendChild(exploreButton);
+
+                        // Append the div to the result container
+                        resultContainer.appendChild(div);
+                    });
+                } else {
+                    resultContainer.innerText = 'No data available.';
+                }
+            } else {
+                // If data is not an object or an array, display as JSON string
+                var div = document.createElement('div');
+                div.classList.add('result');
+                div.innerText = JSON.stringify(data);
+                resultContainer.appendChild(div);
+            }
+        }
+
+        // Function to recursively format nested objects
+        function formatNestedObject(parentElement, obj) {
+            Object.keys(obj).forEach(key => {
+                var paragraph = document.createElement('p');
+                var boldKey = document.createElement('strong');
+                boldKey.innerText = key + ': ';
+                paragraph.appendChild(boldKey);
+
+                if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
+                    formatNestedObject(paragraph, obj[key]);
+                } else {
+                    paragraph.appendChild(document.createTextNode(obj[key]));
+                }
+
+                parentElement.appendChild(paragraph);
+            });
+        }
+
+
+
+       // JavaScript code to handle form submission
+        document.getElementById('addressForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Display the loading spinner
+            displayLoading('result');
+
+            // Get the address value from the form
+            var address = document.getElementById('address').value;
+
+            // Prepare the data to be sent
+            var data = {
+                address: address
+            };
+
+            // Make a POST request to the endpoint
+            fetch(endpoint + 'go/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Token ' + token // Include the user token in the Authorization header
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display the result
+                displayResult('result', data.detail);
+            })
+            .catch(error => {
+                // Display error if any
+                document.getElementById('result').innerText = 'Error: ' + error.message;
+            });
+        });
+
+
+        // Function to create and display the popup menu dynamically
+
+        function createPopupMenu(itemKey) {
+            // Create a div for the popup menu
+            var popupMenu = document.createElement('div');
+            popupMenu.classList.add('popup-menu');
+
+            // Create a form element
+            var form = document.createElement('form');
+            form.id = 'popupForm';
+
+            // Create input fields for each required field
+            var itemInput = document.createElement('input');
+            itemInput.type = 'hidden'; // Hidden input for the associated item key
+            itemInput.name = 'item';
+            itemInput.value = itemKey;
+            form.appendChild(itemInput);
+
+            var descriptorInput = document.createElement('input');
+            descriptorInput.type = 'text';
+            descriptorInput.name = 'descriptor';
+            descriptorInput.placeholder = 'Descriptor';
+            descriptorInput.focus();
+            form.appendChild(descriptorInput);
+
+            var descriptionInput = document.createElement('input');
+            descriptionInput.type = 'text';
+            descriptionInput.name = 'description';
+            descriptionInput.placeholder = 'Description';
+            form.appendChild(descriptionInput);
+
+            var thirdDataInput = document.createElement('input');
+            thirdDataInput.type = 'text';
+            thirdDataInput.name = 'third_data';
+            thirdDataInput.placeholder = 'Third Data';
+            form.appendChild(thirdDataInput);
+
+            var submitButton = document.createElement('button');
+            submitButton.type = 'submit';
+            submitButton.innerText = 'Submit';
+            form.appendChild(submitButton);
+
+            // Event listener for form submission
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                // Gather data from form fields
+                var formData = new FormData(form);
+
+                // Prepare the data to be sent
+                var data = {};
+                formData.forEach((value, key) => {
+                    data[key] = value;
+                });
+
+                // Make a POST request to the endpoint
+                fetch(endpoint + 'collect/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Token ' + token // Include the user token in the Authorization header
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response as needed
+                    console.log('Collect response:', data);
+                    // Optionally, close the popup menu after successful submission
+                    popupMenu.remove();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+
+            // Append the form to the popup menu
+            popupMenu.appendChild(form);
+
+            // Append the popup menu to the body
+            document.body.appendChild(popupMenu);
+        }
+
+
+        // Event listener for "Get Item Choices" button
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listener to all treasure buttons
+            var treasureButtons = document.querySelectorAll('.treasure-button');
+            treasureButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Handle treasure button click
+                    var itemKey = this.dataset.itemKey;
+                    // Create and display the popup menu with the associated item key
+                    createPopupMenu(itemKey);
+                });
+            });
+
+                        // Event listener for close button
+            document.getElementById('popupCloseBtn').addEventListener('click', function() {
+                // Hide the popup menu when close button is clicked
+                document.getElementById('popupMenu').style.display = 'none';
+            });
+        });
+
+        // Function to create and display the popup menu dynamically
+        function createPopupMenu(itemKey) {
+            // Show the popup menu
+            document.getElementById('popupMenu').style.display = 'block';
+
+            // Populate hidden input field with item key
+            document.getElementById('itemInput').value = itemKey;
+
+            // Handle form submission for the popup menu
+            document.getElementById('popupForm').addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // Gather data from form fields
+                var formData = new FormData(this);
+
+                // Prepare the data to be sent
+                var data = {};
+                formData.forEach((value, key) => {
+                    data[key] = value;
+                });
+
+                // Make a POST request to the endpoint
+                fetch(endpoint + 'collect/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Token ' + token // Include the user token in the Authorization header
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response as needed
+                    console.log('Collect response:', data);
+                    // Optionally, hide the popup menu after successful submission
+                    document.getElementById('popupMenu').style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        }
+
+
+        // Function to make GET request to friends endpoint and display popup/modal for treasures
+        function getFriendsAndDisplayTreasurePopup(treasureId) { // Updated parameter
+            var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/friends/';
+            makeGetRequest(url, function(data) {
+                // Display popup/modal with friends as radio buttons for treasures
+                displayTreasureFriendsPopup(data, treasureId); // Updated function call
+            });
+        }
+
+        // Function to display popup/modal with friends as radio buttons for treasures
+        function displayTreasureFriendsPopup(friends, treasureId) {
+            // Access the existing popup container defined in your HTML
+            var popupContainer = document.getElementById('giftTreasurePopup');
+
+            // Display the popup
+            popupContainer.style.display = 'block';
+
+            // Set the treasure ID in the form input
+            var treasureIdInput = document.getElementById('treasureIdInput');
+            treasureIdInput.value = treasureId;
+
+            var friendsRadioContainer = document.getElementById('giftFriendsRadio');
+            friendsRadioContainer.innerHTML = '';
+            friendsRadioContainer.focus();
+
+            // Create radio buttons for each friend and append them to the container
+            friends.forEach(friend => {
+                var radioButton = document.createElement('input');
+                var radioLabel = document.createElement('label');
+                radioButton.type = 'radio';
+                radioButton.name = 'giftFriend';
+                radioButton.value = friend.friend; // Assuming friend object has an 'id' property
+
+                // Append the radio button to the label
+                radioLabel.appendChild(radioButton);
+                // Add the label text
+                radioLabel.appendChild(document.createTextNode(friend.nickname));
+
+                // Add CSS class to label for styling
+                radioLabel.classList.add('radio-label');
+
+                // Append the label with the radio button to the container
+                friendsRadioContainer.appendChild(radioLabel);
+
+                // Append a line break after each label-radio button pair
+                friendsRadioContainer.appendChild(document.createElement('br'));
+            });
+            // Set focus to the message input field
+            var messageInput = document.getElementById('messageInput');
+
+
+            // Attach form submission handler to the form
+            document.getElementById('popupGiftForm').addEventListener('submit', handleFormSubmission);
+        }
+
+        // Function to handle form submission
+        function handleFormSubmission(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Get form data
+            var formData = new FormData(event.target);
+
+            // Extract data from form
+            var selectedFriendId = formData.get('giftFriend');
+            var message = formData.get('message');
+            var treasureId = formData.get('treasureId');
+
+            // Send gift
+            sendGift(selectedFriendId, message, treasureId);
+
+            // Hide the popup after sending the gift
+            var popupContainer = document.getElementById('giftTreasurePopup');
+            popupContainer.style.display = 'none';
+        }
+
+
+        // Function to send a gift request
+        function sendGift(selectedFriendId, message, treasureId) {
+            // Log a message indicating that the function is called
+            console.log('Sending gift...');
+
+            // Construct the data object with the required keys and values
+            var data = {
+                message: message,
+                treasure: treasureId,
+                recipient: selectedFriendId
+            };
+
+            // Make the POST request to the server endpoint with the data in the request body
+            fetch(userEndpoint + 'send-gift-request/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Token ' + token
+                },
+                body: JSON.stringify(data) // Convert the data object to a JSON string
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle the response data
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        }
+
+
+
+        // Wrap the event listener setup inside the DOMContentLoaded event listener
+        document.addEventListener('DOMContentLoaded', function() {
+            // Event listener for "View Treasures" button
+            document.getElementById('viewTreasuresBtn').addEventListener('click', function() {
+                var url = userEndpoint + 'treasures/';
+                makeGetRequest(url, function(data) {
+                    // Display the result using custom formatting function
+                    formatTreasures(data);
+                });
+                updateButtonText('viewTreasuresBtn', url);
+                if (previousButtonId && previousButtonId !== 'viewTreasuresBtn') {
+                    document.getElementById(previousButtonId).innerText = previousButtonId;
+                }
+                previousButtonId = 'viewTreasuresBtn';
+            });
+
+
+
+            // Event listener for the close button in the gift popup menu
+            document.getElementById('popupGiftCloseBtn').addEventListener('click', function() {
+                var popupContainer = document.getElementById('giftTreasurePopup');
+                popupContainer.style.display = 'none'; // Hide the popup menu
+            });
+
+            // Event listener for dynamically created "Gift" buttons using event delegation
+            document.addEventListener('click', function(event) {
+                if (event.target.classList.contains('gift-button')) {
+                    var treasureId = event.target.getAttribute('data-treasure-id');
+                    getFriendsAndDisplayTreasurePopup(treasureId);
+                }
+            });
+        });
+
+
+
+
+
+
+
+
+        // Event listener for "User Profile" button
+        document.getElementById('userProfileBtn').addEventListener('click', function() {
+            var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/profile/';
+            makeGetRequest(url, function(data) {
+                // Display the result
+                displayResultEdit('result', data);
+            });
+        });
+
+        // Event listener for "User Inbox" button
+        document.getElementById('userInboxBtn').addEventListener('click', function() {
+            var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/inbox/items/';
+            makeGetRequest(url, function(data) {
+                // Display the result
+                displayResultBottom('result', data);
+            });
+        });
+
+
+                // Event listener for "Friend Profile" button
+        document.getElementById('userFriendProfilesBtn').addEventListener('click', function() {
+            var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/friends/';
+            makeGetRequest(url, function(data) {
+                // Display the result
+                displayResultEdit('result', data);
+            });
+        });
+
+        // Event listener for "User Summary" button
+        document.getElementById('userSummaryBtn').addEventListener('click', function() {
+            var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/summary';
+            makeGetRequest(url, function(data) {
+                // Display the result
+                displayResultSummary('result', data);
+            });
+        });
+
+
+        function displayResultSummary(resultContainerId, data) {
+            var resultContainer = document.getElementById(resultContainerId);
+            resultContainer.innerHTML = ''; // Clear previous results
+
+            // Check if data is an array
+            if (Array.isArray(data)) {
+                data.forEach(user => {
+                    // Create a div for each user
+                    var userDiv = document.createElement('div');
+
+                    // Iterate through each key-value pair in the user object
+                    Object.keys(user).forEach(key => {
+                        var paragraph = document.createElement('p');
+                        paragraph.innerHTML = `<strong>${key}:</strong> ${formatValue(user[key])}`;
+                        paragraph.className = 'summary-text-container';
+                        userDiv.appendChild(paragraph);
+                    });
+
+                    // Append the user div to the result container
+                    resultContainer.appendChild(userDiv);
+                });
+            }
+        }
+
+        function formatValue(value) {
+            // If value is an array, format each item in the array
+            if (Array.isArray(value)) {
+                return value.map(item => {
+                    return formatValue(item);
+                }).join('<br>');
+            }
+            // If value is an object, format its properties
+            else if (typeof value === 'object' && value !== null) {
+                return Object.keys(value).map(key => {
+                    return `<strong>${key}:</strong> ${formatValue(value[key])}`;
+                }).join('<br>');
+            }
+            // If value is a date, format it accordingly
+            else if (value instanceof Date) {
+                return value.toLocaleString();
+            }
+            // Otherwise, return the value as is
+            else {
+                return value;
+            }
+        }
+
+
+        function formatValue(value) {
+            // If value is an array, format each item in the array
+            if (Array.isArray(value)) {
+                return value.map(item => {
+                    return formatValue(item);
+                }).join('<br>');
+            }
+            // If value is an object, format its properties
+            else if (typeof value === 'object' && value !== null) {
+                return Object.keys(value).map(key => {
+                    return `<strong>${key}:</strong> ${formatValue(value[key])}`;
+                }).join('<br>');
+            }
+            // If value is a date, format it accordingly
+            else if (value instanceof Date) {
+                return value.toLocaleString();
+            }
+            // Otherwise, return the value as is
+            else {
+                return value;
+            }
+        }
+
+
+        function displayResultPerformance(resultContainerId, data) {
+            var resultContainer = document.getElementById(resultContainerId);
+            resultContainer.innerHTML = ''; // Clear previous results
+
+            // Check if data is a string, then parse it to JSON
+            if (typeof data === 'string') {
+                try {
+                    data = JSON.parse(data);
+                } catch (error) {
+                    console.error('Error parsing JSON data:', error);
+                    return;
+                }
+            }
+
+            // Check if data has the 'detail' key
+            if (data && Array.isArray(data.detail)) {
+                data.detail.forEach(detail => {
+                    // Create a div for each detail item with a soft semi-transparent gray border and padding
+                    var detailDiv = document.createElement('div');
+                    detailDiv.style.border = '1px solid rgba(0, 0, 0, 0.2)'; // Soft semi-transparent gray border
+                    detailDiv.style.padding = '10px'; // Padding
+                    detailDiv.classList.add('result');
+
+                    // Iterate through each key-value pair in the detail object
+                    Object.keys(detail).forEach(key => {
+                        var paragraph = document.createElement('p');
+                        paragraph.innerHTML = `<strong>${key.replace(/_/g, ' ')}:</strong> ${formatValue(detail[key])}`;
+                        detailDiv.appendChild(paragraph);
+                    });
+
+                    // Append the detail div to the result container
+                    resultContainer.appendChild(detailDiv);
+                });
+            }
+        }
+
+
+        // Function to display result in the specified result container (for the second display box)
+        function displayResultBottom(resultContainerId, data) {
+            var resultContainer = document.getElementById(resultContainerId);
+            resultContainer.innerHTML = ''; // Clear previous results
+
+            // Check if data is an array
+            if (Array.isArray(data)) {
+                data.forEach(item => {
+                    // Create a div for each item in the array
+                    var itemDiv = document.createElement('div');
+
+                    // Check if the item is an object
+                    if (typeof item === 'object' && !Array.isArray(item)) {
+                        Object.keys(item).forEach(key => {
+                            var paragraph = document.createElement('p');
+                            paragraph.innerHTML = `<strong>${key}:</strong> ${item[key]}`;
+                            itemDiv.appendChild(paragraph);
+                        });
+
+                        // Create "Open" button
+                        var openButton = document.createElement('button');
+                        openButton.innerText = 'Open';
+                        openButton.dataset.itemId = item.id;
+
+                        // Add event listener to handle button click
+                        openButton.addEventListener('click', function() {
+                            openInboxItem(this.dataset.itemId, this.parentElement);
+                        });
+
+                        // Append the button to the item div
+                        itemDiv.appendChild(openButton);
+                    } else {
+                        itemDiv.innerText = item;
+                    }
+
+                    resultContainer.appendChild(itemDiv);
+                });
+            } else {
+                // If data is not an array, check if it's a single object
+                if (typeof data === 'object' && !Array.isArray(data)) {
+                    // Create a div for the single object
+                    var div = document.createElement('div');
+                    div.classList.add('result-bottom');
+
+                    // Display each key-value pair
+                    Object.keys(data).forEach(key => {
+                        var paragraph = document.createElement('p');
+                        paragraph.innerHTML = `<strong>${key}:</strong> ${data[key]}`;
+                        div.appendChild(paragraph);
+                    });
+
+                    // Create "Edit" button instead of "Open" button
+                    var editButton = document.createElement('button');
+                    editButton.innerText = 'Edit';
+
+                    // Add event listener to handle button click
+                    editButton.addEventListener('click', function() {
+                        // Handle editing the single object
+                        editObject(data);
+                    });
+
+                    // Append the button to the item div
+                    div.appendChild(editButton);
+
+                    // Append the div to the result container
+                    resultContainer.appendChild(div);
+                } else {
+                    // If data is neither an array nor an object, display as is
+                    var div = document.createElement('div');
+                    div.classList.add('result-bottom');
+                    div.innerText = JSON.stringify(data);
+                    resultContainer.appendChild(div);
+                }
+            }
+        }
+
+
+        // Function to open an inbox item
+        function openInboxItem(itemId, parentElement) {
+            // Check if an inbox item is already open
+            if (document.querySelector('.inbox-item-open')) {
+                alert('Please close the currently open inbox item before opening another one.');
+                return; // Exit the function if an item is already open
+            }
+
+            var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/inbox/item/' + itemId;
+            makeGetRequest(url, function(data) {
+                // Create a div to display the inbox item
+                var inboxItemDiv = document.createElement('div');
+                inboxItemDiv.classList.add('result-bottom');
+                inboxItemDiv.classList.add('inbox-item-open'); // Add a class to indicate that the item is open
+
+                // Create a close button
+                var closeButton = document.createElement('button');
+                closeButton.innerText = 'Close';
+                closeButton.classList.add('inbox-item-close');
+                closeButton.addEventListener('click', function() {
+                    // Remove the inbox item when the close button is clicked
+                    inboxItemDiv.remove();
+                    // Remove the class indicating that an item is open
+                    document.querySelector('.inbox-item-open').classList.remove('inbox-item-open');
+                });
+
+                // Create accept and reject buttons based on special_type
+                if (data.message.content_object.special_type === 'friend request' ||
+                    data.message.content_object.special_type === 'gift request') {
+                    var acceptButton = document.createElement('button');
+                    acceptButton.innerText = 'Accept';
+                    acceptButton.addEventListener('click', function() {
+                        // Handle accepting the request
+                        handleRequest(data.message.content_object.id, true);
+                    });
+
+                    var rejectButton = document.createElement('button');
+                    rejectButton.innerText = 'Reject';
+                    rejectButton.addEventListener('click', function() {
+                        // Handle rejecting the request
+                        handleRequest(data.message.content_object.id, false);
+                    });
+
+                    // Append accept and reject buttons to the inbox item div
+                    inboxItemDiv.appendChild(acceptButton);
+                    inboxItemDiv.appendChild(rejectButton);
+                }
+
+
+                // Create a div to display the formatted JSON data
+                var jsonDataDiv = document.createElement('div');
+                jsonDataDiv.classList.add('json-data');
+
+                // Set the item header based on the special_type value
+                var itemHeader = '';
+                if (data.message.content_object.special_type == 'friend request') {
+                    itemHeader = 'Friend Request';
+                } else if (data.message.content_object.special_type == 'gift request') {
+                    itemHeader = 'Gift Request';
+                } else {
+                    itemHeader = 'Message';
+                }
+
+                // Create a header element for the item
+                var header = document.createElement('h2');
+                header.innerText = itemHeader;
+                // Append the header to the inbox item div
+                inboxItemDiv.appendChild(header);
+
+                // Iterate over the keys and values of the data object
+                Object.keys(data).forEach(key => {
+                    var paragraph = document.createElement('p');
+                    var boldKey = document.createElement('strong');
+                    boldKey.innerText = key + ': ';
+                    paragraph.appendChild(boldKey);
+
+                    // Check if the value is an object (nested data)
+                    if (typeof data[key] === 'object') {
+                        // Format nested object recursively
+                        formatNestedObjectBottom(paragraph, data[key]);
+                    } else {
+                        // Append the value to the paragraph
+                        paragraph.appendChild(document.createTextNode(data[key]));
+                    }
+
+                    // Append the formatted key-value pair to the JSON data div
+                    jsonDataDiv.appendChild(paragraph);
+                });
+
+                // Display the formatted JSON data
+                inboxItemDiv.appendChild(jsonDataDiv);
+                // Append the close button to the inbox item div
+                inboxItemDiv.appendChild(closeButton);
+
+                // Insert the inbox item below the parent element
+                parentElement.parentNode.insertBefore(inboxItemDiv, parentElement.nextSibling);
+            });
+        }
+
+        // Function to handle accepting/rejecting a request
+        function handleRequest(itemId, isAccepted) {
+            var url = `https://climatetwin-lzyyd.ondigitalocean.app/users/inbox/accept-gift-request/${itemId}/`;
+            var requestData = {
+                is_accepted: isAccepted,
+                is_rejected: !isAccepted
+            };
+
+
+            fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Token ' + token
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle success response
+                console.log('Request handled successfully:', data);
+            })
+            .catch(error => {
+                // Handle error
+                console.error('Error handling request:', error);
+            });
+        }
+
+
+        function formatNestedObjectBottom(parentElement, obj) {
+            Object.keys(obj).forEach(key => {
+                var paragraph = document.createElement('p');
+                var boldKey = document.createElement('strong');
+                boldKey.innerText = key + ': ';
+                paragraph.appendChild(boldKey);
+
+                if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
+                    // If the value is an object, format it recursively
+                    formatNestedObjectBottom(paragraph, obj[key]);
+                } else {
+                    // Append the value to the paragraph
+                    paragraph.appendChild(document.createTextNode(obj[key]));
+                }
+
+                parentElement.appendChild(paragraph);
+            });
+        }
+
+
+        function displayResultEdit(resultContainerId, data) {
+            var resultContainer = document.getElementById(resultContainerId);
+            resultContainer.innerHTML = ''; // Clear previous results
+
+            // Check if data is an array
+            if (Array.isArray(data)) {
+                data.forEach(item => {
+                    // Create a div for each item in the array
+                    var itemDiv = document.createElement('div');
+
+                    // Check if the item is an object
+                    if (typeof item === 'object' && !Array.isArray(item)) {
+                        Object.keys(item).forEach(key => {
+                            var paragraph = document.createElement('p');
+                            paragraph.innerHTML = `<strong>${key}:</strong> ${item[key]}`;
+                            itemDiv.appendChild(paragraph);
+                        });
+                    } else {
+                        itemDiv.innerText = item;
+                    }
+
+                    // Create "Edit" button for every item
+                    var editButton = document.createElement('button');
+                    editButton.innerText = 'Edit';
+
+                    // Add event listener to handle button click
+                    editButton.addEventListener('click', function() {
+                        editObject(item);
+                    });
+
+                    // Append the "Edit" button to the item div
+                    //itemDiv.appendChild(editButton);
+
+                    resultContainer.appendChild(itemDiv);
+                });
+            } else {
+                // If data is not an array, treat it as a single item and display accordingly
+                var div = document.createElement('div');
+                div.classList.add('result-bottom');
+
+                // Display each key-value pair
+                Object.keys(data).forEach(key => {
+                    var paragraph = document.createElement('p');
+                    paragraph.innerHTML = `<strong>${key}:</strong> ${data[key]}`;
+                    div.appendChild(paragraph);
+                });
+
+                // Create "Edit" button for the single item
+                var editButton = document.createElement('button');
+                editButton.innerText = 'Edit';
+
+                // Add event listener to handle button click
+                editButton.addEventListener('click', function() {
+                    editObject(data);
+                });
+
+                // Append the "Edit" button to the div
+                div.appendChild(editButton);
+
+                resultContainer.appendChild(div);
+            }
+        }
+
+       // Function to update button text based on endpoint
+        function updateButtonText(buttonId, endpoint) {
+            var button = document.getElementById(buttonId);
+            // Store the original text only if it's not already stored
+            if (!button.dataset.originalText) {
+                button.dataset.originalText = button.innerText;
+            }
+            button.innerText = endpoint.replace("https://climatetwin-lzyyd.ondigitalocean.app", "");
+            // Remove any inline font size set previously
+            button.style.fontSize = "";
+        }
+
+        // Keep track of the previously clicked button ID
+        var previousButtonId = null;
+
+
+        // Event listener for buttons
+        ['userPerfDataBtn', 'itemChoicesBtn', 'homeWeatherBtn', 'currentlyVisitingBtn', 'viewTreasuresBtn', 'currentlyNearbyBtn', 'currentlyExploringBtn', 'userSettingsBtn', 'userProfileBtn', 'userInboxBtn', 'userFriendProfilesBtn', 'userSummaryBtn'].forEach(function(buttonId) {
+            var button = document.getElementById(buttonId);
+            button.addEventListener('click', function() {
+                var originalText = button.dataset.originalText; // Retrieve the original text from the data attribute
+                var endpoint = button.innerText;
+                updateButtonText(buttonId, endpoint);
+                // Revert text of previous button, if any
+                if (previousButtonId && previousButtonId !== buttonId) {
+                    document.getElementById(previousButtonId).innerText = document.getElementById(previousButtonId).dataset.originalText;
+                }
+                previousButtonId = buttonId;
+            });
+        });
+
+
+
+
+
+        // Event listener for "User Profile" button
+        document.getElementById('userProfileBtn').addEventListener('click', function() {
+            var endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/users/profile/';
+            updateButtonText('userProfileBtn', endpoint);
+            // Revert text of previous button, if any
+            if (previousButtonId && previousButtonId !== 'userProfileBtn') {
+                document.getElementById(previousButtonId).innerText = previousButtonId;
+            }
+            previousButtonId = 'userProfileBtn';
+        });
+
+        // Event listener for "User Inbox" button
+        document.getElementById('userInboxBtn').addEventListener('click', function() {
+            var endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/users/inbox/items/';
+            updateButtonText('userInboxBtn', endpoint);
+            // Revert text of previous button, if any
+            if (previousButtonId && previousButtonId !== 'userInboxBtn') {
+                document.getElementById(previousButtonId).innerText = previousButtonId;
+            }
+            previousButtonId = 'userInboxBtn';
+        });
+
+        // Event listener for "Friend Profile" button
+        document.getElementById('userFriendProfilesBtn').addEventListener('click', function() {
+            var endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/users/friends/';
+            updateButtonText('userFriendProfilesBtn', endpoint);
+            // Revert text of previous button, if any
+            if (previousButtonId && previousButtonId !== 'userFriendProfilesBtn') {
+                document.getElementById(previousButtonId).innerText = previousButtonId;
+            }
+            previousButtonId = 'userFriendProfilesBtn';
+        });
+
+        // Event listener for "User Summary" button
+        document.getElementById('userSummaryBtn').addEventListener('click', function() {
+            var endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/users/summary/';
+            updateButtonText('userSummaryBtn', endpoint);
+            // Revert text of previous button, if any
+            if (previousButtonId && previousButtonId !== 'userSummaryBtn') {
+                document.getElementById(previousButtonId).innerText = previousButtonId;
+            }
+            previousButtonId = 'userSummaryBtn';
+        });
+
+                // Event listener for "Settings" button
+        document.getElementById('userSettingsBtn').addEventListener('click', function() {
+            var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/settings/';
+            makeGetRequest(url, function(data) {
+                // Display the result
+                displayResultEdit('result', data);
+            });
+            updateButtonText('userSettingsBtn', url);
+            if (previousButtonId && previousButtonId !== 'userSettingsBtn') {
+                document.getElementById(previousButtonId).innerText = previousButtonId;
+            }
+            previousButtonId = 'userSettingsBtn';
+        });
+
+        document.getElementById('currentlyExploringBtn').addEventListener('click', function() {
+            var url = endpoint + 'currently-exploring/';
+            makeGetRequest(url, function(data) {
+                displayResult('result', data);
+            });
+            updateButtonText('currentlyExploringBtn', url);
+            if (previousButtonId && previousButtonId !== 'currentlyExploringBtn') {
+                document.getElementById(previousButtonId).innerText = previousButtonId;
+            }
+            previousButtonId = 'currentlyExploringBtn';
+        });
+
+                // Event listener for "Get Currently Nearby" button
+        document.getElementById('currentlyNearbyBtn').addEventListener('click', function() {
+            var url = endpoint + 'currently-nearby/';
+            makeGetRequest(url, function(data) {
+                // Display the result
+                displayResult('result', data);
+            });
+            updateButtonText('currentlyNearbyBtn', url);
+            if (previousButtonId && previousButtonId !== 'currentlyNearbyBtn') {
+                document.getElementById(previousButtonId).innerText = previousButtonId;
+            }
+            previousButtonId = 'currentlyNearbyBtn';
+        });
+
+
+        document.getElementById('currentlyVisitingBtn').addEventListener('click', function() {
+            var url = endpoint + 'currently-visiting/';
+            makeGetRequest(url, function(data) {
+                displayResult('result', data);
+            });
+            updateButtonText('currentlyVisitingBtn', url);
+            if (previousButtonId && previousButtonId !== 'currentlyVisitingBtn') {
+                document.getElementById(previousButtonId).innerText = previousButtonId;
+            }
+            previousButtonId = 'currentlyVisitingBtn';
+        });
+
+
+        // Event listener for "Home Weather" button
+        document.getElementById('homeWeatherBtn').addEventListener('click', function() {
+            var url = endpoint + 'launchpad-data/';
+            makeGetRequest(url, function(data) {
+                displayResult('result', data);
+            });
+            updateButtonText('homeWeatherBtn', url);
+            if (previousButtonId && previousButtonId !== 'homeWeatherBtn') {
+                document.getElementById(previousButtonId).innerText = previousButtonId;
+            }
+            previousButtonId = 'homeWeatherBtn';
+        });
+
+
+
+        // Event listener for "Get Item Choices" button
+        document.getElementById('itemChoicesBtn').addEventListener('click', function() {
+            var url = endpoint + 'item-choices/';
+            makeGetRequest(url, function(data) {
+                // Check if the response contains an error message
+                if ('detail' in data) {
+                    // Display the error message
+                    displayResult('result', { error: data.detail });
+                } else {
+                    // Display the result
+                    displayResult('result', data);
+
+                    // Get the result container
+                    var resultContainer = document.getElementById('result');
+
+                    // Clear previous results
+                    resultContainer.innerHTML = '';
+
+                    // Check if 'choices' key exists in the data
+                    if ('choices' in data) {
+                        var choices = data.choices;
+
+                        // Loop through the keys of the 'choices' object
+                        Object.keys(choices).forEach(key => {
+                            // Create a div for each key
+                            var keyDiv = document.createElement('div');
+                            keyDiv.classList.add('result');
+
+                            // Create a paragraph for the key-value pair
+                            var keyParagraph = document.createElement('p');
+                            keyParagraph.innerHTML = `<strong>${key}:</strong> ${choices[key]}`;
+
+                            // Append the key paragraph to the key div
+                            keyDiv.appendChild(keyParagraph);
+
+                            // Create a treasure button for each key
+                            var treasureButton = document.createElement('button');
+                            treasureButton.innerText = 'Get Treasure';
+                            treasureButton.classList.add('treasure-button');
+
+                            // Add a data attribute to store the key
+                            treasureButton.dataset.itemKey = key;
+
+                            // Append the treasure button to the key div
+                            keyDiv.appendChild(treasureButton);
+
+                            // Append the key div to the result container
+                            resultContainer.appendChild(keyDiv);
+                        });
+
+                        // Add event listeners for treasure buttons
+                        var treasureButtons = document.querySelectorAll('.treasure-button');
+                        treasureButtons.forEach(button => {
+                            button.addEventListener('click', function() {
+                                // Handle treasure button click
+                                var itemKey = this.dataset.itemKey;
+                                // Create and display the popup menu with the associated item key
+                                createPopupMenu(itemKey);
+                            });
+                        });
+                    }
+                }
+            });
+            updateButtonText('itemChoicesBtn', url);
+            if (previousButtonId && previousButtonId !== 'itemChoicesBtn') {
+                document.getElementById(previousButtonId).innerText = previousButtonId;
+            }
+            previousButtonId = 'itemChoicesBtn';
+        });
+
+                // Event listener for "User Performance Data" button
+        document.getElementById('userPerfDataBtn').addEventListener('click', function() {
+            var url = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/performance/compare/key-data/';
+            makeGetRequest(url, function(data) {
+                // Display the result
+                displayResultPerformance('result', data);
+            });
+            updateButtonText('userPerfDataBtn', url);
+            if (previousButtonId && previousButtonId !== 'userPerfDataBtn') {
+                document.getElementById(previousButtonId).innerText = previousButtonId;
+            }
+            previousButtonId = 'userPerfDataBtn';
+        });
+
+
+
+
+    </script>
+</body>
+</html>
+
+
+
+

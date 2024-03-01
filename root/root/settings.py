@@ -10,8 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+#D:\CodingSpace\Redis\redis-cli -h 127.0.0.1 -p 6379 ping
+#celery -A root worker
+
 from pathlib import Path
 from django.core.management.utils import get_random_secret_key
+
+from decouple import config
 
 import dj_database_url
 import os
@@ -37,13 +42,15 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', get_random_secret_key())
 
 #DEBUG = True
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
+#DEBUG = config("DEBUG", default=0)
 
 #ALLOWED_HOSTS = ['climatetwin-lzyyd.ondigitalocean.app']
 #ALLOWED_HOSTS = []
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 # Application definition
 
-CELERY_BROKER_URL = 'redis://10.108.0.3:6379/0'
+# Digital Ocean droplet IP:
+#CELERY_BROKER_URL = 'redis://10.108.0.3:6379/0'
 
 
 INSTALLED_APPS = [
@@ -52,7 +59,10 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'daphne',
     'django.contrib.staticfiles',
+    'channels',
+    'django_celery_results',
     'users',
     'climatevisitor',
     'rest_framework',
@@ -67,6 +77,76 @@ INSTALLED_APPS = [
     'templated_email',
     'drf_yasg',
 ]
+
+
+ASGI_APPLICATION = 'root.asgi.application'
+
+# save Celery task results in Django's database (local):
+
+#CELERY_RESULT_BACKEND = "django-db"
+
+# This configures Redis as the datastore between Django + Celery
+#CELERY_BROKER_URL = config('CELERY_BROKER_REDIS_URL', default='redis://localhost:6379')
+#local:
+#CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
+
+
+
+CELERY_BROKER_URL = f'{REDIS_URL}/0'
+CELERY_RESULT_BACKEND = f'{REDIS_URL}/1'
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+#CELERY_TIMEZONE = TIME_ZONE
+
+# if you out to use os.environ the config is:
+# CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_REDIS_URL', 'redis://localhost:6379')
+
+ 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [os.environ.get('REDIS_HOST', 'localhost')],
+            # local
+            # 'hosts': [('127.0.0.1', 6379)],
+        },
+    },
+}
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 300
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
+
+
+
+import logging
+
+
+# settings.py
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',  
+            'class': 'logging.StreamHandler',  
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'], 
+            'level': 'DEBUG',  
+            'propagate': True,
+        },
+    },
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

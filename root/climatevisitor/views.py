@@ -4,6 +4,7 @@ from .climatetwinclasses.ClimateEncounterClass import ClimateEncounter
 from .climatetwinclasses.ClimateObjectClass import ClimateObject
 from .climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
 from .climatetwinclasses.OpenMapAPIClass import OpenMapAPI
+from asgiref.sync import sync_to_async
 from django.shortcuts import render
 from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
@@ -18,6 +19,7 @@ from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from users.models import Treasure, UserVisit
 
+
 # Create your views here.
 @swagger_auto_schema(operation_id='index')
 @throttle_classes([AnonRateThrottle, UserRateThrottle])
@@ -31,6 +33,11 @@ def endpoints(request):
     return render(request, 'endpoints.html', {})
 
 
+
+@swagger_auto_schema(operation_id='demo')
+#@throttle_classes([AnonRateThrottle, UserRateThrottle])
+def demo(request):
+    return render(request, 'demo.html', {})
 
 
 @swagger_auto_schema(method='post', order=1, operation_id='createGo', operation_dscription="Main feature of app", request_body=openapi.Schema(

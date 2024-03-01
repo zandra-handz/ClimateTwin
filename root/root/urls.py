@@ -22,6 +22,10 @@ from rest_framework_swagger.views import get_swagger_view
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.auth import AuthMiddlewareStack
+from climatevisitor import routing
+
 
 #http://127.0.0.1:8000/#/activate/Nw/c1f76q-af6408c556d882b5de0aee38033ee102
 schema_view = get_schema_view((info), public=True,
@@ -29,9 +33,13 @@ schema_view = get_schema_view((info), public=True,
 
 
 urlpatterns = [
+    
     re_path(r'^doc(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),  #<-- Here
     path('doc/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),  
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'), 
+
+    path('ws/', URLRouter(routing.websocket_urlpatterns)),
+
     path('admin/', admin.site.urls),
     path('climatevisitor/', include('climatevisitor.urls')),
     
