@@ -1,8 +1,12 @@
-from climatevisitor.tasks import send_coordinate_update 
+from climatevisitor.tasks import send_coordinate_update_to_celery
 from django.conf import settings
 import geopandas as gpd
 import numpy as np 
 import requests
+
+# Added for websocket
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 
 # Actual keys are in settings.py
@@ -316,6 +320,20 @@ class ClimateTwinFinder:
         else:
             return
 
+    # Added for websocket
+
+
+    def send_coordinate_update(latitude, longitude):
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.send)(
+            'websocket',  # Channel name for the consumer
+            {
+                'type': 'update_coordinates',
+                'latitude': latitude,
+                'longitude': longitude,
+            }
+        )
+        print(f"Sending update for coordinate pair: {latitude}, {longitude}")
 
     def search_random_coords_in_a_country(self):
         base_url = "https://api.openweathermap.org/data/2.5/find"
@@ -331,8 +349,9 @@ class ClimateTwinFinder:
 
                 if celery_fail_count < 3:
                     try:
-                        # Send to celery task
-                        send_coordinate_update.delay(latitude, longitude)
+                        # Send coordinates update via WebSocket
+                        #self.send_coordinate_update(latitude, longitude)
+                        send_coordinate_update_to_celery(latitude, longitude)
                     except Exception as e:
                         print(f"Error sending to Celery task: {e}")
                         celery_fail_count += 1
@@ -360,22 +379,22 @@ class ClimateTwinFinder:
                             'longitude': weather['longitude']
                         }
                         self.process_new_entry(new_entry)
+
+                        # Check if we have found the desired number of places
+                        if num_places <= len(self.similar_places['name']):
+                            break
+
                     else:
                         if temperature_difference > 14:
                             high_variance += 1
                             self.high_variance_count += 1
                             print(f"High variance: {high_variance}")
                             if high_variance > 2:
-
                                 # Reset high_variance and break to get new coordinates
                                 high_variance = 0
                                 break
                 else:
                     print("missing weather data")
-
-                # Check if we have found the desired number of places
-                if num_places <= len(self.similar_places['name']):
-                    break
 
         return True
 
