@@ -15,7 +15,7 @@ from climatevisitor.climatetwinclasses.OpenMapAPIClass import OpenMapAPI
 
 @shared_task
 def run_climate_twin_algorithms_task(user_id, user_address):
-    print("run_climate_twin_algorithms_task initiated")
+    print(f"run_climate_twin_algorithms_task initiated with args: {user_id}, {user_address}")
 
     try:
         user_instance = BadRainbowzUser.objects.get(pk=user_id)
@@ -25,7 +25,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
     # Your task logic here, using the retrieved user object
     
     climate_places = ClimateTwinFinder(user_address)
-
+    print("Twin Location found.")
 
     if climate_places.home_climate:
         address = list(climate_places.home_climate.keys())[0]
@@ -91,8 +91,13 @@ def run_climate_twin_algorithms_task(user_id, user_address):
                 discovery_location_instance = serializer.save(
                     user=user_instance  
                 )
+                print("Success: Discovery Location saved.")
             else:
                 # Handle invalid data
-                pass
+                print("Error: Discovery Location could not be saved.")
+
+        return "Success: Search completed!"
+                
+                
 
     # You can return any necessary data, but in this case, you might not need to return anything
