@@ -3,6 +3,7 @@ from . import serializers
 from .climatetwinclasses.ClimateEncounterClass import ClimateEncounter
 from .climatetwinclasses.ClimateObjectClass import ClimateObject
 from .climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
+from .tasks import run_climate_twin_algorithms_task
 from .climatetwinclasses.OpenMapAPIClass import OpenMapAPI
 from asgiref.sync import sync_to_async
 from django.shortcuts import render
@@ -18,6 +19,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from users.models import Treasure, UserVisit
+
 
 
 # Create your views here.
@@ -72,7 +74,28 @@ def go(request):
     **Note**: Makes two Google Maps calls per POST. User limit of two POSTs per day.
 
     """
+    if request.method == 'POST':
+        user = request.user  # Assuming the user is authenticated
+        user_address = request.data.get('address', None)
 
+        if not user_address:
+            return Response({'error': 'Address is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if user has hit daily limit
+        if user and not (user.is_staff or user.is_superuser): 
+            today = timezone.now().date()
+            daily_count = models.ClimateTwinDiscoveryLocation.objects.filter(user=user, created_on__date=today).count()
+            if daily_count >= 3:
+                return Response({'error': 'You have reached the daily limit of visits.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Pass user instance to Celery task
+        run_climate_twin_algorithms_task.delay(user, user_address)
+
+        return Response({'detail': 'Success! A new search has started.'}, status=status.HTTP_200_OK)
+
+    return Response({'detail': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    '''
     if request.method == 'POST':
         user = request.user
         user_address = request.data.get('address', None)
@@ -189,6 +212,8 @@ def go(request):
             return Response({'error': 'error'}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response({'detail': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+'''
 
 
 class HomeLocationsView(generics.ListAPIView):
