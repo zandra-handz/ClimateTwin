@@ -3,7 +3,11 @@ from __future__ import absolute_import, unicode_literals
 import os
 from celery import Celery
 from django.conf import settings
-import ssl
+import logging
+
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'root.settings')
 

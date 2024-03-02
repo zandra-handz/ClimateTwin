@@ -94,7 +94,7 @@ def go(request):
         task = run_climate_twin_algorithms_task(user.id, user_address)
 
         # Return a response indicating that the task has started
-        return Response({'detail': 'Success! A new search has started.', 'task_id': task.id}, status=status.HTTP_200_OK)
+        return Response({'detail': 'Success!'}, status=status.HTTP_200_OK) #, 'task_id': task.id}, status=status.HTTP_200_OK)
 
     return Response({'detail': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
