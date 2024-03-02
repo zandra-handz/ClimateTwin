@@ -1,5 +1,6 @@
 from . import models
 from . import serializers
+from celery.result import AsyncResult
 from .climatetwinclasses.ClimateEncounterClass import ClimateEncounter
 from .climatetwinclasses.ClimateObjectClass import ClimateObject
 from .climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
@@ -74,14 +75,14 @@ def go(request):
     **Note**: Makes two Google Maps calls per POST. User limit of two POSTs per day.
 
     """
+
     if request.method == 'POST':
-        user = request.user  # Assuming the user is authenticated
+        user = request.user
         user_address = request.data.get('address', None)
 
         if not user_address:
             return Response({'error': 'Address is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Check if user has hit daily limit
         if user and not (user.is_staff or user.is_superuser): 
             today = timezone.now().date()
             daily_count = models.ClimateTwinDiscoveryLocation.objects.filter(user=user, created_on__date=today).count()
@@ -89,11 +90,13 @@ def go(request):
                 return Response({'error': 'You have reached the daily limit of visits.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Pass user instance to Celery task
-        run_climate_twin_algorithms_task.delay(user, user_address)
+        task = run_climate_twin_algorithms_task.delay(user.id, user_address)
 
-        return Response({'detail': 'Success! A new search has started.'}, status=status.HTTP_200_OK)
+        # Return a response indicating that the task has started
+        return Response({'detail': 'Success! A new search has started.', 'task_id': task.id}, status=status.HTTP_200_OK)
 
     return Response({'detail': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 
     '''
     if request.method == 'POST':
