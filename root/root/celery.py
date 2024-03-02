@@ -2,9 +2,22 @@
 from __future__ import absolute_import, unicode_literals
 import os
 from celery import Celery
-from ssl import CERT_NONE
+from django.conf import settings
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'root.settings')
+
+app = Celery('root')
+
+# Use the REDIS_URL from Django settings for the broker and backend
+app.conf.broker_url = settings.REDIS_URL
+app.conf.result_backend = settings.REDIS_URL
+
+# Load settings from Django settings file
+app.config_from_object('django.conf:settings', namespace='CELERY')
+
+# Autodiscover tasks
+app.autodiscover_tasks()
+
 
 '''
 local
@@ -17,7 +30,7 @@ app.autodiscover_tasks()
 digital ocean  
 app = Celery("yourapp")
 app.conf.broker_url = os.environ.get("REDIS_URL", "redis://localhost:6379") 
-'''
+
 
 
 # Stackoverflow 
@@ -35,3 +48,4 @@ app.autodiscover_tasks()
 def debug_task(self):
     print(f'Request: {self.request!r}')
 # End stackoverflow
+'''
