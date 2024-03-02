@@ -5,7 +5,7 @@ from celery.result import AsyncResult
 from .climatetwinclasses.ClimateEncounterClass import ClimateEncounter
 from .climatetwinclasses.ClimateObjectClass import ClimateObject
 from .climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
-from .algorithms_task import run_climate_twin_algorithms_task
+from .tasks.algorithms_task import run_climate_twin_algorithms_task
 from .climatetwinclasses.OpenMapAPIClass import OpenMapAPI
 from asgiref.sync import sync_to_async
 from django.shortcuts import render
@@ -20,7 +20,7 @@ from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
-from users.models import Treasure, UserVisit
+from users.models import Treasure
 
 
 
@@ -94,7 +94,7 @@ def go(request):
         task = run_climate_twin_algorithms_task(user.id, user_address)
 
         # Return a response indicating that the task has started
-        return Response({'detail': 'Success!'}, status=status.HTTP_200_OK) #, 'task_id': task.id}, status=status.HTTP_200_OK)
+        return Response({'detail': 'Success! Twin Location found.'}, status=status.HTTP_200_OK) #, 'task_id': task.id}, status=status.HTTP_200_OK)
 
     return Response({'detail': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 

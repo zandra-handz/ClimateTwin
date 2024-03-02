@@ -1,4 +1,4 @@
-from climatevisitor.tasks import send_coordinate_update_to_celery
+from climatevisitor.tasks.tasks import send_coordinate_update_to_celery
 from django.conf import settings
 import geopandas as gpd
 import numpy as np 
