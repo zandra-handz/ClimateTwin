@@ -79,11 +79,24 @@ INSTALLED_APPS = [
 ]
 
 
+# Internationalization
+# https://docs.djangoproject.com/en/5.0/topics/i18n/
+
+LANGUAGE_CODE = 'en-us'
+
+TIME_ZONE = 'UTC'
+
+USE_I18N = True
+
+USE_TZ = True
+
+
+
 ASGI_APPLICATION = 'root.asgi.application'
 
 # save Celery task results in Django's database (local):
 
-#CELERY_RESULT_BACKEND = "django-db"
+
 
 # This configures Redis as the datastore between Django + Celery
 #CELERY_BROKER_URL = config('CELERY_BROKER_REDIS_URL', default='redis://localhost:6379')
@@ -97,6 +110,8 @@ REDIS_URL_WITH_CERT_OPTION = f'{REDIS_URL}/0?ssl_cert_reqs=CERT_REQUIRED'
 
 # Use the modified REDIS_URL for CELERY_BROKER_URL and CELERY_RESULT_BACKEND
 CELERY_BROKER_URL = REDIS_URL_WITH_CERT_OPTION
+
+#CELERY_RESULT_BACKEND = "django-db"
 CELERY_RESULT_BACKEND = REDIS_URL_WITH_CERT_OPTION
 
 #CELERY_BROKER_URL = f'{REDIS_URL}/0'
@@ -106,7 +121,7 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-#CELERY_TIMEZONE = TIME_ZONE
+CELERY_TIMEZONE = TIME_ZONE
 
 # if you out to use os.environ the config is:
 # CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_REDIS_URL', 'redis://localhost:6379')
@@ -333,19 +348,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-
-
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.0/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
