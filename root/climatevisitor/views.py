@@ -3,7 +3,7 @@ from . import serializers
 from .climatetwinclasses.ClimateEncounterClass import ClimateEncounter
 from .climatetwinclasses.ClimateObjectClass import ClimateObject
 from .climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
-from .tasks import run_climate_twin_algorithms_task
+from .algorithms_task import run_climate_twin_algorithms_task
 from .climatetwinclasses.OpenMapAPIClass import OpenMapAPI
 from asgiref.sync import sync_to_async
 from django.shortcuts import render
