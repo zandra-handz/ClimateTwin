@@ -17,6 +17,8 @@ app = Celery(
 
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
+app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
+app.autodiscover_tasks(lambda: settings.INSTALLED_APPS, related_name='algorithms_task')
 
 '''
 # Use the REDIS_URL from Django settings for the broker and backend
