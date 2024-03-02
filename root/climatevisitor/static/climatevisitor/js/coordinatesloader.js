@@ -14,8 +14,8 @@ function displayLoading(resultContainerId) {
     resultContainer.appendChild(loadingDiv);
 
     // WebSocket connection
-    const socket = new WebSocket('wss://localhost:8000/ws/climate-twin/'); // Replace with your WebSocket URL
-    //const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/');
+    //const socket = new WebSocket('wss://localhost:8000/ws/climate-twin/'); // Replace with your WebSocket URL
+    const socket = new WebSocket('ws://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/');
 
     // Event listener for WebSocket open
     socket.onopen = function(event) {
