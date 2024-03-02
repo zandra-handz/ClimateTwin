@@ -1,7 +1,7 @@
 import logging
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import sync_to_async
-from .tasks import send_coordinate_update_to_celery
+from .tasks.tasks import send_coordinate_update_to_celery
 
 logger = logging.getLogger(__name__)
 
