@@ -90,9 +90,8 @@ def go(request):
             if daily_count >= 3:
                 return Response({'error': 'You have reached the daily limit of visits.'}, status=status.HTTP_400_BAD_REQUEST)
 
-
-        user_data = BadRainbowzUserSerializer(user).data
-        task = run_climate_twin_algorithms_task(user_data, user_address)
+ 
+        task = run_climate_twin_algorithms_task(user.id, user_address)
 
         # Return a response indicating that the task has started
         return Response({'detail': 'Success! A new search has started.', 'task_id': task.id}, status=status.HTTP_200_OK)

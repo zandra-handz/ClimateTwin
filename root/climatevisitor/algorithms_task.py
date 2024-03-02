@@ -8,24 +8,24 @@ from climatevisitor.climatetwinclasses.ClimateObjectClass import ClimateObject
 from climatevisitor.climatetwinclasses.ClimateEncounterClass import ClimateEncounter
 from climatevisitor.models import ClimateTwinLocation
 from climatevisitor import serializers
-from users.models import UserVisit
+from django.contrib.auth import get_user_model
+from users.models import BadRainbowzUser, UserVisit
 from users.serializers import BadRainbowzUserSerializer
 from climatevisitor.climatetwinclasses.OpenMapAPIClass import OpenMapAPI
 
 @shared_task
-def run_climate_twin_algorithms_task(user, user_address):
+def run_climate_twin_algorithms_task(user_id, user_address):
     print("run_climate_twin_algorithms_task initiated")
-    
-    user_instance = BadRainbowzUserSerializer(data=user)
-    if user_instance.is_valid():
-        user_instance.save() 
-    else:
-        print("User serializer invalid")
+
+    try:
+        user_instance = BadRainbowzUser.objects.get(pk=user_id)
+    except BadRainbowzUser.DoesNotExist:
+        print("Could not validate user.")
         return
+    # Your task logic here, using the retrieved user object
     
     climate_places = ClimateTwinFinder(user_address)
 
-    
 
     if climate_places.home_climate:
         address = list(climate_places.home_climate.keys())[0]
