@@ -1,17 +1,17 @@
+from ..animations import update_animation
+from ..consumer import ClimateTwinConsumer 
+from asgiref.sync import async_to_sync
 from celery import shared_task
 from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
-from .animations import update_animation
-from .consumer import ClimateTwinConsumer  
 from climatevisitor.climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
 from climatevisitor.climatetwinclasses.ClimateObjectClass import ClimateObject
 from climatevisitor.climatetwinclasses.ClimateEncounterClass import ClimateEncounter
+from climatevisitor.climatetwinclasses.OpenMapAPIClass import OpenMapAPI
 from climatevisitor.models import ClimateTwinLocation
 from climatevisitor import serializers
-from django.contrib.auth import get_user_model
 from users.models import BadRainbowzUser, UserVisit
 from users.serializers import BadRainbowzUserSerializer
-from climatevisitor.climatetwinclasses.OpenMapAPIClass import OpenMapAPI
+
 
 @shared_task
 def run_climate_twin_algorithms_task(user_id, user_address):
