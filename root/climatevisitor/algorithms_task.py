@@ -9,13 +9,23 @@ from climatevisitor.climatetwinclasses.ClimateEncounterClass import ClimateEncou
 from climatevisitor.models import ClimateTwinLocation
 from climatevisitor import serializers
 from users.models import UserVisit
+from users.serializers import BadRainbowzUserSerializer
 from climatevisitor.climatetwinclasses.OpenMapAPIClass import OpenMapAPI
 
 @shared_task
 def run_climate_twin_algorithms_task(user, user_address):
+    print("run_climate_twin_algorithms_task initiated")
+    
+    user_instance = BadRainbowzUserSerializer(data=user)
+    if user_instance.is_valid():
+        user_instance.save() 
+    else:
+        print("User serializer invalid")
+        return
+    
     climate_places = ClimateTwinFinder(user_address)
 
-    user_instance = user
+    
 
     if climate_places.home_climate:
         address = list(climate_places.home_climate.keys())[0]
