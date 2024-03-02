@@ -7,8 +7,16 @@ import ssl
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'root.settings')
 
-app = Celery('root')
+app = Celery(
+    'root',
+    broker_use_ssl={'ssl_cert_reqs': ssl.CERT_NONE},
+    redis_backend_use_ssl={'ssl_cert_reqs': ssl.CERT_NONE}
+)
 
+app.config_from_object('django.conf:settings', namespace='CELERY')
+app.autodiscover_tasks()
+
+'''
 # Use the REDIS_URL from Django settings for the broker and backend
 #app.conf.broker_url = 'redis://default:AVNS_TKxUs1XBH-EKD3Nw47P@db-redis-climatetwin-do-user-15838008-0.c.db.ondigitalocean.com:25061'
 app.conf.broker_url = settings.REDIS_URL
@@ -19,7 +27,7 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 
 # Autodiscover tasks
 app.autodiscover_tasks()
-
+'''
 
 '''
 local
