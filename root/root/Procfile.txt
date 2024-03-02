@@ -1,0 +1,2 @@
+web: gunicorn --worker-tmp-dir /dev/shm root.wsgi
+websocket: daphne -b 0.0.0.0 -p 8080 root.asgi:application
