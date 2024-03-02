@@ -90,7 +90,7 @@ def go(request):
                 return Response({'error': 'You have reached the daily limit of visits.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Pass user instance to Celery task
-        task = run_climate_twin_algorithms_task.delay(user.id, user_address)
+        task = run_climate_twin_algorithms_task.delay(user, user_address)
 
         # Return a response indicating that the task has started
         return Response({'detail': 'Success! A new search has started.', 'task_id': task.id}, status=status.HTTP_200_OK)
