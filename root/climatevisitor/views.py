@@ -93,7 +93,8 @@ def go(request):
 
  
         # Send the task to Celery for execution
-        task = process_climate_twin_request.apply_async(user.id, user_address)
+        task = process_climate_twin_request.apply_async(args=[user.id, user_address])
+        #task = process_climate_twin_request.apply_async(user.id, user_address)
 
         # Return a response indicating that the task has started
         return Response({'detail': 'Success! Twin Location found.', 'task_id': task.id}, status=status.HTTP_200_OK)
