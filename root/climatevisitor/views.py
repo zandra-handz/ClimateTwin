@@ -1,12 +1,14 @@
 from . import models
 from . import serializers
 from users.serializers import BadRainbowzUserSerializer
+from celery import shared_task, current_app
 from celery.result import AsyncResult
 from .climatetwinclasses.ClimateEncounterClass import ClimateEncounter
 from .climatetwinclasses.ClimateObjectClass import ClimateObject
 from .climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
 from .tasks.algorithms_task import run_climate_twin_algorithms_task
 from .tasks.algorithms_task import process_climate_twin_request
+
 from .climatetwinclasses.OpenMapAPIClass import OpenMapAPI
 from asgiref.sync import sync_to_async
 from django.shortcuts import render
@@ -93,8 +95,11 @@ def go(request):
 
  
         # Send the task to Celery for execution
-        #task = process_climate_twin_request.apply_async(args=[user.id, user_address])
-        task = run_climate_twin_algorithms_task(user.id, user_address)
+        run_climate_twin_algorithms_task(user.id, user_address)
+        process_climate_twin_request.apply_async(args=[user.id, user_address])
+
+        #current_app.send_task('run_climate_twin_algorithms_task', args=[user.id, user_address])
+        #task = run_climate_twin_algorithms_task(user.id, user_address)
 
         # Return a response indicating that the task has started
         return Response({'detail': 'Success!'}, status=status.HTTP_200_OK)

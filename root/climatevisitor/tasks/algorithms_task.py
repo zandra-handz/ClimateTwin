@@ -9,23 +9,20 @@ from climatevisitor.climatetwinclasses.ClimateEncounterClass import ClimateEncou
 from climatevisitor.climatetwinclasses.OpenMapAPIClass import OpenMapAPI
 from climatevisitor.models import ClimateTwinLocation
 from climatevisitor import serializers
+from time import sleep
 from users.models import BadRainbowzUser, UserVisit
 from users.serializers import BadRainbowzUserSerializer
 
+import logging
 
-@shared_task
-def process_climate_twin_request(user_id, user_address):
-    print("Task to process climate twin request sent.")
+logger = logging.getLogger(__name__)
 
-    user_instance = BadRainbowzUser.objects.get(pk=user_id)
 
-    current_app.send_task('climate_twin_algorithm_runner', args=[user_id, user_address])
-
-    return "Request sent for processing"
 
 
 @shared_task
 def run_climate_twin_algorithms_task(user_id, user_address):
+    sleep(5)
     print(f"run_climate_twin_algorithms_task initiated with args: {user_id}, {user_address}")
 
     try:
@@ -109,7 +106,21 @@ def run_climate_twin_algorithms_task(user_id, user_address):
 
         return "Success: Search completed!"
                 
-                
-
+ 
     # You can return any necessary data, but in this case, you might not need to return anything
 
+
+@shared_task
+
+def process_climate_twin_request(user_id, user_address):
+    logger.info("Task to process climate twin request received.")
+    
+    print("Task to process climate twin request sent.")
+
+    user_instance = BadRainbowzUser.objects.get(pk=user_id)
+
+    run_climate_twin_algorithms_task(user_id, user_address)
+    #current_app.send_task('climate_twin_algorithm_runner', args=[user_id, user_address])
+
+    logger.info("Task to process climate twin request completed.")
+    return "Request sent for processing"

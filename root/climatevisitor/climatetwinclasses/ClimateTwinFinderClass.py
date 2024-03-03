@@ -1,4 +1,5 @@
 from climatevisitor.tasks.tasks import send_coordinate_update_to_celery
+from celery import shared_task, current_app
 from django.conf import settings
 import geopandas as gpd
 import numpy as np 
@@ -322,7 +323,7 @@ class ClimateTwinFinder:
 
     # Added for websocket
 
-
+    @shared_task
     def send_coordinate_update(latitude, longitude):
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.send)(

@@ -1,9 +1,9 @@
 # animation_updater.py
 
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
-import matplotlib
-matplotlib.use('Agg')  
+#import matplotlib
+#matplotlib.use('Agg')  
 
 def update_animation(latitude, longitude):
     pass

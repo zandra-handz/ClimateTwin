@@ -10,8 +10,15 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+#.\mysqld --initialize-insecure
+#.\mysqld --console
 #D:\CodingSpace\Redis\redis-cli -h 127.0.0.1 -p 6379 ping
-#celery -A root worker
+#celery -A root worker -l info -E
+
+
+
+#for Digital Ocean use
+#celery -A root worker --pool=gevent  (pip install gevent)
 
 from pathlib import Path
 from django.core.management.utils import get_random_secret_key
@@ -27,9 +34,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 AUTH_USER_MODEL = 'users.BadRainbowzUser'
 
+# Convert to Env Variable
 GOOGLE_MAPS_API_KEY = 'AIzaSyBAW09hdzlszciQ4fTiZjfxcVMlEkF5Iqk'
 OPEN_MAP_API_KEY = '54a19c0e6cd35fb9f2d1ec6a87f22dba'
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -38,19 +45,26 @@ OPEN_MAP_API_KEY = '54a19c0e6cd35fb9f2d1ec6a87f22dba'
 #SECRET_KEY = 'django-insecure-ulk_hius7lv6hv#tm72-+(%^^@0xtz1ze=pzxy$9yil*fo%=!-'
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', get_random_secret_key())
 
-# SECURITY WARNING: don't run with debug turned on in production!
 
-#DEBUG = True
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
-#DEBUG = config("DEBUG", default=0)
+# SET MODE HERE!  *you will also need to switch the demo token in templates/demo file
+# make sure requirements.txt is up to date :)
+    # pip freeze > requirements.txt
+        # if pushing to Digital Oceean, remove this: twisted-iocpsupport==1.0.4
 
-#ALLOWED_HOSTS = ['climatetwin-lzyyd.ondigitalocean.app']
-#ALLOWED_HOSTS = []
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
-# Application definition
+DEVELOPMENT_MODE = False
 
-# Digital Ocean droplet IP:
-#CELERY_BROKER_URL = 'redis://10.108.0.3:6379/0'
+
+if DEVELOPMENT_MODE is True:
+    DEBUG = True
+    ALLOWED_HOSTS = []
+else:
+    DEBUG = os.getenv('DEBUG', 'False') == 'True'
+    ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+
+    #DEBUG = config("DEBUG", default=0)
+    #ALLOWED_HOSTS = ['climatetwin-lzyyd.ondigitalocean.app']
+    # Digital Ocean droplet IP:
+    #CELERY_BROKER_URL = 'redis://10.108.0.3:6379/0'
 
 
 INSTALLED_APPS = [
@@ -81,73 +95,61 @@ INSTALLED_APPS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
-
 
 
 ASGI_APPLICATION = 'root.asgi.application'
 
-# save Celery task results in Django's database (local):
-
-
-
-# This configures Redis as the datastore between Django + Celery
-#CELERY_BROKER_URL = config('CELERY_BROKER_REDIS_URL', default='redis://localhost:6379')
-#local:
-#CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
-
 REDIS_URL = os.environ.get('REDIS_URL')
 
-# Add SSL certificate requirements flag to REDIS_URL
-REDIS_URL_WITH_CERT_OPTION = f'{REDIS_URL}/0?ssl_cert_reqs=CERT_REQUIRED'
+if DEVELOPMENT_MODE is True:
+    CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+    CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
 
-# Use the modified REDIS_URL for CELERY_BROKER_URL and CELERY_RESULT_BACKEND
-CELERY_BROKER_URL = REDIS_URL_WITH_CERT_OPTION
+    #CELERY_RESULT_BACKEND = "django-db"
 
-#CELERY_RESULT_BACKEND = "django-db"
-CELERY_RESULT_BACKEND = REDIS_URL_WITH_CERT_OPTION
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                'hosts': [('127.0.0.1', 6379)],
+            },
+        },
+    }
 
-#CELERY_BROKER_URL = f'{REDIS_URL}/0'
-#CELERY_RESULT_BACKEND = f'{REDIS_URL}/1'
+else:
+
+    # Digital Ocean
+    REDIS_URL_WITH_CERT_OPTION = f'{REDIS_URL}/0?ssl_cert_reqs=CERT_REQUIRED'   
+    CELERY_BROKER_URL = REDIS_URL_WITH_CERT_OPTION
+    CELERY_RESULT_BACKEND = REDIS_URL_WITH_CERT_OPTION
+
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                'hosts': [os.environ.get('REDIS_URL')],
+            },
+        },
+    }
+
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
-
-# if you out to use os.environ the config is:
-# CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_REDIS_URL', 'redis://localhost:6379')
-
- 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [os.environ.get('REDIS_URL')],
-            # local
-            # 'hosts': [('127.0.0.1', 6379)],
-        },
-    },
-}
+CELERY_WORKER_CONCURRENCY = 10 
+    
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_AGE = 300
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
 
-
-import logging
-
-
-# settings.py
 
 LOGGING = {
     'version': 1,
@@ -275,9 +277,8 @@ DATABASES = {
 
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
+#DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
 
-#DEVELOPMENT_MODE = True
 
 if DEVELOPMENT_MODE is True:
     DATABASES = {
