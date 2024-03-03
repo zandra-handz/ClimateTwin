@@ -12,9 +12,10 @@ from climatevisitor import serializers
 from users.models import BadRainbowzUser, UserVisit
 from users.serializers import BadRainbowzUserSerializer
 
+from celery import shared_task
 
 @shared_task
-def run_climate_twin_algorithms_task(user_id, user_address):
+def climate_twin_algorithm_runner(user_id, user_address):
     print(f"run_climate_twin_algorithms_task initiated with args: {user_id}, {user_address}")
 
     try:
@@ -97,16 +98,3 @@ def run_climate_twin_algorithms_task(user_id, user_address):
                 print("Error: Discovery Location could not be saved.")
 
         return "Success: Search completed!"
-                
-                
-
-    # You can return any necessary data, but in this case, you might not need to return anything
-
-@shared_task
-def process_climate_twin_request(user_id, user_address):
-
-    user_instance = BadRainbowzUser.objects.get(pk=user_id)
-
-    current_app.send_task('climate_twin_algorithm_runner', args=[user_id, user_address])
-
-    return "Request sent for processing"

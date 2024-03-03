@@ -25,3 +25,4 @@ def send_coordinate_update_to_celery(latitude, longitude):
     print(f"Sending update for coordinate pair: {latitude}, {longitude}")
 
     # Call the consumer method directly for testing purposes
+
