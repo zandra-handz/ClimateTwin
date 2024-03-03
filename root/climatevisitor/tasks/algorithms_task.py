@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 @shared_task
 def run_climate_twin_algorithms_task(user_id, user_address):
-    sleep(5)
+    sleep(2)
     print(f"run_climate_twin_algorithms_task initiated with args: {user_id}, {user_address}")
 
     try:
@@ -107,20 +107,22 @@ def run_climate_twin_algorithms_task(user_id, user_address):
         return "Success: Search completed!"
                 
  
-    # You can return any necessary data, but in this case, you might not need to return anything
+ 
 
 
-@shared_task
-
-def process_climate_twin_request(user_id, user_address):
+@shared_task(bind=True, max_retries=3)
+def process_climate_twin_request(self, user_id, user_address):
     logger.info("Task to process climate twin request received.")
     
     print("Task to process climate twin request sent.")
 
     user_instance = BadRainbowzUser.objects.get(pk=user_id)
 
-    run_climate_twin_algorithms_task(user_id, user_address)
-    #current_app.send_task('climate_twin_algorithm_runner', args=[user_id, user_address])
-
+    try:
+        run_climate_twin_algorithms_task(user_id, user_address)
+    except Exception as exc:
+        logger.error(f"Error processing climate twin request: {exc}. Retrying...")
+        raise self.retry(exc=exc)
+    
     logger.info("Task to process climate twin request completed.")
     return "Request sent for processing"
