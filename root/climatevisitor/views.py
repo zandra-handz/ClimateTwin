@@ -92,7 +92,7 @@ def go(request):
                 return Response({'error': 'You have reached the daily limit of visits.'}, status=status.HTTP_400_BAD_REQUEST)
 
  
-        task = process_climate_twin_request.delay(user.id, user_address)
+        task = process_climate_twin_request(user.id, user_address)
 
         # Return a response indicating that the task has started
         return Response({'detail': 'Success! Twin Location found.'}, status=status.HTTP_200_OK) #, 'task_id': task.id}, status=status.HTTP_200_OK)
