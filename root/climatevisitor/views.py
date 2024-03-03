@@ -1,11 +1,6 @@
 from . import models
 from . import serializers
-from users.serializers import BadRainbowzUserSerializer
-from celery.result import AsyncResult
-from .climatetwinclasses.ClimateEncounterClass import ClimateEncounter
-from .climatetwinclasses.ClimateObjectClass import ClimateObject
-from .climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
-from .tasks.algorithms_task import run_climate_twin_algorithms_task
+from .tasks.algorithms import climate_twin_algorithm_runner
 from .climatetwinclasses.OpenMapAPIClass import OpenMapAPI
 from asgiref.sync import sync_to_async
 from django.shortcuts import render
@@ -91,7 +86,7 @@ def go(request):
                 return Response({'error': 'You have reached the daily limit of visits.'}, status=status.HTTP_400_BAD_REQUEST)
 
  
-        task = run_climate_twin_algorithms_task(user.id, user_address)
+        task = climate_twin_algorithm_runner(user.id, user_address)
 
         # Return a response indicating that the task has started
         return Response({'detail': 'Success! Twin Location found.'}, status=status.HTTP_200_OK) #, 'task_id': task.id}, status=status.HTTP_200_OK)
