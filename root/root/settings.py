@@ -10,15 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
-#.\mysqld --initialize-insecure
-#.\mysqld --console
-#D:\CodingSpace\Redis\redis-cli -h 127.0.0.1 -p 6379 ping
-#celery -A root worker -l info -E
+# Local run lines for my own reference --> .\mysqld --initialize-insecure
+#                                           .\mysqld --console, 
+#                                           D:\CodingSpace\Redis\redis-cli -h 127.0.0.1 -p 6379 ping
+#                                           celery -A root worker -l info -E
 
 
-
-#for Digital Ocean use
-#celery -A root worker --pool=gevent  (pip install gevent)
+#for Digital Ocean use --> celery -A root worker --pool=gevent 
 
 from pathlib import Path
 from django.core.management.utils import get_random_secret_key
