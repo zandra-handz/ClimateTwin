@@ -11,6 +11,12 @@ console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.DEBUG)
 logger.addHandler(console_handler)
 
+
+ # JavaScript function to update dots on canvas
+def updateAnimation(latitude, longitude):
+        # Your JavaScript code to update dots on canvas here
+        pass
+
 class ClimateTwinConsumer(WebsocketConsumer):
     def connect(self):
         self.group_name = 'climate_updates'  # Group name
@@ -41,3 +47,13 @@ class ClimateTwinConsumer(WebsocketConsumer):
 
         # Additional logging for debugging
         logger.info(f"Received coordinates: Latitude - {event['latitude']}, Longitude - {event['longitude']}")
+
+        # Has own JS file
+        #latitude = event['latitude']
+        #longitude = event['longitude']
+        #updateAnimation(latitude, longitude)  # Call JavaScript function to update dots on canvas
+
+        # Additional logging for debugging
+        logger.info(f"Received coordinates: Latitude - {event['latitude']}, Longitude - {event['longitude']}")
+
+
