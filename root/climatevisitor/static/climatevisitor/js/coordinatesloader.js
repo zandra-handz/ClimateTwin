@@ -43,7 +43,7 @@ function replaceUpdate(update) {
     // Apply CSS styles to center, make it smaller, and add padding
     updateElement.style.textAlign = 'center';
     updateElement.style.fontSize = 'small';
-    updateElement.style.paddingBottom = '22px'; // Adjust the value as needed
+    updateElement.style.paddingBottom = '32px'; // Adjust the value as needed
  
     if (update.latitude !== undefined && update.longitude !== undefined) { 
         updateElement.textContent = `Twin Finder is searching...`; // ${update.latitude}, ${update.longitude}`;
