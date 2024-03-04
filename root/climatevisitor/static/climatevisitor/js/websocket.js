@@ -3,12 +3,12 @@ function replaceUpdate(update) {
     const container = document.getElementById('climate-updates-container');
     const updateElement = document.createElement('div');
     updateElement.textContent = `Latitude: ${update.latitude}, Longitude: ${update.longitude}`;
-    container.innerHTML = ''; // Clear the container's content
+    container.innerHTML = '';
     container.appendChild(updateElement);
 }
 
 // WebSocket connection
-const socket = new WebSocket('ws://localhost:8000/ws/climate-twin/'); // Replace with your WebSocket URL
+const socket = new WebSocket('ws://localhost:8000/ws/climate-twin/'); 
 
 // Event listener for WebSocket open
 socket.onopen = function(event) {
@@ -21,12 +21,12 @@ socket.onmessage = function(event) {
     appendUpdate(update);
 };
 
-// Event listener for WebSocket close
+
 socket.onclose = function(event) {
     console.log('WebSocket connection closed');
 };
 
-// Event listener for WebSocket errors
+
 socket.onerror = function(error) {
     console.error('WebSocket error:', error);
 };
