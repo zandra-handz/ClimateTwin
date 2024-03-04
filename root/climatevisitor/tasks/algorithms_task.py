@@ -11,7 +11,7 @@ from climatevisitor.models import ClimateTwinLocation
 from climatevisitor import serializers
 from time import sleep
 from users.models import BadRainbowzUser, UserVisit
-from users.serializers import BadRainbowzUserSerializer
+from users.serializers import BadRainbowzUserSerializer, UserVisitSerializer
 
 import logging
 
@@ -70,7 +70,15 @@ def run_climate_twin_algorithms_task(user_id, user_address):
             home_location=home_location_instance
         )
 
+        
+        user_visit_instance = UserVisit(user=user_instance, location_name=climate_twin_weather_profile.name,
+                                        location_latitude=climate_twin_weather_profile.latitude,
+                                         location_longitude=climate_twin_weather_profile.longitude)
+        
+
         climate_twin_location_instance.save()
+        user_visit_instance.save()
+
 
         osm_api = OpenMapAPI()
         osm_results = osm_api.find_ancient_ruins(climate_twin_weather_profile.latitude, climate_twin_weather_profile.longitude, radius=100000, num_results=15)
