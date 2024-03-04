@@ -363,7 +363,7 @@ class ClimateTwinFinder:
                     temperature_difference = abs(weather['temperature'] - self.weather_info['temperature'])
                     print(temperature_difference)
 
-                    if temperature_difference < 3.5:
+                    if temperature_difference < 3:
                         # Process and add the new entry to self.similar_places
                         new_entry = {
                             'name': [f'climate twin candidate'],

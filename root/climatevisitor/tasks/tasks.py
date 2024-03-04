@@ -6,7 +6,7 @@ from asgiref.sync import async_to_sync
 from ..animations import update_animation
 from ..consumer import ClimateTwinConsumer  
 
-
+# Name currently inaccurate; this is getting processed by main server
 @shared_task
 def send_coordinate_update_to_celery(latitude, longitude):
     # Call the function to update animation with the given coordinates
