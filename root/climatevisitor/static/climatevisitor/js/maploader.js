@@ -4,10 +4,9 @@
 function displayMapAnimation(resultContainerId) {
     var resultContainer = document.getElementById(resultContainerId);
     resultContainer.innerHTML = '';
-    var loadingDiv = document.createElement('div');
-    loadingDiv.classList.add('map-container');
-    //loadingDiv.innerHTML = '<div class="spinner"></div>';
-    resultContainer.appendChild(loadingDiv);
+    var canvas = document.createElement('canvas'); // Create canvas element
+    canvas.id = 'map-canvas'; // Set ID for canvas element
+    resultContainer.appendChild(canvas);
 
     // WebSocket connection
     //const socket = new WebSocket('wss://localhost:8000/ws/climate-twin/'); // Replace with your WebSocket URL
