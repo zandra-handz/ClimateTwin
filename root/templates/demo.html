@@ -176,12 +176,17 @@
           height: 100%;
         }
 
-        .map-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-        }
+    #map-container {
+        position: relative;
+        width: 100%;
+        max-width: 1200px; /* Optionally limit maximum width */
+        margin: 0 auto; /* Center the container */
+    }
+    #map-canvas {
+        width: 100%;
+        height: 50vw; /* Set the height to half of the width */
+        background-color: lightgray; /* Optional background color */
+    }
 
         .spinner {
           border: 4px solid rgba(0, 0, 0, 0.1);

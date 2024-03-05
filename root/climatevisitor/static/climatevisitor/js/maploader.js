@@ -48,7 +48,7 @@ function updateAnimation(update) {
     // Draw dots based on latitude and longitude
     const latitude = parseFloat(update.latitude);
     const longitude = parseFloat(update.longitude);
-    const dotSize = 5; // Size of the dots
+    const dotSize = 2; // Size of the dots
     const dotColor = 'red'; // Color of the dots
 
     ctx.fillStyle = dotColor;
