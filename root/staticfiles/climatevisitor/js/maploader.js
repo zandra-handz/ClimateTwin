@@ -46,8 +46,8 @@ function updateAnimation(update) {
     // Your code to draw map
 
     // Draw dots based on latitude and longitude
-    const latitude = update.latitude;
-    const longitude = update.longitude;
+    const latitude = parseFloat(update.latitude);
+    const longitude = parseFloat(update.longitude);
     const dotSize = 5; // Size of the dots
     const dotColor = 'red'; // Color of the dots
 
