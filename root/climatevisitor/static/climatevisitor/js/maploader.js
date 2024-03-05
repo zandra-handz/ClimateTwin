@@ -37,6 +37,7 @@ function displayMapAnimation(resultContainerId) {
     // Function to update animation
     function updateAnimation(update) {
         const canvas = document.getElementById('map-canvas');
+        console.log(canvas); 
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
         
