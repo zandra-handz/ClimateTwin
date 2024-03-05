@@ -176,7 +176,7 @@
           height: 100%;
         }
 
-    #map-container {
+        #map-container {
         position: relative;
         width: 100%;
         max-width: 1200px; /* Optionally limit maximum width */
@@ -184,11 +184,39 @@
         border-radius: 20px;
         overflow: hidden;
     }
-    #map-canvas {
-        width: 100%;
-        height: 50vw; /* Set the height to half of the width */
-        background-color: #f0f0f0; /* Optional background color */
-    }
+        #map-canvas {
+            width: 100%;
+            height: 50vw; /* Set the height as 50% of the width */
+            max-height: 600px; /* Set a maximum height */
+            background-color: transparent; /* Remove the background color */
+            background-size: contain; /* Ensure the background image fits the canvas */
+            background-repeat: no-repeat; /* Prevent the background image from repeating */
+            background-position: center; /* Center the background image */
+        }
+        canvas {
+            background-image: url('{% static `climatevisitor/map1.PNG` %}'); /* Use your image path here */
+            background-size: cover;
+        }
+
+
+        .dot {
+            position: absolute;
+            width: 6px; /* Increase dot size for better visibility */
+            height: 6px; /* Increase dot size for better visibility */
+            background-color: red;
+            border-radius: 50%;
+            transition: opacity 1s;
+        }
+        #start-animation {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
         .spinner {
           border: 4px solid rgba(0, 0, 0, 0.1);
@@ -430,7 +458,7 @@
                 <div id="climate-updates-container"></div>
                 
                 <div id="map-container">
-                    <canvas id="map-canvas" width="400" height="400"></canvas>
+                    <canvas id="map-canvas"></canvas>
                 </div>
                 
                 <div id="result"></div>
