@@ -1,16 +1,12 @@
-// maploader.js
-
-// maploader.js
-
 function displayMapAnimation(resultContainerId) {
     var resultContainer = document.getElementById(resultContainerId);
     resultContainer.innerHTML = '';
     var canvas = document.createElement('canvas'); // Create canvas element
     canvas.id = 'map-canvas'; // Set ID for canvas element
+    canvas.width = resultContainer.offsetWidth; // Set canvas width
+    canvas.height = resultContainer.offsetHeight; // Set canvas height
     resultContainer.appendChild(canvas);
-    //const canvas = document.getElementById('map-canvas');
-    const dotContainer = document.getElementById('map-container');
-
+    const dotContainer = resultContainer; // Assign dot container
 
     function drawMap() {
         const mapImage = new Image();
@@ -27,9 +23,10 @@ function displayMapAnimation(resultContainerId) {
             console.error('Failed to load the map image.');
         };
 
-        
+        // Load map image
+        mapImage.src = '{% static "climatevisitor/map1.PNG" %}';
+
         // WebSocket connection
-        //const socket = new WebSocket('wss://localhost:8000/ws/climate-twin/'); // Replace with your WebSocket URL
         const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/');
 
         // Event listener -- open
@@ -52,40 +49,42 @@ function displayMapAnimation(resultContainerId) {
         socket.onerror = function(error) {
             console.error('WebSocket error:', error);
         };
-
-    }
     }
 
-// Function to update animation with latitude and longitude
-function updateAnimation(update) {
-    const latitude = parseFloat(update.latitude);
-    const longitude = parseFloat(update.longitude);
-    createDot(latitude, longitude);
-}
+    // Call drawMap function to initiate drawing
+    drawMap();
 
-// Function to create a dot with trailing fade-out effect
-function createDot(latitude, longitude) {
-    const dot = document.createElement('div');
-    dot.classList.add('dot');
+    // Function to update animation with latitude and longitude
+    function updateAnimation(update) {
+        const latitude = parseFloat(update.latitude);
+        const longitude = parseFloat(update.longitude);
+        createDot(latitude, longitude);
+    }
 
-    // Convert latitude and longitude to screen coordinates
-    const x = (longitude + 180) * (canvas.offsetWidth / 360);
-    const y = (90 - latitude) * (canvas.offsetHeight / 180);
+    // Function to create a dot with trailing fade-out effect
+    function createDot(latitude, longitude) {
+        const dot = document.createElement('div');
+        dot.classList.add('dot');
 
-    // Set dot initial position
-    dot.style.left = x + 'px';
-    dot.style.top = y + 'px';
+        // Convert latitude and longitude to screen coordinates
+        const x = (longitude + 180) * (canvas.offsetWidth / 360);
+        const y = (90 - latitude) * (canvas.offsetHeight / 180);
 
-    dotContainer.appendChild(dot);
+        // Set dot initial position
+        dot.style.left = x + 'px';
+        dot.style.top = y + 'px';
 
-    // Start the fade-out animation after a delay
-    setTimeout(() => {
-        dot.style.opacity = '0';
-        // Remove the dot from the DOM after fading out
+        dotContainer.appendChild(dot);
+
+        // Start the fade-out animation after a delay
         setTimeout(() => {
-            dotContainer.removeChild(dot);
-        }, 260); // Adjust this value for the fade-out duration
-    }, 100); // Adjust this value for the delay before fading out
+            dot.style.opacity = '0';
+            // Remove the dot from the DOM after fading out
+            setTimeout(() => {
+                dotContainer.removeChild(dot);
+            }, 260); // Adjust this value for the fade-out duration
+        }, 100); // Adjust this value for the delay before fading out
+    }
 }
 
 
