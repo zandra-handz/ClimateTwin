@@ -5,7 +5,7 @@ function displayMapAnimation(resultContainerId) {
     var resultContainer = document.getElementById(resultContainerId);
     resultContainer.innerHTML = '';
     var loadingDiv = document.createElement('div');
-    loadingDiv.classList.add('loading-container');
+    loadingDiv.classList.add('map-container');
     //loadingDiv.innerHTML = '<div class="spinner"></div>';
     resultContainer.appendChild(loadingDiv);
 
@@ -36,7 +36,7 @@ function displayMapAnimation(resultContainerId) {
 
     // Function to update animation
     function updateAnimation(update) {
-        const canvas = document.getElementById('map-canvas');
+        const canvas = document.getElementById('map-container');
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
         
