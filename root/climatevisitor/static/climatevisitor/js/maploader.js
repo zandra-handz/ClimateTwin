@@ -52,21 +52,19 @@ function updateAnimation(update) {
     const dotColor = 'red'; // Color of the dots
 
     ctx.fillStyle = dotColor;
-    for (let i = 0; i < latitude.length; i++) {
-        // Map latitude and longitude values to coordinates on the canvas
-        const x = (longitude[i] + 180) * (canvas.width / 360);
-        const y = (90 - latitude[i]) * (canvas.height / 180);
 
-        ctx.beginPath();
-        ctx.arc(x, y, dotSize, 0, Math.PI * 2);
-        ctx.fill();
-    }
+    // Map latitude and longitude values to coordinates on the canvas
+    const x = (longitude + 180) * (canvas.width / 360);
+    const y = (90 - latitude) * (canvas.height / 180);
 
+    ctx.beginPath();
+    ctx.arc(x, y, dotSize, 0, Math.PI * 2);
+    ctx.fill();
 
     // Draw a constant dot at a fixed position
     const constantDotX = 100; // X coordinate of the constant dot
     const constantDotY = 100; // Y coordinate of the constant dot
-    const constantDotSize = 10; // Size of the constant dot
+    const constantDotSize = 2; // Size of the constant dot
     const constantDotColor = 'blue'; // Color of the constant dot
 
     ctx.fillStyle = constantDotColor;
@@ -74,5 +72,4 @@ function updateAnimation(update) {
     ctx.arc(constantDotX, constantDotY, constantDotSize, 0, Math.PI * 2);
     ctx.fill();
 }
-
-}
+}    
