@@ -5,7 +5,7 @@ function displayMapAnimation(resultContainerId) {
     var resultContainer = document.getElementById(resultContainerId);
     resultContainer.innerHTML = '';
     var loadingDiv = document.createElement('div');
-    loadingDiv.classList.add('map-container');
+    loadingDiv.classList.add('map-canvas');
     //loadingDiv.innerHTML = '<div class="spinner"></div>';
     resultContainer.appendChild(loadingDiv);
 
