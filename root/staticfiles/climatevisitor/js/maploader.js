@@ -33,27 +33,37 @@ function displayMapAnimation(resultContainerId) {
         console.error('WebSocket error:', error);
     };
 
-    // Function to update animation
-    function updateAnimation(update) {
-        const canvas = document.getElementById('map-canvas');
-        console.log(canvas); 
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
-        
-        // Draw map (if needed)
-        // Your code to draw map
-        
-        // Draw dots based on latitude and longitude
-        const latitude = update.latitude;
-        const longitude = update.longitude;
-        const dotSize = 5; // Size of the dots
-        const dotColor = 'red'; // Color of the dots
+function updateAnimation(update) {
+    const canvas = document.getElementById('map-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+    
+    // Draw map (if needed)
+    // Your code to draw map
 
-        ctx.fillStyle = dotColor;
-        for (let i = 0; i < latitude.length; i++) {
-            ctx.beginPath();
-            ctx.arc(longitude[i], latitude[i], dotSize, 0, Math.PI * 2);
-            ctx.fill();
-        }
+    // Draw dots based on latitude and longitude
+    const latitude = update.latitude;
+    const longitude = update.longitude;
+    const dotSize = 5; // Size of the dots
+    const dotColor = 'red'; // Color of the dots
+
+    ctx.fillStyle = dotColor;
+    for (let i = 0; i < latitude.length; i++) {
+        ctx.beginPath();
+        ctx.arc(longitude[i], latitude[i], dotSize, 0, Math.PI * 2);
+        ctx.fill();
     }
+
+    // Draw a constant dot at a fixed position
+    const constantDotX = 100; // X coordinate of the constant dot
+    const constantDotY = 100; // Y coordinate of the constant dot
+    const constantDotSize = 10; // Size of the constant dot
+    const constantDotColor = 'blue'; // Color of the constant dot
+
+    ctx.fillStyle = constantDotColor;
+    ctx.beginPath();
+    ctx.arc(constantDotX, constantDotY, constantDotSize, 0, Math.PI * 2);
+    ctx.fill();
+}
+    
 }
