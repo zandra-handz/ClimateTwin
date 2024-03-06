@@ -16,14 +16,14 @@ function displayMapAnimation(resultContainerId) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     
         // Draw a simple map background
-        ctx.fillStyle = 'lightblue';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // ctx.fillStyle = 'lightblue';
+        // ctx.fillRect(0, 0, canvas.width, canvas.height);
     
         // Draw some example features (e.g., rivers, mountains, cities)
         // You can use various canvas drawing functions (e.g., arc, lineTo, fillText) to draw the map features
         // Example:
-        ctx.fillStyle = 'green';
-        ctx.fillRect(100, 100, 50, 50); // Draw a green rectangle representing a forest
+        // ctx.fillStyle = 'green';
+        // ctx.fillRect(100, 100, 50, 50); // Draw a green rectangle representing a forest
     
 
         // WebSocket connection
