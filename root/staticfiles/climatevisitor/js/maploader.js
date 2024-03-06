@@ -6,7 +6,7 @@ function displayMapAnimation(resultContainerId) {
     canvas.width = resultContainer.offsetWidth; // Set canvas width
     canvas.height = resultContainer.offsetHeight; // Set canvas height
     resultContainer.appendChild(canvas);
-    const dotContainer = canvas; // Assign dot container as the canvas itself
+    const dotContainer = resultContainer; // Assign dot container as the canvas itself
 
     function drawMap() {
         // Get canvas context
