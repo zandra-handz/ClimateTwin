@@ -8,6 +8,30 @@ function displayMapAnimation(resultContainerId) {
     canvas.height = resultContainer.offsetHeight; // Set canvas height
     const dotContainer = resultContainer; // Assign dot container as the canvas itself
 
+    // WebSocket connection
+    const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/');
+
+    // Event listener -- open
+    socket.onopen = function(event) {
+        console.log('WebSocket connection opened');
+    };
+
+    // Event listener -- messages
+    socket.onmessage = function(event) {
+        const update = JSON.parse(event.data);
+        updateAnimation(update); 
+    };
+
+    // Event listener -- close
+    socket.onclose = function(event) {
+        console.log('WebSocket connection closed');
+    };
+
+    // Event listener -- errors
+    socket.onerror = function(error) {
+        console.error('WebSocket error:', error);
+    };
+
     function drawMap() {
         // Get canvas context
         const ctx = canvas.getContext('2d');
@@ -24,78 +48,51 @@ function displayMapAnimation(resultContainerId) {
         // Example:
         // ctx.fillStyle = 'green';
         // ctx.fillRect(100, 100, 50, 50); // Draw a green rectangle representing a forest
-    
-
-        // WebSocket connection
-        const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/');
-
-        // Event listener -- open
-        socket.onopen = function(event) {
-            console.log('WebSocket connection opened');
-        };
-
-        // Event listener -- messages
-        socket.onmessage = function(event) {
-            const update = JSON.parse(event.data);
-            updateAnimation(update); 
-        };
-
-        // Event listener -- close
-        socket.onclose = function(event) {
-            console.log('WebSocket connection closed');
-        };
-
-        // Event listener -- errors
-        socket.onerror = function(error) {
-            console.error('WebSocket error:', error);
-        };
     }
 
     // Call drawMap function to initiate drawing
     drawMap();
+    // Function to update animation with latitude and longitude
+    function updateAnimation(update) {
+        const latitude = parseFloat(update.latitude);
+        const longitude = parseFloat(update.longitude);
+        createDot(latitude, longitude);
+    }// Keep track of the currently displayed dot
+    let currentDot = null;
 
- // Function to update animation with latitude and longitude
-function updateAnimation(update) {
-    const latitude = parseFloat(update.latitude);
-    const longitude = parseFloat(update.longitude);
-    createDot(latitude, longitude);
-}
-
-function createDot(latitude, longitude) {
-    const dot = document.createElement('div');
-    dot.classList.add('dot');
+    function createDot(latitude, longitude) {
+        const dot = document.createElement('div');
+        dot.classList.add('dot');
 
         // Convert latitude and longitude to screen coordinates
-    const x = (longitude + 180) * (canvas.offsetWidth / 360);
-    const y = (90 - latitude) * (canvas.offsetHeight / 180);
+        const x = (longitude + 180) * (canvas.offsetWidth / 360);
+        const y = (90 - latitude) * (canvas.offsetHeight / 180);
 
-    console.log('Dot coordinates (x, y):', x, y); // Log dot coordinates for debugging
-    console.log('Canvas width:', canvas.width);
-    console.log('Canvas height:', canvas.height);
+        // Check if the calculated coordinates are within the canvas bounds
+        if (x < 0 || x > canvas.width || y < 0 || y > canvas.height) {
+            console.error('Dot coordinates are outside the canvas bounds.');
+            return; // Exit the function if coordinates are outside bounds
+        }
 
-    // Check if the calculated coordinates are within the canvas bounds
-    if (x < 0 || x > canvas.width || y < 0 || y > canvas.height) {
-        console.error('Dot coordinates are outside the canvas bounds.');
-        return; // Exit the function if coordinates are outside bounds
+        // Set dot initial position
+        dot.style.left = x + 'px';
+        dot.style.top = y + 'px';
+
+        // Append dot to the dot container
+        dotContainer.appendChild(dot);
+
+        // If there's a current dot, start the fade-out animation for it
+        if (currentDot) {
+            currentDot.style.opacity = '0';
+            // Remove the dot from the DOM after fading out
+            setTimeout(() => {
+                dotContainer.removeChild(currentDot);
+            }, 260); // Adjust this value for the fade-out duration
+        }
+
+        // Set the new dot as the current dot
+        currentDot = dot;
     }
-
-    // Set dot initial position
-    dot.style.left = x + 'px';
-    dot.style.top = y + 'px';
-
-    // Append dot to the dot container
-    dotContainer.appendChild(dot);
-
-
-    // Start the fade-out animation after a delay
-    setTimeout(() => {
-        dot.style.opacity = '0';
-        // Remove the dots from the DOM after fading out
-        setTimeout(() => {
-            dotContainer.removeChild(dot);
-        }, 260); // Adjust this value for the fade-out duration
-    }, 100); // Adjust this value for the delay before fading out
-}
 }
 
 /*
