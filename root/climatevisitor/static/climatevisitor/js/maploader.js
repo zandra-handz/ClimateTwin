@@ -66,9 +66,9 @@ function createDot(latitude, longitude) {
     dot.classList.add('dot');
 
     // Convert latitude and longitude to screen coordinates
-    const x = (longitude + 180) * (canvas.offsetWidth / 360);
-    const y = (90 - latitude) * (canvas.offsetHeight / 180);
-    
+    const x = (longitude + 180) * (canvas.width / 360); // Adjusted canvas dimensions
+    const y = (90 - latitude) * (canvas.height / 180); // Adjusted canvas dimensions
+
     console.log('Dot coordinates (x, y):', x, y); // Log dot coordinates for debugging
     console.log('Canvas width:', canvas.width);
     console.log('Canvas height:', canvas.height);
