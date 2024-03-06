@@ -3,10 +3,11 @@ function displayMapAnimation(resultContainerId) {
     resultContainer.innerHTML = '';
     var canvas = document.createElement('canvas'); // Create canvas element
     canvas.id = 'map-canvas'; // Set ID for canvas element
-    canvas.width = resultContainer.offsetWidth; // Set canvas width
-    canvas.height = resultContainer.offsetHeight; // Set canvas height
-    resultContainer.appendChild(canvas);
-    const dotContainer = canvas; // Assign dot container as the canvas itself
+    canvas.width = canvas.offsetWidth; // Set canvas width
+    canvas.height = canvas.offsetHeight; // Set canvas height
+    const dotContainer = canvas;
+    resultContainer.appendChild(dotContainer);
+    // Assign dot container as the canvas itself
      // Assign dot container
 
     function drawMap() {
