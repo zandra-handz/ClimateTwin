@@ -58,6 +58,7 @@ function displayMapAnimation(resultContainerId) {
         const longitude = parseFloat(update.longitude);
         createDot(latitude, longitude);
     }// Keep track of the currently displayed dot
+    // Keep track of the currently displayed dot
     let currentDot = null;
 
     function createDot(latitude, longitude) {
@@ -84,13 +85,49 @@ function displayMapAnimation(resultContainerId) {
         // If there's a current dot, start the fade-out animation for it
         if (currentDot) {
             currentDot.style.opacity = '0';
-            // Remove the dot from the DOM after fading out
-            setTimeout(() => {
-                dotContainer.removeChild(currentDot);
-            }, 260); // Adjust this value for the fade-out duration
         }
 
         // Set the new dot as the current dot
         currentDot = dot;
     }
+
+    // Calculate latitude and longitude for the center of the map
+    const centerLatitude = 0;
+    const centerLongitude = 0;
+
+    // Function to draw a dot at a specific latitude and longitude
+    function drawCenterDot() {
+        const dot = document.createElement('div');
+        dot.classList.add('center-dot');
+
+        // Convert latitude and longitude to screen coordinates
+        const x = (centerLongitude + 180) * (canvas.offsetWidth / 360);
+        const y = (90 - centerLatitude) * (canvas.offsetHeight / 180);
+
+        // Set dot position
+        dot.style.left = x + 'px';
+        dot.style.top = y + 'px';
+
+        // Append dot to the dot container
+        dotContainer.appendChild(dot);
+    }
+
+    // Call the function to draw the dot at the center of the map
+    drawCenterDot();
+
+    // Function to handle canvas resize
+    function handleResize() {
+        // Update canvas size
+        canvas.width = resultContainer.offsetWidth;
+        canvas.height = resultContainer.offsetHeight;
+
+        // Redraw the map and dots
+        drawMap();
+        // Call function to redraw dots
+        drawDots();
+    }
+
+// Event listener for window resize
+    window.addEventListener('resize', handleResize);
+
 }
