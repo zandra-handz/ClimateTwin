@@ -1,12 +1,83 @@
-function displayMapAnimation(resultContainerId) {
-    var resultContainer = document.getElementById(resultContainerId);
-    resultContainer.innerHTML = '';
-    var canvas = document.createElement('canvas'); // Create canvas element
-    canvas.id = 'map-canvas'; // Set ID for canvas element
-    resultContainer.appendChild(canvas);
-    canvas.width = resultContainer.offsetWidth; // Set canvas width
-    canvas.height = resultContainer.offsetHeight; // Set canvas height
-    const dotContainer = resultContainer; // Assign dot container as the canvas itself
+function displayMapAnimation(mapContainerId) {
+    const mapContainer = document.getElementById(mapContainerId);
+    mapContainer.innerHTML = ''; // Clear any existing content
+
+    // Create canvas element
+    const mapCanvas = document.createElement('canvas');
+    mapCanvas.id = 'map-canvas';
+    mapContainer.appendChild(mapCanvas);
+
+    // Set canvas dimensions
+    mapCanvas.width = mapContainer.offsetWidth;
+    mapCanvas.height = mapContainer.offsetHeight;
+
+    function updateAnimation(update) {
+        const latitude = parseFloat(update.latitude);
+        const longitude = parseFloat(update.longitude);
+        createDot(latitude, longitude, mapContainer);
+    }
+
+    function createDot(latitude, longitude, mapContainer) {
+        const dot = document.createElement('div');
+        dot.classList.add('dot');
+
+        // Convert latitude and longitude to screen coordinates
+        const x = (longitude + 180) * (mapCanvas.offsetWidth / 360);
+        const y = (90 - latitude) * (mapCanvas.offsetHeight / 180);
+
+        // Check if the calculated coordinates are within the canvas bounds
+        if (x < 0 || x > mapCanvas.offsetWidth || y < 0 || y > mapCanvas.offsetHeight) {
+            console.error('Dot coordinates are outside the canvas bounds.');
+            return; // Exit the function if coordinates are outside bounds
+        }
+
+        // Set dot initial position
+        dot.style.left = x + 'px';
+        dot.style.top = y + 'px';
+
+        // Append dot to the dot container
+        mapContainer.appendChild(dot);
+
+        // Fade out the previous dot
+        const currentDot = mapContainer.querySelector('.dot.current');
+        if (currentDot) {
+            currentDot.classList.remove('current');
+            setTimeout(() => {
+                mapContainer.removeChild(currentDot);
+            }, 1000); // Adjust this value for the fade-out duration
+        }
+
+        // Set the new dot as the current dot
+        dot.classList.add('current');
+    }
+
+    function drawCenterDot(mapContainer) {
+        const dot = document.createElement('div');
+        dot.classList.add('center-dot');
+
+        // Calculate latitude and longitude for the center of the map
+        const centerLatitude = 0;
+        const centerLongitude = 0;
+
+        // Convert latitude and longitude to screen coordinates
+        const x = (centerLongitude + 180) * (mapCanvas.offsetWidth / 360);
+        const y = (90 - centerLatitude) * (mapCanvas.offsetHeight / 180);
+
+        // Set dot position
+        dot.style.left = x + 'px';
+        dot.style.top = y + 'px';
+
+        // Append dot to the dot container
+        mapContainer.appendChild(dot);
+    }
+
+    function handleResize(mapContainer) {
+        // Redraw the center dot
+        drawCenterDot(mapContainer);
+    }
+
+    // Event listener for window resize
+    window.addEventListener('resize', () => handleResize(mapContainer));
 
     // WebSocket connection
     const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/');
@@ -19,7 +90,7 @@ function displayMapAnimation(resultContainerId) {
     // Event listener -- messages
     socket.onmessage = function(event) {
         const update = JSON.parse(event.data);
-        updateAnimation(update); 
+        updateAnimation(update);
     };
 
     // Event listener -- close
@@ -32,105 +103,10 @@ function displayMapAnimation(resultContainerId) {
         console.error('WebSocket error:', error);
     };
 
-    function drawMap() {
-        // Get canvas context
-        const ctx = canvas.getContext('2d');
-        
-        // Clear the canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-        // Draw a simple map background
-        // ctx.fillStyle = 'lightblue';
-        // ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-        // Draw some example features (e.g., rivers, mountains, cities)
-        // You can use various canvas drawing functions (e.g., arc, lineTo, fillText) to draw the map features
-        // Example:
-        // ctx.fillStyle = 'green';
-        // ctx.fillRect(100, 100, 50, 50); // Draw a green rectangle representing a forest
-    }
-
-    // Call drawMap function to initiate drawing
-    drawMap();
-    // Function to update animation with latitude and longitude
-    function updateAnimation(update) {
-        const latitude = parseFloat(update.latitude);
-        const longitude = parseFloat(update.longitude);
-        createDot(latitude, longitude);
-    }// Keep track of the currently displayed dot
-    // Keep track of the currently displayed dot
-    let currentDot = null;
-
-    function createDot(latitude, longitude) {
-        const dot = document.createElement('div');
-        dot.classList.add('dot');
-
-        // Convert latitude and longitude to screen coordinates
-        const x = (longitude + 180) * (canvas.offsetWidth / 360);
-        const y = (90 - latitude) * (canvas.offsetHeight / 180);
-
-        // Check if the calculated coordinates are within the canvas bounds
-        if (x < 0 || x > canvas.width || y < 0 || y > canvas.height) {
-            console.error('Dot coordinates are outside the canvas bounds.');
-            return; // Exit the function if coordinates are outside bounds
-        }
-
-        // Set dot initial position
-        dot.style.left = x + 'px';
-        dot.style.top = y + 'px';
-
-        // Append dot to the dot container
-        dotContainer.appendChild(dot);
-
-        // If there's a current dot, start the fade-out animation for it
-        if (currentDot) {
-            currentDot.style.opacity = '0';
-        }
-
-        // Set the new dot as the current dot
-        currentDot = dot;
-    }
-
-    // Calculate latitude and longitude for the center of the map
-    const centerLatitude = 0;
-    const centerLongitude = 0;
-
-    // Function to draw a dot at a specific latitude and longitude
-    function drawCenterDot() {
-        const dot = document.createElement('div');
-        dot.classList.add('center-dot');
-
-        // Convert latitude and longitude to screen coordinates
-        const x = (centerLongitude + 180) * (canvas.offsetWidth / 360);
-        const y = (90 - centerLatitude) * (canvas.offsetHeight / 180);
-
-        // Set dot position
-        dot.style.left = x + 'px';
-        dot.style.top = y + 'px';
-
-        // Append dot to the dot container
-        dotContainer.appendChild(dot);
-    }
-
-    // Call the function to draw the dot at the center of the map
-    drawCenterDot();
-
-    // Function to handle canvas resize
-    function handleResize() {
-        // Update canvas size
-        canvas.width = resultContainer.offsetWidth;
-        canvas.height = resultContainer.offsetHeight;
-
-        // Redraw the map and dots
-        drawMap();
-        // Call function to redraw dots
-        drawDots();
-    }
-
-// Event listener for window resize
-    window.addEventListener('resize', handleResize);
-
+    // Call the function to draw the center dot initially
+    drawCenterDot(mapContainer);
 }
+
 
 /*
 // Function to display map animation
