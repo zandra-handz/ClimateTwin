@@ -6,25 +6,18 @@ function displayMapAnimation(resultContainerId) {
     canvas.width = resultContainer.offsetWidth; // Set canvas width
     canvas.height = resultContainer.offsetHeight; // Set canvas height
     resultContainer.appendChild(canvas);
-    const dotContainer = resultContainer; // Assign dot container
+    const dotContainer = canvas; // Assign dot container as the canvas itself
+     // Assign dot container
 
     function drawMap() {
-        const mapImage = new Image();
+        // Get canvas context
         const ctx = canvas.getContext('2d');
-
-        // Set up onload event handler for the image
-        mapImage.onload = function() {
-            // Once the image is loaded, draw it onto the canvas
-            ctx.drawImage(mapImage, 0, 0, canvas.width, canvas.height);
-        };
-
-        // Set up error handler for the image loading
-        mapImage.onerror = function() {
-            console.error('Failed to load the map image.');
-        };
-
-        // Load map image
-        mapImage.src = '{% static "climatevisitor/map1.PNG" %}';
+    
+        // Optional: Clear the canvas if needed
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+        // Proceed with other drawing operations or leave it empty
+    
 
         // WebSocket connection
         const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/');
