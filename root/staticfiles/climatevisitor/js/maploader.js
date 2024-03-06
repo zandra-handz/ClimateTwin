@@ -3,12 +3,10 @@ function displayMapAnimation(resultContainerId) {
     resultContainer.innerHTML = '';
     var canvas = document.createElement('canvas'); // Create canvas element
     canvas.id = 'map-canvas'; // Set ID for canvas element
-    canvas.width = canvas.offsetWidth; // Set canvas width
-    canvas.height = canvas.offsetHeight; // Set canvas height
-    const dotContainer = canvas;
-    resultContainer.appendChild(dotContainer);
-    // Assign dot container as the canvas itself
-     // Assign dot container
+    canvas.width = resultContainer.offsetWidth; // Set canvas width
+    canvas.height = resultContainer.offsetHeight; // Set canvas height
+    resultContainer.appendChild(canvas);
+    const dotContainer = canvas; // Assign dot container as the canvas itself
 
     function drawMap() {
         // Get canvas context
@@ -48,7 +46,7 @@ function displayMapAnimation(resultContainerId) {
     // Call drawMap function to initiate drawing
     drawMap();
 
-// Function to update animation with latitude and longitude
+ // Function to update animation with latitude and longitude
 function updateAnimation(update) {
     const latitude = parseFloat(update.latitude);
     const longitude = parseFloat(update.longitude);
@@ -64,11 +62,20 @@ function createDot(latitude, longitude) {
     const y = (90 - latitude) * (canvas.height / 180); // Adjusted canvas dimensions
 
     console.log('Dot coordinates (x, y):', x, y); // Log dot coordinates for debugging
+    console.log('Canvas width:', canvas.width);
+    console.log('Canvas height:', canvas.height);
+
+    // Check if the calculated coordinates are within the canvas bounds
+    if (x < 0 || x > canvas.width || y < 0 || y > canvas.height) {
+        console.error('Dot coordinates are outside the canvas bounds.');
+        return; // Exit the function if coordinates are outside bounds
+    }
 
     // Set dot initial position
     dot.style.left = x + 'px';
     dot.style.top = y + 'px';
 
+    // Append dot to the dot container
     dotContainer.appendChild(dot);
 
     // Create a central dot
