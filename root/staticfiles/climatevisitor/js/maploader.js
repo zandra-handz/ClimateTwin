@@ -1,8 +1,11 @@
 function displayMapAnimation(resultContainerId) {
     var resultContainer = document.getElementById(resultContainerId);
     resultContainer.innerHTML = '';
-    const canvas = document.getElementById('map-canvas');
+    var canvas = document.createElement('canvas'); // Create canvas element
+    canvas.id = 'map-canvas'; // Set ID for canvas element
     resultContainer.appendChild(canvas);
+    canvas.width = resultContainer.offsetWidth; // Set canvas width
+    canvas.height = resultContainer.offsetHeight; // Set canvas height
     const dotContainer = resultContainer; // Assign dot container as the canvas itself
 
     function drawMap() {
@@ -62,10 +65,9 @@ function createDot(latitude, longitude) {
     const dot = document.createElement('div');
     dot.classList.add('dot');
 
-    
     // Convert latitude and longitude to screen coordinates
     const x = (longitude + 180) * (canvas.offsetWidth / 360);
-    const y = (90 - latitude) * (canvas.offsetHeight / 180); 
+    const y = (90 - latitude) * (canvas.offsetHeight / 180);
 
     console.log('Dot coordinates (x, y):', x, y); // Log dot coordinates for debugging
     console.log('Canvas width:', canvas.width);
