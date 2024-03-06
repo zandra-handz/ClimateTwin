@@ -86,13 +86,6 @@ function createDot(latitude, longitude) {
     // Append dot to the dot container
     dotContainer.appendChild(dot);
 
-    // Create a central dot
-    const centralDot = document.createElement('div');
-    centralDot.classList.add('dot', 'central-dot'); // Add central-dot class
-    centralDot.style.left = canvas.width / 2 + 'px'; // Position in the center horizontally
-    centralDot.style.top = canvas.height / 2 + 'px'; // Position in the center vertically
-    dotContainer.appendChild(centralDot);
-
     // Start the fade-out animation after a delay
     setTimeout(() => {
         dot.style.opacity = '0';
