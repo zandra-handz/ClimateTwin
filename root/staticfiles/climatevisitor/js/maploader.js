@@ -1,10 +1,7 @@
 function displayMapAnimation(resultContainerId) {
     var resultContainer = document.getElementById(resultContainerId);
     resultContainer.innerHTML = '';
-    var canvas = document.createElement('canvas'); // Create canvas element
-    canvas.id = 'map-canvas'; // Set ID for canvas element
-    canvas.width = resultContainer.offsetWidth; // Set canvas width
-    canvas.height = resultContainer.offsetHeight; // Set canvas height
+    const canvas = document.getElementById('map-canvas');
     resultContainer.appendChild(canvas);
     const dotContainer = resultContainer; // Assign dot container as the canvas itself
 
@@ -65,9 +62,10 @@ function createDot(latitude, longitude) {
     const dot = document.createElement('div');
     dot.classList.add('dot');
 
+    
     // Convert latitude and longitude to screen coordinates
-    const x = (longitude + 180) * (canvas.width / 360);
-    const y = (90 - latitude) * (canvas.height / 180); 
+    const x = (longitude + 180) * (canvas.offsetWidth / 360);
+    const y = (90 - latitude) * (canvas.offsetHeight / 180); 
 
     console.log('Dot coordinates (x, y):', x, y); // Log dot coordinates for debugging
     console.log('Canvas width:', canvas.width);
@@ -89,11 +87,9 @@ function createDot(latitude, longitude) {
     // Start the fade-out animation after a delay
     setTimeout(() => {
         dot.style.opacity = '0';
-        centralDot.style.opacity = '0'; // Make central dot fade out with the other dot
         // Remove the dots from the DOM after fading out
         setTimeout(() => {
             dotContainer.removeChild(dot);
-            dotContainer.removeChild(centralDot);
         }, 260); // Adjust this value for the fade-out duration
     }, 100); // Adjust this value for the delay before fading out
 }
