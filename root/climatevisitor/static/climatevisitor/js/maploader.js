@@ -16,14 +16,14 @@ function displayMapAnimation(resultContainerId) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     
         // Draw a simple map background
-        ctx.fillStyle = 'lightblue';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // ctx.fillStyle = 'lightblue';
+        // ctx.fillRect(0, 0, canvas.width, canvas.height);
     
         // Draw some example features (e.g., rivers, mountains, cities)
         // You can use various canvas drawing functions (e.g., arc, lineTo, fillText) to draw the map features
         // Example:
-        ctx.fillStyle = 'green';
-        ctx.fillRect(100, 100, 50, 50); // Draw a green rectangle representing a forest
+        // ctx.fillStyle = 'green';
+        // ctx.fillRect(100, 100, 50, 50); // Draw a green rectangle representing a forest
     
 
         // WebSocket connection
@@ -86,12 +86,6 @@ function createDot(latitude, longitude) {
     // Append dot to the dot container
     dotContainer.appendChild(dot);
 
-    // Create a central dot
-    const centralDot = document.createElement('div');
-    centralDot.classList.add('dot', 'central-dot'); // Add central-dot class
-    centralDot.style.left = canvas.width / 2 + 'px'; // Position in the center horizontally
-    centralDot.style.top = canvas.height / 2 + 'px'; // Position in the center vertically
-    dotContainer.appendChild(centralDot);
 
     // Start the fade-out animation after a delay
     setTimeout(() => {
