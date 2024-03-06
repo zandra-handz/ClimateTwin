@@ -11,11 +11,19 @@ function displayMapAnimation(resultContainerId) {
     function drawMap() {
         // Get canvas context
         const ctx = canvas.getContext('2d');
-    
-        // Optional: Clear the canvas if needed
+        
+        // Clear the canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-        // Proceed with other drawing operations or leave it empty
+        // Draw a simple map background
+        ctx.fillStyle = 'lightblue';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+        // Draw some example features (e.g., rivers, mountains, cities)
+        // You can use various canvas drawing functions (e.g., arc, lineTo, fillText) to draw the map features
+        // Example:
+        ctx.fillStyle = 'green';
+        ctx.fillRect(100, 100, 50, 50); // Draw a green rectangle representing a forest
     
 
         // WebSocket connection
