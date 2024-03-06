@@ -54,35 +54,45 @@ function displayMapAnimation(resultContainerId) {
     // Call drawMap function to initiate drawing
     drawMap();
 
-    // Function to update animation with latitude and longitude
-    function updateAnimation(update) {
-        const latitude = parseFloat(update.latitude);
-        const longitude = parseFloat(update.longitude);
-        createDot(latitude, longitude);
-    }
+// Function to update animation with latitude and longitude
+function updateAnimation(update) {
+    const latitude = parseFloat(update.latitude);
+    const longitude = parseFloat(update.longitude);
+    createDot(latitude, longitude);
+}
 
-    // Function to create a dot with trailing fade-out effect
-    function createDot(latitude, longitude) {
-        const dot = document.createElement('div');
-        dot.classList.add('dot');
+function createDot(latitude, longitude) {
+    const dot = document.createElement('div');
+    dot.classList.add('dot');
 
-        // Convert latitude and longitude to screen coordinates
-        const x = (longitude + 180) * (canvas.offsetWidth / 360);
-        const y = (90 - latitude) * (canvas.offsetHeight / 180);
+    // Convert latitude and longitude to screen coordinates
+    const x = (longitude + 180) * (canvas.width / 360); // Adjusted canvas dimensions
+    const y = (90 - latitude) * (canvas.height / 180); // Adjusted canvas dimensions
 
-        // Set dot initial position
-        dot.style.left = x + 'px';
-        dot.style.top = y + 'px';
+    console.log('Dot coordinates (x, y):', x, y); // Log dot coordinates for debugging
 
-        dotContainer.appendChild(dot);
+    // Set dot initial position
+    dot.style.left = x + 'px';
+    dot.style.top = y + 'px';
 
-        // Start the fade-out animation after a delay
+    dotContainer.appendChild(dot);
+
+    // Create a central dot
+    const centralDot = document.createElement('div');
+    centralDot.classList.add('dot', 'central-dot'); // Add central-dot class
+    centralDot.style.left = canvas.width / 2 + 'px'; // Position in the center horizontally
+    centralDot.style.top = canvas.height / 2 + 'px'; // Position in the center vertically
+    dotContainer.appendChild(centralDot);
+
+    // Start the fade-out animation after a delay
+    setTimeout(() => {
+        dot.style.opacity = '0';
+        centralDot.style.opacity = '0'; // Make central dot fade out with the other dot
+        // Remove the dots from the DOM after fading out
         setTimeout(() => {
-            dot.style.opacity = '0';
-            // Remove the dot from the DOM after fading out
-            setTimeout(() => {
-                dotContainer.removeChild(dot);
-            }, 260); // Adjust this value for the fade-out duration
-        }, 100); // Adjust this value for the delay before fading out
-    }
+            dotContainer.removeChild(dot);
+            dotContainer.removeChild(centralDot);
+        }, 260); // Adjust this value for the fade-out duration
+    }, 100); // Adjust this value for the delay before fading out
+}
 }
