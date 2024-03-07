@@ -261,6 +261,12 @@ class ClimateTwinFinder:
             random_country_idx = np.random.choice(land_only.index)
             random_country = land_only.loc[random_country_idx]
 
+            # For algorithm viewing and animation debugging
+            try:
+                country_name = random_country['name']   
+            except KeyError:
+                country_name = 'Mystery Country'  
+
             # Use spatial index for efficient point-in-polygon check
             possible_matches_index = list(spatial_index.intersection(random_country.geometry.bounds))
             possible_matches = land_only.iloc[possible_matches_index]
@@ -276,7 +282,7 @@ class ClimateTwinFinder:
                 break
 
         print(f"Country picker recalculations: {recalculations}")
-        return points_within_country
+        return country_name, points_within_country
 
 
 
@@ -323,18 +329,6 @@ class ClimateTwinFinder:
 
     # Added for websocket
 
-    @shared_task
-    def send_coordinate_update(latitude, longitude):
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.send)(
-            'websocket',  # Channel name for the consumer
-            {
-                'type': 'update_coordinates',
-                'latitude': latitude,
-                'longitude': longitude,
-            }
-        )
-        print(f"Sending update for coordinate pair: {latitude}, {longitude}")
 
     def search_random_coords_in_a_country(self):
         base_url = "https://api.openweathermap.org/data/2.5/find"
@@ -343,7 +337,7 @@ class ClimateTwinFinder:
         celery_fail_count = 0
 
         while num_places > len(self.similar_places['name']):
-            random_coords = self.generate_random_coords_in_a_country_list()
+            country_name, random_coords = self.generate_random_coords_in_a_country_list()
 
             for idx, point in random_coords.iterrows():
                 latitude, longitude = point.geometry.y, point.geometry.x
@@ -352,7 +346,7 @@ class ClimateTwinFinder:
                     try:
                         # Send coordinates update via WebSocket
                         #self.send_coordinate_update(latitude, longitude)
-                        send_coordinate_update_to_celery(latitude, longitude)
+                        send_coordinate_update_to_celery(country_name, latitude, longitude)
                     except Exception as e:
                         print(f"Error sending to Celery task: {e}")
                         celery_fail_count += 1
