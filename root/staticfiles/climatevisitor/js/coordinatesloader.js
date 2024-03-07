@@ -86,7 +86,7 @@ function displayLocationUpdate(resultContainerId) {
 
     // WebSocket connection
     //const socket = new WebSocket('wss://localhost:8000/ws/climate-twin/'); // Replace with your WebSocket URL
-    const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/');
+    const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/current/');
 
     // Event listener -- open
     socket.onopen = function(event) {
