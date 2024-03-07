@@ -72,8 +72,22 @@ function displayMapAnimation(mapContainerId) {
     }
 
     function handleResize(mapContainer) {
+        // Remove the previous center dot, if exists
+        const previousCenterDot = mapContainer.querySelector('.center-dot');
+        if (previousCenterDot) {
+            mapContainer.removeChild(previousCenterDot);
+        }
+        
         // Redraw the center dot
         drawCenterDot(mapContainer);
+    
+        // Recalculate and update positions of all dots
+        const dotElements = mapContainer.querySelectorAll('.dot');
+        dotElements.forEach(dotElement => {
+            const latitude = parseFloat(dotElement.dataset.latitude);
+            const longitude = parseFloat(dotElement.dataset.longitude);
+            createDot(latitude, longitude, mapContainer);
+        });
     }
 
     // Event listener for window resize
