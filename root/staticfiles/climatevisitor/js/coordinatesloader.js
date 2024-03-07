@@ -121,7 +121,7 @@ function locationUpdate(update) {
     updateElement.style.paddingBottom = '32px'; // Adjust the value as needed
  
     if (update.latitude !== undefined && update.longitude !== undefined) { 
-        updateElement.textContent = `Success! You are now in ${update.name}, Lat: ${update.latitude}, Long: $'{update.longitude}`; // ${update.latitude}, ${update.longitude}`;
+        updateElement.textContent = `Success! You are now in ${update.name}, Lat: ${update.latitude}, Long: ${update.longitude}`; // ${update.latitude}, ${update.longitude}`;
         updateElement.style.color = 'black'; 
  
         if (update.latitude > 0) {
