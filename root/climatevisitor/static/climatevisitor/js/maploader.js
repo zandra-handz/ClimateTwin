@@ -1,4 +1,20 @@
 function displayMapAnimation(mapContainerId) {
+    // Function to set the height of the map container
+    function setMapContainerHeight() {
+        const mapContainer = document.getElementById(mapContainerId);
+        const width = mapContainer.offsetWidth;
+        const height = width / 2; // Set height to half of the width
+        mapContainer.style.height = height + 'px';
+    }
+
+    // Call the function to set the initial height on page load
+    setMapContainerHeight();
+
+    // Call the function whenever the window is resized
+    window.addEventListener('resize', setMapContainerHeight);
+
+    // Your existing displayMapAnimation function and other related functions go here...
+
     const mapContainer = document.getElementById(mapContainerId);
     mapContainer.innerHTML = ''; // Clear any existing content
 
@@ -120,6 +136,7 @@ function displayMapAnimation(mapContainerId) {
     // Call the function to draw the center dot initially
     drawCenterDot(mapContainer);
 }
+
 
 
 /*
