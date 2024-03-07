@@ -63,6 +63,14 @@ function replaceUpdate(update) {
         } else {
             updateElement.innerHTML += `, Long: ${update.longitude}`;
         }
+
+        // Check if it's the last update
+        if (update.last) {
+            const loadingContainer = document.querySelector('.loading-container');
+            if (loadingContainer) {
+                loadingContainer.remove(); // Remove the loading container
+            }
+        }
     } else {
         // Display completed message if no coordinates left
         updateElement.textContent = 'Completed';
@@ -72,6 +80,7 @@ function replaceUpdate(update) {
     container.innerHTML = '';  
     container.appendChild(updateElement);
 }
+
 
 
 // coordinatesloader.js
@@ -121,7 +130,8 @@ function locationUpdate(update) {
     updateElement.style.paddingBottom = '32px'; // Adjust the value as needed
  
     if (update.latitude !== undefined && update.longitude !== undefined) { 
-        updateElement.textContent = `Success! You are now in ${update.name}, Lat: ${update.latitude}, Long: ${update.longitude}`; // ${update.latitude}, ${update.longitude}`;
+        updateElement.textContent = '';
+        updateElement.textContent = `You are now in ${update.name}, ${update.latitude}, ${update.longitude}`; // ${update.latitude}, ${update.longitude}`;
         updateElement.style.color = 'black'; 
  
         if (update.latitude > 0) {
