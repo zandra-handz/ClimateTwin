@@ -88,3 +88,4 @@ function replaceUpdate(update) {
     container.innerHTML = '';  
     container.appendChild(updateElement);
 }
+
