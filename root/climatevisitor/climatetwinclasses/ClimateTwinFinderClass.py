@@ -534,7 +534,7 @@ class ClimateTwinFinder:
 
                 #this return ensures only one location; comment out to allow for multiple
                 self.climate_twin = climate_twin
-                send_location_update_to_celery.delay(address_str, latitude, longitude)
+                send_location_update_to_celery(address_str, latitude, longitude)
                 
                 return True
 

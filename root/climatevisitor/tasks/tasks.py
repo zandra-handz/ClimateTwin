@@ -33,7 +33,8 @@ def send_location_update_to_celery(name, latitude, longitude):
         'location_update',
         {
             'type': 'update_location',
-            'name': latitude,
+            'name': name,
+            'latitude': latitude,
             'longitude': longitude,
         }
     )
