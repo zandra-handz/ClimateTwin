@@ -464,6 +464,7 @@
             
             <div class="result-container">
                 <div id="climate-updates-container"></div>
+                <div id="location-update-container"></div>
             </div>
             <div class="result-container"></div>
                 <div id="map-container">
@@ -570,6 +571,11 @@
     <script>
         // Call displayLoading function with the appropriate result container ID
         displayLoading('climate-updates-container');
+    </script>
+
+    <script>
+        // Call displayLoading function with the appropriate result container ID
+        displayLocationUpdate('climate-location-container');
     </script>
 
     <script src="{% static 'climatevisitor/js/maploader.js' %}"></script>

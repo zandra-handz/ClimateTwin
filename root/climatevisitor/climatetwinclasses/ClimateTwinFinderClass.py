@@ -1,4 +1,4 @@
-from climatevisitor.tasks.tasks import send_coordinate_update_to_celery
+from climatevisitor.tasks.tasks import send_coordinate_update_to_celery, send_location_update_to_celery
 from celery import shared_task, current_app
 from django.conf import settings
 import geopandas as gpd
@@ -534,6 +534,8 @@ class ClimateTwinFinder:
 
                 #this return ensures only one location; comment out to allow for multiple
                 self.climate_twin = climate_twin
+                send_location_update_to_celery.delay(address_str, latitude, longitude)
+                
                 return True
 
 
