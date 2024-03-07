@@ -44,23 +44,20 @@ function displayMapAnimation(mapContainerId) {
         // Check if the calculated coordinates are within the canvas bounds
         if (x < 0 || x > mapCanvas.offsetWidth || y < 0 || y > mapCanvas.offsetHeight) {
             console.error('Dot coordinates are outside the canvas bounds.');
-            return; // Exit the function if coordinates are outside bounds
+            return; 
         }
 
-        // Set dot initial position
         dot.style.left = x + 'px';
         dot.style.top = y + 'px';
 
-        // Append dot to the dot container
         mapContainer.appendChild(dot);
 
-        // Fade out the previous dot
         const currentDot = mapContainer.querySelector('.dot.current');
         if (currentDot) {
             currentDot.classList.remove('current');
             setTimeout(() => {
                 mapContainer.removeChild(currentDot);
-            }, 1000); // Adjust this value for the fade-out duration
+            }, 1000); 
         }
 
         // Set the new dot as the current dot
