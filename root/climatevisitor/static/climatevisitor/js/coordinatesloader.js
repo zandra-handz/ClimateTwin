@@ -122,6 +122,7 @@ function displayLocationUpdate(resultContainerId) {
 // Function to append new update to the container
 function locationUpdate(update) {
     const container = document.getElementById('climates-update-container');
+    container.innerHTML = '';
     const updateElement = document.createElement('div');
     
     // Apply CSS styles to center, make it smaller, and add padding
@@ -155,5 +156,6 @@ function locationUpdate(update) {
         updateElement.style.color = 'gray';
     }
 
+    container.innerHTML = '';
     container.appendChild(updateElement);
 }
