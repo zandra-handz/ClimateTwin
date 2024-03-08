@@ -155,6 +155,5 @@ function locationUpdate(update) {
         updateElement.style.color = 'gray';
     }
 
-    container.innerHTML = '';  
     container.appendChild(updateElement);
 }
