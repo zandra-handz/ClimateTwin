@@ -39,3 +39,17 @@ def send_location_update_to_celery(name, latitude, longitude):
         }
     )
     
+
+@shared_task
+def send_current_location_to_celery(name, latitude, longitude):
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        'update_location_from_celery',
+        {
+            'type': 'current_location',
+            'name': 'hiiii',
+            'latitude': 'hiiii',
+            'longitude': 'hiiii',
+        }
+    )
+    
