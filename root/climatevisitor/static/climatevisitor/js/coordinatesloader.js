@@ -134,7 +134,7 @@ function locationUpdate(update) {
         updateElement.textContent = '';
         updateElement.textContent = `You are now in ${update.name}.`; // ${update.latitude}, ${update.longitude}`;
         updateElement.style.color = 'black'; 
- 
+        /*
         if (update.latitude > 0) {
             updateElement.innerHTML += `<br>Lat: <span style="color: green">${update.latitude}</span>`;
         } else if (update.latitude < 0) {
@@ -149,7 +149,7 @@ function locationUpdate(update) {
             updateElement.innerHTML += `, Long: <span style="color: orange">${update.longitude}</span>`;
         } else {
             updateElement.innerHTML += `, Long: ${update.longitude}`;
-        }
+        } */
     } else {
         // Display completed message if no coordinates left
         updateElement.textContent = 'Completed';
