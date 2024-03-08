@@ -121,7 +121,8 @@ function displayLocationUpdate(resultContainerId) {
 
 // Function to append new update to the container
 function locationUpdate(update) {
-    const container = document.getElementById('location-update-container');
+    const container = document.getElementById('climates-update-container');
+    container.innerHTML = '';  
     const updateElement = document.createElement('div');
     
     // Apply CSS styles to center, make it smaller, and add padding
@@ -131,7 +132,7 @@ function locationUpdate(update) {
  
     if (update.latitude !== undefined && update.longitude !== undefined) { 
         updateElement.textContent = '';
-        updateElement.textContent = `You are now in ${update.name}, ${update.latitude}, ${update.longitude}`; // ${update.latitude}, ${update.longitude}`;
+        updateElement.textContent = `You are now in ${update.name}.`; // ${update.latitude}, ${update.longitude}`;
         updateElement.style.color = 'black'; 
  
         if (update.latitude > 0) {
