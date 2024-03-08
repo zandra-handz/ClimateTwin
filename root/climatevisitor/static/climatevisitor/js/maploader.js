@@ -30,6 +30,13 @@ function displayMapAnimation(mapContainerId) {
     function updateAnimation(update) {
         const latitude = parseFloat(update.latitude);
         const longitude = parseFloat(update.longitude);
+        
+        // Remove the previous dot, if exists
+        const previousDot = mapContainer.querySelector('.dot');
+        if (previousDot) {
+            mapContainer.removeChild(previousDot);
+        }
+
         createDot(latitude, longitude, mapContainer);
     }
 
@@ -60,13 +67,14 @@ function displayMapAnimation(mapContainerId) {
             currentDot.classList.remove('current');
             setTimeout(() => {
                 mapContainer.removeChild(currentDot);
-            }, 1000); // Adjust this value for the fade-out duration
+            }, 600); // Adjust this value for the fade-out duration
         }
 
         // Set the new dot as the current dot
         dot.classList.add('current');
     }
 
+    /*
     function drawCenterDot(mapContainer) {
         const dot = document.createElement('div');
         dot.classList.add('center-dot');
@@ -85,10 +93,11 @@ function displayMapAnimation(mapContainerId) {
 
         // Append dot to the dot container
         mapContainer.appendChild(dot);
-    }
+    } */
 
     function handleResize(mapContainer) {
         // Remove the previous center dot, if exists
+        /*
         const previousCenterDot = mapContainer.querySelector('.center-dot');
         if (previousCenterDot) {
             mapContainer.removeChild(previousCenterDot);
@@ -96,7 +105,7 @@ function displayMapAnimation(mapContainerId) {
         
         // Redraw the center dot
         drawCenterDot(mapContainer);
-    
+        */
         // Recalculate and update positions of all dots
         const dotElements = mapContainer.querySelectorAll('.dot');
         dotElements.forEach(dotElement => {
@@ -134,7 +143,7 @@ function displayMapAnimation(mapContainerId) {
     };
 
     // Call the function to draw the center dot initially
-    drawCenterDot(mapContainer);
+    //drawCenterDot(mapContainer);
 }
 
 
