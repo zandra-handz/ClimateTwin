@@ -6,6 +6,10 @@ from celery.schedules import crontab
 from django.conf import settings
 import logging 
 
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+import json
+import requests
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -22,9 +26,23 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS, related_name='algorithms_task')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS, related_name='algorithms')
 
+
+@app.task
+def send_current_location_to_celery(name, latitude, longitude):
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        'update_location_from_celery',
+        {
+            'type': 'current_location',
+            'name': 'hiiii',
+            'latitude': 'hiiii',
+            'longitude': 'hiiii',
+        }
+    )
+
 app.conf.beat_schedule = {
     'fetch-current-location-every-minute': {
-        'task': 'climatevisitor.tasks.tasks.send_current_location_to_celery',
+        'task': 'celery.send_current_location_to_celery',
         'schedule': crontab(second='*/20'),
     },
 }
