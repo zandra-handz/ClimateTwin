@@ -4,8 +4,7 @@ import os
 from celery import Celery
 from celery.schedules import crontab
 from django.conf import settings
-import logging
-from climatevisitor.tasks.tasks import send_current_location_to_celery
+import logging 
 
 
 logger = logging.getLogger(__name__)
@@ -25,7 +24,7 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS, related_name='algorithms
 
 app.conf.beat_schedule = {
     'fetch-current-location-every-minute': {
-        'task': send_current_location_to_celery,
+        'task': 'climatevisitor.tasks.tasks.send_current_location_to_celery',
         'schedule': crontab(second='*/20'),
     },
 }
