@@ -4,8 +4,6 @@ from channels.layers import get_channel_layer
 import json
 import logging
 
-from .tasks.tasks import send_current_location_to_celery
-
 logger = logging.getLogger(__name__)
 
 console_handler = logging.StreamHandler()
@@ -87,4 +85,4 @@ class LocationUpdateConsumer(WebsocketConsumer):
     def update_location_from_celery(self, event):
         logger.debug(f"Received update_location event from Celery: {event}")
         self.send(text_data=event['data'])
-        logger.info("Sent location update to WebSocket clients from Celery")
+        logger.info("Received location update from Celery")
