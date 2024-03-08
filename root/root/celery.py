@@ -43,7 +43,7 @@ def send_current_location_to_celery(name, latitude, longitude):
 app.conf.beat_schedule = {
     'fetch-current-location-every-minute': {
         'task': 'celery.send_current_location_to_celery',
-        'schedule': crontab(second='*/20'),
+        'schedule': crontab(minute='*/20'),
     },
 }
 
