@@ -31,7 +31,7 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS, related_name='algorithms
 def send_current_location_to_celery(name, latitude, longitude):
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
-        'update_location_from_celery',
+        'location_update',
         {
             'type': 'current_location',
             'name': 'hiiii',
