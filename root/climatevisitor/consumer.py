@@ -28,6 +28,7 @@ def get_user_model():
     return apps.get_model('users', 'BadRainbowzUser')
 
 class ClimateTwinConsumer(WebsocketConsumer):
+    
     def connect(self):
         self.group_name = 'climate_updates'  
         async_to_sync(self.channel_layer.group_add)(
@@ -42,6 +43,7 @@ class ClimateTwinConsumer(WebsocketConsumer):
 
         # Send a message indicating whether the user was retrieved
         if user:
+            self.accept()  # Ensure the connection is accepted before sending messages
             self.send(text_data=json.dumps({
                 'message': f"User retrieved: {user}"
             }))
@@ -49,8 +51,6 @@ class ClimateTwinConsumer(WebsocketConsumer):
             self.send(text_data=json.dumps({
                 'message': "Failed to retrieve user"
             }))
-
-        self.accept()
 
     def disconnect(self, close_code):
         async_to_sync(self.channel_layer.group_discard)(
@@ -69,13 +69,14 @@ class ClimateTwinConsumer(WebsocketConsumer):
         logger.info(f"Received coordinates: Country - {event['country_name']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")
 
     def get_user(self, user_id):
+        user = None
+        # Implement your logic to retrieve the user based on user_id
+        # For example, if you're using Django, you might do something like this:
         try:
             user = get_user_model().objects.get(id=user_id)
-            logger.info(f"User retrieved: {user}")
-            return user
-        except ObjectDoesNotExist:
+        except get_user_model().DoesNotExist:
             logger.error("User does not exist")
-            return None
+        return user
 
 '''
 class ClimateTwinConsumer(WebsocketConsumer):
