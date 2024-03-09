@@ -20,51 +20,61 @@ def updateAnimation(latitude, longitude):
         
         pass
 
+from django.db.models import ObjectDoesNotExist
+
+logger = logging.getLogger(__name__)
+
 def get_user_model():
     return apps.get_model('users', 'BadRainbowzUser')
 
 class ClimateTwinConsumer(WebsocketConsumer):
-    async def connect(self):
-        
-        user = await self.get_user(self.scope['user_id'])
+    def connect(self):
+        self.group_name = 'climate_updates'  
+        async_to_sync(self.channel_layer.group_add)(
+            self.group_name,
+            self.channel_name
+        )
+        logger.info("WebSocket connection established")
+
+        # Retrieve user information
+        user_id = self.scope['user'].id
+        user = self.get_user(user_id)
+
+        # Send a message indicating whether the user was retrieved
         if user:
-            await self.channel_layer.group_add(
-                f'climate_updates_user_{user.id}',
-                self.channel_name
-            )
-            await self.accept()
-            # Send success message to the client
-            await self.send(text_data="User successfully connected to WebSocket.")
+            self.send(text_data=json.dumps({
+                'message': f"User retrieved: {user}"
+            }))
         else:
-            await self.close()
+            self.send(text_data=json.dumps({
+                'message': "Failed to retrieve user"
+            }))
 
-    async def disconnect(self, close_code):
-        user = await self.get_user(self.scope['user_id'])
-        if user:
-            await self.channel_layer.group_discard(
-                f'climate_updates_user_{user.id}',
-                self.channel_name
-            )
+        self.accept()
 
-    async def get_user(self, user_id):
-        BadRainbowzUser = get_user_model()
-        # Implement your logic to retrieve the user based on user_id
-        # For example, if you're using Django, you might do something like this:
-        try:
-            user = await database_sync_to_async(BadRainbowzUser.objects.get)(id=user_id)
-            return user
-        except BadRainbowzUser.DoesNotExist:
-            return None
+    def disconnect(self, close_code):
+        async_to_sync(self.channel_layer.group_discard)(
+            self.group_name,
+            self.channel_name
+        )
+        logger.info("WebSocket connection closed")
 
-    async def receive(self, text_data):
-        # Handle incoming messages here
-        pass
+    def update_coordinates(self, event):
+        logger.debug(f"Received update_coordinates event: {event}")
+        self.send(text_data=json.dumps({
+            'country_name': event['country_name'],
+            'latitude': event['latitude'],
+            'longitude': event['longitude'],
+        }))
+        logger.info(f"Received coordinates: Country - {event['country_name']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")
 
-    @database_sync_to_async
     def get_user(self, user_id):
         try:
-            return BadRainbowzUser.objects.get(id=user_id)
-        except BadRainbowzUser.DoesNotExist:
+            user = get_user_model().objects.get(id=user_id)
+            logger.info(f"User retrieved: {user}")
+            return user
+        except ObjectDoesNotExist:
+            logger.error("User does not exist")
             return None
 
 '''
