@@ -49,7 +49,8 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', get_random_secret_key())
     # pip freeze > requirements.txt
         # if pushing to Digital Oceean, remove this: twisted-iocpsupport==1.0.4
 
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+ALLOWED_HOSTS = ['climatetwin-lzyyd.ondigitalocean.app']
+#ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 DEVELOPMENT_MODE = False
 
@@ -58,8 +59,8 @@ DEVELOPMENT_MODE = False
 #ALLOWED_HOSTS = []
 #else:
     
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
-
+#DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = False
     #ALLOWED_HOSTS = ['climatetwin-lzyyd.ondigitalocean.app']
     #DEBUG = config("DEBUG", default=0)
     # Digital Ocean droplet IP:
