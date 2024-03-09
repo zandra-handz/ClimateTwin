@@ -28,7 +28,7 @@ def get_user_model():
     return apps.get_model('users', 'BadRainbowzUser')
 
 class ClimateTwinConsumer(WebsocketConsumer):
-    
+
     def connect(self):
         self.group_name = 'climate_updates'  
         async_to_sync(self.channel_layer.group_add)(
@@ -48,6 +48,7 @@ class ClimateTwinConsumer(WebsocketConsumer):
                 'message': f"User retrieved: {user}"
             }))
         else:
+            self.accept() 
             self.send(text_data=json.dumps({
                 'message': "Failed to retrieve user"
             }))
