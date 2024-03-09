@@ -49,18 +49,18 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', get_random_secret_key())
     # pip freeze > requirements.txt
         # if pushing to Digital Oceean, remove this: twisted-iocpsupport==1.0.4
 
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+
 DEVELOPMENT_MODE = False
 
-
-if DEVELOPMENT_MODE is True:
+if DEVELOPMENT_MODE == True:
     DEBUG = True
     ALLOWED_HOSTS = []
 else:
     DEBUG = os.getenv('DEBUG', 'False') == 'True'
-    ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
-    #DEBUG = config("DEBUG", default=0)
     #ALLOWED_HOSTS = ['climatetwin-lzyyd.ondigitalocean.app']
+    #DEBUG = config("DEBUG", default=0)
     # Digital Ocean droplet IP:
     #CELERY_BROKER_URL = 'redis://10.108.0.3:6379/0'
 
@@ -182,6 +182,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'root.urls'
 
+#for front-end development
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = False
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -258,9 +262,7 @@ DJOSER = {
     'LOGOUT_ON_PASSWORD_CHANGE': True,
 }
 
-#for front-end development
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_CREDENTIALS = False
+
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
