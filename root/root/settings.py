@@ -59,8 +59,8 @@ DEVELOPMENT_MODE = False
 #ALLOWED_HOSTS = []
 #else:
     
-#DEBUG = os.getenv('DEBUG', 'False') == 'True'
-DEBUG = False
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
+#DEBUG = False
     #ALLOWED_HOSTS = ['climatetwin-lzyyd.ondigitalocean.app']
     #DEBUG = config("DEBUG", default=0)
     # Digital Ocean droplet IP:
@@ -190,6 +190,8 @@ ROOT_URLCONF = 'root.urls'
 #for front-end development
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = False
+
+CSRF_COOKIE_SECURE = False
 
 TEMPLATES = [
     {
