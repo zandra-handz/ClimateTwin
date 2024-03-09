@@ -84,5 +84,11 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
     def current_location(self, event):
         logger.debug(f"Received update_location event from Celery: {event}")
-        self.send(text_data=event['data'])
+        # Send the message data directly
+        self.send(text_data=json.dumps({
+            'type': 'current_location',
+            'name': 'HI I WORK!!!',
+            'latitude': event['latitude'],
+            'longitude': event['longitude'],
+        }))
         logger.info("Received location update from Celery")
