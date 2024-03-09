@@ -148,9 +148,9 @@ CELERY_TIMEZONE = TIME_ZONE
 CELERY_WORKER_CONCURRENCY = 10 
     
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-SESSION_COOKIE_AGE = 300
-SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
+#SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+#SESSION_COOKIE_AGE = 300
+#SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
 
 
