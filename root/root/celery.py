@@ -38,7 +38,7 @@ def send_current_location_to_celery():
     async_to_sync(channel_layer.group_send)(
         'location_update',
         {
-            #'type': 'current_location',
+            'type': 'current_location',
             'name': 'hiiii',
             'latitude': 'hiiii',
             'longitude': 'hiiii',
