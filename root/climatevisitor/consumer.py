@@ -3,7 +3,7 @@ from channels.generic.websocket import WebsocketConsumer
 from channels.layers import get_channel_layer
 
 from channels.db import database_sync_to_async
-from users.models import BadRainbowzUser
+from django.apps import apps
 import asyncio
 
 import json
@@ -20,8 +20,12 @@ def updateAnimation(latitude, longitude):
         
         pass
 
+def get_user_model():
+    return apps.get_model('users', 'BadRainbowzUser')
+
 class ClimateTwinConsumer(WebsocketConsumer):
     async def connect(self):
+        
         user = await self.get_user(self.scope['user_id'])
         if user:
             await self.channel_layer.group_add(
@@ -43,6 +47,7 @@ class ClimateTwinConsumer(WebsocketConsumer):
             )
 
     async def get_user(self, user_id):
+        BadRainbowzUser = get_user_model()
         # Implement your logic to retrieve the user based on user_id
         # For example, if you're using Django, you might do something like this:
         try:
@@ -50,7 +55,6 @@ class ClimateTwinConsumer(WebsocketConsumer):
             return user
         except BadRainbowzUser.DoesNotExist:
             return None
-
 
     async def receive(self, text_data):
         # Handle incoming messages here
