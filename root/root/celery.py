@@ -27,8 +27,13 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS, related_name='algorithms
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS, related_name='algorithms')
 
 
+@app.on_after_configure.connect
+def setup_periodic_tasks(sender, **kwargs):
+    sender.add_periodic_task(10.0, send_current_location_to_celery.s(), name='send_current_location')
+
+
 @app.task
-def send_current_location_to_celery(name, latitude, longitude):
+def send_current_location_to_celery():
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
         'location_update',
@@ -39,13 +44,8 @@ def send_current_location_to_celery(name, latitude, longitude):
             'longitude': 'hiiii',
         }
     )
+    
 
-app.conf.beat_schedule = {
-    'fetch-current-location-every-minute': {
-        'task': 'celery.send_current_location_to_celery',
-        'schedule': crontab(minute='*/20'),
-    },
-}
 
 '''
 # Use the REDIS_URL from Django settings for the broker and backend
