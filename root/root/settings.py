@@ -103,6 +103,13 @@ USE_TZ = True
 
 ASGI_APPLICATION = 'root.asgi.application'
 
+CSRF_TRUSTED_ORIGINS = [
+    'climatetwin-lzyyd.ondigitalocean.app',
+    # Add more trusted origins as needed
+]
+
+CSRF_COOKIE_DOMAIN = 'climatetwin-lzyyd.ondigitalocean.app'
+
 REDIS_URL = os.environ.get('REDIS_URL')
 
 '''
