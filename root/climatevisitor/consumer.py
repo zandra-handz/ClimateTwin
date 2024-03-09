@@ -3,6 +3,7 @@ from channels.generic.websocket import WebsocketConsumer
 from channels.layers import get_channel_layer
 import json
 import logging
+from .views import CurrentExploreLocationView
 
 logger = logging.getLogger(__name__)
 
@@ -84,11 +85,19 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
     def current_location(self, event):
         logger.debug(f"Received update_location event from Celery: {event}")
-        # Send the message data directly
-        self.send(text_data=json.dumps({
-            'type': 'current_location',
-            'name': 'HI I WORK!!!',
-            'latitude': event['latitude'],
-            'longitude': event['longitude'],
-        }))
-        logger.info("Received location update from Celery")
+        
+        # Use the view function to get the latest explore location
+        latest_location = CurrentExploreLocationView().get_latest_explore_location(self.scope['user'])
+        
+        if latest_location:
+            # If a latest location is found, send it through the WebSocket
+            self.send(text_data=json.dumps({
+                'type': 'current_location',
+                'name': 'Latest Explore Location',
+                'latitude': latest_location.latitude,
+                'longitude': latest_location.longitude,
+            }))
+            logger.info("Sent latest explore location through WebSocket")
+        else:
+            # If no latest location is found, handle it accordingly
+            logger.info("No latest explore location found")

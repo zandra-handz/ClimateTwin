@@ -579,13 +579,13 @@ class CurrentExploreLocationView(generics.ListAPIView):
 
     @swagger_auto_schema(operation_id='getCurrentExploreDiscoverLocation', operation_description="Returns the most recent explore location.")
     def get(self, request, *args, **kwargs):
-        latest_location = self.get_latest_location(request.user)
+        latest_location = self.get_latest_explore_location(request.user)
         if not latest_location:
             return Response({'detail': 'You are not exploring any locations right now. Pick an explore location to collect treasure!'}, status=status.HTTP_404_NOT_FOUND)
         serializer = self.get_serializer(latest_location)
         return Response(serializer.data)
 
-    def get_latest_location(self, user):
+    def get_latest_explore_location(self, user):
         most_recent_climate_twin_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-created_on').first()
         if not most_recent_climate_twin_location:
             return None
