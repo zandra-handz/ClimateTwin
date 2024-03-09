@@ -1,7 +1,5 @@
-# ASGI config
-
 import os
-
+import logging
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
@@ -14,10 +12,19 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'root.settings')
 # Get the Django ASGI application
 django_asgi_app = get_asgi_application()
 
+# Define a logger
+logger = logging.getLogger(__name__)
+
+# Define a function to log request headers
+async def log_request_headers(scope, receive, send):
+    if scope['type'] == 'http':
+        logger.debug("Incoming HTTP request headers: %s", scope.get('headers', []))
+    return await django_asgi_app(scope, receive, send)
+
 # Define the ProtocolTypeRouter for ASGI
 application = ProtocolTypeRouter({
-    "http": django_asgi_app,  # For HTTP requests
+    "http": log_request_headers,
     "websocket": AuthMiddlewareStack(
         URLRouter(websocket_urlpatterns)  # Correct usage of routing
-    ),  # For WebSocket requests
+    ),
 })
