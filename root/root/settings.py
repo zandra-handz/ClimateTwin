@@ -105,6 +105,7 @@ ASGI_APPLICATION = 'root.asgi.application'
 
 CSRF_TRUSTED_ORIGINS = [
     'climatetwin-lzyyd.ondigitalocean.app',
+    'https://climatetwin-lzyyd.ondigitalocean.app'
     # Add more trusted origins as needed
 ]
 
