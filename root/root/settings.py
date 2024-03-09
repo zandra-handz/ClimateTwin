@@ -53,11 +53,12 @@ ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split('
 
 DEVELOPMENT_MODE = False
 
-if DEVELOPMENT_MODE == True:
-    DEBUG = True
-    ALLOWED_HOSTS = []
-else:
-    DEBUG = os.getenv('DEBUG', 'False') == 'True'
+#if DEVELOPMENT_MODE == True:
+#DEBUG = True
+#ALLOWED_HOSTS = []
+#else:
+    
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
     #ALLOWED_HOSTS = ['climatetwin-lzyyd.ondigitalocean.app']
     #DEBUG = config("DEBUG", default=0)
@@ -103,6 +104,7 @@ ASGI_APPLICATION = 'root.asgi.application'
 
 REDIS_URL = os.environ.get('REDIS_URL')
 
+'''
 if DEVELOPMENT_MODE is True:
     CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
     CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
@@ -120,19 +122,21 @@ if DEVELOPMENT_MODE is True:
 
 else:
 
-    # Digital Ocean
-    REDIS_URL_WITH_CERT_OPTION = f'{REDIS_URL}/0?ssl_cert_reqs=CERT_REQUIRED'   
-    CELERY_BROKER_URL = REDIS_URL_WITH_CERT_OPTION
-    CELERY_RESULT_BACKEND = REDIS_URL_WITH_CERT_OPTION
+'''
 
-    CHANNEL_LAYERS = {
-        'default': {
-            'BACKEND': 'channels_redis.core.RedisChannelLayer',
-            'CONFIG': {
-                'hosts': [os.environ.get('REDIS_URL')],
-            },
+# Digital Ocean
+REDIS_URL_WITH_CERT_OPTION = f'{REDIS_URL}/0?ssl_cert_reqs=CERT_REQUIRED'   
+CELERY_BROKER_URL = REDIS_URL_WITH_CERT_OPTION
+CELERY_RESULT_BACKEND = REDIS_URL_WITH_CERT_OPTION
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [os.environ.get('REDIS_URL')],
         },
-    }
+    },
+}
 
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
