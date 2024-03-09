@@ -82,7 +82,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         logger.info(f"Received location update: Location - {event['name']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")
 
 
-    def update_location_from_celery(self, event):
+    def current_location(self, event):
         logger.debug(f"Received update_location event from Celery: {event}")
         self.send(text_data=event['data'])
         logger.info("Received location update from Celery")
