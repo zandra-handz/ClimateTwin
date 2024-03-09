@@ -1,5 +1,52 @@
 // coordinatesloader.js
 
+
+function displayLoading(resultContainerId) {
+    var resultContainer = document.getElementById(resultContainerId);
+    resultContainer.innerHTML = '';
+    var loadingDiv = document.createElement('div');
+    loadingDiv.classList.add('loading-container');
+    //loadingDiv.innerHTML = '<div class="spinner"></div>';
+    resultContainer.appendChild(loadingDiv);
+
+    // Get the user authentication token or identifier
+    const userToken = getAuthToken(); // Function to retrieve the authentication token or identifier
+    
+    // Construct the WebSocket URL with the user information
+    const socketUrl = `wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/?user_token=${userToken}`;
+
+    // WebSocket connection
+    const socket = new WebSocket(socketUrl);
+
+    // Event listener -- open
+    socket.onopen = function(event) {
+        console.log('WebSocket connection opened');
+    };
+
+    // Event listener -- messages
+    socket.onmessage = function(event) {
+        const update = JSON.parse(event.data);
+        replaceUpdate(update); 
+    };
+
+    // Event listener -- close
+    socket.onclose = function(event) {
+        console.log('WebSocket connection closed');
+    };
+
+    // Event listener -- errors
+    socket.onerror = function(error) {
+        console.error('WebSocket error:', error);
+    };
+}
+
+// Function to retrieve the user authentication token or identifier
+function getAuthToken() {
+    // Hardcoded token for testing purposes
+    return 'f38e6b71380f11f62071126b0ff43fc0a2689982';
+}
+
+/*
 function displayLoading(resultContainerId) {
     var resultContainer = document.getElementById(resultContainerId);
     resultContainer.innerHTML = '';
@@ -33,6 +80,7 @@ function displayLoading(resultContainerId) {
         console.error('WebSocket error:', error);
     };
 }
+*/
 
 // Function to append new update to the container
 function replaceUpdate(update) {
@@ -83,7 +131,6 @@ function replaceUpdate(update) {
 
 
 
-// coordinatesloader.js
 
 function displayLocationUpdate(resultContainerId) {
     var resultContainer = document.getElementById(resultContainerId);

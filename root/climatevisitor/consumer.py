@@ -1,6 +1,11 @@
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from channels.layers import get_channel_layer
+
+from channels.db import database_sync_to_async
+from users.models import BadRainbowzUser
+import asyncio
+
 import json
 import logging
 
@@ -15,6 +20,50 @@ def updateAnimation(latitude, longitude):
         
         pass
 
+class ClimateTwinConsumer(WebsocketConsumer):
+    async def connect(self):
+        user = await self.get_user(self.scope['user_id'])
+        if user:
+            await self.channel_layer.group_add(
+                f'climate_updates_user_{user.id}',
+                self.channel_name
+            )
+            await self.accept()
+            # Send success message to the client
+            await self.send(text_data="User successfully connected to WebSocket.")
+        else:
+            await self.close()
+
+    async def disconnect(self, close_code):
+        user = await self.get_user(self.scope['user_id'])
+        if user:
+            await self.channel_layer.group_discard(
+                f'climate_updates_user_{user.id}',
+                self.channel_name
+            )
+
+    async def get_user(self, user_id):
+        # Implement your logic to retrieve the user based on user_id
+        # For example, if you're using Django, you might do something like this:
+        try:
+            user = await database_sync_to_async(BadRainbowzUser.objects.get)(id=user_id)
+            return user
+        except BadRainbowzUser.DoesNotExist:
+            return None
+
+
+    async def receive(self, text_data):
+        # Handle incoming messages here
+        pass
+
+    @database_sync_to_async
+    def get_user(self, user_id):
+        try:
+            return BadRainbowzUser.objects.get(id=user_id)
+        except BadRainbowzUser.DoesNotExist:
+            return None
+
+'''
 class ClimateTwinConsumer(WebsocketConsumer):
     def connect(self):
         self.group_name = 'climate_updates'  
@@ -47,7 +96,7 @@ class ClimateTwinConsumer(WebsocketConsumer):
      
         logger.info(f"Received coordinates: Country - {event['country_name']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")
 
-
+'''
 
 class LocationUpdateConsumer(WebsocketConsumer):
     def connect(self):
