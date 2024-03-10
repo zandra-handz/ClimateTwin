@@ -3,10 +3,9 @@ import logging
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
-from django.urls import path
-from climatevisitor.consumers import AnimationConsumer
-from climatevisitor.routing import websocket_urlpatterns # Correct import
-from climatevisitor.routing import application as websocket_application  # Import your WebSocket routing application
+from django.urls import path 
+from .routing import websocket_urlpatterns # Correct import
+from .routing import application as websocket_application  # Import your WebSocket routing application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'root.settings')
 
