@@ -24,6 +24,8 @@ from django.db.models import ObjectDoesNotExist
 
 logger = logging.getLogger(__name__)
 
+
+'''
 def get_user_model():
     return apps.get_model('users', 'BadRainbowzUser')
 
@@ -35,20 +37,23 @@ class ClimateTwinConsumer(WebsocketConsumer):
             self.group_name,
             self.channel_name
         )
-        logger.info("WebSocket connection established")
 
         # Retrieve user information
         user_id = self.scope['user'].id
+        logger.debug(f"User ID: {user_id}")
+
         user = self.get_user(user_id)
 
         # Send a message indicating whether the user was retrieved
         if user:
             self.accept()  # Ensure the connection is accepted before sending messages
+            logger.info("Coordinates WebSocket connection established")
             self.send(text_data=json.dumps({
                 'message': f"User retrieved: {user}"
             }))
         else:
             self.accept() 
+            logger.info("Coordinates WebSocket connection established")
             self.send(text_data=json.dumps({
                 'message': "Failed to retrieve user"
             }))
@@ -71,8 +76,6 @@ class ClimateTwinConsumer(WebsocketConsumer):
 
     def get_user(self, user_id):
         user = None
-        # Implement your logic to retrieve the user based on user_id
-        # For example, if you're using Django, you might do something like this:
         try:
             user = get_user_model().objects.get(id=user_id)
         except get_user_model().DoesNotExist:
@@ -80,39 +83,65 @@ class ClimateTwinConsumer(WebsocketConsumer):
         return user
 
 '''
+from asgiref.sync import sync_to_async
+
+def get_user_model():
+    return apps.get_model('users', 'BadRainbowzUser')
+
 class ClimateTwinConsumer(WebsocketConsumer):
-    def connect(self):
+    
+    async def connect(self):
         self.group_name = 'climate_updates'  
-        async_to_sync(self.channel_layer.group_add)(
+        await self.channel_layer.group_add(
             self.group_name,
             self.channel_name
         )
-        logger.info("WebSocket connection established")
-        self.accept()
-        
 
-    def disconnect(self, close_code):
+        # Retrieve user information asynchronously
+        user_id = self.scope['user'].id
+        logger.debug(f"User ID: {user_id}")
 
-        async_to_sync(self.channel_layer.group_discard)(
+        user = await sync_to_async(self.get_user)(user_id)
+
+        # Send a message indicating whether the user was retrieved
+        if user:
+            await self.accept()  # Ensure the connection is accepted before sending messages
+            logger.info("Coordinates WebSocket connection established")
+            await self.send(text_data=json.dumps({
+                'message': f"User retrieved: {user}"
+            }))
+        else:
+            await self.accept() 
+            logger.info("Coordinates WebSocket connection established")
+            await self.send(text_data=json.dumps({
+                'message': "Failed to retrieve user"
+            }))
+
+    async def disconnect(self, close_code):
+        await async_to_sync(self.channel_layer.group_discard)(
             self.group_name,
             self.channel_name
         )
         logger.info("WebSocket connection closed")
-        
 
-    def update_coordinates(self, event):
-
+    async def update_coordinates(self, event):
         logger.debug(f"Received update_coordinates event: {event}")
-        self.send(text_data=json.dumps({
-             'country_name': event['country_name'],
+        await self.send(text_data=json.dumps({
+            'country_name': event['country_name'],
             'latitude': event['latitude'],
             'longitude': event['longitude'],
         }))
-
-     
         logger.info(f"Received coordinates: Country - {event['country_name']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")
 
-'''
+    def get_user(self, user_id):
+        user = None
+        try:
+            user = get_user_model().objects.get(id=user_id)
+        except get_user_model().DoesNotExist:
+            logger.error("User does not exist")
+        return user
+
+     
 
 class LocationUpdateConsumer(WebsocketConsumer):
     def connect(self):
