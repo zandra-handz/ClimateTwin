@@ -617,3 +617,5 @@ class UserLinksView(generics.ListAPIView):
 
     def get_queryset(self):
         return models.BadRainbowzUser.objects.filter(username=self.request.user.username)
+
+

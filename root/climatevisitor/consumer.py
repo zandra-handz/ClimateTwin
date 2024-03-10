@@ -30,12 +30,11 @@ def get_user_model():
     return apps.get_model('users', 'BadRainbowzUser')
 
 
+
+
 class ClimateTwinConsumer(AsyncWebsocketConsumer):
-
-    from rest_framework_simplejwt.tokens import AccessToken
-
     async def connect(self):
-        self.group_name = 'climate_updates'  
+        self.group_name = 'climate_updates'
         await self.channel_layer.group_add(
             self.group_name,
             self.channel_name
@@ -52,7 +51,7 @@ class ClimateTwinConsumer(AsyncWebsocketConsumer):
                 'message': f"User retrieved: {self.user}"
             }))
         else:
-            await self.accept() 
+            await self.accept()
             logger.info("Coordinates WebSocket connection established with demo user")
             await self.send(text_data=json.dumps({
                 'message': "Demo user used as authentication failed"
@@ -77,6 +76,7 @@ class ClimateTwinConsumer(AsyncWebsocketConsumer):
     async def authenticate_user(self):
         auth = self.scope.get('query_string', b'').decode()
         try:
+            from rest_framework_simplejwt.tokens import AccessToken
             access_token = AccessToken(auth)
             user = await self.get_user(access_token)
             return user
@@ -84,22 +84,20 @@ class ClimateTwinConsumer(AsyncWebsocketConsumer):
             # Return a demo user with a hardcoded token
             return await self.get_demo_user()
 
-    @database_sync_to_async
-    def get_user(self, access_token):
+    async def get_user(self, access_token):
         try:
             user_id = access_token['user_id']
-            User = get_user_model()
-            user = User.objects.get(id=user_id)
+            user = self.get_user_model().objects.get(id=user_id)
             return user
         except:
             return None
 
-    @database_sync_to_async
-    def get_demo_user(self):
+    async def get_demo_user(self):
         # Get or create a demo user with a hardcoded token
-        demo_user, created = get_user_model().objects.get_or_create(username='sara')
+        demo_user, created = self.get_user_model().objects.get_or_create(username='sara')
         if created:
             # Set a demo token for the demo user
+            from rest_framework_simplejwt.tokens import AccessToken
             demo_token = AccessToken.for_user(demo_user)
             # Customize token expiration or other properties if needed
             # Return the demo user
@@ -107,6 +105,10 @@ class ClimateTwinConsumer(AsyncWebsocketConsumer):
         else:
             # If the demo user already exists, just return it
             return demo_user
+
+    @staticmethod
+    def get_user_model():
+        return apps.get_model('users', 'BadRainbowzUser')
 '''
 class ClimateTwinConsumer(WebsocketConsumer):
     def connect(self):
