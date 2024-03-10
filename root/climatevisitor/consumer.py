@@ -33,7 +33,7 @@ def get_user_model():
     return apps.get_model('users', 'BadRainbowzUser')
 
 
-
+'''
 class ClimateTwinConsumer(AsyncWebsocketConsumer):
     def connect(self):
         self.group_name = 'climate_updates'
@@ -126,65 +126,68 @@ class ClimateTwinConsumer(AsyncWebsocketConsumer):
 '''
 # Most updated async version
 
-class ClimateTwinConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
+
+def get_user_model():
+    return apps.get_model('users', 'BadRainbowzUser')
+
+class ClimateTwinConsumer(WebsocketConsumer):
+    def connect(self):
         self.group_name = 'climate_updates'
-        await self.channel_layer.group_add(
+        async_to_sync(self.channel_layer.group_add)(
             self.group_name,
             self.channel_name
         )
 
         # Authenticate the user
-        self.user = await self.authenticate_user()
+        self.user = self.authenticate_user()
 
         # Send a message indicating whether the user was retrieved
         if self.user:
-            await self.accept()  # Ensure the connection is accepted before sending messages
+            self.accept()  # Ensure the connection is accepted before sending messages
             logger.info("Coordinates WebSocket connection established")
-            await self.send(text_data=json.dumps({
+            self.send(text_data=json.dumps({
                 'message': f"User retrieved: {self.user}"
             }))
         else:
-            await self.accept()
+            self.accept()
             logger.info("Coordinates WebSocket connection established with demo user")
-            await self.send(text_data=json.dumps({
+            self.send(text_data=json.dumps({
                 'message': "Demo user used as authentication failed"
             }))
 
-    async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(
+    def disconnect(self, close_code):
+        async_to_sync(self.channel_layer.group_discard)(
             self.group_name,
             self.channel_name
         )
         logger.info("WebSocket connection closed")
 
-    async def update_coordinates(self, event):
+    def update_coordinates(self, event):
         logger.debug(f"Received update_coordinates event: {event}")
-        await self.send(text_data=json.dumps({
+        self.send(text_data=json.dumps({
             'country_name': event['country_name'],
             'latitude': event['latitude'],
             'longitude': event['longitude'],
         }))
         logger.info(f"Received coordinates: Country - {event['country_name']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")
 
-    async def authenticate_user(self):
+    def authenticate_user(self):
         auth = self.scope.get('query_string', b'').decode()
         user_token = parse_qs(auth).get('user_token', [None])[0]
         if user_token:
             try:
                 from rest_framework_simplejwt.tokens import AccessToken
                 access_token = AccessToken(user_token)
-                user = await self.get_user(access_token)
+                user = self.get_user(access_token)
                 return user
             except:
                 # Return a demo user with a hardcoded token
-                return await self.get_demo_user()
+                return self.get_demo_user()
         else:
             # Return a demo user with a hardcoded token
-            return await self.get_demo_user()
+            return self.get_demo_user()
 
-
-    async def get_user(self, access_token):
+    def get_user(self, access_token):
         try:
             user_id = access_token['user_id']
             user = self.get_user_model().objects.get(id=user_id)
@@ -192,7 +195,7 @@ class ClimateTwinConsumer(AsyncWebsocketConsumer):
         except:
             return None
 
-    async def get_demo_user(self):
+    def get_demo_user(self):
         # Get or create a demo user with a hardcoded token
         try:
             demo_user = self.get_user_model().objects.get(username='sara')
@@ -214,7 +217,7 @@ class ClimateTwinConsumer(AsyncWebsocketConsumer):
     def get_user_model():
         return apps.get_model('users', 'BadRainbowzUser')
 
-'''
+
 '''
 class ClimateTwinConsumer(WebsocketConsumer):
     def connect(self):
