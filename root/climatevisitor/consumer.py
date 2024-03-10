@@ -1,10 +1,14 @@
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
+from rest_framework_simplejwt.tokens import AccessToken
 from channels.layers import get_channel_layer
 
 from channels.db import database_sync_to_async
 from django.apps import apps
 import asyncio
+
+
+from django.db.models import ObjectDoesNotExist
 
 import json
 import logging
@@ -20,9 +24,7 @@ def updateAnimation(latitude, longitude):
         
         pass
 
-from django.db.models import ObjectDoesNotExist
 
-logger = logging.getLogger(__name__)
 
 
 
@@ -38,24 +40,21 @@ class ClimateTwinConsumer(WebsocketConsumer):
             self.channel_name
         )
 
-        # Retrieve user information
-        user_id = self.scope['user'].id
-        logger.debug(f"User ID: {user_id}")
-
-        user = self.get_user(user_id)
+        # Authenticate the user
+        self.user = self.authenticate_user()
 
         # Send a message indicating whether the user was retrieved
-        if user:
+        if self.user:
             self.accept()  # Ensure the connection is accepted before sending messages
             logger.info("Coordinates WebSocket connection established")
             self.send(text_data=json.dumps({
-                'message': f"User retrieved: {user}"
+                'message': f"User retrieved: {self.user}"
             }))
         else:
             self.accept() 
-            logger.info("Coordinates WebSocket connection established")
+            logger.info("Coordinates WebSocket connection established with demo user")
             self.send(text_data=json.dumps({
-                'message': "Failed to retrieve user"
+                'message': "Demo user used as authentication failed"
             }))
 
     def disconnect(self, close_code):
@@ -74,14 +73,36 @@ class ClimateTwinConsumer(WebsocketConsumer):
         }))
         logger.info(f"Received coordinates: Country - {event['country_name']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")
 
-    def get_user(self, user_id):
-        user = None
+    def authenticate_user(self):
+        auth = self.scope.get('query_string', b'').decode()
         try:
-            user = get_user_model().objects.get(id=user_id)
-        except get_user_model().DoesNotExist:
-            logger.error("User does not exist")
-        return user
+            access_token = AccessToken(auth)
+            user = self.get_user(access_token)
+            return user
+        except:
+            # Return a demo user with a hardcoded token
+            return self.get_demo_user()
 
+    def get_user(self, access_token):
+        try:
+            user_id = access_token['user_id']
+            user = get_user_model().objects.get(id=user_id)
+            return user
+        except:
+            return None
+
+    def get_demo_user(self):
+        # Get or create a demo user with a hardcoded token
+        demo_user, created = get_user_model().objects.get_or_create(username='sara')
+        if created:
+            # Set a demo token for the demo user
+            demo_token = AccessToken.for_user(demo_user)
+            # Customize token expiration or other properties if needed
+            # Return the demo user
+            return demo_user
+        else:
+            # If the demo user already exists, just return it
+            return demo_user
 '''
 class ClimateTwinConsumer(WebsocketConsumer):
     def connect(self):
