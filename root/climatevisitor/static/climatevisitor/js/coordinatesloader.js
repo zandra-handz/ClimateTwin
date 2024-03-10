@@ -1,6 +1,6 @@
 // coordinatesloader.js
 
-function displayLoading(resultContainerId) {
+function displayLoading(resultContainerId, user_token) {
     var resultContainer = document.getElementById(resultContainerId);
     resultContainer.innerHTML = '';
     var loadingDiv = document.createElement('div');
@@ -10,7 +10,9 @@ function displayLoading(resultContainerId) {
 
     // WebSocket connection
     //const socket = new WebSocket('wss://localhost:8000/ws/climate-twin/'); // Replace with your WebSocket URL
-    const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/');
+    // const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/');
+     // Construct WebSocket URL with query parameter
+    const socket = new WebSocket(`wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/?user_token=${user_token}`);
 
     // Event listener -- open
     socket.onopen = function(event) {

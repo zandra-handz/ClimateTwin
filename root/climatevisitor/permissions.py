@@ -22,6 +22,7 @@ class ReviewUserOrReadOnly(permissions.BasePermission):
 
 
 # in views.py:
-# from climatevisitor.permissions import AdminOrReadOnly
+# from climatevisitor.permissions import AdminOrReadOnly, ReviewUserOrReadOnly
 
 # permission_classes = [AdminOrReadOnly]
+# permission_classes = [ReviewUserOrReadOnly]
