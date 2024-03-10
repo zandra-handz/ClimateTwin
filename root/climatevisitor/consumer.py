@@ -25,7 +25,7 @@ from django.db.models import ObjectDoesNotExist
 logger = logging.getLogger(__name__)
 
 
-'''
+
 def get_user_model():
     return apps.get_model('users', 'BadRainbowzUser')
 
@@ -83,65 +83,39 @@ class ClimateTwinConsumer(WebsocketConsumer):
         return user
 
 '''
-from asgiref.sync import sync_to_async
-
-def get_user_model():
-    return apps.get_model('users', 'BadRainbowzUser')
-
 class ClimateTwinConsumer(WebsocketConsumer):
-    
-    async def connect(self):
+    def connect(self):
         self.group_name = 'climate_updates'  
-        await self.channel_layer.group_add(
+        async_to_sync(self.channel_layer.group_add)(
             self.group_name,
             self.channel_name
         )
+        logger.info("WebSocket connection established")
+        self.accept()
+        
 
-        # Retrieve user information asynchronously
-        user_id = self.scope['user'].id
-        logger.debug(f"User ID: {user_id}")
+    def disconnect(self, close_code):
 
-        user = await sync_to_async(self.get_user)(user_id)
-
-        # Send a message indicating whether the user was retrieved
-        if user:
-            await self.accept()  # Ensure the connection is accepted before sending messages
-            logger.info("Coordinates WebSocket connection established")
-            await self.send(text_data=json.dumps({
-                'message': f"User retrieved: {user}"
-            }))
-        else:
-            await self.accept() 
-            logger.info("Coordinates WebSocket connection established")
-            await self.send(text_data=json.dumps({
-                'message': "Failed to retrieve user"
-            }))
-
-    async def disconnect(self, close_code):
-        await async_to_sync(self.channel_layer.group_discard)(
+        async_to_sync(self.channel_layer.group_discard)(
             self.group_name,
             self.channel_name
         )
         logger.info("WebSocket connection closed")
+        
 
-    async def update_coordinates(self, event):
+    def update_coordinates(self, event):
+
         logger.debug(f"Received update_coordinates event: {event}")
-        await self.send(text_data=json.dumps({
-            'country_name': event['country_name'],
+        self.send(text_data=json.dumps({
+             'country_name': event['country_name'],
             'latitude': event['latitude'],
             'longitude': event['longitude'],
         }))
-        logger.info(f"Received coordinates: Country - {event['country_name']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")
-
-    def get_user(self, user_id):
-        user = None
-        try:
-            user = get_user_model().objects.get(id=user_id)
-        except get_user_model().DoesNotExist:
-            logger.error("User does not exist")
-        return user
 
      
+        logger.info(f"Received coordinates: Country - {event['country_name']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")
+
+'''
 
 class LocationUpdateConsumer(WebsocketConsumer):
     def connect(self):

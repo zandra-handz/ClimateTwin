@@ -19,6 +19,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 #for Digital Ocean use --> celery -A root worker --pool=gevent 
 
 from pathlib import Path
+
+from datetime import timedelta
 from django.core.management.utils import get_random_secret_key
 
 from decouple import config
@@ -52,14 +54,14 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', get_random_secret_key())
 #ALLOWED_HOSTS = ['climatetwin-lzyyd.ondigitalocean.app']
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
-DEVELOPMENT_MODE = False
+DEVELOPMENT_MODE = True
 
-#if DEVELOPMENT_MODE == True:
-#DEBUG = True
-#ALLOWED_HOSTS = []
-#else:
-    
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+if DEVELOPMENT_MODE == True:
+    DEBUG = True
+    ALLOWED_HOSTS = []
+else:
+    DEBUG = os.getenv('DEBUG', 'False') == 'True'
+
 #DEBUG = False
     #ALLOWED_HOSTS = ['climatetwin-lzyyd.ondigitalocean.app']
     #DEBUG = config("DEBUG", default=0)
@@ -104,33 +106,31 @@ USE_TZ = True
 ASGI_APPLICATION = 'root.asgi.application'
 
 CSRF_TRUSTED_ORIGINS = [
-    'climatetwin-lzyyd.ondigitalocean.app',
     'https://climatetwin-lzyyd.ondigitalocean.app' # adding https ended up being really important
 ]
 
-CSRF_COOKIE_DOMAIN = ['climatetwin-lzyyd.ondigitalocean.app',
+CSRF_COOKIE_DOMAIN = [
                       'https://climatetwin-lzyyd.ondigitalocean.app'
 ]
 
 REDIS_URL = os.environ.get('REDIS_URL')
 
 '''
-if DEVELOPMENT_MODE is True:
-    CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
-    CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+# Local
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
 
-    #CELERY_RESULT_BACKEND = "django-db"
+#CELERY_RESULT_BACKEND = "django-db"
 
-    CHANNEL_LAYERS = {
-        'default': {
-            'BACKEND': 'channels_redis.core.RedisChannelLayer',
-            'CONFIG': {
-                'hosts': [('127.0.0.1', 6379)],
-            },
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],
         },
-    }
+    },
+}
 
-else:
 
 '''
 
@@ -147,6 +147,7 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
 
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
@@ -386,13 +387,21 @@ REST_FRAMEWORK = {
     ],
     
     'DEFAULT_AUTHENTICATION_CLASSES' : [
-        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        #'rest_framework.authentication.TokenAuthentication',
         
-        'rest_framework.authentication.SessionAuthentication'
+        #'rest_framework.authentication.SessionAuthentication'
     ],
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
 }
 
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('JWT',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=3)
+}
 
 
 
