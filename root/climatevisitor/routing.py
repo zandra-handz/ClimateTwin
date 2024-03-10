@@ -4,7 +4,6 @@ from channels.auth import AuthMiddlewareStack
 from django.urls import path, re_path
 from climatevisitor.consumers import AnimationConsumer
 from climatevisitor.consumer import ClimateTwinConsumer, LocationUpdateConsumer
-#from climatevisitor.middleware import TokenAuthMiddlewareStack
 
 websocket_urlpatterns = [
     path('animation/', AnimationConsumer.as_asgi()),
@@ -14,7 +13,6 @@ websocket_urlpatterns = [
 
 
 application = ProtocolTypeRouter({
-    #'websocket': TokenAuthMiddlewareStack(
     'websocket': AuthMiddlewareStack(
         URLRouter(websocket_urlpatterns)
     ),
