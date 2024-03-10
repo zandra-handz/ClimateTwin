@@ -54,13 +54,13 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', get_random_secret_key())
 #ALLOWED_HOSTS = ['climatetwin-lzyyd.ondigitalocean.app']
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
-DEVELOPMENT_MODE = True
+DEVELOPMENT_MODE = False
 
-if DEVELOPMENT_MODE == True:
-    DEBUG = True
-    ALLOWED_HOSTS = []
-else:
-    DEBUG = os.getenv('DEBUG', 'False') == 'True'
+#if DEVELOPMENT_MODE == True:
+#    DEBUG = True
+#    ALLOWED_HOSTS = []
+
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 #DEBUG = False
     #ALLOWED_HOSTS = ['climatetwin-lzyyd.ondigitalocean.app']
@@ -388,7 +388,7 @@ REST_FRAMEWORK = {
     
     'DEFAULT_AUTHENTICATION_CLASSES' : [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        #'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
         
         #'rest_framework.authentication.SessionAuthentication'
     ],
