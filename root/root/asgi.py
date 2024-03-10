@@ -6,22 +6,22 @@ from channels.auth import AuthMiddlewareStack
 from django.urls import path
 from climatevisitor.consumers import AnimationConsumer
 from climatevisitor.routing import websocket_urlpatterns # Correct import
-from root.climatevisitor.middleware import TokenAuthMiddlewareStack
+from climatevisitor.routing import application as websocket_application  # Import your WebSocket routing application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'root.settings')
 
 
-django_asgi_app = get_asgi_application()
+django_asgi_app = get_asgi_application() 
+
+# Define the ProtocolTypeRouter for ASGI
+application = ProtocolTypeRouter({
+    "http": django_asgi_app,
+    "websocket": websocket_application,
+})
 
 
-logger = logging.getLogger(__name__)
 
-# Define a function to log request headers
-async def log_request_headers(scope, receive, send):
-    if scope['type'] == 'http':
-        logger.debug("Incoming HTTP request headers: %s", scope.get('headers', []))
-    return await django_asgi_app(scope, receive, send)
-
+'''
 # Define the ProtocolTypeRouter for ASGI
 application = ProtocolTypeRouter({
     #"http": log_request_headers,
@@ -33,3 +33,5 @@ application = ProtocolTypeRouter({
         URLRouter(websocket_urlpatterns)
     ),
 })
+
+'''
