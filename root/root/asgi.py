@@ -6,7 +6,7 @@ from channels.auth import AuthMiddlewareStack
 from django.urls import path
 from climatevisitor.consumers import AnimationConsumer
 from climatevisitor.routing import websocket_urlpatterns # Correct import
-from root.middleware import TokenAuthMiddlewareStack
+from climatevisitor.middleware import TokenAuthMiddlewareStack
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'root.settings')
 
