@@ -1,15 +1,12 @@
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from channels.generic.websocket import AsyncWebsocketConsumer
-from rest_framework_simplejwt.tokens import AccessToken
 from channels.layers import get_channel_layer
 
 from channels.db import database_sync_to_async
 from django.apps import apps
 import asyncio
-
-
-from django.db.models import ObjectDoesNotExist
+ 
 
 import json
 import logging
@@ -34,6 +31,8 @@ def get_user_model():
 
 
 class ClimateTwinConsumer(AsyncWebsocketConsumer):
+
+    from rest_framework_simplejwt.tokens import AccessToken
 
     async def connect(self):
         self.group_name = 'climate_updates'  

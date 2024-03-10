@@ -12,6 +12,14 @@ class AdminOrReadOnly(permissions.IsAdminUser):
         return request.method == "GET" or admin_permission
 
 
+class ReviewUserOrReadOnly(permissions.BasePermission):
+
+    def has_object_permssion(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True  
+        else:
+            return obj.review_user == request.user
+
 
 # in views.py:
 # from climatevisitor.permissions import AdminOrReadOnly
