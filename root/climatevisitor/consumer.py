@@ -11,6 +11,9 @@ import asyncio
 import json
 import logging
 
+from urllib.parse import parse_qs
+
+
 logger = logging.getLogger(__name__)
 
 console_handler = logging.StreamHandler()
@@ -75,14 +78,20 @@ class ClimateTwinConsumer(AsyncWebsocketConsumer):
 
     async def authenticate_user(self):
         auth = self.scope.get('query_string', b'').decode()
-        try:
-            from rest_framework_simplejwt.tokens import AccessToken
-            access_token = AccessToken(auth)
-            user = await self.get_user(access_token)
-            return user
-        except:
+        user_token = parse_qs(auth).get('user_token', [None])[0]
+        if user_token:
+            try:
+                from rest_framework_simplejwt.tokens import AccessToken
+                access_token = AccessToken(user_token)
+                user = await self.get_user(access_token)
+                return user
+            except:
+                # Return a demo user with a hardcoded token
+                return await self.get_demo_user()
+        else:
             # Return a demo user with a hardcoded token
             return await self.get_demo_user()
+
 
     async def get_user(self, access_token):
         try:
