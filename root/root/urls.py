@@ -45,9 +45,10 @@ urlpatterns = [
     
     # Djoser URLs
     path('auth/', include('djoser.urls')),
+    path('auth/', include('djoser.urls.jwt')),
     path('auth/', include('djoser.urls.authtoken')),
     
     # Allauth URLs
-    path('auth/', include('allauth.urls')),
+    path('all-auth/', include('allauth.urls')),
     path('users/', include('users.urls')),
 ]
