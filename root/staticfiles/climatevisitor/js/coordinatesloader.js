@@ -43,7 +43,8 @@ function displayLoading(resultContainerId) {
 // Function to retrieve the user authentication token or identifier
 function getAuthToken() {
     // Hardcoded token for testing purposes
-    return 'f38e6b71380f11f62071126b0ff43fc0a2689982';
+    //return 'f38e6b71380f11f62071126b0ff43fc0a2689982';
+    return ''
 }
 
 /*
