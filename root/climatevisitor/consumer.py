@@ -94,17 +94,21 @@ class ClimateTwinConsumer(AsyncWebsocketConsumer):
 
     async def get_demo_user(self):
         # Get or create a demo user with a hardcoded token
-        demo_user, created = self.get_user_model().objects.get_or_create(username='sara')
-        if created:
-            # Set a demo token for the demo user
+        try:
+            demo_user = self.get_user_model().objects.get(username='sara')
+
             from rest_framework_simplejwt.tokens import AccessToken
             demo_token = AccessToken.for_user(demo_user)
-            # Customize token expiration or other properties if needed
-            # Return the demo user
+            
+            logger.debug(f"Generated token: {demo_token}")
+            
             return demo_user
-        else:
-            # If the demo user already exists, just return it
-            return demo_user
+        except self.get_user_model().DoesNotExist:
+            # Log the error
+            logger.error("Demo user 'sara' does not exist.")
+                
+            # Raise an error
+            raise Exception("Demo user 'sara' does not exist.")
 
     @staticmethod
     def get_user_model():
