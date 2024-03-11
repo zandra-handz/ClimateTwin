@@ -21,9 +21,9 @@ console_handler.setLevel(logging.DEBUG)
 logger.addHandler(console_handler)
 
  
-def updateAnimation(latitude, longitude):
+#def updateAnimation(latitude, longitude):
         
-        pass
+#        pass
 
 
 
@@ -176,10 +176,11 @@ class ClimateTwinConsumer(WebsocketConsumer):
         logger.debug(f"Received update_coordinates event: {event}")
         self.send(text_data=json.dumps({
             'country_name': event['country_name'],
+            'temperature': event['temperature'],
             'latitude': event['latitude'],
             'longitude': event['longitude'],
         }))
-        logger.info(f"Received coordinates: Country - {event['country_name']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")
+        logger.info(f"Received coordinates: Country - {event['country_name']}, Temperature - {event['temperature']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")
 
     def authenticate_user(self):
         auth = self.scope.get('query_string', b'').decode()

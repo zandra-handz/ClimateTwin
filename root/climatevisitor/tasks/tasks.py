@@ -29,11 +29,11 @@ def send_coordinate_update_to_celery(country_name, latitude, longitude):
 # Testing passing in user
 
 @shared_task
-def send_coordinate_update_to_celery(user_id, country_name, latitude, longitude):
+def send_coordinate_update_to_celery(user_id, country_name, temperature, latitude, longitude):
     # Call the function to update animation with the given coordinates
-    update_animation(latitude, longitude)
-    print("Sent coords to animation")
-    channel_layer = get_channel_layer()
+    # update_animation(latitude, longitude)
+    # print("Sent coords to animation")
+    # channel_layer = get_channel_layer()
     
     # Construct the group name using the user ID
     group_name = f'climate_updates_{user_id}'
@@ -43,11 +43,12 @@ def send_coordinate_update_to_celery(user_id, country_name, latitude, longitude)
         {
             'type': 'update_coordinates',  # Name of the consumer method to call
             'country_name': country_name,
+            'temperature': temperature,
             'latitude': latitude,
             'longitude': longitude,
         }
     )
-    print(f"Sending Twin Finder location update: {country_name}, {latitude}, {longitude}")
+    print(f"Sending Twin Finder location update: {country_name}, {temperature} degrees F, {latitude}, {longitude}")
 
 
     # Call the consumer method directly for testing purposes
