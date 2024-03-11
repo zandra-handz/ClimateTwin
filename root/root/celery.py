@@ -31,12 +31,16 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS, related_name='algorithms
 
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(10.0, send_current_location_to_celery.s(), name='send_current_location')
+    sender.add_periodic_task(10.0, run_current_location_task.s(), name='send_current_location')
+
+
+
+@app.task
+def run_current_location_task()
+    send_current_location_to_celery()
 
 
 '''
-@app.task
-def send_current_location_to_celery():
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
         'location_update',
