@@ -52,7 +52,7 @@ class ClimateTwinFinder:
     """
 
 
-    def __init__(self, address, units='imperial'):
+    def __init__(self, user_id_for_celery, address, units='imperial'):
 
         self.api_key = open_map_api_key
         self.google_api_key = google_api_key
@@ -69,7 +69,7 @@ class ClimateTwinFinder:
         self.search_cycle = 0
         self.climate_twin = None
 
-        self.user_id_for_celery = 0
+        self.user_id_for_celery = user_id_for_celery
 
         coordinates = self.validate_address(address)
 
