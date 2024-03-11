@@ -67,5 +67,20 @@ def send_location_update_to_celery(name, latitude, longitude):
     )
     
 
+# Testing, part of the effort to bring a scheduled task to climatevisitor level to pass id into it
 
-    
+@shared_task
+def send_current_location_to_celery(user_id, name, latitude, longitude):
+    channel_layer = get_channel_layer()
+
+    group_name = f'climate_updates_{user_id}'
+
+    async_to_sync(channel_layer.group_send)(
+        group_name,  # Name of the group associated with the user
+        {
+            'type': 'current_location',
+            'name': name,
+            'latitude': latitude,
+            'longitude': longitude,
+        }
+    )

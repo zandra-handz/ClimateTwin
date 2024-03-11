@@ -11,7 +11,7 @@ from asgiref.sync import async_to_sync
 import json
 import requests
 
-
+from climatevisitor.tasks.tasks import send_current_location_to_celery
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -34,6 +34,7 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(10.0, send_current_location_to_celery.s(), name='send_current_location')
 
 
+'''
 @app.task
 def send_current_location_to_celery():
     channel_layer = get_channel_layer()
@@ -47,7 +48,7 @@ def send_current_location_to_celery():
         }
     )
     
-
+'''
 
 '''
 # Use the REDIS_URL from Django settings for the broker and backend
