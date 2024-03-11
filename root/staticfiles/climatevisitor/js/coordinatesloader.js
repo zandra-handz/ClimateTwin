@@ -83,7 +83,7 @@ function replaceUpdate(update) {
     updateElement.style.paddingBottom = '32px'; // Adjust the value as needed
  
     if (update.latitude !== undefined && update.longitude !== undefined) { 
-        updateElement.textContent = `Twin Finder is searching in ${update.country_name}`; // ${update.latitude}, ${update.longitude}`;
+        updateElement.textContent = `Twin Finder is searching in ${update.country_name} (${update.temperature} degrees)`; // ${update.latitude}, ${update.longitude}`;
         updateElement.style.color = 'black'; 
  
         if (update.latitude > 0) {
