@@ -350,21 +350,17 @@ class ClimateTwinFinder:
                     temperature = weather['temperature']
                     temperature_difference = abs(weather['temperature'] - self.weather_info['temperature'])
                     print(temperature_difference)
-                else: 
-                    temperature_difference = "Error obtaining temperature difference"
-                    temperature = "Error obtaining weather information for this location"
                     
 
-                if celery_fail_count < 3:
-                    try:
-                        # Send coordinates update via WebSocket
-                        #self.send_coordinate_update(latitude, longitude)
-                        send_coordinate_update_to_celery(user_id=self.user_id_for_celery, country_name=country_name, temperature=temperature, latitude=latitude, longitude=longitude)
-                    except Exception as e:
-                        print(f"Error sending to Celery task: {e}")
-                        celery_fail_count += 1
-                        continue
-
+                    if celery_fail_count < 3:
+                        try:
+                            # Send coordinates update via WebSocket
+                            #self.send_coordinate_update(latitude, longitude)
+                            send_coordinate_update_to_celery(user_id=self.user_id_for_celery, country_name=country_name, temperature=temperature, latitude=latitude, longitude=longitude)
+                        except Exception as e:
+                            print(f"Error sending to Celery task: {e}")
+                            celery_fail_count += 1
+                            continue
 
 
                     if temperature_difference < 3:
