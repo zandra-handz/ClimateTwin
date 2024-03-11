@@ -348,6 +348,7 @@ class ClimateTwinFinder:
 
                 if weather:
                     temperature = weather['temperature']
+                    temperature = round(int(temperature))
                     temperature_difference = abs(weather['temperature'] - self.weather_info['temperature'])
                     print(temperature_difference)
                     
