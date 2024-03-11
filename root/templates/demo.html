@@ -1223,7 +1223,7 @@
             var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/profile/';
             makeGetRequest(url, function(data) {
                 // Display the result
-                displayResultEdit('result', data);
+                displayResult('result', data);
             });
         });
 
@@ -1742,7 +1742,7 @@
             var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/settings/';
             makeGetRequest(url, function(data) {
                 // Display the result
-                displayResultEdit('result', data);
+                displayResult('result', data);
             });
             updateButtonText('userSettingsBtn', url);
             if (previousButtonId && previousButtonId !== 'userSettingsBtn') {
