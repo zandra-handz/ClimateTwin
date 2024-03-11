@@ -133,7 +133,7 @@ def get_user_model():
 class ClimateTwinConsumer(WebsocketConsumer):
     def connect(self):
 
-        self.user_id = 1  # Hardcoded user ID for now, replace with actual user ID
+        self.user_id = 3  # demo User ID is hardcoded for right now
         self.group_name = f'climate_updates_{self.user_id}'
         async_to_sync(self.channel_layer.group_add)(
             self.group_name,
