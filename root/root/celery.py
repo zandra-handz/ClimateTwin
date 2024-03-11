@@ -36,7 +36,7 @@ def setup_periodic_tasks(sender, **kwargs):
 
 
 @app.task
-def run_current_location_task()
+def run_current_location_task():
     send_current_location_to_celery()
 
 
