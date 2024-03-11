@@ -135,7 +135,7 @@ function locationUpdate(update) {
  
     if (update.latitude !== undefined && update.longitude !== undefined) { 
         updateElement.textContent = '';
-        updateElement.textContent = `${update.name} is your weather twin right now :)`; // ${update.latitude}, ${update.longitude}`;
+        updateElement.textContent = `You are in ${update.name}`; // ${update.latitude}, ${update.longitude}`;
         updateElement.style.color = 'black'; 
         /*
         if (update.latitude > 0) {
