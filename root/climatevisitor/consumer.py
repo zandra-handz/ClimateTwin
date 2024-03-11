@@ -302,7 +302,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         # Send the message data directly
         self.send(text_data=json.dumps({
             'type': 'current_location',
-            'name': '!! HI THIS IS A SCHEDULED TASKS TEST !!',
+            'name': f'! Scheduled Task Test ! {event['name']}',
             'latitude': event['latitude'],
             'longitude': event['longitude'],
         }))
