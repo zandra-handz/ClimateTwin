@@ -69,6 +69,8 @@ class ClimateTwinFinder:
         self.search_cycle = 0
         self.climate_twin = None
 
+        self.user_id_for_celery = 0
+
         coordinates = self.validate_address(address)
 
         if not coordinates:
@@ -346,7 +348,7 @@ class ClimateTwinFinder:
                     try:
                         # Send coordinates update via WebSocket
                         #self.send_coordinate_update(latitude, longitude)
-                        send_coordinate_update_to_celery(country_name, latitude, longitude)
+                        send_coordinate_update_to_celery(user_id=self.user_id_for_celery, country_name=country_name, latitude=latitude, longitude=longitude)
                     except Exception as e:
                         print(f"Error sending to Celery task: {e}")
                         celery_fail_count += 1

@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 @shared_task
 def run_climate_twin_algorithms_task(user_id, user_address):
-    sleep(2)
+    sleep(0)
     print(f"run_climate_twin_algorithms_task initiated with args: {user_id}, {user_address}")
 
     try:
@@ -32,7 +32,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
         return
     # Your task logic here, using the retrieved user object
     
-    climate_places = ClimateTwinFinder(user_address)
+    climate_places = ClimateTwinFinder(user_id_for_celery=user_id, address=user_address)
     print("Twin Location found.")
 
     if climate_places.home_climate:
