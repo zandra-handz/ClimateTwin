@@ -54,15 +54,15 @@ def send_coordinate_update_to_celery(user_id, country_name, temperature, latitud
     # Call the consumer method directly for testing purposes
 
 @shared_task
-def send_location_update_to_celery(name, latitude, longitude):
+def send_location_update_to_celery():
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
         'location_update',
         {
             'type': 'update_location',
-            'name': name,
-            'latitude': latitude,
-            'longitude': longitude,
+            'name': 'name here',
+            'latitude': 'latitude here',
+            'longitude': 'longitude here',
         }
     )
     
