@@ -268,7 +268,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
     def fetch_data_from_endpoint(self, token):
         # Fetch data from endpoint(s)
-        endpoint_url = 'climatevisitor/currently-visiting/'
+        endpoint_url = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-visiting/'
 
         headers = {
             'Authorization': f'Bearer {token}',
