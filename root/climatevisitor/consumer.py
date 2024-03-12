@@ -245,11 +245,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
         )
 
         #self.user = self.authenticate_user()
-        self.user, self.token = self.authenticate_user()
-
-        if not self.user:
-            self.token = "f38e6b71380f11f62071126b0ff43fc0a2689982"  
-            logger.info("Location Update WebSocket connecting with demo token")
+        self.user, self.token = self.authenticate_user() 
+        logger.info(f"Location Update Websockey connecting with user: {self.user}, token: {self.token}")
 
         self.accept()
         logger.info("Location Update WebSocket connection established")
@@ -338,9 +335,11 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 user = self.get_user(access_token)
                 return user, access_token
             except:
-                return self.get_demo_user(), access_token
+                # WARNING: This is returning other token
+                return self.get_demo_user() 
         else:
-            return self.get_demo_user(), None
+            # WARNING: This is returning other token
+            return self.get_demo_user() 
 
     def get_user(self, access_token):
         try:
@@ -351,6 +350,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
             return None, None
 
     def get_demo_user(self):
+
+
         try:
             demo_user = self.get_user_model().objects.get(username='sara')
 
@@ -358,8 +359,12 @@ class LocationUpdateConsumer(WebsocketConsumer):
             demo_token = AccessToken.for_user(demo_user)
             
             logger.debug(f"Generated token: {demo_token}")
+
+            # Need to conform to one token eventually, but this will work for demo purposes
+            endpoint_demo_token = "f38e6b71380f11f62071126b0ff43fc0a2689982"  
             
-            return demo_user
+            return demo_user, endpoint_demo_token
+        
         except self.get_user_model().DoesNotExist:
             # Log the error
             logger.error("Demo user 'sara' does not exist.")
