@@ -236,7 +236,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
     def connect(self):
 
-        self.user_id = 3  
+        self.user_id = 3
+
         self.group_name = f'location_update_{self.user_id}'
         async_to_sync(self.channel_layer.group_add)(
             self.group_name,
@@ -246,25 +247,19 @@ class LocationUpdateConsumer(WebsocketConsumer):
         #self.user = self.authenticate_user()
         self.user, self.token = self.authenticate_user()
 
-        if self.user:
-            self.accept()
-            logger.info("Location Update WebSocket connection established")
+        if not self.user:
+            self.token = "f38e6b71380f11f62071126b0ff43fc0a2689982"  
+            logger.info("Location Update WebSocket connecting with demo token")
 
-            # Fetch data from endpoint(s) and broadcast it to the client
-            data = self.fetch_data_from_endpoint(self.token)
-            logger.info(data)
+        self.accept()
+        logger.info("Location Update WebSocket connection established")
+
+        data = self.fetch_data_from_endpoint(self.token)
+        
+        if data:
             self.update_location(data)
+            logger.info(data) 
 
-            self.send(text_data=json.dumps({
-                'message': f"User retrieved: {self.user}"
-            }))
-
-        else:
-            self.accept()
-            logger.info("Location Update WebSocket connection established with demo user")
-            self.send(text_data=json.dumps({
-                'message': "Demo user used as authentication failed"
-            }))
 
 
     def fetch_data_from_endpoint(self, token):
@@ -272,8 +267,6 @@ class LocationUpdateConsumer(WebsocketConsumer):
         explore_endpoint_url = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-exploring/'
         twin_endpoint_url = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-visiting/'
 
-        #sara's token
-        token = "f38e6b71380f11f62071126b0ff43fc0a2689982"
 
         headers = {
             'Authorization': f'Token {token}',
