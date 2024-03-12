@@ -245,13 +245,13 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
         if self.user:
             self.accept()
-            logger.info("Coordinates WebSocket connection established")
+            logger.info("Location Update WebSocket connection established")
             self.send(text_data=json.dumps({
                 'message': f"User retrieved: {self.user}"
             }))
         else:
             self.accept()
-            logger.info("Coordinates WebSocket connection established with demo user")
+            logger.info("Location Update WebSocket connection established with demo user")
             self.send(text_data=json.dumps({
                 'message': "Demo user used as authentication failed"
             }))
