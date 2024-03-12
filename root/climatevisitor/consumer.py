@@ -270,8 +270,10 @@ class LocationUpdateConsumer(WebsocketConsumer):
         # Fetch data from endpoint(s)
         endpoint_url = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-visiting/'
 
+        #sara's token
+        token = "f38e6b71380f11f62071126b0ff43fc0a2689982"
         headers = {
-            'Authorization': f'Bearer {token}',
+            'Authorization': f'Token {token}',
             'Content-Type': 'application/json'
         }
 
