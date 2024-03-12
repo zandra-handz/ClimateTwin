@@ -253,7 +253,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             # Fetch data from endpoint(s) and broadcast it to the client
             data = self.fetch_data_from_endpoint(self.token)
             logger.info(data)
-            self.send_data_to_client(data)
+            self.update_location(data)
 
             self.send(text_data=json.dumps({
                 'message': f"User retrieved: {self.user}"
@@ -269,8 +269,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
     def fetch_data_from_endpoint(self, token):
         # Fetch data from endpoint(s)
-        first_endpoint_url = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-exploring/'
-        endpoint_url = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-visiting/'
+        explore_endpoint_url = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-exploring/'
+        twin_endpoint_url = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-visiting/'
 
         #sara's token
         token = "f38e6b71380f11f62071126b0ff43fc0a2689982"
@@ -280,13 +280,21 @@ class LocationUpdateConsumer(WebsocketConsumer):
             'Content-Type': 'application/json'
         }
 
-        response = requests.get(endpoint_url, headers=headers)
+        explore_response = requests.get(explore_endpoint_url, headers=headers)
 
-        if response.status_code == 200:
-            return response.json()
+        if explore_response.status_code == 200:
+            return explore_response.json()
         else:
-            logger.error(f"Failed to fetch data from endpoint: {endpoint_url}")
-            return None
+
+            twin_response = requests.get(twin_endpoint_url, headers=headers)
+
+            if twin_response.status_code == 200:
+                return twin_response.json()
+            
+            else:
+                logger.error(f"Error: {twin_response.status_code}")
+                return None
+            
         
     def send_data_to_client(self, data):
         if data is not None:
