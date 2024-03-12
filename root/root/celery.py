@@ -33,6 +33,7 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS, related_name='algorithms
 def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(10.0, send_current_location_to_celery.s(), name='send_current_location')
 
+# I removed the channel that this is connected to, so not sure if this will break something or simply error silently in the background
 
 @app.task
 def send_current_location_to_celery():
