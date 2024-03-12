@@ -54,33 +54,23 @@ def send_coordinate_update_to_celery(user_id, country_name, temperature, latitud
     # Call the consumer method directly for testing purposes
 
 @shared_task
-def send_location_update_to_celery():
+def send_location_update_to_celery(user_id, name, temperature, latitude, longitude):
+
     channel_layer = get_channel_layer()
+    
+    # Construct the group name using the user ID
+    group_name = f'location_update_{user_id}'
+    
     async_to_sync(channel_layer.group_send)(
         'location_update',
         {
             'type': 'update_location',
-            'name': 'name here',
-            'latitude': 'latitude here',
-            'longitude': 'longitude here',
-        }
-    )
-    
-
-# Testing, part of the effort to bring a scheduled task to climatevisitor level to pass id into it
-
-@shared_task
-def send_current_location_to_celery(user_id, name, latitude, longitude):
-    channel_layer = get_channel_layer()
-
-    group_name = f'climate_updates_{user_id}'
-
-    async_to_sync(channel_layer.group_send)(
-        group_name,  # Name of the group associated with the user
-        {
-            'type': 'current_location',
             'name': name,
             'latitude': latitude,
             'longitude': longitude,
         }
     )
+    
+
+
+    
