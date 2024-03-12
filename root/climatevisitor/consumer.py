@@ -252,6 +252,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
             # Fetch data from endpoint(s) and broadcast it to the client
             data = self.fetch_data_from_endpoint(self.token)
+            logger.info(data)
             self.send_data_to_client(data)
 
             self.send(text_data=json.dumps({
@@ -268,10 +269,12 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
     def fetch_data_from_endpoint(self, token):
         # Fetch data from endpoint(s)
+        first_endpoint_url = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-exploring/'
         endpoint_url = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-visiting/'
 
         #sara's token
         token = "f38e6b71380f11f62071126b0ff43fc0a2689982"
+
         headers = {
             'Authorization': f'Token {token}',
             'Content-Type': 'application/json'
