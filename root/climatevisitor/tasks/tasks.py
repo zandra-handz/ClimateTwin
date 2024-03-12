@@ -62,10 +62,11 @@ def send_location_update_to_celery(user_id, name, temperature, latitude, longitu
     group_name = f'location_update_{user_id}'
     
     async_to_sync(channel_layer.group_send)(
-        'location_update',
+        group_name,
         {
             'type': 'update_location',
             'name': name,
+            'temperature': temperature,
             'latitude': latitude,
             'longitude': longitude,
         }
