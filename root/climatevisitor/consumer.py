@@ -20,6 +20,8 @@ console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.DEBUG)
 logger.addHandler(console_handler)
 
+import requests
+
  
 #def updateAnimation(latitude, longitude):
         
@@ -241,20 +243,53 @@ class LocationUpdateConsumer(WebsocketConsumer):
             self.channel_name
         )
 
-        self.user = self.authenticate_user()
+        #self.user = self.authenticate_user()
+        self.user, self.token = self.authenticate_user()
 
         if self.user:
             self.accept()
             logger.info("Location Update WebSocket connection established")
+
+            # Fetch data from endpoint(s) and broadcast it to the client
+            data = self.fetch_data_from_endpoint(self.token)
+            self.send_data_to_client(data)
+
             self.send(text_data=json.dumps({
                 'message': f"User retrieved: {self.user}"
             }))
+
         else:
             self.accept()
             logger.info("Location Update WebSocket connection established with demo user")
             self.send(text_data=json.dumps({
                 'message': "Demo user used as authentication failed"
             }))
+
+
+    def fetch_data_from_endpoint(self, token):
+        # Fetch data from endpoint(s)
+        endpoint_url = 'climatevisitor/currently-visiting/'
+
+        headers = {
+            'Authorization': f'Bearer {token}',
+            'Content-Type': 'application/json'
+        }
+
+        response = requests.get(endpoint_url, headers=headers)
+
+        if response.status_code == 200:
+            return response.json()
+        else:
+            logger.error(f"Failed to fetch data from endpoint: {endpoint_url}")
+            return None
+        
+    def send_data_to_client(self, data):
+        if data is not None:
+            # Broadcast data to client
+            self.send(text_data=json.dumps(data))
+        else:
+            logger.error("No data to send to client")
+            
 
     def disconnect(self, close_code):
         async_to_sync(self.channel_layer.group_discard)(
@@ -295,19 +330,19 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 from rest_framework_simplejwt.tokens import AccessToken
                 access_token = AccessToken(user_token)
                 user = self.get_user(access_token)
-                return user
+                return user, access_token
             except:
-                return self.get_demo_user()
+                return self.get_demo_user(), access_token
         else:
-            return self.get_demo_user()
+            return self.get_demo_user(), None
 
     def get_user(self, access_token):
         try:
             user_id = access_token['user_id']
             user = self.get_user_model().objects.get(id=user_id)
-            return user
+            return user, access_token
         except:
-            return None
+            return None, None
 
     def get_demo_user(self):
         try:
