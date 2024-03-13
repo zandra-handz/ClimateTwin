@@ -247,7 +247,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
         #self.user = self.authenticate_user()
         self.user, self.token = self.authenticate_user() 
-        logger.info(f"Location Update Websockey connecting with user: {self.user}, token: {self.token}")
+        logger.info(f"Location Update Websocket connecting with user: {self.user}, token: {self.token}")
 
         self.accept()
         logger.info("Location Update WebSocket connection established")
@@ -296,7 +296,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 
                 return discovery_data.json()
 
-        
+
 
         twin_response = requests.get(twin_endpoint, headers=headers)
 
