@@ -28,6 +28,7 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS, related_name='algorithms_task')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS, related_name='algorithms')
 
+'''
 
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
@@ -49,7 +50,7 @@ def send_current_location_to_celery():
     )
     
 
-
+'''
 '''
 # Use the REDIS_URL from Django settings for the broker and backend
 #app.conf.broker_url = 'redis://default:AVNS_TKxUs1XBH-EKD3Nw47P@db-redis-climatetwin-do-user-15838008-0.c.db.ondigitalocean.com:25061'
