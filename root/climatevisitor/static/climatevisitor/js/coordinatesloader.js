@@ -1,4 +1,4 @@
-// coordinatesloader.js
+
 
 function displayLoading(resultContainerId, user_token) {
     var resultContainer = document.getElementById(resultContainerId);
@@ -84,9 +84,6 @@ function replaceUpdate(update) {
     container.appendChild(updateElement);
 }
 
-
-
-// coordinatesloader.js
 
 function displayLocationUpdate(resultContainerId) {
     var resultContainer = document.getElementById(resultContainerId);
