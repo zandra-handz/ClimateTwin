@@ -265,8 +265,10 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
     def fetch_data_from_endpoint(self, token):
         # Fetch data from endpoint(s)
-        explore_endpoint_url = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-exploring/'
-        twin_endpoint_url = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-visiting/'
+        explore_data_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-exploring/'
+        explore_location_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/locations/nearby/'
+        twin_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-visiting/'
+
 
 
         headers = {
@@ -274,20 +276,32 @@ class LocationUpdateConsumer(WebsocketConsumer):
             'Content-Type': 'application/json'
         }
 
-        explore_response = requests.get(explore_endpoint_url, headers=headers)
+        explore_response = requests.get(explore_data_endpoint, headers=headers)
 
         if explore_response.status_code == 200:
-            return explore_response.json()
+            explore_data = explore_response.json()
+            discovery_location_id = explore_data.get('explore_location')
+
+            if discovery_location_id is not None:
+                discovery_location_endpoint = f'{explore_location_endpoint}{discovery_location_id}/'
+
+                headers = {
+                    'Authorization': f'Token {token}',
+                    'Content-Type': 'application/json'
+                }
+
+                discovery_response = requests.get(discovery_location_endpoint)
+                return discovery_response.json()
+        
+
+        twin_response = requests.get(twin_endpoint, headers=headers)
+
+        if twin_response.status_code == 200:
+            return twin_response.json()
+        
         else:
-
-            twin_response = requests.get(twin_endpoint_url, headers=headers)
-
-            if twin_response.status_code == 200:
-                return twin_response.json()
-            
-            else:
-                logger.error(f"Error: {twin_response.status_code}")
-                return None
+            logger.error(f"Error: {twin_response.status_code}")
+            return None
             
         
     def send_data_to_client(self, data):
