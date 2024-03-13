@@ -297,8 +297,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 # Strip off the prefix from keys
                 stripped_choices_data = {}
                 for key, value in choices_data.items():
-                    if key.startswith('explore_location_'):
-                        stripped_key = key[len('explore_location_'):]  # Strip off the prefix
+                    if key.startswith('explore_location__'):
+                        stripped_key = key[len('explore_location__'):]  # Strip off the prefix
                         stripped_choices_data[stripped_key] = value
                     else:
                         stripped_choices_data[key] = value
