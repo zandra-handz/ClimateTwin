@@ -1,4 +1,4 @@
-
+// coordinatesloader.js
 
 function displayLoading(resultContainerId, user_token) {
     var resultContainer = document.getElementById(resultContainerId);
@@ -9,12 +9,14 @@ function displayLoading(resultContainerId, user_token) {
     resultContainer.appendChild(loadingDiv);
 
     // WebSocket connection
-    //const socket = new WebSocket('wss://localhost:8000/ws/climate-twin/');  
+    //const socket = new WebSocket('wss://localhost:8000/ws/climate-twin/'); // Replace with your WebSocket URL
+    // const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/');
+     // Construct WebSocket URL with query parameter
     const socket = new WebSocket(`wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/?user_token=${user_token}`);
 
     // Event listener -- open
     socket.onopen = function(event) {
-        console.log('Static displayLoading WebSocket connection opened');
+        console.log('WebSocket connection opened');
     };
 
     // Event listener -- messages
@@ -25,7 +27,7 @@ function displayLoading(resultContainerId, user_token) {
 
     // Event listener -- close
     socket.onclose = function(event) {
-        console.log('Static displayLoading WebSocket connection closed');
+        console.log('WebSocket connection closed');
     };
 
     // Event listener -- errors
@@ -84,6 +86,8 @@ function replaceUpdate(update) {
 
 
 
+// coordinatesloader.js
+
 function displayLocationUpdate(resultContainerId) {
     var resultContainer = document.getElementById(resultContainerId);
     resultContainer.innerHTML = '';
@@ -98,7 +102,7 @@ function displayLocationUpdate(resultContainerId) {
 
     // Event listener -- open
     socket.onopen = function(event) {
-        console.log('Static displayLocationUpdate WebSocket connection opened');
+        console.log('WebSocket connection opened');
     };
 
     // Event listener -- messages
@@ -109,7 +113,7 @@ function displayLocationUpdate(resultContainerId) {
 
     // Event listener -- close
     socket.onclose = function(event) {
-        console.log('Static displayLocationUpdate WebSocket connection closed');
+        console.log('WebSocket connection closed');
     };
 
     // Event listener -- errors
