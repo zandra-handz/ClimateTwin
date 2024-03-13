@@ -295,6 +295,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 logger.info(discovery_data)
                 
                 return discovery_data.json()
+
         
 
         twin_response = requests.get(twin_endpoint, headers=headers)
