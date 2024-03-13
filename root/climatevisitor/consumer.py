@@ -165,6 +165,12 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
             send_location_update_to_celery.delay(self.user_id, data['name'], data['temperature'], data['latitude'], data['longitude'])
 
+        else:
+            self.send(text_data=json.dumps({
+                'name': "You are home"
+            }))
+
+
 
 
 
@@ -177,7 +183,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
 
         headers = {
-            'Authorization': f'Bearer {token}',
+            'Authorization': f'Token {token}',
             'Content-Type': 'application/json'
         }
 
@@ -190,7 +196,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             if discovery_location_id is not None: 
 
                 headers = {
-                    'Authorization': f'Bearer {token}',
+                    'Authorization': f'Token {token}',
                     'Content-Type': 'application/json' 
                 }
 
@@ -289,9 +295,6 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
             # Need to conform to one token eventually, but this will work for demo purposes
             endpoint_demo_token = "f38e6b71380f11f62071126b0ff43fc0a2689982"  
-
-            # Trying out JWT
-            endpoint_demo_token = demo_token
 
             
             return demo_user, endpoint_demo_token
