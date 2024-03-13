@@ -291,7 +291,19 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
                 discovery_interactive_data = requests.get(discovery_location_interactive_data_endpoint)
                 logger.info(discovery_interactive_data)
-                return discovery_interactive_data.json()
+
+                stripped_data = {}
+
+                for key, value in discovery_interactive_data.items():
+                    if key.startswith('explore_location_'):
+                        stripped_key = key[len('explore_location_'):]  # Strip off the prefix
+                        stripped_data[stripped_key] = value
+                    else:
+                        stripped_data[key] = value
+
+                # Return the modified JSON object
+                return stripped_data
+                #return discovery_interactive_data.json()
         
 
         twin_response = requests.get(twin_endpoint, headers=headers)
