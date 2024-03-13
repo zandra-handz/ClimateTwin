@@ -292,17 +292,19 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 discovery_interactive_data = requests.get(discovery_location_interactive_data_endpoint)
                 logger.info(discovery_interactive_data)
 
-                stripped_data = {}
+                choices_data = discovery_interactive_data.get("choices", {})
 
-                for key, value in discovery_interactive_data.items():
+                # Strip off the prefix from keys
+                stripped_choices_data = {}
+                for key, value in choices_data.items():
                     if key.startswith('explore_location_'):
                         stripped_key = key[len('explore_location_'):]  # Strip off the prefix
-                        stripped_data[stripped_key] = value
+                        stripped_choices_data[stripped_key] = value
                     else:
-                        stripped_data[key] = value
+                        stripped_choices_data[key] = value
 
-
-                return stripped_data
+                # Return the modified choices data
+                return stripped_choices_data
                 #return discovery_interactive_data.json()
         
 
