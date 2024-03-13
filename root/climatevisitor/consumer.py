@@ -301,7 +301,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
                     else:
                         stripped_data[key] = value
 
-                # Return the modified JSON object
+
                 return stripped_data
                 #return discovery_interactive_data.json()
         
