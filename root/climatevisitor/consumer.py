@@ -266,7 +266,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
     def fetch_data_from_endpoint(self, token):
         # Fetch data from endpoint(s)
         explore_data_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-exploring/'
-        discovery_location_interactive_data_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/item-choices/'
+        discovery_locations_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/locations/nearby/'
         twin_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-visiting/'
 
 
@@ -280,7 +280,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
         if explore_response.status_code == 200:
             explore_data = explore_response.json()
-            discovery_location_id = explore_data.get('created_on')
+            discovery_location_id = explore_data.get('explore_location')
 
             if discovery_location_id is not None: 
 
@@ -289,23 +289,12 @@ class LocationUpdateConsumer(WebsocketConsumer):
                     'Content-Type': 'application/json' 
                 }
 
-                discovery_interactive_data = requests.get(discovery_location_interactive_data_endpoint)
-                logger.info(discovery_interactive_data)
+                discovery_location_endpoint = f'{discovery_locations_endpoint}{discovery_location_id}/'
 
-                choices_data = discovery_interactive_data.get("choices", {})
-
-                # Strip off the prefix from keys
-                stripped_choices_data = {}
-                for key, value in choices_data.items():
-                    if key.startswith('explore_location__'):
-                        stripped_key = key[len('explore_location__'):]  # Strip off the prefix
-                        stripped_choices_data[stripped_key] = value
-                    else:
-                        stripped_choices_data[key] = value
-
-                # Return the modified choices data
-                return stripped_choices_data
-                #return discovery_interactive_data.json()
+                discovery_data = requests.get(discovery_location_endpoint, headers=headers)
+                logger.info(discovery_data)
+                
+                return discovery_data.json()
         
 
         twin_response = requests.get(twin_endpoint, headers=headers)
