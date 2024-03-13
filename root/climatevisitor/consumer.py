@@ -36,7 +36,102 @@ def get_user_model():
     return apps.get_model('users', 'BadRainbowzUser')
 
 
+'''
+class ClimateTwinConsumer(AsyncWebsocketConsumer):
+    def connect(self):
+        self.group_name = 'climate_updates'
+        self.channel_layer.group_add(
+            self.group_name,
+            self.channel_name
+        )
 
+        # Authenticate the user
+        self.user = self.authenticate_user()
+
+        # Send a message indicating whether the user was retrieved
+        if self.user:
+            self.accept()  # Ensure the connection is accepted before sending messages
+            logger.info("Coordinates WebSocket connection established")
+            self.send(text_data=json.dumps({
+                'message': f"User retrieved: {self.user}"
+            }))
+        else:
+            self.accept()
+            logger.info("Coordinates WebSocket connection established with demo user")
+            self.send(text_data=json.dumps({
+                'message': "Demo user used as authentication failed"
+            }))
+
+    def disconnect(self, close_code):
+        self.channel_layer.group_discard(
+            self.group_name,
+            self.channel_name
+        )
+        logger.info("WebSocket connection closed")
+
+    def update_coordinates(self, event):
+        logger.debug(f"Received update_coordinates event: {event}")
+        self.send(text_data=json.dumps({
+            'country_name': event['country_name'],
+            'latitude': event['latitude'],
+            'longitude': event['longitude'],
+        }))
+        logger.info(f"Received coordinates: Country - {event['country_name']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")
+
+    def authenticate_user(self):
+        auth = self.scope.get('query_string', b'').decode()
+        user_token = parse_qs(auth).get('user_token', [None])[0]
+        if user_token:
+            try:
+                from rest_framework_simplejwt.tokens import AccessToken
+                access_token = AccessToken(user_token)
+                user = self.get_user(access_token)
+                return user
+            except:
+                # Return a demo user with a hardcoded token
+                return self.get_demo_user()
+        else:
+            # Return a demo user with a hardcoded token
+            return self.get_demo_user()
+
+
+    def get_user(self, access_token):
+        try:
+            user_id = access_token['user_id']
+            user = self.get_user_model().objects.get(id=user_id)
+            return user
+        except:
+            return None
+
+    def get_demo_user(self):
+        # Get or create a demo user with a hardcoded token
+        try:
+            demo_user = self.get_user_model().objects.get(username='sara')
+
+            from rest_framework_simplejwt.tokens import AccessToken
+            demo_token = AccessToken.for_user(demo_user)
+            
+            logger.debug(f"Generated token: {demo_token}")
+            
+            return demo_user
+        except self.get_user_model().DoesNotExist:
+            # Log the error
+            logger.error("Demo user 'sara' does not exist.")
+                
+            # Raise an error
+            raise Exception("Demo user 'sara' does not exist.")
+
+    @staticmethod
+    def get_user_model():
+        return apps.get_model('users', 'BadRainbowzUser')
+
+
+'''
+# Most updated async version
+
+
+def get_user_model():
+    return apps.get_model('users', 'BadRainbowzUser')
 
 class ClimateTwinConsumer(WebsocketConsumer):
     def connect(self):
@@ -122,7 +217,7 @@ class ClimateTwinConsumer(WebsocketConsumer):
             from rest_framework_simplejwt.tokens import AccessToken
             demo_token = AccessToken.for_user(demo_user)
             
-            logger.debug(f"ClimateTwinConsumer generated token: {demo_token}")
+            logger.debug(f"Generated token: {demo_token}")
             
             return demo_user
         except self.get_user_model().DoesNotExist:
@@ -152,7 +247,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
         #self.user = self.authenticate_user()
         self.user, self.token = self.authenticate_user() 
-        logger.info(f"Location Update Websocket connecting with user: {self.user}, token: {self.token}")
+        logger.info(f"Location Update Websockey connecting with user: {self.user}, token: {self.token}")
 
         self.accept()
         logger.info("Location Update WebSocket connection established")
@@ -164,12 +259,6 @@ class LocationUpdateConsumer(WebsocketConsumer):
             logger.info(data) 
 
             send_location_update_to_celery.delay(self.user_id, data['name'], data['temperature'], data['latitude'], data['longitude'])
-
-        else:
-            self.send(text_data=json.dumps({
-                'name': "You are home"
-            }))
-
 
 
 
@@ -206,8 +295,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 logger.info(discovery_data)
                 
                 return discovery_data.json()
-
-
+        
 
         twin_response = requests.get(twin_endpoint, headers=headers)
 
@@ -291,11 +379,10 @@ class LocationUpdateConsumer(WebsocketConsumer):
             from rest_framework_simplejwt.tokens import AccessToken
             demo_token = AccessToken.for_user(demo_user)
             
-            logger.debug(f"LocationUpdateConsumer Generated token: {demo_token}")
+            logger.debug(f"Generated token: {demo_token}")
 
             # Need to conform to one token eventually, but this will work for demo purposes
             endpoint_demo_token = "f38e6b71380f11f62071126b0ff43fc0a2689982"  
-
             
             return demo_user, endpoint_demo_token
         
