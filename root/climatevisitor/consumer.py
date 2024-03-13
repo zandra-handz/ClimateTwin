@@ -2,6 +2,7 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
+from climatevisitor.tasks.tasks import send_location_update_to_celery
 
 from channels.db import database_sync_to_async
 from django.apps import apps
@@ -256,6 +257,9 @@ class LocationUpdateConsumer(WebsocketConsumer):
         if data:
             self.update_location(data)
             logger.info(data) 
+
+            send_location_update_to_celery.delay(self.user_id, data['name'], data['temperature'], data['latitude'], data['longitude'])
+
 
 
 
