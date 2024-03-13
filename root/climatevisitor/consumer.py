@@ -287,7 +287,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
                 headers = {
                     'Authorization': f'Token {token}',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'User-ID': '3'  # Demo ID for now
                 }
 
                 discovery_response = requests.get(discovery_location_endpoint)
