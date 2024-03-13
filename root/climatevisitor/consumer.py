@@ -266,7 +266,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
     def fetch_data_from_endpoint(self, token):
         # Fetch data from endpoint(s)
         explore_data_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-exploring/'
-        explore_location_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/locations/nearby/'
+        discovery_location_interactive_data_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/item-choices/'
         twin_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-visiting/'
 
 
@@ -280,19 +280,18 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
         if explore_response.status_code == 200:
             explore_data = explore_response.json()
-            discovery_location_id = explore_data.get('explore_location')
+            discovery_location_id = explore_data.get('created_on')
 
-            if discovery_location_id is not None:
-                discovery_location_endpoint = f'{explore_location_endpoint}{discovery_location_id}/'
+            if discovery_location_id is not None: 
 
                 headers = {
                     'Authorization': f'Token {token}',
-                    'Content-Type': 'application/json',
-                    'User-ID': '3'  # Demo ID for now
+                    'Content-Type': 'application/json' 
                 }
 
-                discovery_response = requests.get(discovery_location_endpoint)
-                return discovery_response.json()
+                discovery_interactive_data = requests.get(discovery_location_interactive_data_endpoint)
+                logger.info(discovery_interactive_data)
+                return discovery_interactive_data.json()
         
 
         twin_response = requests.get(twin_endpoint, headers=headers)
