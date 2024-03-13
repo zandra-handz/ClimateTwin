@@ -1,4 +1,4 @@
-// coordinatesloader.js
+
 
 function displayLoading(resultContainerId, user_token) {
     var resultContainer = document.getElementById(resultContainerId);
@@ -36,41 +36,6 @@ function displayLoading(resultContainerId, user_token) {
     };
 }
 
-/*
-function displayLoading(resultContainerId) {
-    var resultContainer = document.getElementById(resultContainerId);
-    resultContainer.innerHTML = '';
-    var loadingDiv = document.createElement('div');
-    loadingDiv.classList.add('loading-container');
-    //loadingDiv.innerHTML = '<div class="spinner"></div>';
-    resultContainer.appendChild(loadingDiv);
-
-    // WebSocket connection
-    //const socket = new WebSocket('wss://localhost:8000/ws/climate-twin/'); // Replace with your WebSocket URL
-    const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/');
-
-    // Event listener -- open
-    socket.onopen = function(event) {
-        console.log('WebSocket connection opened');
-    };
-
-    // Event listener -- messages
-    socket.onmessage = function(event) {
-        const update = JSON.parse(event.data);
-        replaceUpdate(update); 
-    };
-
-    // Event listener -- close
-    socket.onclose = function(event) {
-        console.log('WebSocket connection closed');
-    };
-
-    // Event listener -- errors
-    socket.onerror = function(error) {
-        console.error('WebSocket error:', error);
-    };
-}
-*/
 
 // Function to append new update to the container
 function replaceUpdate(update) {
@@ -136,7 +101,7 @@ function displayLocationUpdate(resultContainerId) {
 
     // Event listener -- open
     socket.onopen = function(event) {
-        console.log('WebSocket connection opened');
+        console.log('Static Files displayLocationUpdate WebSocket connection opened');
     };
 
     // Event listener -- messages
@@ -147,7 +112,7 @@ function displayLocationUpdate(resultContainerId) {
 
     // Event listener -- close
     socket.onclose = function(event) {
-        console.log('WebSocket connection closed');
+        console.log('Static Files displayLocationUpdate WebSocket connection closed');
     };
 
     // Event listener -- errors
