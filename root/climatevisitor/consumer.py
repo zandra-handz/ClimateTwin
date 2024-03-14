@@ -154,11 +154,10 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
         data = self.fetch_data_from_endpoint(self.token)
         
-        if data:
-            self.update_location(data)
-            logger.info(data) 
+        self.update_location(data)
+        logger.info(data) 
 
-            send_location_update_to_celery.delay(self.user_id, data['name'], data['temperature'], data['latitude'], data['longitude'])
+        send_location_update_to_celery.delay(self.user_id, data['name'], data['temperature'], data['latitude'], data['longitude'])
 
 
 
@@ -195,6 +194,9 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 logger.info(discovery_data)
                 
                 return discovery_data.json()
+            
+            else:
+                return None
         
 
         twin_response = requests.get(twin_endpoint, headers=headers)
@@ -223,13 +225,17 @@ class LocationUpdateConsumer(WebsocketConsumer):
         logger.info("WebSocket connection closed")
 
     def update_location(self, event):
-
         logger.debug(f"Received update_locations event: {event}")
-        self.send(text_data=json.dumps({
-             'name': event['name'],
-            'latitude': event['latitude'],
-            'longitude': event['longitude'],
-        }))
+        if event is None:
+            self.send(text_data=json.dumps({
+                'name': "You are home",
+            }))
+        elif 'latitude' in event and 'longitude' in event:
+            self.send(text_data=json.dumps({
+                'name': event['name'],
+                'latitude': event['latitude'],
+                'longitude': event['longitude'],
+            }))
 
      
         logger.info(f"Received location update: Location - {event['name']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")

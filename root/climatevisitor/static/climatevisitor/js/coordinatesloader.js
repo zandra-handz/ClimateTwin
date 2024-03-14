@@ -119,10 +119,10 @@ function displayLocationUpdate(resultContainerId) {
     };
 }
 
+
 // Function to append new update to the container
 function locationUpdate(update) {
-    const container = document.getElementById('climates-update-container');
-    container.innerHTML = '';
+    const container = document.getElementById('climate-updates-container');
     const updateElement = document.createElement('div');
     
     // Apply CSS styles to center, make it smaller, and add padding
@@ -131,31 +131,15 @@ function locationUpdate(update) {
     updateElement.style.paddingBottom = '32px'; // Adjust the value as needed
  
     if (update.latitude !== undefined && update.longitude !== undefined) { 
-        updateElement.textContent = '';
-        updateElement.textContent = `You are in ${update.name}`; // ${update.latitude}, ${update.longitude}`;
+        // Display location information
+        updateElement.textContent = `You are in ${update.name}`;
         updateElement.style.color = 'black'; 
-        /*
-        if (update.latitude > 0) {
-            updateElement.innerHTML += `<br>Lat: <span style="color: green">${update.latitude}</span>`;
-        } else if (update.latitude < 0) {
-            updateElement.innerHTML += `<br>Lat: <span style="color: red">${update.latitude}</span>`;
-        } else {
-            updateElement.innerHTML += `<br>Lat: ${update.latitude}`;
-        }
-
-        if (update.longitude > 0) {
-            updateElement.innerHTML += `, Long: <span style="color: blue">${update.longitude}</span>`;
-        } else if (update.longitude < 0) {
-            updateElement.innerHTML += `, Long: <span style="color: orange">${update.longitude}</span>`;
-        } else {
-            updateElement.innerHTML += `, Long: ${update.longitude}`;
-        } */
-    } else {
-        // Display completed message if no coordinates left
-        updateElement.textContent = 'Completed';
+    } else { 
+        // Display the name if there is no location information
+        updateElement.textContent = update.name;
         updateElement.style.color = 'gray';
     }
 
-    container.innerHTML = '';
+    container.innerHTML = ''; // Clear previous content
     container.appendChild(updateElement);
 }
