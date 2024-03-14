@@ -47,37 +47,38 @@ function displayMapAnimation(mapContainerId) {
     function createDot(latitude, longitude, mapContainer) {
         const dot = document.createElement('div');
         dot.classList.add('dot');
-
+    
         // Convert latitude and longitude to screen coordinates
         const x = (longitude + 180) * (mapCanvas.offsetWidth / 360);
         const y = (90 - latitude) * (mapCanvas.offsetHeight / 180);
-
+    
         // Check if the calculated coordinates are within the canvas bounds
         if (x < 0 || x > mapCanvas.offsetWidth || y < 0 || y > mapCanvas.offsetHeight) {
             console.error('Dot coordinates are outside the canvas bounds.');
             return; // Exit the function if coordinates are outside bounds
         }
-
+    
         // Set dot initial position
         dot.style.left = x + 'px';
         dot.style.top = y + 'px';
-
+    
         // Append dot to the dot container
         mapContainer.appendChild(dot);
-
-        // Fade out the previous dot
-        const currentDot = mapContainer.querySelector('.dot.current');
-        if (currentDot) {
-            currentDot.classList.remove('current');
+    
+        // Fade out the previous dot, if any
+        const previousDot = mapContainer.querySelector('.dot.current');
+        if (previousDot) {
+            previousDot.style.opacity = 0; // Set opacity to 0 to trigger fade-out
+            // Remove the dot after a short delay
             setTimeout(() => {
-                mapContainer.removeChild(currentDot);
+                mapContainer.removeChild(previousDot);
             }, 600); // Adjust this value for the fade-out duration
         }
-
+    
         // Set the new dot as the current dot
         dot.classList.add('current');
     }
-
+    
     /*
     function drawCenterDot(mapContainer) {
         const dot = document.createElement('div');
