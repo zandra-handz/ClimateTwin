@@ -149,7 +149,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         self.update_location(data)
         # logger.info(data) 
 
-        send_location_update_to_celery.delay(self.user_id, data['name'], data['temperature'], data['latitude'], data['longitude'])
+        # send_location_update_to_celery.delay(self.user_id, data['name'], data['temperature'], data['latitude'], data['longitude'])
 
 
 
