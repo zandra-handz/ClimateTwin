@@ -1,5 +1,5 @@
 function displayMapAnimation(mapContainerId) {
-    // Function to set the height of the map container
+    
     function setMapContainerHeight() {
         const mapContainer = document.getElementById(mapContainerId);
         const width = mapContainer.offsetWidth;
@@ -13,7 +13,7 @@ function displayMapAnimation(mapContainerId) {
     // Call the function whenever the window is resized
     window.addEventListener('resize', setMapContainerHeight);
 
-    // Your existing displayMapAnimation function and other related functions go here...
+    
 
     const mapContainer = document.getElementById(mapContainerId);
     mapContainer.innerHTML = ''; // Clear any existing content
@@ -31,7 +31,7 @@ function displayMapAnimation(mapContainerId) {
         const latitude = parseFloat(update.latitude);
         const longitude = parseFloat(update.longitude);
         
-        // Remove the previous dot, if exists
+        
         const previousDot = mapContainer.querySelector('.dot');
         if (previousDot) {
             mapContainer.removeChild(previousDot);
@@ -48,7 +48,7 @@ function displayMapAnimation(mapContainerId) {
         const x = (longitude + 180) * (mapCanvas.offsetWidth / 360);
         const y = (90 - latitude) * (mapCanvas.offsetHeight / 180);
 
-        // Check if the calculated coordinates are within the canvas bounds
+        
         if (x < 0 || x > mapCanvas.offsetWidth || y < 0 || y > mapCanvas.offsetHeight) {
             console.error('Dot coordinates are outside the canvas bounds.');
             return; // Exit the function if coordinates are outside bounds
@@ -67,7 +67,7 @@ function displayMapAnimation(mapContainerId) {
             currentDot.classList.remove('current');
             setTimeout(() => {
                 mapContainer.removeChild(currentDot);
-            }, 600); // Adjust this value for the fade-out duration
+            }, 600); 
         }
 
         // Set the new dot as the current dot
