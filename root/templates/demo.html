@@ -27,20 +27,22 @@
             flex-direction: column;
             align-items: center;
             border-radius: 20px;
-            max-width: 900px; /* Max width for responsiveness */
-            margin: 0 auto; /* Center the container */
-            padding: 20px; /* Add padding for better spacing */
+            max-width: 900px;  
+            margin: 0 auto;  
+            padding: 10px; 
         }
         .header {
-            font-size: 24px;
+            font-size: 22px;
             justify-content: center;
-            margin-bottom: 20px;
+            margin-top: 10px;
+            margin-bottom: 10px;
         }
+
         .sections {
             display: flex;
             flex-wrap: wrap; /* Allow sections to wrap on smaller screens */
             justify-content: space-between;
-            margin-bottom: 20px; /* Add margin between sections */
+            margin-bottom: 0px;  
         }
 
         .go-section {
@@ -52,30 +54,30 @@
         }
 
         .section {
-            width: calc(33.33% - 8px); /* Three equally sized sections */
-            margin-bottom: 20px; /* Add margin between sections */
+            width: calc(33.33% - 8px);  
+            margin-bottom: 6px;  
 
         }
+
         .form-group {
-            font-size: 12px;
-            margin-bottom: 10px;
-            border-radius: 20px;
+            font-size: 11px;
+            margin-bottom: 0px; 
         }
         .form-group input {
             width: calc(100% - 88px); /* NUMBERS I PLAYED AROUND WITH THAT MUST BE EXACT LOL */
-            padding: 8px;
+            padding: 6px;
             border: 1px solid #ccc;
-            border-radius: 20px;
+            border-radius: 10px;
         }
         .form-group button {
             width: 100%;
             min-width: 70px;
-            height: 46px;
-            padding: 8px;
+            height: 26px;
+            padding: 6px;
             background-color: #007bff;
             color: #fff;
             border: none;
-            border-radius: 20px;
+            border-radius: 10px;
             cursor: pointer;
             overflow: hidden; /* Hide any overflow text */
             white-space: nowrap; /* Prevent text from wrapping */
@@ -90,12 +92,12 @@
             background-color: #007bff;
             color: #fff;
             border: none;
-            border-radius: 20px;
+            border-radius: 10px;
             cursor: pointer;
         }
         .form-group button:hover {
             background-color: #0056b3;
-            border-radius: 20px;
+            border-radius: 10px;
             overflow: hidden; /* Hide any overflow text */
             white-space: nowrap; /* Prevent text from wrapping */
             text-overflow: ellipsis;
@@ -103,7 +105,7 @@
 
         .form-group button:focus {
             background-color: #0056b3;
-            border-radius: 20px;
+            border-radius: 10px;
             overflow: hidden; /* Hide any overflow text */
             white-space: nowrap; /* Prevent text from wrapping */
             text-overflow: ellipsis;
@@ -203,7 +205,7 @@
             position: absolute;
             width: 6px; /* Increase dot size for better visibility */
             height: 6px; /* Increase dot size for better visibility */
-            background-color: orange;
+            background-color: darkgreen;
             border-radius: 50%;
             transition: opacity 1s;
         }
