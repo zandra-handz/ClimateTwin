@@ -75,9 +75,10 @@ function replaceUpdate(update) {
             }
         }
     } else {
-        // Display completed message if no coordinates left
-        updateElement.textContent = 'Completed';
-        updateElement.style.color = 'gray';
+        const loadingContainer = document.querySelector('.loading-container');
+        if (loadingContainer) {
+            loadingContainer.remove(); // Remove the loading container
+        }
     }
 
     container.innerHTML = '';  
