@@ -31,12 +31,16 @@ function displayMapAnimation(mapContainerId) {
         const latitude = parseFloat(update.latitude);
         const longitude = parseFloat(update.longitude);
         
-        // Remove the previous dot, if exists
-        const previousDot = mapContainer.querySelector('.dot');
+        // Fade out the previous dot
+        const previousDot = mapContainer.querySelector('.dot.current');
         if (previousDot) {
-            mapContainer.removeChild(previousDot);
+            previousDot.classList.remove('current');
+            // Remove the dot after the transition ends
+            previousDot.addEventListener('transitionend', function() {
+                mapContainer.removeChild(previousDot);
+            });
         }
-
+    
         createDot(latitude, longitude, mapContainer);
     }
 
