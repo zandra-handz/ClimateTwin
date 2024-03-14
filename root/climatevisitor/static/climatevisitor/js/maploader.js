@@ -34,11 +34,11 @@ function displayMapAnimation(mapContainerId) {
         // Fade out the previous dot
         const previousDot = mapContainer.querySelector('.dot.current');
         if (previousDot) {
-            previousDot.classList.remove('current');
-            // Remove the dot after the transition ends
-            previousDot.addEventListener('transitionend', function() {
+            previousDot.style.opacity = 0; // Set opacity to 0 to trigger fade-out
+            // Remove the dot after a short delay
+            setTimeout(() => {
                 mapContainer.removeChild(previousDot);
-            });
+            }, 600); // Adjust this value for the fade-out duration
         }
     
         createDot(latitude, longitude, mapContainer);
