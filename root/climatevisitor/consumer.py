@@ -37,33 +37,25 @@ class ClimateTwinConsumer(WebsocketConsumer):
     def connect(self):
 
         self.user_id = 3  # demo User ID is hardcoded for right now
+
         self.group_name = f'climate_updates_{self.user_id}'
         async_to_sync(self.channel_layer.group_add)(
             self.group_name,
             self.channel_name
-        )
+        ) 
 
-        '''
-        self.group_name = 'climate_updates'
-        async_to_sync(self.channel_layer.group_add)(
-            self.group_name,
-            self.channel_name
-        )
-        '''
-
-        # Authenticate the user
+        
         self.user = self.authenticate_user()
-
-        # Send a message indicating whether the user was retrieved
+ 
         if self.user:
-            self.accept()  # Ensure the connection is accepted before sending messages
-            logger.info("Coordinates WebSocket connection established")
+            self.accept() 
+            # logger.info("Coordinates WebSocket connection established")
             self.send(text_data=json.dumps({
                 'message': f"User retrieved: {self.user}"
             }))
         else:
             self.accept()
-            logger.info("Coordinates WebSocket connection established with demo user")
+            # logger.info("Coordinates WebSocket connection established with demo user")
             self.send(text_data=json.dumps({
                 'message': "Demo user used as authentication failed"
             }))
@@ -73,17 +65,17 @@ class ClimateTwinConsumer(WebsocketConsumer):
             self.group_name,
             self.channel_name
         )
-        logger.info("WebSocket connection closed")
+        # logger.info("WebSocket connection closed")
 
     def update_coordinates(self, event):
-        logger.debug(f"Received update_coordinates event: {event}")
+        # logger.debug(f"Received update_coordinates event: {event}")
         self.send(text_data=json.dumps({
             'country_name': event['country_name'],
             'temperature': event['temperature'],
             'latitude': event['latitude'],
             'longitude': event['longitude'],
         }))
-        logger.info(f"Received coordinates: Country - {event['country_name']}, Temperature - {event['temperature']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")
+        # logger.info(f"Received coordinates: Country - {event['country_name']}, Temperature - {event['temperature']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")
 
     def authenticate_user(self):
         auth = self.scope.get('query_string', b'').decode()
@@ -117,12 +109,12 @@ class ClimateTwinConsumer(WebsocketConsumer):
             from rest_framework_simplejwt.tokens import AccessToken
             demo_token = AccessToken.for_user(demo_user)
             
-            logger.debug(f"Generated token: {demo_token}")
+            logger.debug(f"ClimateTwinConsumer generated JWT token: {demo_token}")
             
             return demo_user
         except self.get_user_model().DoesNotExist:
             # Log the error
-            logger.error("Demo user 'sara' does not exist.")
+            # logger.error("Demo user 'sara' does not exist.")
                 
             # Raise an error
             raise Exception("Demo user 'sara' does not exist.")
@@ -147,15 +139,15 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
         #self.user = self.authenticate_user()
         self.user, self.token = self.authenticate_user() 
-        logger.info(f"Location Update Websockey connecting with user: {self.user}, token: {self.token}")
+        # logger.info(f"Location Update Websockey connecting with user: {self.user}, token: {self.token}")
 
         self.accept()
-        logger.info("Location Update WebSocket connection established")
+        # logger.info("Location Update WebSocket connection established")
 
         data = self.fetch_data_from_endpoint(self.token)
         
         self.update_location(data)
-        logger.info(data) 
+        # logger.info(data) 
 
         send_location_update_to_celery.delay(self.user_id, data['name'], data['temperature'], data['latitude'], data['longitude'])
 
@@ -191,7 +183,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 discovery_location_endpoint = f'{discovery_locations_endpoint}{discovery_location_id}/'
 
                 discovery_data = requests.get(discovery_location_endpoint, headers=headers)
-                logger.info(discovery_data)
+                # logger.info(discovery_data)
                 
                 return discovery_data.json()
             
@@ -205,16 +197,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
             return twin_response.json()
         
         else:
-            logger.error(f"Error: {twin_response.status_code}")
+            # logger.error(f"Error: {twin_response.status_code}")
             return None
-            
-        
-    def send_data_to_client(self, data):
-        if data is not None:
-            # Broadcast data to client
-            self.send(text_data=json.dumps(data))
-        else:
-            logger.error("No data to send to client")
             
 
     def disconnect(self, close_code):
@@ -222,10 +206,10 @@ class LocationUpdateConsumer(WebsocketConsumer):
             self.group_name,
             self.channel_name
         )
-        logger.info("WebSocket connection closed")
+        # logger.info("WebSocket connection closed")
 
     def update_location(self, event):
-        logger.debug(f"Received update_locations event: {event}")
+        # logger.debug(f"Received update_locations event: {event}")
         if event is None:
             self.send(text_data=json.dumps({
                 'name': "You are home",
@@ -238,7 +222,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             }))
 
      
-        logger.info(f"Received location update: Location - {event['name']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")
+        # logger.info(f"Received location update: Location - {event['name']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")
 
     '''
     def current_location(self, event):
@@ -285,7 +269,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             from rest_framework_simplejwt.tokens import AccessToken
             demo_token = AccessToken.for_user(demo_user)
             
-            logger.debug(f"Generated token: {demo_token}")
+            logger.debug(f"LocationUpdateConsumer generated token: {demo_token}")
 
             # Need to conform to one token eventually, but this will work for demo purposes
             endpoint_demo_token = "f38e6b71380f11f62071126b0ff43fc0a2689982"  
@@ -293,8 +277,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             return demo_user, endpoint_demo_token
         
         except self.get_user_model().DoesNotExist:
-            # Log the error
-            logger.error("Demo user 'sara' does not exist.")
+            # logger.error("Demo user 'sara' does not exist.")
                 
             # Raise an error
             raise Exception("Demo user 'sara' does not exist.")
