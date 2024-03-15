@@ -35,11 +35,11 @@ function displayMapAnimation(mapContainerId) {
         const previousDot = mapContainer.querySelector('.dot.current');
         if (previousDot) {
             previousDot.style.opacity = 0; // Set opacity to 0 to trigger fade-out
+            // Add the new dot while the previous one is still fading out
+            createDot(latitude, longitude, mapContainer);
             // Remove the dot after a short delay
             setTimeout(() => {
                 mapContainer.removeChild(previousDot);
-                // Add the new dot after removing the previous one
-                createDot(latitude, longitude, mapContainer);
             }, 600); // Adjust this value for the fade-out duration
         } else {
             // If there's no previous dot, simply add the new dot
