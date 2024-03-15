@@ -45,23 +45,23 @@ function replaceUpdate(update) {
     // updateElement.style.paddingBottom = '32px'; 
  
     if (update.latitude !== undefined && update.longitude !== undefined) { 
-        updateElement.textContent = `Twin Finder is searching in ${update.country_name} (${update.temperature} degrees)`; // ${update.latitude}, ${update.longitude}`;
+        updateElement.textContent = `Twin Finder is in ${update.country_name}, ${update.temperature}°, `; // ${update.latitude}, ${update.longitude}`;
         updateElement.style.color = 'black'; 
  
         if (update.latitude > 0) {
-            updateElement.innerHTML += `<br>Lat: <span style="color: green">${update.latitude}</span>`;
+            updateElement.innerHTML += `<span style="color: green">${update.latitude}, </span>`;
         } else if (update.latitude < 0) {
-            updateElement.innerHTML += `<br>Lat: <span style="color: red">${update.latitude}</span>`;
+            updateElement.innerHTML += `<span style="color: red">${update.latitude}, </span>`;
         } else {
-            updateElement.innerHTML += `<br>Lat: ${update.latitude}`;
+            updateElement.innerHTML += `${update.latitude}, `;
         }
 
         if (update.longitude > 0) {
-            updateElement.innerHTML += `, Long: <span style="color: blue">${update.longitude}</span>`;
+            updateElement.innerHTML += `<span style="color: blue">${update.longitude}</span>`;
         } else if (update.longitude < 0) {
-            updateElement.innerHTML += `, Long: <span style="color: orange">${update.longitude}</span>`;
+            updateElement.innerHTML += `<span style="color: orange">${update.longitude}</span>`;
         } else {
-            updateElement.innerHTML += `, Long: ${update.longitude}`;
+            updateElement.innerHTML += `${update.longitude}`;
         }
  
         if (update.last) {
@@ -118,7 +118,7 @@ function locationUpdate(update) {
     const updateElement = document.createElement('div');
     updateElement.style.textAlign = 'center';
     updateElement.style.fontSize = 'small';
-    updateElement.style.paddingBottom = '32px';
+    // updateElement.style.paddingBottom = '32px';
  
     if (update.latitude !== undefined && update.longitude !== undefined) { 
         
