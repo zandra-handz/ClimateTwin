@@ -403,7 +403,8 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=3)
 }
 
-
+# Added this to get Swagger UI to send https requests when running on DigitalOcean
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 AUTHENTICATION_BACKENDS = (
     # ...
