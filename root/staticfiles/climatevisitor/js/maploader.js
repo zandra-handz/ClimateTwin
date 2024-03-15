@@ -30,7 +30,7 @@ function displayMapAnimation(mapContainerId) {
     function updateAnimation(update) {
         const latitude = parseFloat(update.latitude);
         const longitude = parseFloat(update.longitude);
-        
+    
         // Fade out the previous dot
         const previousDot = mapContainer.querySelector('.dot.current');
         if (previousDot) {
@@ -38,10 +38,13 @@ function displayMapAnimation(mapContainerId) {
             // Remove the dot after a short delay
             setTimeout(() => {
                 mapContainer.removeChild(previousDot);
+                // Add the new dot after removing the previous one
+                createDot(latitude, longitude, mapContainer);
             }, 600); // Adjust this value for the fade-out duration
+        } else {
+            // If there's no previous dot, simply add the new dot
+            createDot(latitude, longitude, mapContainer);
         }
-    
-        createDot(latitude, longitude, mapContainer);
     }
 
     function createDot(latitude, longitude, mapContainer) {
