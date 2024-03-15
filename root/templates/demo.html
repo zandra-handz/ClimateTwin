@@ -36,8 +36,8 @@
         .header {
             font-size: 18px;
             justify-content: center;
-            margin-top: 6%;
-            margin-bottom: 6px;
+            margin-top: 2px;
+            margin-bottom: 2px;
         }
 
         .sections {
@@ -49,10 +49,11 @@
 
         .fixed-sections {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: wrap; 
             justify-content: space-between;
+            width: 100%;
             position: fixed;
-            bottom: 0; 
+            bottom: 3px; 
             padding: 10px; 
         }
         
@@ -61,13 +62,18 @@
             display: inline-block;
             white-space: nowrap;/* Allow sections to wrap on smaller screens */
             justify-content: center;
-            margin-bottom: 14px; /* Add margin between sections */
+            margin-bottom: 8px; /* Add margin between sections */
             width: 100%;
         }
 
         .section {
             width: calc(33.33% - 4px);  
             margin-bottom: 10px;  
+
+        }
+
+        .fixed-section {
+            width: calc(33.33% - 4px); 
 
         }
 
@@ -504,7 +510,7 @@
             <div class="websocket-container">
                 <div id="climate-updates-container"></div>
             </div>
-            <div class="map-side-panel-container"></div>
+            <!-- <div class="map-side-panel-container"></div> -->
             <div class="result-container"></div>
                 <div id="map-container">
                     <canvas id="map-canvas"></canvas>
