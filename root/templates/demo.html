@@ -53,8 +53,9 @@
             justify-content: space-between;
             width: 100%;
             position: fixed;
-            bottom: 3px; 
-            padding: 10px; 
+            bottom: 0; 
+            backdrop-filter: blur(5px); /* Adjust the blur radius as needed */
+            background-color: rgba(255, 255, 255, 0.5);
         }
         
 
@@ -163,7 +164,7 @@
             display: block;
             align-items: center;  
             justify-content: center;  
-            min-height: 70px;
+            min-height: 36px;
             width: 100%;
         }
 
@@ -221,7 +222,7 @@
 
         #map-container {
             position: relative;
-            width: 60%;
+            width: 50%;
             height: 50vw;
             max-width: 1200px; /* Optionally limit maximum width */
             margin: 0 auto; /* Center the container */
