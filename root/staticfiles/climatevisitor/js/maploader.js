@@ -31,22 +31,10 @@ function displayMapAnimation(mapContainerId) {
         const latitude = parseFloat(update.latitude);
         const longitude = parseFloat(update.longitude);
     
-        // Fade out the previous dot
-        const previousDot = mapContainer.querySelector('.dot.current');
-        if (previousDot) {
-            previousDot.style.opacity = 0; // Set opacity to 0 to trigger fade-out
-            // Add the new dot while the previous one is still fading out
-            createDot(latitude, longitude, mapContainer);
-            // Remove the dot after a short delay
-            setTimeout(() => {
-                mapContainer.removeChild(previousDot);
-            }, 600); // Adjust this value for the fade-out duration
-        } else {
-            // If there's no previous dot, simply add the new dot
-            createDot(latitude, longitude, mapContainer);
-        }
+        // Add the new dot immediately
+        createDot(latitude, longitude, mapContainer);
     }
-
+    
     function createDot(latitude, longitude, mapContainer) {
         const dot = document.createElement('div');
         dot.classList.add('dot');
@@ -61,12 +49,17 @@ function displayMapAnimation(mapContainerId) {
             return; // Exit the function if coordinates are outside bounds
         }
     
-        // Set dot initial position
+        // Set dot position
         dot.style.left = x + 'px';
         dot.style.top = y + 'px';
     
         // Append dot to the dot container
         mapContainer.appendChild(dot);
+    
+        // Remove the dot after a certain period (e.g., 5 seconds)
+        setTimeout(() => {
+            mapContainer.removeChild(dot);
+        }, 5000); // Adjust this value as needed
     
         // Fade out the previous dot, if any
         const previousDot = mapContainer.querySelector('.dot.current');
