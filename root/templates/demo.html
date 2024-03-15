@@ -45,6 +45,14 @@
             margin-bottom: 0px;  
         }
 
+        .fixed-sections {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            /* Add any other styles you need for this container */
+        }
+
         .go-section {
             display: inline-block;
             white-space: nowrap;/* Allow sections to wrap on smaller screens */
@@ -59,14 +67,19 @@
 
         }
 
+
+
         .form-group {
-            font-size: 10px;
-            margin-bottom: 6px; 
+            font-size: 9px;
+            align-items: center;
+            /*margin-bottom: 6px; */
         }
         .form-group input {
+            font-size: 9px;
             width: calc(100% - 88px); /* NUMBERS I PLAYED AROUND WITH THAT MUST BE EXACT LOL */
             padding: 5px;
             border: 1px solid #ccc;
+            height: 26px;
             border-radius: 10px;
         }
         .form-group button {
@@ -134,8 +147,12 @@
             width: 100%;
         }
 
-        .climate-updates-container {
-            height: 50px;
+        .websocket-container {
+            display: flex;
+            align-items: center;  
+            justify-content: center;  
+            min-height: 80px;
+            width: 100%;
         }
 
         .summary-text-container {
@@ -186,11 +203,11 @@
 
         #map-container {
             position: relative;
-            width: 70%;
+            width: 60%;
             height: 50vw;
             max-width: 1200px; /* Optionally limit maximum width */
             margin: 0 auto; /* Center the container */
-            border-radius: 40px;
+            border-radius: 30%;
             overflow: hidden;
         }
         #map-canvas {
@@ -202,7 +219,7 @@
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
-            border-radius: 40px;
+            border-radius: 30%;
         }
 
         .dot {
@@ -472,7 +489,7 @@
         </div>
         <div class="sections">
             
-            <div class="result-container">
+            <div class="websocket-container">
                 <div id="climate-updates-container"></div>
             <div class="result-container"></div>
                 <div id="map-container">
@@ -486,7 +503,7 @@
 
     </div>
     <div class="container">
-        <div class="sections">
+        <div class="fixed-sections">
             <div class="section">
                 <div class="form-group">
                     <button id="userInboxBtn">Inbox</button>
