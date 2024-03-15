@@ -68,7 +68,7 @@ function displayMapAnimation(mapContainerId) {
             // Remove the dot after a short delay
             setTimeout(() => {
                 mapContainer.removeChild(previousDot);
-            }, 260); // Adjust this value for the fade-out duration
+            }, 200); // Adjust this value for the fade-out duration
         }
     
         // Set the new dot as the current dot
