@@ -126,7 +126,7 @@ function locationUpdate(update) {
         updateElement.style.color = 'black'; 
     } else { 
         updateElement.textContent = update.name;
-        updateElement.style.color = 'gray';
+        updateElement.style.color = 'black';
     }
 
     container.innerHTML = ''; 
