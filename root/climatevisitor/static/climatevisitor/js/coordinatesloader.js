@@ -42,7 +42,7 @@ function replaceUpdate(update) {
     // In-line CSS  
     updateElement.style.textAlign = 'center';
     updateElement.style.fontSize = 'small';
-    updateElement.style.paddingBottom = '32px'; 
+    // updateElement.style.paddingBottom = '32px'; 
  
     if (update.latitude !== undefined && update.longitude !== undefined) { 
         updateElement.textContent = `Twin Finder is searching in ${update.country_name} (${update.temperature} degrees)`; // ${update.latitude}, ${update.longitude}`;
