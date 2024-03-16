@@ -116,29 +116,24 @@ function displayMapAnimation(mapContainerId) {
         });
     }
 
-    // Event listener for window resize
+    
     window.addEventListener('resize', () => handleResize(mapContainer));
 
-    // WebSocket connection
     const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/');
 
-    // Event listener -- open
     socket.onopen = function(event) {
         console.log('WebSocket connection opened');
     };
 
-    // Event listener -- messages
     socket.onmessage = function(event) {
         const update = JSON.parse(event.data);
         updateAnimation(update);
     };
 
-    // Event listener -- close
     socket.onclose = function(event) {
         console.log('WebSocket connection closed');
     };
 
-    // Event listener -- errors
     socket.onerror = function(error) {
         console.error('WebSocket error:', error);
     };
@@ -146,6 +141,75 @@ function displayMapAnimation(mapContainerId) {
     // Call the function to draw the center dot initially
     //drawCenterDot(mapContainer);
 }
+
+function displayMapUpdate(mapContainerId) {
+    var mapContainer = document.getElementById(mapContainerId);
+    mapContainer.innerHTML = '';
+    var loadingDiv = document.createElement('div');
+    loadingDiv.classList.add('loading-container');
+    // loadingDiv.innerHTML = '<div class="spinner"></div>';
+    mapContainer.appendChild(loadingDiv);
+
+    const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/current/');
+
+    socket.onopen = function(event) {
+        console.log('displayMapUpdate WebSocket connection opened');
+    };
+
+    socket.onmessage = function(event) {
+        const update = JSON.parse(event.data);
+        mapUpdate(update); 
+    };
+
+    socket.onclose = function(event) {
+        console.log('displayMapUpdate WebSocket connection closed');
+    };
+
+    socket.onerror = function(error) {
+        console.error('displayMapUpdate WebSocket error:', error);
+    };
+}
+
+function mapUpdate(update) {
+    const mapContainer = document.getElementById('map-container');
+    const mapCanvas = document.createElement('canvas');
+    mapCanvas.id = 'map-canvas';
+    mapContainer.innerHTML = ''; // Clear any existing content
+    mapContainer.appendChild(mapCanvas);
+
+    // Set canvas dimensions
+    mapCanvas.width = mapContainer.offsetWidth;
+    mapCanvas.height = mapContainer.offsetHeight;
+
+    const latitude = parseFloat(update.latitude);
+    const longitude = parseFloat(update.longitude);
+
+    // Add the new dot immediately
+    createPulsingDot(latitude, longitude, mapContainer);
+}
+
+function createPulsingDot(latitude, longitude, mapContainer) {
+    const dot = document.createElement('div');
+    dot.classList.add('dot');
+    dot.classList.add('pulsing');
+
+    // Convert latitude and longitude to screen coordinates
+    const x = (longitude + 180) * (mapContainer.offsetWidth / 360);
+    const y = (90 - latitude) * (mapContainer.offsetHeight / 180);
+
+    // Set dot position
+    dot.style.left = x + 'px';
+    dot.style.top = y + 'px';
+
+    // Append dot to the dot container
+    mapContainer.appendChild(dot);
+
+    // Remove the dot after a certain period (e.g., after pulsing three times)
+    setTimeout(() => {
+        mapContainer.removeChild(dot);
+    }, 2400); // Adjust this value as needed for three pulses
+}
+
 
 
 
