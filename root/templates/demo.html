@@ -50,7 +50,7 @@
 
         .fixed-top-container {
             position: fixed;
-            width: 90%;
+            width: 100%;
             top: 0;  
             left: 50%;
             transform: translateX(-50%);
@@ -59,9 +59,7 @@
             align-items: center;
             border-radius: 0 0 20px 20px;
             max-width: 900px;
-            margin: 0 auto;
-            margin-left: 5px; /* Adjust as needed */
-            margin-right: 5px;
+            margin: 0 auto; 
             padding: 0px;
             z-index: 2; 
             background-color: #f0f0f0;
@@ -71,7 +69,7 @@
 
         .fixed-bottom-container {
             position: fixed;
-            width: 90%;
+            width: 100%;
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
@@ -80,9 +78,7 @@
             align-items: center;
             border-radius: 20px 20px 0 0;
             max-width: 900px;
-            margin: 0 auto;
-            margin-left: 5px; /* Adjust as needed */
-            margin-right: 5px;
+            margin: 0 auto; 
             padding: 0px;
             z-index: 2; /* Ensure it's above other content */
             background-color: #f0f0f0;
@@ -90,7 +86,7 @@
 
 
         .fixed-sections {
-            width: 100%;
+            width: 90%;
             display: flex;
             flex-wrap: wrap; 
             justify-content: space-between;
@@ -556,7 +552,7 @@
                 </div>
             </form>
         </div>
-        <div class="sections">
+        <div class="fixed-sections">
             <div class="section">
                 <div class="form-group">
                     <button id="homeWeatherBtn">Home</button>
