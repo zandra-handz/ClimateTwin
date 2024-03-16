@@ -643,7 +643,7 @@
 
     <script>
         // Call the displayMapAnimation function with the container ID
-        displayMapAnimation('map-container');
+        // displayMapAnimation('map-container');
     </script>
     
 
@@ -944,7 +944,9 @@
             event.preventDefault(); // Prevent the default form submission
 
             // Display the loading spinner
-            //displayLoading('result');
+            var token = "f38e6b71380f11f62071126b0ff43fc0a2689982";
+            displayLoading('climate-updates-container', token);
+            displayMapAnimation('map-container');
 
             // Get the address value from the form
             var address = document.getElementById('address').value;
