@@ -62,8 +62,7 @@
             margin: 0 auto;
             padding: 0px;
             z-index: 2; 
-            backdrop-filter: blur(0px);
-            background-color: lightslategray;
+            background-color: #f0f0f0;
 
         }
 
@@ -81,9 +80,9 @@
             max-width: 900px;
             margin: 0 auto;
             padding: 0px;
+            padding-top: 10px;
             z-index: 2; /* Ensure it's above other content */
-            backdrop-filter: blur(0px);
-            background-color: lightslategray;
+            background-color: #f0f0f0;
         }
 
 
@@ -92,8 +91,7 @@
             display: flex;
             flex-wrap: wrap; 
             justify-content: space-between;
-            backdrop-filter: blur(5px);
-            background-color: rgba(255, 255, 255, 0.5);
+            background-color: #f0f0f0;
         }
 
                 
@@ -212,7 +210,7 @@
             display: flex; /* Use Flexbox */
             align-items: center; /* Vertically center the item */
             justify-content: center; /* Horizontally center the item */
-            min-height: 18px;
+            min-height: 10px;
             width: 100%;
             border: 0px solid #ccc;
             border-radius: 6px;
@@ -223,30 +221,29 @@
         .map-side-panel-container {
             display: flex;
             width: 30px;
-            background-color: lightgray;
         }
 
         .summary-text-container {
             margin-bottom: 10px;
             margin-top: 10px;
-            padding: 20px;
+            padding: 12px;
             background-color: white;
             border: 1px solid #ccc;
             border: 1px solid white;
             border-radius: 40px;
-            font-size: 13px;
+            font-size: 11px;
 
         }
 
         .result, .result-bottom {
             margin-bottom: 10px;
             margin-top: 10px;
-            padding: 20px;
+            padding: 12px;
             background-color: white;
             border: 1px solid #ccc;
             border: 1px solid white;
             border-radius: 40px;
-            font-size: 13px;
+            font-size: 11px;
             overflow: hidden; /* Hide any overflow text */
              /* Prevent text from wrapping */
             text-overflow: ellipsis;
@@ -261,8 +258,7 @@
 
         .result, .result-bottom {
             flex: 1;
-            padding: 20px;
-            margin-right: 10px;
+            padding: 12px;
         }
 
         .loading-container {
@@ -978,7 +974,10 @@
                         resultContainer.appendChild(div);
                     });
                 } else {
-                    resultContainer.innerText = 'No data available.';
+                    var div = document.createElement('div');
+                    div.classList.add('result');
+                    div.innerText = JSON.stringify(data);
+                    resultContainer.appendChild(div);
                 }
             } else {
                 // If data is not an object or an array, display as JSON string
