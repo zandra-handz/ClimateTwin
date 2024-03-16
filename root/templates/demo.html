@@ -47,6 +47,17 @@
             margin-bottom: 0px;  
         }
 
+        .fixed-container {
+            position: relative; /* Add this line */
+            display: block;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
         .fixed-sections {
             width: 100%;
             position: absolute;
@@ -517,7 +528,7 @@
         </div>
 
     </div>
-    <div class="container">
+    <div class="fixed-container">
         <div class="fixed-sections">
             <div class="sections">
                 <div class="section">
