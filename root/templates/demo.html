@@ -47,7 +47,24 @@
             margin-bottom: 0px;  
         }
 
-        .fixed-container {
+        .fixed-top-container {
+            position: fixed;
+            width: 100%;
+            top: 0;  
+            left: 50%;
+            transform: translateX(-50%);
+            display: block;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 10px;
+            z-index: 2; 
+        }
+
+
+        .fixed-bottom-container {
             position: fixed;
             width: 100%;
             bottom: 0;
@@ -270,6 +287,27 @@
             opacity: 1; /* Initial opacity set to 1 */
         }
 
+    /* CSS for the pulsing effect */
+        .current-dot {
+            position: absolute;
+            width: 6px; /* Increase dot size for better visibility */
+            height: 6px; /* Increase dot size for better visibility */
+            background-color: greenyellow;
+            border-radius: 50%;
+            transition: opacity 0.6s ease; /* Adjust the duration as needed */
+            animation: pulse 1s infinite alternate; /* Adjust the animation duration as needed */
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.1); /* Adjust the scale factor for the pulsing effect */
+            }
+        }
+
+
 
         .center-dot {
             position: absolute;
@@ -488,7 +526,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700&display=swap">
 </head>
 <body>
-    <div class="container">
+    <div class="fixed-top-container">
         <div class="header">ClimateTwin API Demo</div>
         <div class="go-section">
             <form id="addressForm">
@@ -525,8 +563,10 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="container">
         <div class="sections">
-            
+        
             <div class="websocket-container">
                 <div id="climate-updates-container"></div>
             </div>
@@ -542,7 +582,7 @@
         </div>
 
     </div>
-    <div class="fixed-container">
+    <div class="fixed-bottom-container">
         <div class="fixed-sections">
             <div class="section">
                 <div class="form-group">
@@ -960,8 +1000,6 @@
             showMapContainer();
 
             displayMapAnimation('map-container');
-            
-             
 
             // Get the address value from the form
             var address = document.getElementById('address').value;
