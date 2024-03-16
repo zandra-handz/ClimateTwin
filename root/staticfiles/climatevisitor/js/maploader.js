@@ -190,7 +190,7 @@ function mapUpdate(update) {
 
 function createPulsingDot(latitude, longitude, mapContainer) {
     const dot = document.createElement('div');
-    dot.classList.add('dot');
+    dot.classList.add('current-dot');
     dot.classList.add('pulsing');
 
     // Convert latitude and longitude to screen coordinates
@@ -207,7 +207,7 @@ function createPulsingDot(latitude, longitude, mapContainer) {
     // Remove the dot after a certain period (e.g., after pulsing three times)
     setTimeout(() => {
         mapContainer.removeChild(dot);
-    }, 2400); // Adjust this value as needed for three pulses
+    }, 5000); // Adjust this value as needed for three pulses
 }
 
 
