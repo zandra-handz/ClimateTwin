@@ -48,7 +48,7 @@
         }
 
         .fixed-container {
-            position: relative; /* Add this line */
+            position: relative;
             display: block;
             flex-direction: column;
             align-items: center;
@@ -60,12 +60,12 @@
 
         .fixed-sections {
             width: 100%;
-            position: absolute;
-            bottom: 0; 
-            backdrop-filter: blur(5px); /* Adjust the blur radius as needed */
+            position: fixed; /* Change position to fixed */
+            bottom: 0;
+            backdrop-filter: blur(5px);
             background-color: rgba(255, 255, 255, 0.5);
         }
-        
+                
 
         .go-section {
             display: inline-block;
