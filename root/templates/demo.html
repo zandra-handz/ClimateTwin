@@ -233,6 +233,7 @@
         }
 
         #map-container {
+            display: none;
             position: relative;
             width: 50%;
             height: 50vw;
@@ -937,6 +938,9 @@
             });
         }
 
+        function showMapContainer() {
+            document.getElementById('map-container').style.display = 'block';
+        }
 
 
        // JavaScript code to handle form submission
@@ -947,6 +951,10 @@
             var token = "f38e6b71380f11f62071126b0ff43fc0a2689982";
             displayLoading('climate-updates-container', token);
             displayMapAnimation('map-container');
+ 
+            showMapContainer();
+
+             
 
             // Get the address value from the form
             var address = document.getElementById('address').value;
@@ -1133,13 +1141,10 @@
                 displayTreasureFriendsPopup(data, treasureId); // Updated function call
             });
         }
-
-        // Function to display popup/modal with friends as radio buttons for treasures
-        function displayTreasureFriendsPopup(friends, treasureId) {
-            // Access the existing popup container defined in your HTML
+ 
+        function displayTreasureFriendsPopup(friends, treasureId) { 
             var popupContainer = document.getElementById('giftTreasurePopup');
-
-            // Display the popup
+ 
             popupContainer.style.display = 'block';
 
             // Set the treasure ID in the form input
