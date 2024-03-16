@@ -47,6 +47,16 @@
             margin-bottom: 0px;  
         }
 
+        .fixed-sections { 
+            position: fixed;
+            bottom: 0;
+            display: flex;
+            justify-content: space-between;
+            backdrop-filter: blur(5px);
+            background-color: rgba(255, 255, 255, 0.5);
+            z-index: 2;
+        }
+
         .fixed-container {
             position: relative;
             display: block;
@@ -56,15 +66,9 @@
             max-width: 900px;
             margin: 0 auto;
             padding: 10px;
+            z-index: 1;
         }
 
-        .fixed-sections {
-            width: 100%;
-            position: fixed; /* Change position to fixed */
-            bottom: 0;
-            backdrop-filter: blur(5px);
-            background-color: rgba(255, 255, 255, 0.5);
-        }
                 
 
         .go-section {
@@ -530,31 +534,30 @@
     </div>
     <div class="fixed-container">
         <div class="fixed-sections">
-            <div class="sections">
-                <div class="section">
-                    <div class="form-group">
-                        <button id="userInboxBtn">Inbox</button>
-                    </div>
-                    <div class="form-group">
-                        <button id="userSettingsBtn">Settings</button>
-                    </div>
+            <div class="section">
+                <div class="form-group">
+                    <button id="userInboxBtn">Inbox</button>
                 </div>
-                <div class="section">
-                    <div class="form-group">
-                        <button id="userProfileBtn">Profile</button>
-                    </div>
-                    <div class="form-group">
-                        <button id="userFriendProfilesBtn">Friends</button>
-                    </div>
+                <div class="form-group">
+                    <button id="userSettingsBtn">Settings</button>
                 </div>
-                <div class="section">
-                    <div class="form-group">
-                        <button id="userSummaryBtn">User Summary</button>
-                    </div>
-                    <div class="form-group">
-                        <button id="userPerfDataBtn">Performance</button>
-                    </div>
+            </div>
+            <div class="section">
+                <div class="form-group">
+                    <button id="userProfileBtn">Profile</button>
                 </div>
+                <div class="form-group">
+                    <button id="userFriendProfilesBtn">Friends</button>
+                </div>
+            </div>
+            <div class="section">
+                <div class="form-group">
+                    <button id="userSummaryBtn">User Summary</button>
+                </div>
+                <div class="form-group">
+                    <button id="userPerfDataBtn">Performance</button>
+                </div>
+            </div>
             </div>
         </div>
 
