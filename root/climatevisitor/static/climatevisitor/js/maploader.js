@@ -203,12 +203,8 @@ function createPulsingDot(latitude, longitude, mapContainer) {
 
     // Append dot to the dot container
     mapContainer.appendChild(dot);
-
-    // Remove the dot after a certain period (e.g., after pulsing three times)
-    setTimeout(() => {
-        mapContainer.removeChild(dot);
-    }, 5000); // Adjust this value as needed for three pulses
 }
+
 
 
 
