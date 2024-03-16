@@ -57,13 +57,11 @@
             display: block;
             flex-direction: column;
             align-items: center;
-            border-radius: 20px;
+            border-radius: 0 0 20px 20px;
             max-width: 900px;
             margin: 0 auto;
             padding: 0px;
             z-index: 2; 
-            backdrop-filter: blur(5px);
-            background-color: rgba(255, 255, 255, 0.5);
             backdrop-filter: blur(0px);
             background-color: lightslategray;
 
@@ -79,7 +77,7 @@
             display: block;
             flex-direction: column;
             align-items: center;
-            border-radius: 20px;
+            border-radius: 20px 20px 0 0;
             max-width: 900px;
             margin: 0 auto;
             padding: 0px;
@@ -210,6 +208,18 @@
             margin-bottom: 10px;
         }
 
+        .websocket-container-spacer {
+            display: flex; /* Use Flexbox */
+            align-items: center; /* Vertically center the item */
+            justify-content: center; /* Horizontally center the item */
+            min-height: 18px;
+            width: 100%;
+            border: 0px solid #ccc;
+            border-radius: 6px;
+            padding: 10px; /* Adjust padding as needed */
+            box-sizing: border-box; /* Include padding and border in element's total width and height */
+            margin-bottom: 10px;
+        }
         .map-side-panel-container {
             display: flex;
             width: 30px;
@@ -581,7 +591,7 @@
     <div class="container">
         <div class="sections">
         
-            <div class="websocket-container">
+            <div class="websocket-container-spacer">
             </div>
             <!-- <div class="map-side-panel-container"></div> -->
             <div class="result-container"></div>
