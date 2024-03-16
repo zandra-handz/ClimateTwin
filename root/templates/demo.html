@@ -64,6 +64,9 @@
             z-index: 2; 
             backdrop-filter: blur(5px);
             background-color: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(0px);
+            background-color: lightslategray;
+
         }
 
 
@@ -81,6 +84,8 @@
             margin: 0 auto;
             padding: 0px;
             z-index: 2; /* Ensure it's above other content */
+            backdrop-filter: blur(0px);
+            background-color: lightslategray;
         }
 
 
@@ -542,7 +547,7 @@
             </form>
         </div>
         <div class="sections">
-             <div class="section">
+            <div class="section">
                 <div class="form-group">
                     <button id="homeWeatherBtn">Home</button>
                 </div>
@@ -567,12 +572,16 @@
                 </div>
             </div>
         </div>
+        <div class="sections"></div>
+            <div class="websocket-container">
+                <div id="climate-updates-container"></div>
+            </div>
+        </div>
     </div>
     <div class="container">
         <div class="sections">
         
             <div class="websocket-container">
-                <div id="climate-updates-container"></div>
             </div>
             <!-- <div class="map-side-panel-container"></div> -->
             <div class="result-container"></div>
