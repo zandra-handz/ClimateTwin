@@ -173,13 +173,16 @@
         }
 
         .websocket-container {
-            display: block;
-            align-items: center;  
-            justify-content: center;  
+            display: flex; /* Use Flexbox */
+            align-items: center; /* Vertically center the item */
+            justify-content: center; /* Horizontally center the item */
             min-height: 36px;
             width: 100%;
             border: 1px solid #ccc;
             border-radius: 6px;
+            padding: 10px; /* Adjust padding as needed */
+            box-sizing: border-box; /* Include padding and border in element's total width and height */
+            margin-bottom: 10px;
         }
 
         .map-side-panel-container {
