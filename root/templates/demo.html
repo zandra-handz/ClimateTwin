@@ -178,6 +178,8 @@
             justify-content: center;  
             min-height: 36px;
             width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 6px;
         }
 
         .map-side-panel-container {
@@ -949,11 +951,11 @@
 
             // Display the loading spinner
             var token = "f38e6b71380f11f62071126b0ff43fc0a2689982";
-            displayLoading('climate-updates-container', token);
-            displayMapAnimation('map-container');
+            displayLoading('climate-updates-container', token); 
  
             showMapContainer();
 
+            displayMapAnimation('map-container');
              
 
             // Get the address value from the form
