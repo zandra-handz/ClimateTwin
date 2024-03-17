@@ -100,9 +100,8 @@
                 
 
         .go-section {
-            display: flex; /* Change to flex */
-            white-space: nowrap; 
-            align-items: center; 
+            display: flex;
+            align-items: center;
             width: 98%;
             margin: 0 auto;
         }
@@ -123,14 +122,13 @@
         }
 
         .form-group input {
+            flex: 1; /* Make input field take up remaining space */
             font-size: 12px;
-            flex: 1; /* Make input field take up all available space */
-            /* Adjusted padding and border */
-            padding: 3px 5px; 
+            padding: 3px 5px;
             border: 1px solid #ccc;
             height: 24px;
             border-radius: 10px;
-            align-items: center;
+            margin-right: 5px; /* Add margin to separate input and button */
         }
 
         .form-group button {
