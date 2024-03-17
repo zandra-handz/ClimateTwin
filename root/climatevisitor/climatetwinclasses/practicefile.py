@@ -78,6 +78,8 @@ print(avg_price([3,4,5]))
 
 import numpy as np 
 
+'''
+
 mylist = [1,2,3]
 
 print(type(mylist))
@@ -162,3 +164,6 @@ print(arr.shape)
 print(arr.reshape(5,5))
 print(arr.reshape(25,1))
 print(arr.reshape(1,25))
+'''
+
+arr = np.arange(0,11)
