@@ -148,18 +148,25 @@
             text-overflow: ellipsis;
         }
 
-
         .form-group .go-button {
-            width: 6%;
             height: 26px;
-            background-color: #007bff;
+            background-color: #f0f0f0;
+            background-color: transparent;
             color: #fff;
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
         }
+
+        .form-group .go-button i {
+            /* Additional styles for the icon */
+            font-size: 20px;  
+            margin-right: 5px;  
+            color:#007bff;
+        }
+
         .form-group button:hover {
             background-color: #0056b3;
             border-radius: 6px;
@@ -547,6 +554,8 @@
 
     </style>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-3bRRPYwQdY0JiCOY3qDxSgthGAc1cXItwpRN0A7nzb5M19TbBJu+39cK6W3eGXK7f6Fsl8GZysy3ExUTeCQsFg==" crossorigin="anonymous" />
+
 </head>
 <body>
     <div class="fixed-top-container">
@@ -555,8 +564,9 @@
             <form id="addressForm">
                 <div class="form-group">
                     <input type="text" id="address" name="address" placeholder="Enter address" required>
-
-                    <button class="go-button" type="submit">Go!</button>
+                    <button class="go-button" type="submit">
+                        <i class="fas fa-arrow-alt-circle-right"></i> <!-- Font Awesome icon for a right arrow -->
+                    </button>
                 </div>
             </form>
         </div>
