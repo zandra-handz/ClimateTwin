@@ -141,4 +141,24 @@ print(arr)
 print(arr.reshape(5,5))
 print(arr)
 
-arr
+ranarr = np.random.randint(0,101,10)
+
+print(ranarr)
+
+print(ranarr.max())
+
+print(ranarr.min())
+
+#index location
+print(ranarr.argmax())
+print(ranarr.argmin())
+
+
+print(ranarr.dtype)
+
+
+print(arr.shape)
+
+print(arr.reshape(5,5))
+print(arr.reshape(25,1))
+print(arr.reshape(1,25))
