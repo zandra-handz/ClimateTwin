@@ -114,20 +114,6 @@
         }
 
 
-        .input-section {
-            width: calc(87.5% - 4px); /* 7/8 of the container width minus margin and border */
-            margin-bottom: 10px;
-        }
-
-
-        .go-button-section {
-            width: calc(12.5% - 4px); /* 1/8 of the container width minus margin and border */
-            margin-bottom: 10px;
-        }
-
-
-
-
 
 
         .form-group {
@@ -136,8 +122,14 @@
             margin-bottom: 6px;
         }
 
+        .go-section form {
+            display: flex;
+            flex-grow: 1; /* Make form take up remaining space */
+        }
+
         .form-group input {
-            width: 100%;
+            width: calc(100% - 45px); /* Adjusted width using calc */
+            /* Subtracting the width of the button plus some additional space for margin */
             font-size: 12px;
             padding: 3px 5px;
             border: 1px solid #ccc;
@@ -162,7 +154,7 @@
         }
 
         .form-group .go-button {
-            width: 100%;
+            max-width: 40px;
             height: 100%;
             background-color: transparent; /* This line seems redundant */
             border: none;
@@ -573,22 +565,14 @@
     <div class="fixed-top-container">
         <div class="header">ClimateTwin API Demo</div>
         <div class="go-section">
-            
             <form id="addressForm">
-                <div class="input-section">
-                    <div class="form-group">
-                        <input type="text" id="address" name="address" placeholder="Enter address" required>
-                    </div>
-                </div>
-                <div class="go-button-section">
-                    <div class="form-group">
-                        <button class="go-button" type="submit">
-                            <i class="fas fa-arrow-alt-circle-right"></i> <!-- Font Awesome icon for a right arrow -->
-                        </button>
-                    </div>
+                <div class="form-group">
+                    <input type="text" id="address" name="address" placeholder="Enter address" required>
+                    <button class="go-button" type="submit">
+                        <i class="fas fa-arrow-alt-circle-right"></i> <!-- Font Awesome icon for a right arrow -->
+                    </button>
                 </div>
             </form>
-            
         </div>
         <div class="fixed-sections">
             <div class="section">
