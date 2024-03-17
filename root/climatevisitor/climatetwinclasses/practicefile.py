@@ -108,6 +108,19 @@ print(np.linspace(0,10,11))
 # Identity matrix (always known as a square matrix with a 1 along the diagonal)
 print(np.eye(5))
 
+# 'uniformly' = all numbers have same likelihood
 
+print(np.random.rand(1))
+print('')
+print('Random rows and columns:')
+print(np.random.rand(5,6))
 
+print('')
+print('Standard normal distribution:')
+#mean is at 0 and variance of 1
+#values closer to 0 more likely to appear than those farther away from 0
+print(np.random.randn(10)) 
+print(np.random.randn(2,3))
+
+print(np.)
 
