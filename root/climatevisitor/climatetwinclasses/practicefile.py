@@ -94,3 +94,20 @@ print(my_matrix)
 
 print(np.array(my_matrix))
 
+print(np.arange(0, 10, 2))
+
+
+# print(np.zeros(5))
+
+# print(np.zeros((5,5)))
+
+# print(np.ones((4,4)))
+
+print(np.linspace(0,10,11))
+
+# Identity matrix (always known as a square matrix with a 1 along the diagonal)
+print(np.eye(5))
+
+
+
+
