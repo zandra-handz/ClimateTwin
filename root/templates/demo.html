@@ -120,6 +120,16 @@
             margin-bottom: 10px;
         }
 
+        .input-section input {
+            width: 100%;
+            font-size: 12px;
+            padding: 3px 5px;
+            border: 1px solid #ccc;
+            height: 24px;
+            border-radius: 10px;
+            margin-right: 1px; /* Add margin to separate input and button */
+        }
+
         #addressForm {
             width: 100%;
             flex-wrap: wrap; 
@@ -153,6 +163,7 @@
             border-radius: 10px;
             margin-right: 1px; /* Add margin to separate input and button */
         }
+
 
         .form-group button {
             width: 100%;
@@ -584,9 +595,7 @@
             
             <form id="addressForm">
                 <div class="input-section">
-                    <div class="form-group">
-                        <input type="text" id="address" name="address" placeholder="Enter address" required>
-                    </div>
+                    <input type="text" id="address" name="address" placeholder="Enter address" required>
                 </div>
                 <div class="go-button-section">
                     <div class="form-group">
