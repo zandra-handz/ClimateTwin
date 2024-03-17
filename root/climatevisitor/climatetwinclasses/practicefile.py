@@ -80,4 +80,17 @@ import numpy as np
 
 mylist = [1,2,3]
 
-type(mylist)
+print(type(mylist))
+
+print(np.array(mylist))
+
+myarr = np.array(mylist)
+print(type(myarr))
+# = numpy.ndarray
+
+my_matrix = [[1,2,3],[4,5,6],[7,8,9]]
+
+print(my_matrix)
+
+print(np.array(my_matrix))
+
