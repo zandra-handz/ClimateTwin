@@ -143,6 +143,39 @@
             margin-bottom: 10px;
         }
 
+        .go-button-section .go-button {
+            width: 100%;
+            height: 100%;
+            background-color: transparent; /* This line seems redundant */
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .go-button-section .go-button i {
+            /* Additional styles for the icon */
+            font-size: 20px;  
+            margin-right: 5px;  
+            color: #007bff;
+        }
+
+        .go-button-section button:hover {
+            background-color: #0056b3;
+            border-radius: 6px;
+            overflow: hidden; /* Hide any overflow text */
+            white-space: nowrap; /* Prevent text from wrapping */
+            text-overflow: ellipsis;
+        }
+
+        .go-button-section button:focus {
+            background-color: #0056b3;
+            border-radius: 6px;
+            overflow: hidden; /* Hide any overflow text */
+            white-space: nowrap; /* Prevent text from wrapping */
+            text-overflow: ellipsis;
+        }
 
 
 
@@ -598,11 +631,9 @@
                     <input type="text" id="address" name="address" placeholder="Enter address" required>
                 </div>
                 <div class="go-button-section">
-                    <div class="form-group">
-                        <button class="go-button" type="submit">
-                            <i class="fas fa-arrow-alt-circle-right"></i> <!-- Font Awesome icon for a right arrow -->
-                        </button>
-                    </div>
+                    <button class="go-button" type="submit">
+                        <i class="fas fa-arrow-alt-circle-right"></i> <!-- Font Awesome icon for a right arrow -->
+                    </button>
                 </div>
             </form>
             
