@@ -121,6 +121,24 @@ print('Standard normal distribution:')
 #values closer to 0 more likely to appear than those farther away from 0
 print(np.random.randn(10)) 
 print(np.random.randn(2,3))
+print('')
 
-print(np.)
+print('Random int:')
+print(np.random.randint(0,101,5))
+print('')
 
+print('Random int as a matrix:')
+print(np.random.randint(0,101,(4,5)))
+print('')
+
+
+# seed = random set that can be reused
+np.random.seed(42)
+print(np.random.rand(4))
+
+arr = np.arange(0,25)
+print(arr)
+print(arr.reshape(5,5))
+print(arr)
+
+arr
