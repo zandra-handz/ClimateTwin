@@ -100,9 +100,8 @@
                 
 
         .go-section {
-            display: inline-block;
+            display: flex; /* Change to flex */
             white-space: nowrap; 
-            justify-content: space-between;
             align-items: center; 
             width: 98%;
             margin: 0 auto;
@@ -125,8 +124,9 @@
 
         .form-group input {
             font-size: 12px;
-            width: 89%;
-            padding: 3px;
+            flex: 1; /* Make input field take up all available space */
+            /* Adjusted padding and border */
+            padding: 3px 5px; 
             border: 1px solid #ccc;
             height: 24px;
             border-radius: 10px;
@@ -150,9 +150,8 @@
 
         .form-group .go-button {
             max-width: 40px;
-            height: 26px;
-            background-color: #0056b3;
-            background-color: transparent;
+            height: 100%;
+            background-color: transparent; /* This line seems redundant */
             border: none;
             border-radius: 6px;
             cursor: pointer;
@@ -164,7 +163,7 @@
             /* Additional styles for the icon */
             font-size: 20px;  
             margin-right: 5px;  
-            color:#007bff;
+            color: #007bff;
         }
 
         .form-group button:hover {
