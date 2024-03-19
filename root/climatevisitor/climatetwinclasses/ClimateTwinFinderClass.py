@@ -1,6 +1,7 @@
 from climatevisitor.tasks.tasks import send_coordinate_update_to_celery, send_location_update_to_celery
 from celery import shared_task, current_app
 from django.conf import settings
+from shapely.geometry import Point
 import geopandas as gpd
 import numpy as np 
 import requests
@@ -231,13 +232,31 @@ class ClimateTwinFinder:
 
 
 
-
+    # Alternative to points_with_polygon; not in use
     def generate_random_points_within_bounds(self, bounds, num_points):
         minx, miny, maxx, maxy = bounds
         x = np.random.uniform(minx, maxx, num_points)
         y = np.random.uniform(miny, maxy, num_points)
         points = gpd.GeoDataFrame(geometry=gpd.points_from_xy(x, y))
         return points
+
+
+    def generate_random_points_within_polygon(self, polygon, num_points):
+        
+        centroid = polygon.centroid
+        centroid_x, centroid_y = centroid.x, centroid.y
+        minx, miny, maxx, maxy = polygon.bounds
+        
+        std_dev_x = (maxx - minx) / 6
+        std_dev_y = (maxy - miny) / 6
+        
+        x = np.random.normal(centroid_x, std_dev_x, num_points)
+        y = np.random.normal(centroid_y, std_dev_y, num_points)
+        
+        points = [Point(px, py) for px, py in zip(x, y) if polygon.contains(Point(px, py))]
+        points_gdf = gpd.GeoDataFrame(geometry=points)
+        
+        return points_gdf
 
 
 
@@ -276,8 +295,10 @@ class ClimateTwinFinder:
             # Extract the simplified geometry from the first matching feature
             simplified_geometry = possible_matches.simplified_geometry.iloc[0]
 
-            # Generate random points within the selected country
-            points_within_country = self.generate_random_points_within_bounds(simplified_geometry.bounds, num_points)
+            # Goes with alternative function
+            # points_within_country = self.generate_random_points_within_bounds(simplified_geometry.bounds, num_points)
+
+            points_within_country = self.generate_random_points_within_polygon(random_country['geometry'], num_points)
 
             # Check if the generated points fall within land polygons
             if all(land_only.geometry.contains(point).any() for point in points_within_country.geometry):
