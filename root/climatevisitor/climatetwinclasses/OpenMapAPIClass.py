@@ -214,7 +214,7 @@ class OpenMapAPI:
 
         for ruin in results:
             tags = ruin.get('tags', {})
-            name = tags.get('name', 'Mystery Location')
+            name = tags.get('name', 'a mystery location')
 
             formatted_ruin = {
                 "direction_deg": ruin['direction_deg'],
@@ -296,10 +296,10 @@ class OpenMapAPI:
 
         for ruin in results:
             tags = ruin.get('tags', {})
-            name = tags.get('name', 'Mystery Location')
+            name = tags.get('name', 'a mystery location')
 
             if not name:
-                name = 'Mystery Location'
+                name = 'a mystery location'
 
             # Call the compare_wind_to_ruin function to get wind compass information
             wind_compass_info = OpenMapAPI.compare_wind_to_ruin(
