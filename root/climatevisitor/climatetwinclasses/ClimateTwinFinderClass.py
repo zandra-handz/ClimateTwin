@@ -385,7 +385,7 @@ class ClimateTwinFinder:
                             continue
 
 
-                    if temperature_difference < 3:
+                    if temperature_difference < 2:
                         # Process and add the new entry to self.similar_places
                         new_entry = {
                             'name': [f'climate twin candidate'],
@@ -539,7 +539,7 @@ class ClimateTwinFinder:
 
                 else:
                     if country:
-                        complete_address = f"Uncharted location in {country}"
+                        complete_address = f"an uncharted location in {country}"
                     else:
                         print("FIND CLIMATE TWIN RETURNED FALSE")
                         return False
