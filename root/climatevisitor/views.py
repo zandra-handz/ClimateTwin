@@ -489,9 +489,10 @@ class CurrentDiscoveryLocationsView(generics.ListAPIView):
         latest_location = self.get_latest_location(request.user)
         if not latest_location:
             return Response({'detail': 'You are not visiting anywhere right now.'}, status=status.HTTP_200_OK)
+        
         discovery_locations = models.ClimateTwinDiscoveryLocation.objects.filter(origin_location=latest_location).order_by('miles_away')
         if not discovery_locations:
-            return Response({"detail": "No ruins found nearby. Don't worry! This trip's on me. Try searching again for a new twin location!"}, status=status.HTTP_200_OK)
+            return Response({"detail": "Either no ruins were found nearby or Twin Finder is still searching. Try refreshing the page or searching again for a new twin location! (If no ruins are found, this trip will not be counted towards your daily limit of searches.)"}, status=status.HTTP_200_OK)
         serializer = self.get_serializer(discovery_locations, many=True)
         return Response(serializer.data)
 
