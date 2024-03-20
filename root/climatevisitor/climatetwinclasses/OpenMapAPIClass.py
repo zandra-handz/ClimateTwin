@@ -162,8 +162,6 @@ class OpenMapAPI:
 
 
 
-
-
         except requests.exceptions.HTTPError as errh:
             print("HTTP Error:", errh)
         except requests.exceptions.ConnectionError as errc:
