@@ -493,6 +493,17 @@ class CurrentDiscoveryLocationsView(generics.ListAPIView):
         discovery_locations = models.ClimateTwinDiscoveryLocation.objects.filter(origin_location=latest_location).order_by('miles_away')
         if not discovery_locations:
             return Response({"detail": "Either no ruins were found nearby or Twin Finder is still searching. Try refreshing the page or searching again for a new twin location! (If no ruins are found, this trip will not be counted towards your daily limit of searches.)"}, status=status.HTTP_200_OK)
+        
+        latest_location_serializer = serializers.ClimateTwinLocationSerializer(latest_location)
+
+        # Serialize the other discovery locations
+        serializer = self.get_serializer(discovery_locations, many=True)
+
+        # Combine the serialized data with the latest location at the top
+        data = latest_location_serializer.data + serializer.data
+
+        return Response(data)
+        
         serializer = self.get_serializer(discovery_locations, many=True)
         return Response(serializer.data)
 
