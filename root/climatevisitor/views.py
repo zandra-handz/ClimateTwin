@@ -545,7 +545,7 @@ class CreateExploreLocationView(generics.CreateAPIView):
         return super().post(request, *args, **kwargs)
 
     def get_queryset(self):
-        return models.ClimateTwinExploreDiscoveryLocation.objects.filter(user=self.request.user)
+        return models.ClimateTwinExploreDiscoveryLocationTwo.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user_id=self.request.user.id)  # Save user ID implicitly
@@ -563,7 +563,7 @@ class ExploreLocationsView(generics.ListAPIView):
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        return models.ClimateTwinExploreDiscoveryLocation.objects.filter(user=self.request.user)
+        return models.ClimateTwinExploreDiscoveryLocationTwo.objects.filter(user=self.request.user)
 
 
 
@@ -590,7 +590,7 @@ class ExploreLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIVie
         return super().destroy(request, *args, **kwargs)
 
     def get_queryset(self):
-        return models.ClimateTwinExploreDiscoveryLocation.objects.filter(user=self.request.user)
+        return models.ClimateTwinExploreDiscoveryLocationTwo.objects.filter(user=self.request.user)
 
 
 class CurrentExploreLocationView(generics.ListAPIView):
@@ -612,7 +612,7 @@ class CurrentExploreLocationView(generics.ListAPIView):
         if not most_recent_climate_twin_location:
             return None
         
-        latest_location = models.ClimateTwinExploreDiscoveryLocation.objects.filter(user=user).order_by('-created_on').first()
+        latest_location = models.ClimateTwinExploreDiscoveryLocationTwo.objects.filter(user=user).order_by('-created_on').first()
         
         if latest_location:
             explore_location = latest_location.explore_location
@@ -651,7 +651,7 @@ def collect(request):
 
         try:
             # Retrieve the most recently created ClimateTwinExploreDiscoveryLocation instance by the user
-            latest_explore_location = models.ClimateTwinExploreDiscoveryLocation.objects.filter(user=user).latest('created_on')
+            latest_explore_location = models.ClimateTwinExploreDiscoveryLocationTwo.objects.filter(user=user).latest('created_on')
             location_id = latest_explore_location.explore_location.id
             
             location = models.ClimateTwinDiscoveryLocation.objects.get(id=location_id)
@@ -660,7 +660,7 @@ def collect(request):
 
             return Response({'key_value_pairs': serialized_data, 'message': 'Select an item and add a note.'}, status=status.HTTP_200_OK)
 
-        except models.ClimateTwinExploreDiscoveryLocation.DoesNotExist:
+        except models.ClimateTwinExploreDiscoveryLocationTwo.DoesNotExist:
             return Response({'detail': 'Explore location not found for the user.'}, status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'POST':
@@ -676,7 +676,7 @@ def collect(request):
 
 
         try:
-            latest_explore_location = models.ClimateTwinExploreDiscoveryLocation.objects.filter(user=user).latest('created_on')
+            latest_explore_location = models.ClimateTwinExploreDiscoveryLocationTwo.objects.filter(user=user).latest('created_on')
             location_dict = latest_explore_location.to_dict()
 
             if item in location_dict.keys():
@@ -703,7 +703,7 @@ def collect(request):
             else:
                 return Response({"detail": f"Item '{item}' not found in the dictionary.", 'choices': location_dict}, status=status.HTTP_404_NOT_FOUND)
 
-        except models.ClimateTwinExploreDiscoveryLocation.DoesNotExist:
+        except models.ClimateTwinExploreDiscoveryLocationTwo.DoesNotExist:
             return Response({'detail': 'Explore location not found for the user.'}, status=status.HTTP_404_NOT_FOUND)
 
     return Response({'detail': 'Method not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -727,7 +727,7 @@ def item_choices(request):
 
         
         try:
-            latest_explore_location = models.ClimateTwinExploreDiscoveryLocation.objects.filter(user=user).latest('created_on')
+            latest_explore_location = models.ClimateTwinExploreDiscoveryLocationTwo.objects.filter(user=user).latest('created_on')
     
             latest_climate_twin_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-created_on').first()
 
@@ -742,7 +742,7 @@ def item_choices(request):
             else:
                 return Response({'detail': 'You must be at an explore site to collect a treasure.'}, status=status.HTTP_404_NOT_FOUND)
 
-        except models.ClimateTwinExploreDiscoveryLocation.DoesNotExist:
+        except models.ClimateTwinExploreDiscoveryLocationTwo.DoesNotExist:
             return Response({'detail': 'Explore location not found for the user.'}, status=status.HTTP_404_NOT_FOUND)
         
     return Response({'detail': 'Method not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
