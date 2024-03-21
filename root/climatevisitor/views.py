@@ -531,9 +531,18 @@ class CreateExploreLocationView(generics.CreateAPIView):
             explore_location = models.ClimateTwinDiscoveryLocation.objects.get(pk=explore_location_pk)
             explore_location_creation_date = explore_location.created_on
             if (timezone.now() - explore_location_creation_date).total_seconds() >= 7200:
-                return Response({'error': 'The explore location must have been created within the last two hours.'}, status=status.HTTP_400_BAD_REQUEST)
+
+                explore_location = models.ClimateTwinLocation.objects.get(pk=explore_location_pk)
+                explore_location_creation_date = explore_location.created_on
+
+                if (timezone.now() - explore_location_creation_date).total_seconds() >= 7200:
+                    return Response({'error': 'The explore location must have been created within the last two hours.'}, status=status.HTTP_400_BAD_REQUEST)
+                
+
         except models.ClimateTwinDiscoveryLocation.DoesNotExist:
+
             return Response({'error': 'The explore location does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
+        
         return super().post(request, *args, **kwargs)
 
     def get_queryset(self):
