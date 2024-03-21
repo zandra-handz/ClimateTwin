@@ -4,4 +4,4 @@ from django.contrib import admin
 admin.site.register(models.HomeLocation)
 admin.site.register(models.ClimateTwinLocation)
 admin.site.register(models.ClimateTwinDiscoveryLocation)
-admin.site.register(models.ClimateTwinExploreDiscoveryLocation)
+admin.site.register(models.ClimateTwinExploreDiscoveryLocationTwo)
