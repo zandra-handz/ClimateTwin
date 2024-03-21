@@ -134,7 +134,7 @@ class ClimateTwinDiscoveryLocation(models.Model):
 
 class ClimateTwinExploreDiscoveryLocation(models.Model):
     user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
-    discovery_location = models.ForeignKey(ClimateTwinDiscoveryLocation, on_delete=models.CASCADE, null=True, blank=True)
+    explore_location = models.ForeignKey(ClimateTwinDiscoveryLocation, on_delete=models.CASCADE, null=True, blank=True)
     twin_location = models.ForeignKey(ClimateTwinLocation, on_delete=models.CASCADE, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
     last_accessed = models.DateTimeField(auto_now=True)
@@ -171,14 +171,14 @@ class ClimateTwinExploreDiscoveryLocation(models.Model):
                 fields_dict[f'{prefix}{field_name}'] = str(field_value)
 
         # Include fields from the related ClimateTwinDiscoveryLocation model
-        if self.discovery_location:
-            for field in self.discovery_location._meta.fields:
+        if self.explore_location:
+            for field in self.explore_location._meta.fields:
                 field_name = field.name
 
                 if field_name in processed_fields:
                     continue
 
-                field_value = getattr(self.discovery_location, field_name)
+                field_value = getattr(self.explore_location, field_name)
 
                 if isinstance(field_value, Mapping):
                     # If the field value is a dictionary, gather its keys and values
@@ -186,9 +186,9 @@ class ClimateTwinExploreDiscoveryLocation(models.Model):
                     nested_dict = field_value
                     for nested_key, nested_value in nested_dict.items():
                         nested_field_name = f'{field_name}__{nested_key}'
-                        fields_dict[f'{prefix}discovery_location__{nested_field_name}'] = str(nested_value)
+                        fields_dict[f'{prefix}explore_location__{nested_field_name}'] = str(nested_value)
                 else:
-                    fields_dict[f'{prefix}discovery_location__{field_name}'] = str(field_value)
+                    fields_dict[f'{prefix}explore_location__{field_name}'] = str(field_value)
 
         # Include fields from the related ClimateTwinLocation model
         if self.twin_location:
