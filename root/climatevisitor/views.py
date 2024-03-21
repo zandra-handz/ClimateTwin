@@ -541,6 +541,9 @@ class CreateExploreLocationView(generics.CreateAPIView):
 
                     return Response({'error': 'The explore location must have been created within the last two hours.'}, status=status.HTTP_400_BAD_REQUEST)
                 
+                else:
+
+                    return super().post(request, *args, **kwargs)
 
             if (timezone.now() - explore_location_creation_date).total_seconds() >= 7200:
 
