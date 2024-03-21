@@ -535,7 +535,7 @@ class CreateExploreLocationView(generics.CreateAPIView):
             twin_location = models.ClimateTwinLocation.objects.get(pk=explore_location_pk)
             twin_location_creation_date = twin_location.created_on
 
-            if explore_location.created_on > twin_location.created_on:
+            if explore_location.created_on < twin_location.created_on:
 
                 if (timezone.now() - twin_location_creation_date).total_seconds() >= 7200:
 
