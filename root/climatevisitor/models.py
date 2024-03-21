@@ -132,7 +132,7 @@ class ClimateTwinDiscoveryLocation(models.Model):
 
 
 
-class ClimateTwinExploreDiscoveryLocation(models.Model):
+class ClimateTwinExploreDiscoveryLocationTwo(models.Model):
     user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
     explore_location = models.ForeignKey(ClimateTwinDiscoveryLocation, on_delete=models.CASCADE, null=True, blank=True)
     twin_location = models.ForeignKey(ClimateTwinLocation, on_delete=models.CASCADE, null=True, blank=True)
