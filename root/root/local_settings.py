@@ -54,13 +54,13 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', get_random_secret_key())
 #ALLOWED_HOSTS = ['climatetwin-lzyyd.ondigitalocean.app']
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
-DEVELOPMENT_MODE = False
+DEVELOPMENT_MODE = True
 
-#if DEVELOPMENT_MODE == True:
-#    DEBUG = True
-#    ALLOWED_HOSTS = []
+if DEVELOPMENT_MODE == True:
+    DEBUG = True
+    ALLOWED_HOSTS = []
 
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+#DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 #DEBUG = False
     #ALLOWED_HOSTS = ['climatetwin-lzyyd.ondigitalocean.app']
@@ -115,7 +115,7 @@ CSRF_COOKIE_DOMAIN = [
 
 REDIS_URL = os.environ.get('REDIS_URL')
 
-'''
+
 # Local
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
 CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
@@ -148,6 +148,7 @@ CHANNEL_LAYERS = {
     },
 }
 
+'''
 
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
@@ -404,7 +405,9 @@ SIMPLE_JWT = {
 }
 
 # Added this to get Swagger UI to send https requests when running on DigitalOcean
+'''
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+'''
 
 AUTHENTICATION_BACKENDS = (
     # ...
