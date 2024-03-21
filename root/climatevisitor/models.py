@@ -34,6 +34,7 @@ class HomeLocation(models.Model):
 
 
 class ClimateTwinLocation(models.Model):
+    id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, default="")
     temperature = models.FloatField(default=0.0)
@@ -100,6 +101,7 @@ class ClimateTwinLocation(models.Model):
 
 
 class ClimateTwinDiscoveryLocation(models.Model):
+    id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, default='Unnamed Ruin')
     direction_degree = models.FloatField(default=0.0)
