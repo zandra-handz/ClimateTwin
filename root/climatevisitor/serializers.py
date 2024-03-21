@@ -31,7 +31,7 @@ class ClimateTwinDiscoveryLocationSerializer(serializers.ModelSerializer):
 
 class ClimateTwinExploreDiscoveryLocationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.ClimateTwinExploreDiscoveryLocationTwo
+        model = models.ClimateTwinExploreDiscoveryLocation
         fields = '__all__'
         read_only_fields = ['user']  # Mark the user field as read-only
 
