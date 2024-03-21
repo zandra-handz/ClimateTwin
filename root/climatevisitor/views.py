@@ -527,17 +527,25 @@ class CreateExploreLocationView(generics.CreateAPIView):
     @swagger_auto_schema(operation_id='createExploreLocation', operation_description="Creates explore location.")
     def post(self, request, *args, **kwargs):
         explore_location_pk = request.data.get('explore_location')
+        
         try:
             explore_location = models.ClimateTwinDiscoveryLocation.objects.get(pk=explore_location_pk)
             explore_location_creation_date = explore_location.created_on
-            if (timezone.now() - explore_location_creation_date).total_seconds() >= 7200:
+            
+            twin_location = models.ClimateTwinLocation.objects.get(pk=explore_location_pk)
+            twin_location_creation_date = twin_location.created_on
 
-                explore_location = models.ClimateTwinLocation.objects.get(pk=explore_location_pk)
-                explore_location_creation_date = explore_location.created_on
+            if explore_location.created_on > twin_location.created_on:
 
-                if (timezone.now() - explore_location_creation_date).total_seconds() >= 7200:
+                if (timezone.now() - twin_location_creation_date).total_seconds() >= 7200:
+
                     return Response({'error': 'The explore location must have been created within the last two hours.'}, status=status.HTTP_400_BAD_REQUEST)
                 
+
+            if (timezone.now() - explore_location_creation_date).total_seconds() >= 7200:
+
+                return Response({'error': 'The explore location must have been created within the last two hours.'}, status=status.HTTP_400_BAD_REQUEST)
+
 
         except models.ClimateTwinDiscoveryLocation.DoesNotExist:
 
