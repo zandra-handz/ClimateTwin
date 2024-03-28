@@ -6,6 +6,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ClimateTwin API Demo</title>
+    <meta property="og:title" content="ClimateTwin API Demo">
+    <meta property="og:description" content="Page to trial key ClimateTwin endpoints and view an animation of the main search algorithm in real time.">
+    <meta property="og:image" content="https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/static/climatevisitor/demo_preview.png">
+
     <style>
         * {
             /* Global styles for all elements */
@@ -1282,16 +1286,11 @@
             // Display the loading spinner
             var token = "f38e6b71380f11f62071126b0ff43fc0a2689982";
             displayLoading('climate-updates-container', token); 
-
-
  
             showMapContainer();
 
-
             displayMapAnimation('map-container');
 
-
-            
 
             // Get the address value from the form
             var address = document.getElementById('address').value;
