@@ -1,0 +1,97 @@
+import numpy as np
+arr = np.arange(0,11)
+
+arr[8]
+
+arr[1:5]
+
+#can do with arrays, can't do with lists
+arr[0:5] = 100
+
+#note: a slice is a pointer to the original array
+
+# You can select all with [:]
+# example_select_whole_array[:] = 99 #changes all to 99
+
+# but will change original array
+# so make copy if you don't want it to change
+# array = array.copy()
+
+
+print(np.zeros(10))
+print(np.ones(10))
+
+# create array of 10 fives
+array = np.arange(0, 11)
+array[:11] = 5
+
+OR
+
+np.ones(10) + 4
+np.ones(10) * 5
+
+
+# create array of integers from 10 to 50
+array = np.arange(10,51)
+
+# create an array of all even integers from 10 to 50
+array = np.arange(10, 51, 2)
+
+# create 3x3 matrix with values 0-8
+array = np.arange(9).reshape(3,3)
+
+# create 3x3 identity matrix
+np.eye(3)
+
+# use NumPy to generate random number between 0 and 1
+np.random.rand(1)
+
+# use NumPy to generate an array of 25 random numbers
+#sampled from random distribution
+array = np.random.randn(25)
+
+
+# recreated given matrix
+arr = np.arange(1, 101)/100
+arr.reshape(10,10)
+
+#create array of 20 linearly spaced points between 0 and 1
+np.linspace(0,1,20)
+
+
+# recreate a matrix given
+mat[2:,1:] 
+
+# get the value 20 from the matrix
+mat[3,4]
+
+
+# recreate output shown below
+mat[:3, 1:2]
+
+
+# recreate output shown below
+mat[4,:] OR mat[4]
+
+# recreate output shown below
+mat[3:5, :]
+
+
+# get sum of all values in mat
+mat.sum()
+
+# get standard deviations
+mat.std()
+
+# get sum of columns
+mat.sum(axis=0)
+
+# way to ensure we always get the same random numbers
+np.random.seed(101)
+np.random.rand(1)
+
+
+
+
+
+

@@ -1,0 +1,44 @@
+{% load static %}
+
+<html>
+    <head>
+        <title>Climate Twin</title>
+    </head>
+    <body>
+        <h1 style="text-align:center;">Endpoint directory will go here</h1>
+        <div style="text-align: center;">
+            <img src="{% static 'climatevisitor/sample.jpg' %}" alt="sample image">
+        </div>
+        <div style="text-align: center;"> 
+            <div>
+                <ul>
+                    <li><a href="/auth/users">signup</a></li>
+                    <li><a href="/auth/token/login">signin</a></li>
+                    <li><a href="/auth/token/logout">signout</a></li>
+                    <li><a href="/welcome">welcome</a></li>
+                    <li><a href="">account</a></li>
+                    <li><a href="">editaccount</a></li>
+                    <li><a href="/users/profile">profile</a></li>
+                    <li><a href="/users/edit-profile">editprofile</a></li>
+                    <li><a href="/users/settings">usersettings</a></li>
+                    <li><a href="/users/change-settings">editsettings</a></li>
+                    <li><a href="/users/collected-items">items</a></li>
+                    <li><a href="/users/visited-places">visited</a></li>
+                    <li><a href="/climatevisitor/go">go</a></li>
+
+                    <!-- Additional djoser endpoints -->
+                    <li><a href="/auth/users/me">user profile</a></li>
+                    <li><a href="/auth/users/set_password">set password</a></li>
+                    <li><a href="/auth/users/reset_password">reset password</a></li>
+                    <li><a href="/auth/users/reset_password_confirm">reset password confirm</a></li>
+                    <li><a href="/auth/users/reset_username">reset username</a></li>
+                    <li><a href="/auth/users/reset_username_confirm">reset username confirm</a></li>
+                    <li><a href="/auth/users/activate">activate account</a></li>
+                    <li><a href="/auth/users/resend_activation">resend activation</a></li>
+                    <li><a href="/auth/users/">user list</a></li>
+        </ul>
+                </ul>
+            </div>
+        </div>
+    </body>
+</html>

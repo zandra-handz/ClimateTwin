@@ -1,0 +1,20 @@
+{% load i18n %}
+
+{% block subject %}
+{% blocktrans %} {{site.name }} - Your account has been created and activated!{% endblocktrans %}
+{% endblock subject %}
+
+{% block text_body %}
+{% trans "Your account has been created and is ready to use!" %}
+
+{% trans "Thanks for using my site!" %}
+{% blocktrans %}The {{ site_name }} admin{% endblocktrans %}
+{% endblock text_body %}
+
+{% block html_body %}
+<p>{% trans "Your account has been created and is ready to use!" %}</p>
+
+<p>{% trans "Thanks for using my site!" %}</p>
+
+<p>{% blocktrans %}The {{ site_name }} admin{% endblocktrans %}</p>
+{% endblock html_body %}
