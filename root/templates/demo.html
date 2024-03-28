@@ -391,21 +391,19 @@
             border: 1px solid white;
             border-radius: 10px;
             font-size: 11px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-start; 
+            .box-result {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* Automatically adjust column width */
+            grid-gap: 10px; /* Adjust the gap between grid items */
         }
 
-
-
-
         .square-container {
-            width: 100px; /* Set the width of each square container */
-            height: 100px; /* Set the height of each square container */
-            margin: 10px; /* Adjust the margin between containers */
+            width: 100%; /* Ensure each container takes up the full width of its grid cell */
+            height: 140px; /* Set the height of each square container */
             border: 1px solid #ccc; /* Add border for visualization */
             padding: 10px; /* Add padding inside each container */
             box-sizing: border-box; /* Ensure padding is included in width/height */
+            overflow: hidden; /* Hide overflowing content */
         }
 
 
