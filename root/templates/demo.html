@@ -386,22 +386,21 @@
             margin-bottom: 10px;
             margin-top: 10px;
             padding: 12px;
-            background-color: white;
-            border: 1px solid #ccc;
-            border: 1px solid white;
-            border-radius: 10px;
-            font-size: 11px;
+            background-color: #f0f0f0;
+            border-radius: 10px; 
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* Automatically adjust column width */
             grid-gap: 10px; /* Adjust the gap between grid items */
         }
 
         .square-container {
-            width: 100%; /* Ensure each container takes up the full width of its grid cell */
-            height: 140px; /* Set the height of each square container */
-            border: 1px solid #ccc; /* Add border for visualization */
-            padding: 10px; /* Add padding inside each container */
-            box-sizing: border-box; /* Ensure padding is included in width/height */
+            width: 100%; 
+            height: 140px;  
+            border: 1px solid white; 
+            border-radius: 10px;
+            font-size: 11px;
+            padding: 12px; 
+            box-sizing: border-box;  /
             overflow: hidden; /* Hide overflowing content */
         }
 
@@ -2260,14 +2259,12 @@
         document.getElementById('itemChoicesBtn').addEventListener('click', function() {
             var url = endpoint + 'item-choices/';
             makeGetRequest(url, function(data) {
-                
                 if ('detail' in data) {
                     displayResult('result', { error: data.detail });
                 } else {
                     displayResult('result', data);
 
                     var resultContainer = document.getElementById('result');
-
                     resultContainer.innerHTML = '';
 
                     if ('choices' in data) {
@@ -2306,7 +2303,21 @@
 
                         // Append the box-result container to the result container
                         resultContainer.appendChild(boxResultContainer);
+
+                        // Add event listeners for treasure buttons
+                        var treasureButtons = document.querySelectorAll('.treasure-button');
+                        treasureButtons.forEach(button => {
+                            button.addEventListener('click', function() {
+                                // Handle treasure button click
+                                var itemKey = this.dataset.itemKey;
+                                // Create and display the popup menu with the associated item key
+                                createPopupMenu(itemKey);
+                            });
+                        });
                     }
+                }
+            });
+
 
                     /*
                     if ('choices' in data) {
@@ -2352,8 +2363,7 @@
                         });
                     }
                     */
-                }
-            });
+                
             updateButtonText('itemChoicesBtn', url);
             if (previousButtonId && previousButtonId !== 'itemChoicesBtn') {
                 document.getElementById(previousButtonId).innerText = previousButtonId;
