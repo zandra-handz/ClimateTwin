@@ -91,6 +91,13 @@ function replaceUpdate(update) {
             // Get the map container element
             const mapContainer = document.getElementById('map-container');
 
+            function setFontSize() {
+                const containerHeight = mapContainer.clientHeight; // Get the height of the map container
+                const fontSize = containerHeight / 5; // Calculate font size as 1/5 of container height
+                tempBox.style.fontSize = fontSize + 'px'; // Set font size in pixels
+            }
+
+            setFontSize();
 
             /* 
             // Set the font size of tempBox based on the height of the map container
@@ -118,7 +125,7 @@ function replaceUpdate(update) {
                 const margin = mapContainer.clientHeight + 'px'; 
                 tempBox.style.position = 'relative'; 
                 tempBox.style.backgroundColor = '#FFF';  
-                tempBox.style.padding = '4px';
+                tempBox.style.padding = '8px';
                 tempBox.style.borderRadius = '50%';
                 tempBox.style.marginTop = margin;
             }
