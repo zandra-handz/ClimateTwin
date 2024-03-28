@@ -12,15 +12,11 @@
 
     <style>
         * {
-            /* Global styles for all elements */
-            font-family: 'Poppins', Arial, sans-serif; /* Set default font */
-            /* Add other global styles here */
+            font-family: 'Poppins', Arial, sans-serif;
         }
 
-
-        /* Basic CSS styles */
         body {
-            font-family: 'Poppins', sans-serif; /* Use Poppins as default font */
+            font-family: 'Poppins', sans-serif; 
             margin: 0;
             padding: 0;
             height: 100vh;
@@ -281,8 +277,7 @@
         }
 
         .two-thirds-of-websocket-container {
-            flex-grow: 1; /* Take up remaining space */
-            /* Optionally, add styling for the container */
+            flex-grow: 1; 
         }
 
         .websocket-container_old {
@@ -386,6 +381,29 @@
             flex: 1;
             padding: 12px;
         }
+
+        .box-result {
+            margin-bottom: 10px;
+            margin-top: 10px;
+            padding: 12px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border: 1px solid white;
+            border-radius: 10px;
+            font-size: 11px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .square-container {
+            width: 200px; /* Set the width of each square container */
+            height: 200px; /* Set the height of each square container */
+            margin: 10px; /* Adjust the margin between containers */
+            border: 1px solid #ccc; /* Add border for visualization */
+            padding: 10px; /* Add padding inside each container */
+            box-sizing: border-box; /* Ensure padding is included in width/height */
+        }
+
 
         
         /* Custom scrollbar */
@@ -2257,7 +2275,7 @@
                         Object.keys(choices).forEach(key => {
                             // Create a div for each key
                             var keyDiv = document.createElement('div');
-                            keyDiv.classList.add('result');
+                            keyDiv.classList.add('box-result', 'square-container');
 
                             // Create a paragraph for the key-value pair
                             var keyParagraph = document.createElement('p');
