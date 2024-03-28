@@ -1,0 +1,994 @@
+
+['latitude': 9.720491337216359, 'longitude': 18.508758835384807]
+{'type': 'update_coordinates', 'latitude': 3.010049453780087, 'longitude': 26.593144755119855}
+{'type': 'update_coordinates', 'latitude': 3.010049453780087, 'longitude': 26.593144755119855}
+{'type': 'update_coordinates', 'latitude': 8.511220278496076, 'longitude': 14.909066878275999}
+{'type': 'update_coordinates', 'latitude': 49.73857615357704, 'longitude': 6.02994208631697}
+{'type': 'update_coordinates', 'latitude': 49.90117187990241, 'longitude': 5.693701177964889}
+{'type': 'update_coordinates', 'latitude': 49.57520828626089, 'longitude': 5.746835545257364}
+{'type': 'update_coordinates', 'latitude': 49.50207085230914, 'longitude': 6.19718712469936}
+{'type': 'update_coordinates', 'latitude': 49.753071466190974, 'longitude': 6.215659035923257}
+{'type': 'update_coordinates', 'latitude': 49.49895126159514, 'longitude': 6.194861449647157}
+{'type': 'update_coordinates', 'latitude': 50.07424327035492, 'longitude': 6.081773286043346}
+{'type': 'update_coordinates', 'latitude': 49.753506917884316, 'longitude': 6.028005410665324}
+{'type': 'update_coordinates', 'latitude': 41.623619519190214, 'longitude': 20.45952361018377}
+{'type': 'update_coordinates', 'latitude': 41.88201291702538, 'longitude': 20.440575857079317}
+{'type': 'update_coordinates', 'latitude': 41.23193219739795, 'longitude': 19.638473860291466}
+{'type': 'update_coordinates', 'latitude': 39.75879714175411, 'longitude': 20.77046076798884}
+{'type': 'update_coordinates', 'latitude': 41.98487862180096, 'longitude': 19.447414390617336}
+{'type': 'update_coordinates', 'latitude': 41.498921260048114, 'longitude': 19.846940975693492}
+{'type': 'update_coordinates', 'latitude': 39.888445663313746, 'longitude': 20.392888235288293}
+{'type': 'update_coordinates', 'latitude': 40.70162040882691, 'longitude': 19.56048970844124}
+{'type': 'update_coordinates', 'latitude': 42.60183343659297, 'longitude': 19.549426842289087}
+{'type': 'update_coordinates', 'latitude': 42.22423395961391, 'longitude': 19.52589359814241}
+{'type': 'update_coordinates', 'latitude': 30.553193527520587, 'longitude': 62.52236235134315}
+{'type': 'update_coordinates', 'latitude': 27.783277113713762, 'longitude': 74.74665820029284}
+{'type': 'update_coordinates', 'latitude': 34.3659909454411, 'longitude': 62.03409899522455}
+{'type': 'update_coordinates', 'latitude': 28.138342520765892, 'longitude': 74.19340891794008}
+{'type': 'update_coordinates', 'latitude': 31.611725432560064, 'longitude': 62.364855110546365}
+{'type': 'update_coordinates', 'latitude': 48.09145966507898, 'longitude': 11.780850389469933}
+{'type': 'update_coordinates', 'latitude': 48.06917033864699, 'longitude': 10.908655708243675}
+{'type': 'update_coordinates', 'latitude': 48.01403174558111, 'longitude': 13.991602879765825}
+{'type': 'update_coordinates', 'latitude': 17.120472120129527, 'longitude': 35.41413382735134}
+{'type': 'update_coordinates', 'latitude': 13.05200417833063, 'longitude': 25.735261192257905}
+{'type': 'update_coordinates', 'latitude': 16.16176392195965, 'longitude': 30.386935678860816}
+{'type': 'update_coordinates', 'latitude': 13.597339186415493, 'longitude': 29.665145861794297}
+{'type': 'update_coordinates', 'latitude': 12.30540062237279, 'longitude': 33.19890204045726}
+{'type': 'update_coordinates', 'latitude': -30.514397103649525, 'longitude': 27.897288061584387}
+{'type': 'update_coordinates', 'latitude': -28.666867914446556, 'longitude': 28.75466716465983}
+{'type': 'update_coordinates', 'latitude': -30.008338836729532, 'longitude': 27.01648291992462}
+{'type': 'update_coordinates', 'latitude': -29.792587946515752, 'longitude': 27.339355232730465}
+{'type': 'update_coordinates', 'latitude': -28.791513227273505, 'longitude': 28.760925308995485}
+{'type': 'update_coordinates', 'latitude': -29.52648525352583, 'longitude': 27.845741730906383}
+{'type': 'update_coordinates', 'latitude': -28.67792208629428, 'longitude': 27.815500551848622}
+{'type': 'update_coordinates', 'latitude': -29.969559225359436, 'longitude': 28.782758415820382}
+{'type': 'update_coordinates', 'latitude': -29.83247474843768, 'longitude': 29.085737240259228}
+{'type': 'update_coordinates', 'latitude': -28.815082444769857, 'longitude': 27.814136110469057}
+{'type': 'update_coordinates', 'latitude': -29.361516301545503, 'longitude': 29.104131581097782}
+{'type': 'update_coordinates', 'latitude': -30.371913689226936, 'longitude': 27.13905090129891}
+{'type': 'update_coordinates', 'latitude': -29.721698302748102, 'longitude': 28.229928117387388}
+{'type': 'update_coordinates', 'latitude': -30.280269039227, 'longitude': 27.10243241839419}
+{'type': 'update_coordinates', 'latitude': 10.160636242385298, 'longitude': 26.68273914739481}
+{'type': 'update_coordinates', 'latitude': 7.768071844177053, 'longitude': 24.686297464161495}
+{'type': 'update_coordinates', 'latitude': 20.539977377501273, 'longitude': -1.3097170412195585}
+{'type': 'update_coordinates', 'latitude': 11.821172503045322, 'longitude': -8.435502594761765}
+{'type': 'update_coordinates', 'latitude': 23.140850837488955, 'longitude': -2.0203022312351155}
+{'type': 'update_coordinates', 'latitude': 23.58988140582408, 'longitude': -2.53052194386931}
+{'type': 'update_coordinates', 'latitude': 11.268207791496721, 'longitude': -5.252605675302041}
+{'type': 'update_coordinates', 'latitude': 23.566829200056027, 'longitude': -6.112936262262903}
+{'type': 'update_coordinates', 'latitude': 10.827089999174424, 'longitude': 2.771310942883771}
+{'type': 'update_coordinates', 'latitude': 33.13669794240492, 'longitude': 4.817355932922007}
+{'type': 'update_coordinates', 'latitude': 15.791848563509252, 'longitude': 34.97994200519628}
+{'type': 'update_coordinates', 'latitude': 15.791848563509252, 'longitude': 34.97994200519628}
+{'type': 'update_coordinates', 'latitude': 18.781482996931814, 'longitude': 28.896864244898236}
+{'type': 'update_coordinates', 'latitude': 18.781482996931814, 'longitude': 28.896864244898236}
+{'type': 'update_coordinates', 'latitude': 10.860222449091271, 'longitude': 26.104167038943462}
+{'type': 'update_coordinates', 'latitude': 10.860222449091271, 'longitude': 26.104167038943462}
+[climatetwin] [2024-03-03 21:13:25] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:25] Received coordinates: Latitude - 10.860222449091271, Longitude - 26.104167038943462
+[climatetwin] [2024-03-03 21:13:25] Received coordinates: Latitude - 10.860222449091271, Longitude - 26.104167038943462
+[climatetwin] [2024-03-03 21:13:25] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 20.792224024188386, 'longitude': 22.90621263642622}
+[climatetwin] [2024-03-03 21:13:25] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 20.792224024188386, 'longitude': 22.90621263642622}
+[climatetwin] [2024-03-03 21:13:25] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:25] Received coordinates: Latitude - 20.792224024188386, Longitude - 22.90621263642622
+[climatetwin] [2024-03-03 21:13:25] Received coordinates: Latitude - 20.792224024188386, Longitude - 22.90621263642622
+[climatetwin] [2024-03-03 21:13:25] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 20.792224024188386, 'longitude': 22.90621263642622}
+[climatetwin] [2024-03-03 21:13:25] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 20.792224024188386, 'longitude': 22.90621263642622}
+[climatetwin] [2024-03-03 21:13:25] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:25] Received coordinates: Latitude - 20.792224024188386, Longitude - 22.90621263642622
+[climatetwin] [2024-03-03 21:13:25] Received coordinates: Latitude - 20.792224024188386, Longitude - 22.90621263642622
+[climatetwin] [2024-03-03 21:13:26] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 19.685735588571628, 'longitude': 23.31460021776366}
+[climatetwin] [2024-03-03 21:13:26] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 19.685735588571628, 'longitude': 23.31460021776366}
+[climatetwin] [2024-03-03 21:13:26] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:26] Received coordinates: Latitude - 19.685735588571628, Longitude - 23.31460021776366
+[climatetwin] [2024-03-03 21:13:26] Received coordinates: Latitude - 19.685735588571628, Longitude - 23.31460021776366
+[climatetwin] [2024-03-03 21:13:26] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 19.685735588571628, 'longitude': 23.31460021776366}
+[climatetwin] [2024-03-03 21:13:26] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 19.685735588571628, 'longitude': 23.31460021776366}
+[climatetwin] [2024-03-03 21:13:26] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:26] Received coordinates: Latitude - 19.685735588571628, Longitude - 23.31460021776366
+[climatetwin] [2024-03-03 21:13:26] Received coordinates: Latitude - 19.685735588571628, Longitude - 23.31460021776366
+[climatetwin] [2024-03-03 21:13:26] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.545022362032654, 'longitude': 26.336172882696978}
+[climatetwin] [2024-03-03 21:13:26] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.545022362032654, 'longitude': 26.336172882696978}
+[climatetwin] [2024-03-03 21:13:26] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:26] Received coordinates: Latitude - 9.545022362032654, Longitude - 26.336172882696978
+[climatetwin] [2024-03-03 21:13:26] Received coordinates: Latitude - 9.545022362032654, Longitude - 26.336172882696978
+[climatetwin] [2024-03-03 21:13:26] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.545022362032654, 'longitude': 26.336172882696978}
+[climatetwin] [2024-03-03 21:13:26] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.545022362032654, 'longitude': 26.336172882696978}
+[climatetwin] [2024-03-03 21:13:26] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:26] Received coordinates: Latitude - 9.545022362032654, Longitude - 26.336172882696978
+[climatetwin] [2024-03-03 21:13:26] Received coordinates: Latitude - 9.545022362032654, Longitude - 26.336172882696978
+[climatetwin] [2024-03-03 21:13:26] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 40.621146176117385, 'longitude': 20.595300191910386}
+[climatetwin] [2024-03-03 21:13:26] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 40.621146176117385, 'longitude': 20.595300191910386}
+[climatetwin] [2024-03-03 21:13:26] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:26] Received coordinates: Latitude - 40.621146176117385, Longitude - 20.595300191910386
+[climatetwin] [2024-03-03 21:13:26] Received coordinates: Latitude - 40.621146176117385, Longitude - 20.595300191910386
+[climatetwin] [2024-03-03 21:13:26] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 40.621146176117385, 'longitude': 20.595300191910386}
+[climatetwin] [2024-03-03 21:13:26] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 40.621146176117385, 'longitude': 20.595300191910386}
+[climatetwin] [2024-03-03 21:13:26] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:26] Received coordinates: Latitude - 40.621146176117385, Longitude - 20.595300191910386
+[climatetwin] [2024-03-03 21:13:26] Received coordinates: Latitude - 40.621146176117385, Longitude - 20.595300191910386
+[climatetwin] [2024-03-03 21:13:26] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 42.19678356922718, 'longitude': 19.491919163444415}
+[climatetwin] [2024-03-03 21:13:26] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 42.19678356922718, 'longitude': 19.491919163444415}
+[climatetwin] [2024-03-03 21:13:26] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:26] Received coordinates: Latitude - 42.19678356922718, Longitude - 19.491919163444415
+[climatetwin] [2024-03-03 21:13:26] Received coordinates: Latitude - 42.19678356922718, Longitude - 19.491919163444415
+[climatetwin] [2024-03-03 21:13:26] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 42.19678356922718, 'longitude': 19.491919163444415}
+[climatetwin] [2024-03-03 21:13:26] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 42.19678356922718, 'longitude': 19.491919163444415}
+[climatetwin] [2024-03-03 21:13:26] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:26] Received coordinates: Latitude - 42.19678356922718, Longitude - 19.491919163444415
+[climatetwin] [2024-03-03 21:13:26] Received coordinates: Latitude - 42.19678356922718, Longitude - 19.491919163444415
+[climatetwin] [2024-03-03 21:13:27] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 39.63518947937751, 'longitude': 20.732246449113585}
+[climatetwin] [2024-03-03 21:13:27] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 39.63518947937751, 'longitude': 20.732246449113585}
+[climatetwin] [2024-03-03 21:13:27] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:27] Received coordinates: Latitude - 39.63518947937751, Longitude - 20.732246449113585
+[climatetwin] [2024-03-03 21:13:27] Received coordinates: Latitude - 39.63518947937751, Longitude - 20.732246449113585
+[climatetwin] [2024-03-03 21:13:27] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 39.63518947937751, 'longitude': 20.732246449113585}
+[climatetwin] [2024-03-03 21:13:27] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 39.63518947937751, 'longitude': 20.732246449113585}
+[climatetwin] [2024-03-03 21:13:27] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:27] Received coordinates: Latitude - 39.63518947937751, Longitude - 20.732246449113585
+[climatetwin] [2024-03-03 21:13:27] Received coordinates: Latitude - 39.63518947937751, Longitude - 20.732246449113585
+[climatetwin] [2024-03-03 21:13:27] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 41.81469363363986, 'longitude': 20.34643261515481}
+[climatetwin] [2024-03-03 21:13:27] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 41.81469363363986, 'longitude': 20.34643261515481}
+[climatetwin] [2024-03-03 21:13:27] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:27] Received coordinates: Latitude - 41.81469363363986, Longitude - 20.34643261515481
+[climatetwin] [2024-03-03 21:13:27] Received coordinates: Latitude - 41.81469363363986, Longitude - 20.34643261515481
+[climatetwin] [2024-03-03 21:13:27] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 41.81469363363986, 'longitude': 20.34643261515481}
+[climatetwin] [2024-03-03 21:13:27] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 41.81469363363986, 'longitude': 20.34643261515481}
+[climatetwin] [2024-03-03 21:13:27] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+
+
+
+
+[climatetwin] [2024-03-03 21:13:27] Received coordinates: Latitude - 41.81469363363986, Longitude - 20.34643261515481
+[climatetwin] [2024-03-03 21:13:27] Received coordinates: Latitude - 41.81469363363986, Longitude - 20.34643261515481
+[climatetwin] [2024-03-03 21:13:27] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 41.56312347917243, 'longitude': 20.578571591665234}
+[climatetwin] [2024-03-03 21:13:27] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 41.56312347917243, 'longitude': 20.578571591665234}
+[climatetwin] [2024-03-03 21:13:27] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:27] Received coordinates: Latitude - 41.56312347917243, Longitude - 20.578571591665234
+[climatetwin] [2024-03-03 21:13:27] Received coordinates: Latitude - 41.56312347917243, Longitude - 20.578571591665234
+[climatetwin] [2024-03-03 21:13:27] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 41.56312347917243, 'longitude': 20.578571591665234}
+[climatetwin] [2024-03-03 21:13:27] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 41.56312347917243, 'longitude': 20.578571591665234}
+[climatetwin] [2024-03-03 21:13:27] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:27] Received coordinates: Latitude - 41.56312347917243, Longitude - 20.578571591665234
+[climatetwin] [2024-03-03 21:13:27] Received coordinates: Latitude - 41.56312347917243, Longitude - 20.578571591665234
+[climatetwin] [2024-03-03 21:13:27] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 42.43143534825922, 'longitude': 20.633485059883807}
+[climatetwin] [2024-03-03 21:13:27] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 42.43143534825922, 'longitude': 20.633485059883807}
+[climatetwin] [2024-03-03 21:13:27] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:27] Received coordinates: Latitude - 42.43143534825922, Longitude - 20.633485059883807
+[climatetwin] [2024-03-03 21:13:27] Received coordinates: Latitude - 42.43143534825922, Longitude - 20.633485059883807
+[climatetwin] [2024-03-03 21:13:27] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 42.43143534825922, 'longitude': 20.633485059883807}
+[climatetwin] [2024-03-03 21:13:27] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 42.43143534825922, 'longitude': 20.633485059883807}
+[climatetwin] [2024-03-03 21:13:27] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:27] Received coordinates: Latitude - 42.43143534825922, Longitude - 20.633485059883807
+[climatetwin] [2024-03-03 21:13:27] Received coordinates: Latitude - 42.43143534825922, Longitude - 20.633485059883807
+[climatetwin] [2024-03-03 21:13:27] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 39.998352601567404, 'longitude': 20.71117359144882}
+[climatetwin] [2024-03-03 21:13:27] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 39.998352601567404, 'longitude': 20.71117359144882}
+[climatetwin] [2024-03-03 21:13:27] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:27] Received coordinates: Latitude - 39.998352601567404, Longitude - 20.71117359144882
+[climatetwin] [2024-03-03 21:13:27] Received coordinates: Latitude - 39.998352601567404, Longitude - 20.71117359144882
+[climatetwin] [2024-03-03 21:13:27] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 39.998352601567404, 'longitude': 20.71117359144882}
+[climatetwin] [2024-03-03 21:13:27] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 39.998352601567404, 'longitude': 20.71117359144882}
+[climatetwin] [2024-03-03 21:13:27] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:27] Received coordinates: Latitude - 39.998352601567404, Longitude - 20.71117359144882
+[climatetwin] [2024-03-03 21:13:27] Received coordinates: Latitude - 39.998352601567404, Longitude - 20.71117359144882
+[climatetwin] [2024-03-03 21:13:28] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.119855984464813, 'longitude': -1.1306150169391609}
+[climatetwin] [2024-03-03 21:13:28] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.119855984464813, 'longitude': -1.1306150169391609}
+[climatetwin] [2024-03-03 21:13:28] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:28] Received coordinates: Latitude - 9.119855984464813, Longitude - -1.1306150169391609
+[climatetwin] [2024-03-03 21:13:28] Received coordinates: Latitude - 9.119855984464813, Longitude - -1.1306150169391609
+[climatetwin] [2024-03-03 21:13:28] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.119855984464813, 'longitude': -1.1306150169391609}
+[climatetwin] [2024-03-03 21:13:28] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.119855984464813, 'longitude': -1.1306150169391609}
+[climatetwin] [2024-03-03 21:13:28] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:28] Received coordinates: Latitude - 9.119855984464813, Longitude - -1.1306150169391609
+[climatetwin] [2024-03-03 21:13:28] Received coordinates: Latitude - 9.119855984464813, Longitude - -1.1306150169391609
+[climatetwin] [2024-03-03 21:13:28] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 6.5492633099265465, 'longitude': -1.6833780976415367}
+[climatetwin] [2024-03-03 21:13:28] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 6.5492633099265465, 'longitude': -1.6833780976415367}
+[climatetwin] [2024-03-03 21:13:28] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:28] Received coordinates: Latitude - 6.5492633099265465, Longitude - -1.6833780976415367
+[climatetwin] [2024-03-03 21:13:28] Received coordinates: Latitude - 6.5492633099265465, Longitude - -1.6833780976415367
+[climatetwin] [2024-03-03 21:13:28] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 6.5492633099265465, 'longitude': -1.6833780976415367}
+[climatetwin] [2024-03-03 21:13:28] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 6.5492633099265465, 'longitude': -1.6833780976415367}
+[climatetwin] [2024-03-03 21:13:28] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:28] Received coordinates: Latitude - 6.5492633099265465, Longitude - -1.6833780976415367
+[climatetwin] [2024-03-03 21:13:28] Received coordinates: Latitude - 6.5492633099265465, Longitude - -1.6833780976415367
+[climatetwin] [2024-03-03 21:13:28] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.688510967765904, 'longitude': -3.121758393250003}
+[climatetwin] [2024-03-03 21:13:28] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.688510967765904, 'longitude': -3.121758393250003}
+[climatetwin] [2024-03-03 21:13:28] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:28] Received coordinates: Latitude - 9.688510967765904, Longitude - -3.121758393250003
+[climatetwin] [2024-03-03 21:13:28] Received coordinates: Latitude - 9.688510967765904, Longitude - -3.121758393250003
+[climatetwin] [2024-03-03 21:13:28] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.688510967765904, 'longitude': -3.121758393250003}
+[climatetwin] [2024-03-03 21:13:28] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.688510967765904, 'longitude': -3.121758393250003}
+[climatetwin] [2024-03-03 21:13:28] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:28] Received coordinates: Latitude - 9.688510967765904, Longitude - -3.121758393250003
+[climatetwin] [2024-03-03 21:13:28] Received coordinates: Latitude - 9.688510967765904, Longitude - -3.121758393250003
+[climatetwin] [2024-03-03 21:13:28] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 5.1046219999767555, 'longitude': -0.9072889682853362}
+[climatetwin] [2024-03-03 21:13:28] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 5.1046219999767555, 'longitude': -0.9072889682853362}
+[climatetwin] [2024-03-03 21:13:28] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:28] Received coordinates: Latitude - 5.1046219999767555, Longitude - -0.9072889682853362
+[climatetwin] [2024-03-03 21:13:28] Received coordinates: Latitude - 5.1046219999767555, Longitude - -0.9072889682853362
+[climatetwin] [2024-03-03 21:13:28] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 5.1046219999767555, 'longitude': -0.9072889682853362}
+[climatetwin] [2024-03-03 21:13:28] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 5.1046219999767555, 'longitude': -0.9072889682853362}
+[climatetwin] [2024-03-03 21:13:28] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:28] Received coordinates: Latitude - 5.1046219999767555, Longitude - -0.9072889682853362
+[climatetwin] [2024-03-03 21:13:28] Received coordinates: Latitude - 5.1046219999767555, Longitude - -0.9072889682853362
+[climatetwin] [2024-03-03 21:13:28] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 10.910753886476364, 'longitude': -0.8788383471260168}
+[climatetwin] [2024-03-03 21:13:28] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 10.910753886476364, 'longitude': -0.8788383471260168}
+[climatetwin] [2024-03-03 21:13:28] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:28] Received coordinates: Latitude - 10.910753886476364, Longitude - -0.8788383471260168
+[climatetwin] [2024-03-03 21:13:28] Received coordinates: Latitude - 10.910753886476364, Longitude - -0.8788383471260168
+[climatetwin] [2024-03-03 21:13:28] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 10.910753886476364, 'longitude': -0.8788383471260168}
+[climatetwin] [2024-03-03 21:13:28] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 10.910753886476364, 'longitude': -0.8788383471260168}
+[climatetwin] [2024-03-03 21:13:28] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:28] Received coordinates: Latitude - 10.910753886476364, Longitude - -0.8788383471260168
+[climatetwin] [2024-03-03 21:13:28] Received coordinates: Latitude - 10.910753886476364, Longitude - -0.8788383471260168
+[climatetwin] [2024-03-03 21:13:29] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 8.241547818871574, 'longitude': 0.6332952375812333}
+[climatetwin] [2024-03-03 21:13:29] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 8.241547818871574, 'longitude': 0.6332952375812333}
+[climatetwin] [2024-03-03 21:13:29] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:29] Received coordinates: Latitude - 8.241547818871574, Longitude - 0.6332952375812333
+[climatetwin] [2024-03-03 21:13:29] Received coordinates: Latitude - 8.241547818871574, Longitude - 0.6332952375812333
+[climatetwin] [2024-03-03 21:13:29] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 8.241547818871574, 'longitude': 0.6332952375812333}
+[climatetwin] [2024-03-03 21:13:29] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 8.241547818871574, 'longitude': 0.6332952375812333}
+[climatetwin] [2024-03-03 21:13:29] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:29] Received coordinates: Latitude - 8.241547818871574, Longitude - 0.6332952375812333
+[climatetwin] [2024-03-03 21:13:29] Received coordinates: Latitude - 8.241547818871574, Longitude - 0.6332952375812333
+[climatetwin] [2024-03-03 21:13:29] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 18.181447906367815, 'longitude': -5.771416675944904}
+[climatetwin] [2024-03-03 21:13:29] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 18.181447906367815, 'longitude': -5.771416675944904}
+[climatetwin] [2024-03-03 21:13:29] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:29] Received coordinates: Latitude - 18.181447906367815, Longitude - -5.771416675944904
+[climatetwin] [2024-03-03 21:13:29] Received coordinates: Latitude - 18.181447906367815, Longitude - -5.771416675944904
+[climatetwin] [2024-03-03 21:13:29] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 18.181447906367815, 'longitude': -5.771416675944904}
+[climatetwin] [2024-03-03 21:13:29] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 18.181447906367815, 'longitude': -5.771416675944904}
+[climatetwin] [2024-03-03 21:13:29] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:29] Received coordinates: Latitude - 18.181447906367815, Longitude - -5.771416675944904
+[climatetwin] [2024-03-03 21:13:29] Received coordinates: Latitude - 18.181447906367815, Longitude - -5.771416675944904
+[climatetwin] [2024-03-03 21:13:29] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 15.416950179990156, 'longitude': -3.5221531249829585}
+[climatetwin] [2024-03-03 21:13:29] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 15.416950179990156, 'longitude': -3.5221531249829585}
+[climatetwin] [2024-03-03 21:13:29] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:29] Received coordinates: Latitude - 15.416950179990156, Longitude - -3.5221531249829585
+[climatetwin] [2024-03-03 21:13:29] Received coordinates: Latitude - 15.416950179990156, Longitude - -3.5221531249829585
+[climatetwin] [2024-03-03 21:13:29] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 15.416950179990156, 'longitude': -3.5221531249829585}
+[climatetwin] [2024-03-03 21:13:29] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 15.416950179990156, 'longitude': -3.5221531249829585}
+[climatetwin] [2024-03-03 21:13:29] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:29] Received coordinates: Latitude - 15.416950179990156, Longitude - -3.5221531249829585
+[climatetwin] [2024-03-03 21:13:29] Received coordinates: Latitude - 15.416950179990156, Longitude - -3.5221531249829585
+[climatetwin] [2024-03-03 21:13:29] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 24.814970731915835, 'longitude': -10.747889359938634}
+[climatetwin] [2024-03-03 21:13:29] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 24.814970731915835, 'longitude': -10.747889359938634}
+[climatetwin] [2024-03-03 21:13:29] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:29] Received coordinates: Latitude - 24.814970731915835, Longitude - -10.747889359938634
+[climatetwin] [2024-03-03 21:13:29] Received coordinates: Latitude - 24.814970731915835, Longitude - -10.747889359938634
+[climatetwin] [2024-03-03 21:13:29] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 24.814970731915835, 'longitude': -10.747889359938634}
+[climatetwin] [2024-03-03 21:13:29] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 24.814970731915835, 'longitude': -10.747889359938634}
+[climatetwin] [2024-03-03 21:13:29] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:29] Received coordinates: Latitude - 24.814970731915835, Longitude - -10.747889359938634
+[climatetwin] [2024-03-03 21:13:29] Received coordinates: Latitude - 24.814970731915835, Longitude - -10.747889359938634
+[climatetwin] [2024-03-03 21:13:30] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 20.19740140056614, 'longitude': -2.0793247747689385}
+[climatetwin] [2024-03-03 21:13:30] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 20.19740140056614, 'longitude': -2.0793247747689385}
+[climatetwin] [2024-03-03 21:13:30] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:30] Received coordinates: Latitude - 20.19740140056614, Longitude - -2.0793247747689385
+[climatetwin] [2024-03-03 21:13:30] Received coordinates: Latitude - 20.19740140056614, Longitude - -2.0793247747689385
+[climatetwin] [2024-03-03 21:13:30] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 20.19740140056614, 'longitude': -2.0793247747689385}
+[climatetwin] [2024-03-03 21:13:30] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 20.19740140056614, 'longitude': -2.0793247747689385}
+[climatetwin] [2024-03-03 21:13:30] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:30] Received coordinates: Latitude - 20.19740140056614, Longitude - -2.0793247747689385
+[climatetwin] [2024-03-03 21:13:30] Received coordinates: Latitude - 20.19740140056614, Longitude - -2.0793247747689385
+[climatetwin] [2024-03-03 21:13:30] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 42.30992736593791, 'longitude': 26.68428893243503}
+[climatetwin] [2024-03-03 21:13:30] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 42.30992736593791, 'longitude': 26.68428893243503}
+[climatetwin] [2024-03-03 21:13:30] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:30] Received coordinates: Latitude - 42.30992736593791, Longitude - 26.68428893243503
+[climatetwin] [2024-03-03 21:13:30] Received coordinates: Latitude - 42.30992736593791, Longitude - 26.68428893243503
+[climatetwin] [2024-03-03 21:13:30] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 42.30992736593791, 'longitude': 26.68428893243503}
+[climatetwin] [2024-03-03 21:13:30] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 42.30992736593791, 'longitude': 26.68428893243503}
+[climatetwin] [2024-03-03 21:13:30] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:30] Received coordinates: Latitude - 42.30992736593791, Longitude - 26.68428893243503
+[climatetwin] [2024-03-03 21:13:30] Received coordinates: Latitude - 42.30992736593791, Longitude - 26.68428893243503
+[climatetwin] [2024-03-03 21:13:30] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 43.73172026847761, 'longitude': 23.719993518795533}
+[climatetwin] [2024-03-03 21:13:30] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 43.73172026847761, 'longitude': 23.719993518795533}
+[climatetwin] [2024-03-03 21:13:30] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:30] Received coordinates: Latitude - 43.73172026847761, Longitude - 23.719993518795533
+[climatetwin] [2024-03-03 21:13:30] Received coordinates: Latitude - 43.73172026847761, Longitude - 23.719993518795533
+[climatetwin] [2024-03-03 21:13:30] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 43.73172026847761, 'longitude': 23.719993518795533}
+[climatetwin] [2024-03-03 21:13:30] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 43.73172026847761, 'longitude': 23.719993518795533}
+[climatetwin] [2024-03-03 21:13:30] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:30] Received coordinates: Latitude - 43.73172026847761, Longitude - 23.719993518795533
+[climatetwin] [2024-03-03 21:13:30] Received coordinates: Latitude - 43.73172026847761, Longitude - 23.719993518795533
+[climatetwin] [2024-03-03 21:13:31] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 41.892533157986094, 'longitude': 24.712081163288243}
+[climatetwin] [2024-03-03 21:13:31] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 41.892533157986094, 'longitude': 24.712081163288243}
+[climatetwin] [2024-03-03 21:13:31] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:31] Received coordinates: Latitude - 41.892533157986094, Longitude - 24.712081163288243
+[climatetwin] [2024-03-03 21:13:31] Received coordinates: Latitude - 41.892533157986094, Longitude - 24.712081163288243
+[climatetwin] [2024-03-03 21:13:31] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 41.892533157986094, 'longitude': 24.712081163288243}
+[climatetwin] [2024-03-03 21:13:31] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 41.892533157986094, 'longitude': 24.712081163288243}
+[climatetwin] [2024-03-03 21:13:31] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:31] Received coordinates: Latitude - 41.892533157986094, Longitude - 24.712081163288243
+[climatetwin] [2024-03-03 21:13:31] Received coordinates: Latitude - 41.892533157986094, Longitude - 24.712081163288243
+[climatetwin] [2024-03-03 21:13:31] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 42.03064077279344, 'longitude': 25.64433220863362}
+[climatetwin] [2024-03-03 21:13:31] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 42.03064077279344, 'longitude': 25.64433220863362}
+[climatetwin] [2024-03-03 21:13:31] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:31] Received coordinates: Latitude - 42.03064077279344, Longitude - 25.64433220863362
+[climatetwin] [2024-03-03 21:13:31] Received coordinates: Latitude - 42.03064077279344, Longitude - 25.64433220863362
+[climatetwin] [2024-03-03 21:13:31] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 42.03064077279344, 'longitude': 25.64433220863362}
+[climatetwin] [2024-03-03 21:13:31] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 42.03064077279344, 'longitude': 25.64433220863362}
+[climatetwin] [2024-03-03 21:13:31] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:31] Received coordinates: Latitude - 42.03064077279344, Longitude - 25.64433220863362
+[climatetwin] [2024-03-03 21:13:31] Received coordinates: Latitude - 42.03064077279344, Longitude - 25.64433220863362
+[climatetwin] [2024-03-03 21:13:31] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 44.22876189613389, 'longitude': 27.82250807321001}
+[climatetwin] [2024-03-03 21:13:31] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 44.22876189613389, 'longitude': 27.82250807321001}
+[climatetwin] [2024-03-03 21:13:31] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:31] Received coordinates: Latitude - 44.22876189613389, Longitude - 27.82250807321001
+[climatetwin] [2024-03-03 21:13:31] Received coordinates: Latitude - 44.22876189613389, Longitude - 27.82250807321001
+[climatetwin] [2024-03-03 21:13:31] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 44.22876189613389, 'longitude': 27.82250807321001}
+[climatetwin] [2024-03-03 21:13:31] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 44.22876189613389, 'longitude': 27.82250807321001}
+[climatetwin] [2024-03-03 21:13:31] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:31] Received coordinates: Latitude - 44.22876189613389, Longitude - 27.82250807321001
+[climatetwin] [2024-03-03 21:13:31] Received coordinates: Latitude - 44.22876189613389, Longitude - 27.82250807321001
+[climatetwin] [2024-03-03 21:13:31] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 43.22566207674708, 'longitude': 27.899106343982105}
+[climatetwin] [2024-03-03 21:13:31] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 43.22566207674708, 'longitude': 27.899106343982105}
+[climatetwin] [2024-03-03 21:13:31] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:31] Received coordinates: Latitude - 43.22566207674708, Longitude - 27.899106343982105
+[climatetwin] [2024-03-03 21:13:31] Received coordinates: Latitude - 43.22566207674708, Longitude - 27.899106343982105
+[climatetwin] [2024-03-03 21:13:31] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 43.22566207674708, 'longitude': 27.899106343982105}
+[climatetwin] [2024-03-03 21:13:31] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 43.22566207674708, 'longitude': 27.899106343982105}
+[climatetwin] [2024-03-03 21:13:31] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:31] Received coordinates: Latitude - 43.22566207674708, Longitude - 27.899106343982105
+[climatetwin] [2024-03-03 21:13:31] Received coordinates: Latitude - 43.22566207674708, Longitude - 27.899106343982105
+[climatetwin] [2024-03-03 21:13:31] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 4.020554843657483, 'longitude': 23.773770406646662}
+[climatetwin] [2024-03-03 21:13:31] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 4.020554843657483, 'longitude': 23.773770406646662}
+[climatetwin] [2024-03-03 21:13:31] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 4.020554843657483, Longitude - 23.773770406646662
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 4.020554843657483, Longitude - 23.773770406646662
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 4.020554843657483, 'longitude': 23.773770406646662}
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 4.020554843657483, 'longitude': 23.773770406646662}
+[climatetwin] [2024-03-03 21:13:32] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 4.020554843657483, Longitude - 23.773770406646662
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 4.020554843657483, Longitude - 23.773770406646662
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.774413015517197, 'longitude': 19.02035050750338}
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.774413015517197, 'longitude': 19.02035050750338}
+[climatetwin] [2024-03-03 21:13:32] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 9.774413015517197, Longitude - 19.02035050750338
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 9.774413015517197, Longitude - 19.02035050750338
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.774413015517197, 'longitude': 19.02035050750338}
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.774413015517197, 'longitude': 19.02035050750338}
+[climatetwin] [2024-03-03 21:13:32] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 9.774413015517197, Longitude - 19.02035050750338
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 9.774413015517197, Longitude - 19.02035050750338
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 10.306961906633399, 'longitude': 26.691629993081655}
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 10.306961906633399, 'longitude': 26.691629993081655}
+[climatetwin] [2024-03-03 21:13:32] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 10.306961906633399, Longitude - 26.691629993081655
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 10.306961906633399, Longitude - 26.691629993081655
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 10.306961906633399, 'longitude': 26.691629993081655}
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 10.306961906633399, 'longitude': 26.691629993081655}
+[climatetwin] [2024-03-03 21:13:32] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 10.306961906633399, Longitude - 26.691629993081655
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 10.306961906633399, Longitude - 26.691629993081655
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.75133064185777, 'longitude': 5.954195302853841}
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.75133064185777, 'longitude': 5.954195302853841}
+[climatetwin] [2024-03-03 21:13:32] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 49.75133064185777, Longitude - 5.954195302853841
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 49.75133064185777, Longitude - 5.954195302853841
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.75133064185777, 'longitude': 5.954195302853841}
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.75133064185777, 'longitude': 5.954195302853841}
+[climatetwin] [2024-03-03 21:13:32] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 49.75133064185777, Longitude - 5.954195302853841
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 49.75133064185777, Longitude - 5.954195302853841
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.99007187009091, 'longitude': 6.019815913906386}
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.99007187009091, 'longitude': 6.019815913906386}
+[climatetwin] [2024-03-03 21:13:32] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 49.99007187009091, Longitude - 6.019815913906386
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 49.99007187009091, Longitude - 6.019815913906386
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.99007187009091, 'longitude': 6.019815913906386}
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.99007187009091, 'longitude': 6.019815913906386}
+[climatetwin] [2024-03-03 21:13:32] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 49.99007187009091, Longitude - 6.019815913906386
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 49.99007187009091, Longitude - 6.019815913906386
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.836681260935265, 'longitude': 6.195249639819819}
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.836681260935265, 'longitude': 6.195249639819819}
+[climatetwin] [2024-03-03 21:13:32] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 49.836681260935265, Longitude - 6.195249639819819
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 49.836681260935265, Longitude - 6.195249639819819
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.836681260935265, 'longitude': 6.195249639819819}
+[climatetwin] [2024-03-03 21:13:32] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.836681260935265, 'longitude': 6.195249639819819}
+[climatetwin] [2024-03-03 21:13:32] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 49.836681260935265, Longitude - 6.195249639819819
+[climatetwin] [2024-03-03 21:13:32] Received coordinates: Latitude - 49.836681260935265, Longitude - 6.195249639819819
+[climatetwin] [2024-03-03 21:13:33] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.87348688719151, 'longitude': 6.212689034160178}
+[climatetwin] [2024-03-03 21:13:33] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.87348688719151, 'longitude': 6.212689034160178}
+[climatetwin] [2024-03-03 21:13:33] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:33] Received coordinates: Latitude - 49.87348688719151, Longitude - 6.212689034160178
+[climatetwin] [2024-03-03 21:13:33] Received coordinates: Latitude - 49.87348688719151, Longitude - 6.212689034160178
+[climatetwin] [2024-03-03 21:13:33] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.87348688719151, 'longitude': 6.212689034160178}
+[climatetwin] [2024-03-03 21:13:33] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.87348688719151, 'longitude': 6.212689034160178}
+[climatetwin] [2024-03-03 21:13:33] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:33] Received coordinates: Latitude - 49.87348688719151, Longitude - 6.212689034160178
+[climatetwin] [2024-03-03 21:13:33] Received coordinates: Latitude - 49.87348688719151, Longitude - 6.212689034160178
+[climatetwin] [2024-03-03 21:13:33] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.45750282564792, 'longitude': 5.682775105254969}
+[climatetwin] [2024-03-03 21:13:33] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.45750282564792, 'longitude': 5.682775105254969}
+[climatetwin] [2024-03-03 21:13:33] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:33] Received coordinates: Latitude - 49.45750282564792, Longitude - 5.682775105254969
+[climatetwin] [2024-03-03 21:13:33] Received coordinates: Latitude - 49.45750282564792, Longitude - 5.682775105254969
+[climatetwin] [2024-03-03 21:13:33] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.45750282564792, 'longitude': 5.682775105254969}
+[climatetwin] [2024-03-03 21:13:33] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.45750282564792, 'longitude': 5.682775105254969}
+[climatetwin] [2024-03-03 21:13:33] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:33] Received coordinates: Latitude - 49.45750282564792, Longitude - 5.682775105254969
+[climatetwin] [2024-03-03 21:13:33] Received coordinates: Latitude - 49.45750282564792, Longitude - 5.682775105254969
+[climatetwin] [2024-03-03 21:13:33] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.89908496023477, 'longitude': 6.145997272263365}
+[climatetwin] [2024-03-03 21:13:33] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.89908496023477, 'longitude': 6.145997272263365}
+[climatetwin] [2024-03-03 21:13:33] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:33] Received coordinates: Latitude - 49.89908496023477, Longitude - 6.145997272263365
+[climatetwin] [2024-03-03 21:13:33] Received coordinates: Latitude - 49.89908496023477, Longitude - 6.145997272263365
+[climatetwin] [2024-03-03 21:13:33] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.89908496023477, 'longitude': 6.145997272263365}
+[climatetwin] [2024-03-03 21:13:33] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.89908496023477, 'longitude': 6.145997272263365}
+[climatetwin] [2024-03-03 21:13:33] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:33] Received coordinates: Latitude - 49.89908496023477, Longitude - 6.145997272263365
+[climatetwin] [2024-03-03 21:13:33] Received coordinates: Latitude - 49.89908496023477, Longitude - 6.145997272263365
+[climatetwin] [2024-03-03 21:13:33] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 50.11083423487955, 'longitude': 6.072810415361997}
+[climatetwin] [2024-03-03 21:13:33] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 50.11083423487955, 'longitude': 6.072810415361997}
+[climatetwin] [2024-03-03 21:13:33] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:33] Received coordinates: Latitude - 50.11083423487955, Longitude - 6.072810415361997
+[climatetwin] [2024-03-03 21:13:33] Received coordinates: Latitude - 50.11083423487955, Longitude - 6.072810415361997
+[climatetwin] [2024-03-03 21:13:33] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 50.11083423487955, 'longitude': 6.072810415361997}
+[climatetwin] [2024-03-03 21:13:33] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 50.11083423487955, 'longitude': 6.072810415361997}
+[climatetwin] [2024-03-03 21:13:33] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:33] Received coordinates: Latitude - 50.11083423487955, Longitude - 6.072810415361997
+[climatetwin] [2024-03-03 21:13:33] Received coordinates: Latitude - 50.11083423487955, Longitude - 6.072810415361997
+[climatetwin] [2024-03-03 21:13:33] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.75684680575535, 'longitude': 5.89316560746699}
+[climatetwin] [2024-03-03 21:13:33] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.75684680575535, 'longitude': 5.89316560746699}
+[climatetwin] [2024-03-03 21:13:33] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:33] Received coordinates: Latitude - 49.75684680575535, Longitude - 5.89316560746699
+[climatetwin] [2024-03-03 21:13:33] Received coordinates: Latitude - 49.75684680575535, Longitude - 5.89316560746699
+[climatetwin] [2024-03-03 21:13:33] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.75684680575535, 'longitude': 5.89316560746699}
+[climatetwin] [2024-03-03 21:13:33] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.75684680575535, 'longitude': 5.89316560746699}
+[climatetwin] [2024-03-03 21:13:33] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:33] Received coordinates: Latitude - 49.75684680575535, Longitude - 5.89316560746699
+[climatetwin] [2024-03-03 21:13:33] Received coordinates: Latitude - 49.75684680575535, Longitude - 5.89316560746699
+[climatetwin] [2024-03-03 21:13:34] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 50.07134760084998, 'longitude': 5.851333218291842}
+[climatetwin] [2024-03-03 21:13:34] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 50.07134760084998, 'longitude': 5.851333218291842}
+[climatetwin] [2024-03-03 21:13:34] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:34] Received coordinates: Latitude - 50.07134760084998, Longitude - 5.851333218291842
+[climatetwin] [2024-03-03 21:13:34] Received coordinates: Latitude - 50.07134760084998, Longitude - 5.851333218291842
+[climatetwin] [2024-03-03 21:13:34] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 50.07134760084998, 'longitude': 5.851333218291842}
+[climatetwin] [2024-03-03 21:13:34] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 50.07134760084998, 'longitude': 5.851333218291842}
+[climatetwin] [2024-03-03 21:13:34] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:34] Received coordinates: Latitude - 50.07134760084998, Longitude - 5.851333218291842
+[climatetwin] [2024-03-03 21:13:34] Received coordinates: Latitude - 50.07134760084998, Longitude - 5.851333218291842
+[climatetwin] [2024-03-03 21:13:34] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 51.084652467363725, 'longitude': 3.191504132089042}
+[climatetwin] [2024-03-03 21:13:34] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 51.084652467363725, 'longitude': 3.191504132089042}
+[climatetwin] [2024-03-03 21:13:34] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:34] Received coordinates: Latitude - 51.084652467363725, Longitude - 3.191504132089042
+[climatetwin] [2024-03-03 21:13:34] Received coordinates: Latitude - 51.084652467363725, Longitude - 3.191504132089042
+[climatetwin] [2024-03-03 21:13:34] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 51.084652467363725, 'longitude': 3.191504132089042}
+[climatetwin] [2024-03-03 21:13:34] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 51.084652467363725, 'longitude': 3.191504132089042}
+[climatetwin] [2024-03-03 21:13:34] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:34] Received coordinates: Latitude - 51.084652467363725, Longitude - 3.191504132089042
+[climatetwin] [2024-03-03 21:13:34] Received coordinates: Latitude - 51.084652467363725, Longitude - 3.191504132089042
+[climatetwin] [2024-03-03 21:13:34] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.827648203225046, 'longitude': 3.176253242009084}
+[climatetwin] [2024-03-03 21:13:34] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.827648203225046, 'longitude': 3.176253242009084}
+[climatetwin] [2024-03-03 21:13:34] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:34] Received coordinates: Latitude - 49.827648203225046, Longitude - 3.176253242009084
+[climatetwin] [2024-03-03 21:13:34] Received coordinates: Latitude - 49.827648203225046, Longitude - 3.176253242009084
+[climatetwin] [2024-03-03 21:13:34] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.827648203225046, 'longitude': 3.176253242009084}
+[climatetwin] [2024-03-03 21:13:34] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.827648203225046, 'longitude': 3.176253242009084}
+[climatetwin] [2024-03-03 21:13:34] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:34] Received coordinates: Latitude - 49.827648203225046, Longitude - 3.176253242009084
+[climatetwin] [2024-03-03 21:13:34] Received coordinates: Latitude - 49.827648203225046, Longitude - 3.176253242009084
+[climatetwin] [2024-03-03 21:13:34] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 51.39968247508429, 'longitude': 4.304963319677197}
+[climatetwin] [2024-03-03 21:13:34] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 51.39968247508429, 'longitude': 4.304963319677197}
+[climatetwin] [2024-03-03 21:13:34] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:34] Received coordinates: Latitude - 51.39968247508429, Longitude - 4.304963319677197
+[climatetwin] [2024-03-03 21:13:34] Received coordinates: Latitude - 51.39968247508429, Longitude - 4.304963319677197
+[climatetwin] [2024-03-03 21:13:34] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 51.39968247508429, 'longitude': 4.304963319677197}
+[climatetwin] [2024-03-03 21:13:34] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 51.39968247508429, 'longitude': 4.304963319677197}
+[climatetwin] [2024-03-03 21:13:34] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:34] Received coordinates: Latitude - 51.39968247508429, Longitude - 4.304963319677197
+[climatetwin] [2024-03-03 21:13:34] Received coordinates: Latitude - 51.39968247508429, Longitude - 4.304963319677197
+[climatetwin] [2024-03-03 21:13:34] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.70801640427711, 'longitude': 5.549494185014564}
+[climatetwin] [2024-03-03 21:13:34] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.70801640427711, 'longitude': 5.549494185014564}
+[climatetwin] [2024-03-03 21:13:34] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:34] Received coordinates: Latitude - 49.70801640427711, Longitude - 5.549494185014564
+[climatetwin] [2024-03-03 21:13:34] Received coordinates: Latitude - 49.70801640427711, Longitude - 5.549494185014564
+[climatetwin] [2024-03-03 21:13:34] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.70801640427711, 'longitude': 5.549494185014564}
+[climatetwin] [2024-03-03 21:13:34] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.70801640427711, 'longitude': 5.549494185014564}
+[climatetwin] [2024-03-03 21:13:34] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:34] Received coordinates: Latitude - 49.70801640427711, Longitude - 5.549494185014564
+[climatetwin] [2024-03-03 21:13:34] Received coordinates: Latitude - 49.70801640427711, Longitude - 5.549494185014564
+[climatetwin] [2024-03-03 21:13:35] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 52.175200669996165, 'longitude': -7.873268398153279}
+[climatetwin] [2024-03-03 21:13:35] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 52.175200669996165, 'longitude': -7.873268398153279}
+[climatetwin] [2024-03-03 21:13:35] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:35] Received coordinates: Latitude - 52.175200669996165, Longitude - -7.873268398153279
+[climatetwin] [2024-03-03 21:13:35] Received coordinates: Latitude - 52.175200669996165, Longitude - -7.873268398153279
+[climatetwin] [2024-03-03 21:13:35] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 52.175200669996165, 'longitude': -7.873268398153279}
+[climatetwin] [2024-03-03 21:13:35] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 52.175200669996165, 'longitude': -7.873268398153279}
+[climatetwin] [2024-03-03 21:13:35] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:35] Received coordinates: Latitude - 52.175200669996165, Longitude - -7.873268398153279
+[climatetwin] [2024-03-03 21:13:35] Received coordinates: Latitude - 52.175200669996165, Longitude - -7.873268398153279
+[climatetwin] [2024-03-03 21:13:35] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 52.89432665993549, 'longitude': -7.354506322660277}
+[climatetwin] [2024-03-03 21:13:35] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 52.89432665993549, 'longitude': -7.354506322660277}
+[climatetwin] [2024-03-03 21:13:35] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:35] Received coordinates: Latitude - 52.89432665993549, Longitude - -7.354506322660277
+[climatetwin] [2024-03-03 21:13:35] Received coordinates: Latitude - 52.89432665993549, Longitude - -7.354506322660277
+[climatetwin] [2024-03-03 21:13:35] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 52.89432665993549, 'longitude': -7.354506322660277}
+[climatetwin] [2024-03-03 21:13:35] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 52.89432665993549, 'longitude': -7.354506322660277}
+[climatetwin] [2024-03-03 21:13:35] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:35] Received coordinates: Latitude - 52.89432665993549, Longitude - -7.354506322660277
+[climatetwin] [2024-03-03 21:13:35] Received coordinates: Latitude - 52.89432665993549, Longitude - -7.354506322660277
+[climatetwin] [2024-03-03 21:13:35] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 53.566686171657366, 'longitude': -8.493893635004587}
+[climatetwin] [2024-03-03 21:13:35] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 53.566686171657366, 'longitude': -8.493893635004587}
+[climatetwin] [2024-03-03 21:13:35] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:35] Received coordinates: Latitude - 53.566686171657366, Longitude - -8.493893635004587
+[climatetwin] [2024-03-03 21:13:35] Received coordinates: Latitude - 53.566686171657366, Longitude - -8.493893635004587
+[climatetwin] [2024-03-03 21:13:35] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 53.566686171657366, 'longitude': -8.493893635004587}
+[climatetwin] [2024-03-03 21:13:35] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 53.566686171657366, 'longitude': -8.493893635004587}
+[climatetwin] [2024-03-03 21:13:35] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:35] Received coordinates: Latitude - 53.566686171657366, Longitude - -8.493893635004587
+[climatetwin] [2024-03-03 21:13:35] Received coordinates: Latitude - 53.566686171657366, Longitude - -8.493893635004587
+[climatetwin] [2024-03-03 21:13:35] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.60928517535595, 'longitude': 6.2199951563360285}
+[climatetwin] [2024-03-03 21:13:35] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.60928517535595, 'longitude': 6.2199951563360285}
+[climatetwin] [2024-03-03 21:13:35] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:35] Received coordinates: Latitude - 49.60928517535595, Longitude - 6.2199951563360285
+[climatetwin] [2024-03-03 21:13:35] Received coordinates: Latitude - 49.60928517535595, Longitude - 6.2199951563360285
+[climatetwin] [2024-03-03 21:13:35] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.60928517535595, 'longitude': 6.2199951563360285}
+[climatetwin] [2024-03-03 21:13:35] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.60928517535595, 'longitude': 6.2199951563360285}
+[climatetwin] [2024-03-03 21:13:35] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:35] Received coordinates: Latitude - 49.60928517535595, Longitude - 6.2199951563360285
+[climatetwin] [2024-03-03 21:13:35] Received coordinates: Latitude - 49.60928517535595, Longitude - 6.2199951563360285
+[climatetwin] [2024-03-03 21:13:36] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.75602922065842, 'longitude': 5.880665737371371}
+[climatetwin] [2024-03-03 21:13:36] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.75602922065842, 'longitude': 5.880665737371371}
+[climatetwin] [2024-03-03 21:13:36] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:36] Received coordinates: Latitude - 49.75602922065842, Longitude - 5.880665737371371
+[climatetwin] [2024-03-03 21:13:36] Received coordinates: Latitude - 49.75602922065842, Longitude - 5.880665737371371
+[climatetwin] [2024-03-03 21:13:36] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.75602922065842, 'longitude': 5.880665737371371}
+[climatetwin] [2024-03-03 21:13:36] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.75602922065842, 'longitude': 5.880665737371371}
+[climatetwin] [2024-03-03 21:13:36] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:36] Received coordinates: Latitude - 49.75602922065842, Longitude - 5.880665737371371
+[climatetwin] [2024-03-03 21:13:36] Received coordinates: Latitude - 49.75602922065842, Longitude - 5.880665737371371
+[climatetwin] [2024-03-03 21:13:36] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.57657788579706, 'longitude': 5.695248454069374}
+[climatetwin] [2024-03-03 21:13:36] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.57657788579706, 'longitude': 5.695248454069374}
+[climatetwin] [2024-03-03 21:13:36] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:36] Received coordinates: Latitude - 49.57657788579706, Longitude - 5.695248454069374
+[climatetwin] [2024-03-03 21:13:36] Received coordinates: Latitude - 49.57657788579706, Longitude - 5.695248454069374
+[climatetwin] [2024-03-03 21:13:36] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.57657788579706, 'longitude': 5.695248454069374}
+[climatetwin] [2024-03-03 21:13:36] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.57657788579706, 'longitude': 5.695248454069374}
+[climatetwin] [2024-03-03 21:13:36] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:36] Received coordinates: Latitude - 49.57657788579706, Longitude - 5.695248454069374
+[climatetwin] [2024-03-03 21:13:36] Received coordinates: Latitude - 49.57657788579706, Longitude - 5.695248454069374
+[climatetwin] [2024-03-03 21:13:36] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.80212762028233, 'longitude': 5.725367371272229}
+[climatetwin] [2024-03-03 21:13:36] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.80212762028233, 'longitude': 5.725367371272229}
+[climatetwin] [2024-03-03 21:13:36] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:36] Received coordinates: Latitude - 49.80212762028233, Longitude - 5.725367371272229
+[climatetwin] [2024-03-03 21:13:36] Received coordinates: Latitude - 49.80212762028233, Longitude - 5.725367371272229
+[climatetwin] [2024-03-03 21:13:36] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.80212762028233, 'longitude': 5.725367371272229}
+[climatetwin] [2024-03-03 21:13:36] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 49.80212762028233, 'longitude': 5.725367371272229}
+[climatetwin] [2024-03-03 21:13:36] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:36] Received coordinates: Latitude - 49.80212762028233, Longitude - 5.725367371272229
+[climatetwin] [2024-03-03 21:13:36] Received coordinates: Latitude - 49.80212762028233, Longitude - 5.725367371272229
+[climatetwin] [2024-03-03 21:13:36] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 50.03769804879496, 'longitude': 5.798625421254149}
+[climatetwin] [2024-03-03 21:13:36] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 50.03769804879496, 'longitude': 5.798625421254149}
+[climatetwin] [2024-03-03 21:13:36] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:36] Received coordinates: Latitude - 50.03769804879496, Longitude - 5.798625421254149
+[climatetwin] [2024-03-03 21:13:36] Received coordinates: Latitude - 50.03769804879496, Longitude - 5.798625421254149
+[climatetwin] [2024-03-03 21:13:36] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 50.03769804879496, 'longitude': 5.798625421254149}
+[climatetwin] [2024-03-03 21:13:36] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 50.03769804879496, 'longitude': 5.798625421254149}
+[climatetwin] [2024-03-03 21:13:36] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:36] Received coordinates: Latitude - 50.03769804879496, Longitude - 5.798625421254149
+[climatetwin] [2024-03-03 21:13:36] Received coordinates: Latitude - 50.03769804879496, Longitude - 5.798625421254149
+[climatetwin] [2024-03-03 21:13:36] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 50.083837539470636, 'longitude': 6.019842615813232}
+[climatetwin] [2024-03-03 21:13:36] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 50.083837539470636, 'longitude': 6.019842615813232}
+[climatetwin] [2024-03-03 21:13:36] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:36] Received coordinates: Latitude - 50.083837539470636, Longitude - 6.019842615813232
+[climatetwin] [2024-03-03 21:13:36] Received coordinates: Latitude - 50.083837539470636, Longitude - 6.019842615813232
+[climatetwin] [2024-03-03 21:13:36] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 50.083837539470636, 'longitude': 6.019842615813232}
+[climatetwin] [2024-03-03 21:13:36] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 50.083837539470636, 'longitude': 6.019842615813232}
+[climatetwin] [2024-03-03 21:13:36] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:36] Received coordinates: Latitude - 50.083837539470636, Longitude - 6.019842615813232
+[climatetwin] [2024-03-03 21:13:36] Received coordinates: Latitude - 50.083837539470636, Longitude - 6.019842615813232
+[climatetwin] [2024-03-03 21:13:37] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -5.738763106214362, 'longitude': 21.170868025961006}
+[climatetwin] [2024-03-03 21:13:37] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -5.738763106214362, 'longitude': 21.170868025961006}
+[climatetwin] [2024-03-03 21:13:37] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:37] Received coordinates: Latitude - -5.738763106214362, Longitude - 21.170868025961006
+[climatetwin] [2024-03-03 21:13:37] Received coordinates: Latitude - -5.738763106214362, Longitude - 21.170868025961006
+[climatetwin] [2024-03-03 21:13:37] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -5.738763106214362, 'longitude': 21.170868025961006}
+[climatetwin] [2024-03-03 21:13:37] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -5.738763106214362, 'longitude': 21.170868025961006}
+[climatetwin] [2024-03-03 21:13:37] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:37] Received coordinates: Latitude - -5.738763106214362, Longitude - 21.170868025961006
+[climatetwin] [2024-03-03 21:13:37] Received coordinates: Latitude - -5.738763106214362, Longitude - 21.170868025961006
+[climatetwin] [2024-03-03 21:13:37] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 0.9240610448475248, 'longitude': 21.23939270322176}
+[climatetwin] [2024-03-03 21:13:37] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 0.9240610448475248, 'longitude': 21.23939270322176}
+[climatetwin] [2024-03-03 21:13:37] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:37] Received coordinates: Latitude - 0.9240610448475248, Longitude - 21.23939270322176
+[climatetwin] [2024-03-03 21:13:37] Received coordinates: Latitude - 0.9240610448475248, Longitude - 21.23939270322176
+[climatetwin] [2024-03-03 21:13:37] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 0.9240610448475248, 'longitude': 21.23939270322176}
+[climatetwin] [2024-03-03 21:13:37] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 0.9240610448475248, 'longitude': 21.23939270322176}
+[climatetwin] [2024-03-03 21:13:37] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:37] Received coordinates: Latitude - 0.9240610448475248, Longitude - 21.23939270322176
+[climatetwin] [2024-03-03 21:13:37] Received coordinates: Latitude - 0.9240610448475248, Longitude - 21.23939270322176
+[climatetwin] [2024-03-03 21:13:37] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -1.7946465982579092, 'longitude': 24.352474369796408}
+[climatetwin] [2024-03-03 21:13:37] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -1.7946465982579092, 'longitude': 24.352474369796408}
+[climatetwin] [2024-03-03 21:13:37] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:37] Received coordinates: Latitude - -1.7946465982579092, Longitude - 24.352474369796408
+[climatetwin] [2024-03-03 21:13:37] Received coordinates: Latitude - -1.7946465982579092, Longitude - 24.352474369796408
+[climatetwin] [2024-03-03 21:13:37] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -1.7946465982579092, 'longitude': 24.352474369796408}
+[climatetwin] [2024-03-03 21:13:37] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -1.7946465982579092, 'longitude': 24.352474369796408}
+[climatetwin] [2024-03-03 21:13:37] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:37] Received coordinates: Latitude - -1.7946465982579092, Longitude - 24.352474369796408
+[climatetwin] [2024-03-03 21:13:37] Received coordinates: Latitude - -1.7946465982579092, Longitude - 24.352474369796408
+[climatetwin] [2024-03-03 21:13:37] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -13.231473735769347, 'longitude': 13.639048321218043}
+[climatetwin] [2024-03-03 21:13:37] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -13.231473735769347, 'longitude': 13.639048321218043}
+[climatetwin] [2024-03-03 21:13:37] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:37] Received coordinates: Latitude - -13.231473735769347, Longitude - 13.639048321218043
+[climatetwin] [2024-03-03 21:13:37] Received coordinates: Latitude - -13.231473735769347, Longitude - 13.639048321218043
+[climatetwin] [2024-03-03 21:13:37] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -13.231473735769347, 'longitude': 13.639048321218043}
+[climatetwin] [2024-03-03 21:13:37] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -13.231473735769347, 'longitude': 13.639048321218043}
+[climatetwin] [2024-03-03 21:13:37] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:37] Received coordinates: Latitude - -13.231473735769347, Longitude - 13.639048321218043
+[climatetwin] [2024-03-03 21:13:37] Received coordinates: Latitude - -13.231473735769347, Longitude - 13.639048321218043
+[climatetwin] [2024-03-03 21:13:37] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -13.136068975600303, 'longitude': 14.95766489759939}
+[climatetwin] [2024-03-03 21:13:37] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -13.136068975600303, 'longitude': 14.95766489759939}
+[climatetwin] [2024-03-03 21:13:37] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:37] Received coordinates: Latitude - -13.136068975600303, Longitude - 14.95766489759939
+[climatetwin] [2024-03-03 21:13:37] Received coordinates: Latitude - -13.136068975600303, Longitude - 14.95766489759939
+[climatetwin] [2024-03-03 21:13:37] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -13.136068975600303, 'longitude': 14.95766489759939}
+[climatetwin] [2024-03-03 21:13:37] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -13.136068975600303, 'longitude': 14.95766489759939}
+[climatetwin] [2024-03-03 21:13:37] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:37] Received coordinates: Latitude - -13.136068975600303, Longitude - 14.95766489759939
+[climatetwin] [2024-03-03 21:13:37] Received coordinates: Latitude - -13.136068975600303, Longitude - 14.95766489759939
+[climatetwin] [2024-03-03 21:13:38] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -6.919474355914583, 'longitude': 23.6984342993745}
+[climatetwin] [2024-03-03 21:13:38] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -6.919474355914583, 'longitude': 23.6984342993745}
+[climatetwin] [2024-03-03 21:13:38] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:38] Received coordinates: Latitude - -6.919474355914583, Longitude - 23.6984342993745
+[climatetwin] [2024-03-03 21:13:38] Received coordinates: Latitude - -6.919474355914583, Longitude - 23.6984342993745
+[climatetwin] [2024-03-03 21:13:38] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -6.919474355914583, 'longitude': 23.6984342993745}
+[climatetwin] [2024-03-03 21:13:38] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -6.919474355914583, 'longitude': 23.6984342993745}
+[climatetwin] [2024-03-03 21:13:38] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:38] Received coordinates: Latitude - -6.919474355914583, Longitude - 23.6984342993745
+[climatetwin] [2024-03-03 21:13:38] Received coordinates: Latitude - -6.919474355914583, Longitude - 23.6984342993745
+[climatetwin] [2024-03-03 21:13:38] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 1.0986183413255688, 'longitude': 25.390244350586627}
+[climatetwin] [2024-03-03 21:13:38] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 1.0986183413255688, 'longitude': 25.390244350586627}
+[climatetwin] [2024-03-03 21:13:38] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:38] Received coordinates: Latitude - 1.0986183413255688, Longitude - 25.390244350586627
+[climatetwin] [2024-03-03 21:13:38] Received coordinates: Latitude - 1.0986183413255688, Longitude - 25.390244350586627
+[climatetwin] [2024-03-03 21:13:38] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 1.0986183413255688, 'longitude': 25.390244350586627}
+[climatetwin] [2024-03-03 21:13:38] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 1.0986183413255688, 'longitude': 25.390244350586627}
+[climatetwin] [2024-03-03 21:13:38] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:38] Received coordinates: Latitude - 1.0986183413255688, Longitude - 25.390244350586627
+[climatetwin] [2024-03-03 21:13:38] Received coordinates: Latitude - 1.0986183413255688, Longitude - 25.390244350586627
+[climatetwin] [2024-03-03 21:13:38] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 7.008302847942348, 'longitude': 11.826669063240017}
+[climatetwin] [2024-03-03 21:13:38] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 7.008302847942348, 'longitude': 11.826669063240017}
+[climatetwin] [2024-03-03 21:13:38] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:38] Received coordinates: Latitude - 7.008302847942348, Longitude - 11.826669063240017
+[climatetwin] [2024-03-03 21:13:38] Received coordinates: Latitude - 7.008302847942348, Longitude - 11.826669063240017
+[climatetwin] [2024-03-03 21:13:38] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 7.008302847942348, 'longitude': 11.826669063240017}
+[climatetwin] [2024-03-03 21:13:38] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 7.008302847942348, 'longitude': 11.826669063240017}
+[climatetwin] [2024-03-03 21:13:38] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:38] Received coordinates: Latitude - 7.008302847942348, Longitude - 11.826669063240017
+[climatetwin] [2024-03-03 21:13:38] Received coordinates: Latitude - 7.008302847942348, Longitude - 11.826669063240017
+[climatetwin] [2024-03-03 21:13:38] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 12.64826874240326, 'longitude': 15.856976167010451}
+[climatetwin] [2024-03-03 21:13:38] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 12.64826874240326, 'longitude': 15.856976167010451}
+[climatetwin] [2024-03-03 21:13:38] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:38] Received coordinates: Latitude - 12.64826874240326, Longitude - 15.856976167010451
+[climatetwin] [2024-03-03 21:13:38] Received coordinates: Latitude - 12.64826874240326, Longitude - 15.856976167010451
+[climatetwin] [2024-03-03 21:13:38] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 12.64826874240326, 'longitude': 15.856976167010451}
+[climatetwin] [2024-03-03 21:13:38] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 12.64826874240326, 'longitude': 15.856976167010451}
+[climatetwin] [2024-03-03 21:13:38] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:38] Received coordinates: Latitude - 12.64826874240326, Longitude - 15.856976167010451
+[climatetwin] [2024-03-03 21:13:38] Received coordinates: Latitude - 12.64826874240326, Longitude - 15.856976167010451
+[climatetwin] [2024-03-03 21:13:38] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.605296665311013, 'longitude': 12.808291883809991}
+[climatetwin] [2024-03-03 21:13:38] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.605296665311013, 'longitude': 12.808291883809991}
+[climatetwin] [2024-03-03 21:13:38] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:38] Received coordinates: Latitude - 9.605296665311013, Longitude - 12.808291883809991
+[climatetwin] [2024-03-03 21:13:38] Received coordinates: Latitude - 9.605296665311013, Longitude - 12.808291883809991
+[climatetwin] [2024-03-03 21:13:38] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.605296665311013, 'longitude': 12.808291883809991}
+[climatetwin] [2024-03-03 21:13:38] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.605296665311013, 'longitude': 12.808291883809991}
+[climatetwin] [2024-03-03 21:13:38] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:38] Received coordinates: Latitude - 9.605296665311013, Longitude - 12.808291883809991
+[climatetwin] [2024-03-03 21:13:38] Received coordinates: Latitude - 9.605296665311013, Longitude - 12.808291883809991
+[climatetwin] [2024-03-03 21:13:39] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 5.915701091479438, 'longitude': 9.688768230362001}
+[climatetwin] [2024-03-03 21:13:39] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 5.915701091479438, 'longitude': 9.688768230362001}
+[climatetwin] [2024-03-03 21:13:39] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:39] Received coordinates: Latitude - 5.915701091479438, Longitude - 9.688768230362001
+[climatetwin] [2024-03-03 21:13:39] Received coordinates: Latitude - 5.915701091479438, Longitude - 9.688768230362001
+[climatetwin] [2024-03-03 21:13:39] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 5.915701091479438, 'longitude': 9.688768230362001}
+[climatetwin] [2024-03-03 21:13:39] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 5.915701091479438, 'longitude': 9.688768230362001}
+[climatetwin] [2024-03-03 21:13:39] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:39] Received coordinates: Latitude - 5.915701091479438, Longitude - 9.688768230362001
+[climatetwin] [2024-03-03 21:13:39] Received coordinates: Latitude - 5.915701091479438, Longitude - 9.688768230362001
+[climatetwin] [2024-03-03 21:13:39] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 14.106863164756621, 'longitude': -0.03206454991429908}
+[climatetwin] [2024-03-03 21:13:39] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 14.106863164756621, 'longitude': -0.03206454991429908}
+[climatetwin] [2024-03-03 21:13:39] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:39] Received coordinates: Latitude - 14.106863164756621, Longitude - -0.03206454991429908
+[climatetwin] [2024-03-03 21:13:39] Received coordinates: Latitude - 14.106863164756621, Longitude - -0.03206454991429908
+[climatetwin] [2024-03-03 21:13:39] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 14.106863164756621, 'longitude': -0.03206454991429908}
+[climatetwin] [2024-03-03 21:13:39] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 14.106863164756621, 'longitude': -0.03206454991429908}
+[climatetwin] [2024-03-03 21:13:39] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:39] Received coordinates: Latitude - 14.106863164756621, Longitude - -0.03206454991429908
+[climatetwin] [2024-03-03 21:13:39] Received coordinates: Latitude - 14.106863164756621, Longitude - -0.03206454991429908
+[climatetwin] [2024-03-03 21:13:39] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 17.94038110958281, 'longitude': -3.1284009809127618}
+[climatetwin] [2024-03-03 21:13:39] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 17.94038110958281, 'longitude': -3.1284009809127618}
+[climatetwin] [2024-03-03 21:13:39] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:39] Received coordinates: Latitude - 17.94038110958281, Longitude - -3.1284009809127618
+[climatetwin] [2024-03-03 21:13:39] Received coordinates: Latitude - 17.94038110958281, Longitude - -3.1284009809127618
+[climatetwin] [2024-03-03 21:13:39] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 17.94038110958281, 'longitude': -3.1284009809127618}
+[climatetwin] [2024-03-03 21:13:39] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 17.94038110958281, 'longitude': -3.1284009809127618}
+[climatetwin] [2024-03-03 21:13:39] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:39] Received coordinates: Latitude - 17.94038110958281, Longitude - -3.1284009809127618
+[climatetwin] [2024-03-03 21:13:39] Received coordinates: Latitude - 17.94038110958281, Longitude - -3.1284009809127618
+[climatetwin] [2024-03-03 21:13:39] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 17.542080961977796, 'longitude': -8.698365996463655}
+[climatetwin] [2024-03-03 21:13:39] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 17.542080961977796, 'longitude': -8.698365996463655}
+[climatetwin] [2024-03-03 21:13:39] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:39] Received coordinates: Latitude - 17.542080961977796, Longitude - -8.698365996463655
+[climatetwin] [2024-03-03 21:13:39] Received coordinates: Latitude - 17.542080961977796, Longitude - -8.698365996463655
+[climatetwin] [2024-03-03 21:13:39] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 17.542080961977796, 'longitude': -8.698365996463655}
+[climatetwin] [2024-03-03 21:13:39] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 17.542080961977796, 'longitude': -8.698365996463655}
+[climatetwin] [2024-03-03 21:13:39] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:39] Received coordinates: Latitude - 17.542080961977796, Longitude - -8.698365996463655
+[climatetwin] [2024-03-03 21:13:39] Received coordinates: Latitude - 17.542080961977796, Longitude - -8.698365996463655
+[climatetwin] [2024-03-03 21:13:40] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 4.5960898681885745, 'longitude': 40.15128737020766}
+[climatetwin] [2024-03-03 21:13:40] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 4.5960898681885745, 'longitude': 40.15128737020766}
+[climatetwin] [2024-03-03 21:13:40] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:40] Received coordinates: Latitude - 4.5960898681885745, Longitude - 40.15128737020766
+[climatetwin] [2024-03-03 21:13:40] Received coordinates: Latitude - 4.5960898681885745, Longitude - 40.15128737020766
+[climatetwin] [2024-03-03 21:13:40] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 4.5960898681885745, 'longitude': 40.15128737020766}
+[climatetwin] [2024-03-03 21:13:40] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 4.5960898681885745, 'longitude': 40.15128737020766}
+[climatetwin] [2024-03-03 21:13:40] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:40] Received coordinates: Latitude - 4.5960898681885745, Longitude - 40.15128737020766
+[climatetwin] [2024-03-03 21:13:40] Received coordinates: Latitude - 4.5960898681885745, Longitude - 40.15128737020766
+[climatetwin] [2024-03-03 21:13:40] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 11.61755417167884, 'longitude': 33.073282139018026}
+[climatetwin] [2024-03-03 21:13:40] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 11.61755417167884, 'longitude': 33.073282139018026}
+[climatetwin] [2024-03-03 21:13:40] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:40] Received coordinates: Latitude - 11.61755417167884, Longitude - 33.073282139018026
+[climatetwin] [2024-03-03 21:13:40] Received coordinates: Latitude - 11.61755417167884, Longitude - 33.073282139018026
+[climatetwin] [2024-03-03 21:13:40] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 11.61755417167884, 'longitude': 33.073282139018026}
+[climatetwin] [2024-03-03 21:13:40] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 11.61755417167884, 'longitude': 33.073282139018026}
+[climatetwin] [2024-03-03 21:13:40] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:40] Received coordinates: Latitude - 11.61755417167884, Longitude - 33.073282139018026
+[climatetwin] [2024-03-03 21:13:40] Received coordinates: Latitude - 11.61755417167884, Longitude - 33.073282139018026
+[climatetwin] [2024-03-03 21:13:40] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 10.48818315697967, 'longitude': 45.90808969341497}
+[climatetwin] [2024-03-03 21:13:40] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 10.48818315697967, 'longitude': 45.90808969341497}
+[climatetwin] [2024-03-03 21:13:40] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:40] Received coordinates: Latitude - 10.48818315697967, Longitude - 45.90808969341497
+[climatetwin] [2024-03-03 21:13:40] Received coordinates: Latitude - 10.48818315697967, Longitude - 45.90808969341497
+[climatetwin] [2024-03-03 21:13:40] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 10.48818315697967, 'longitude': 45.90808969341497}
+[climatetwin] [2024-03-03 21:13:40] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 10.48818315697967, 'longitude': 45.90808969341497}
+[climatetwin] [2024-03-03 21:13:40] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:40] Received coordinates: Latitude - 10.48818315697967, Longitude - 45.90808969341497
+[climatetwin] [2024-03-03 21:13:40] Received coordinates: Latitude - 10.48818315697967, Longitude - 45.90808969341497
+[climatetwin] [2024-03-03 21:13:40] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 10.921972777492215, 'longitude': -4.208763131990196}
+[climatetwin] [2024-03-03 21:13:40] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 10.921972777492215, 'longitude': -4.208763131990196}
+[climatetwin] [2024-03-03 21:13:40] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:40] Received coordinates: Latitude - 10.921972777492215, Longitude - -4.208763131990196
+[climatetwin] [2024-03-03 21:13:40] Received coordinates: Latitude - 10.921972777492215, Longitude - -4.208763131990196
+[climatetwin] [2024-03-03 21:13:40] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 10.921972777492215, 'longitude': -4.208763131990196}
+[climatetwin] [2024-03-03 21:13:40] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 10.921972777492215, 'longitude': -4.208763131990196}
+[climatetwin] [2024-03-03 21:13:40] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:40] Received coordinates: Latitude - 10.921972777492215, Longitude - -4.208763131990196
+[climatetwin] [2024-03-03 21:13:40] Received coordinates: Latitude - 10.921972777492215, Longitude - -4.208763131990196
+[climatetwin] [2024-03-03 21:13:40] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.965481525904583, 'longitude': 1.9701941194862185}
+[climatetwin] [2024-03-03 21:13:40] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.965481525904583, 'longitude': 1.9701941194862185}
+[climatetwin] [2024-03-03 21:13:40] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:40] Received coordinates: Latitude - 9.965481525904583, Longitude - 1.9701941194862185
+[climatetwin] [2024-03-03 21:13:40] Received coordinates: Latitude - 9.965481525904583, Longitude - 1.9701941194862185
+[climatetwin] [2024-03-03 21:13:40] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.965481525904583, 'longitude': 1.9701941194862185}
+[climatetwin] [2024-03-03 21:13:40] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 9.965481525904583, 'longitude': 1.9701941194862185}
+[climatetwin] [2024-03-03 21:13:40] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:40] Received coordinates: Latitude - 9.965481525904583, Longitude - 1.9701941194862185
+[climatetwin] [2024-03-03 21:13:40] Received coordinates: Latitude - 9.965481525904583, Longitude - 1.9701941194862185
+[climatetwin] [2024-03-03 21:13:41] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 10.394986509572718, 'longitude': 1.9335580535541537}
+[climatetwin] [2024-03-03 21:13:41] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 10.394986509572718, 'longitude': 1.9335580535541537}
+[climatetwin] [2024-03-03 21:13:41] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:41] Received coordinates: Latitude - 10.394986509572718, Longitude - 1.9335580535541537
+[climatetwin] [2024-03-03 21:13:41] Received coordinates: Latitude - 10.394986509572718, Longitude - 1.9335580535541537
+[climatetwin] [2024-03-03 21:13:41] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 10.394986509572718, 'longitude': 1.9335580535541537}
+[climatetwin] [2024-03-03 21:13:41] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 10.394986509572718, 'longitude': 1.9335580535541537}
+[climatetwin] [2024-03-03 21:13:41] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:41] Received coordinates: Latitude - 10.394986509572718, Longitude - 1.9335580535541537
+[climatetwin] [2024-03-03 21:13:41] Received coordinates: Latitude - 10.394986509572718, Longitude - 1.9335580535541537
+[climatetwin] [2024-03-03 21:13:41] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 6.808766601951115, 'longitude': 0.7200006139748694}
+[climatetwin] [2024-03-03 21:13:41] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 6.808766601951115, 'longitude': 0.7200006139748694}
+[climatetwin] [2024-03-03 21:13:41] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:41] Received coordinates: Latitude - 6.808766601951115, Longitude - 0.7200006139748694
+[climatetwin] [2024-03-03 21:13:41] Received coordinates: Latitude - 6.808766601951115, Longitude - 0.7200006139748694
+[climatetwin] [2024-03-03 21:13:41] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 6.808766601951115, 'longitude': 0.7200006139748694}
+[climatetwin] [2024-03-03 21:13:41] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 6.808766601951115, 'longitude': 0.7200006139748694}
+[climatetwin] [2024-03-03 21:13:41] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:41] Received coordinates: Latitude - 6.808766601951115, Longitude - 0.7200006139748694
+[climatetwin] [2024-03-03 21:13:41] Received coordinates: Latitude - 6.808766601951115, Longitude - 0.7200006139748694
+[climatetwin] [2024-03-03 21:13:41] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 8.472896816325088, 'longitude': -2.074338277772619}
+[climatetwin] [2024-03-03 21:13:41] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 8.472896816325088, 'longitude': -2.074338277772619}
+[climatetwin] [2024-03-03 21:13:41] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:41] Received coordinates: Latitude - 8.472896816325088, Longitude - -2.074338277772619
+[climatetwin] [2024-03-03 21:13:41] Received coordinates: Latitude - 8.472896816325088, Longitude - -2.074338277772619
+[climatetwin] [2024-03-03 21:13:41] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 8.472896816325088, 'longitude': -2.074338277772619}
+[climatetwin] [2024-03-03 21:13:41] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 8.472896816325088, 'longitude': -2.074338277772619}
+[climatetwin] [2024-03-03 21:13:41] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:41] Received coordinates: Latitude - 8.472896816325088, Longitude - -2.074338277772619
+[climatetwin] [2024-03-03 21:13:41] Received coordinates: Latitude - 8.472896816325088, Longitude - -2.074338277772619
+[climatetwin] [2024-03-03 21:13:41] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 6.857144584975265, 'longitude': 0.2595778675064313}
+[climatetwin] [2024-03-03 21:13:41] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 6.857144584975265, 'longitude': 0.2595778675064313}
+[climatetwin] [2024-03-03 21:13:41] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:41] Received coordinates: Latitude - 6.857144584975265, Longitude - 0.2595778675064313
+[climatetwin] [2024-03-03 21:13:41] Received coordinates: Latitude - 6.857144584975265, Longitude - 0.2595778675064313
+[climatetwin] [2024-03-03 21:13:41] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 6.857144584975265, 'longitude': 0.2595778675064313}
+[climatetwin] [2024-03-03 21:13:41] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 6.857144584975265, 'longitude': 0.2595778675064313}
+[climatetwin] [2024-03-03 21:13:41] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:41] Received coordinates: Latitude - 6.857144584975265, Longitude - 0.2595778675064313
+[climatetwin] [2024-03-03 21:13:41] Received coordinates: Latitude - 6.857144584975265, Longitude - 0.2595778675064313
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -10.809126478380367, 'longitude': 15.631179192736608}
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -10.809126478380367, 'longitude': 15.631179192736608}
+[climatetwin] [2024-03-03 21:13:42] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -10.809126478380367, Longitude - 15.631179192736608
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -10.809126478380367, Longitude - 15.631179192736608
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -10.809126478380367, 'longitude': 15.631179192736608}
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -10.809126478380367, 'longitude': 15.631179192736608}
+[climatetwin] [2024-03-03 21:13:42] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -10.809126478380367, Longitude - 15.631179192736608
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -10.809126478380367, Longitude - 15.631179192736608
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -7.927965230744823, 'longitude': 29.855367150927332}
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -7.927965230744823, 'longitude': 29.855367150927332}
+[climatetwin] [2024-03-03 21:13:42] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -7.927965230744823, Longitude - 29.855367150927332
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -7.927965230744823, Longitude - 29.855367150927332
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -7.927965230744823, 'longitude': 29.855367150927332}
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -7.927965230744823, 'longitude': 29.855367150927332}
+[climatetwin] [2024-03-03 21:13:42] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -7.927965230744823, Longitude - 29.855367150927332
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -7.927965230744823, Longitude - 29.855367150927332
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -6.531919187908338, 'longitude': 29.01471775664096}
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -6.531919187908338, 'longitude': 29.01471775664096}
+[climatetwin] [2024-03-03 21:13:42] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -6.531919187908338, Longitude - 29.01471775664096
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -6.531919187908338, Longitude - 29.01471775664096
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -6.531919187908338, 'longitude': 29.01471775664096}
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -6.531919187908338, 'longitude': 29.01471775664096}
+[climatetwin] [2024-03-03 21:13:42] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -6.531919187908338, Longitude - 29.01471775664096
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -6.531919187908338, Longitude - 29.01471775664096
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -7.781448580305017, 'longitude': 21.17738793109604}
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -7.781448580305017, 'longitude': 21.17738793109604}
+[climatetwin] [2024-03-03 21:13:42] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -7.781448580305017, Longitude - 21.17738793109604
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -7.781448580305017, Longitude - 21.17738793109604
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -7.781448580305017, 'longitude': 21.17738793109604}
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -7.781448580305017, 'longitude': 21.17738793109604}
+[climatetwin] [2024-03-03 21:13:42] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -7.781448580305017, Longitude - 21.17738793109604
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -7.781448580305017, Longitude - 21.17738793109604
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -12.128952040647897, 'longitude': 17.11542014300114}
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -12.128952040647897, 'longitude': 17.11542014300114}
+[climatetwin] [2024-03-03 21:13:42] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -12.128952040647897, Longitude - 17.11542014300114
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -12.128952040647897, Longitude - 17.11542014300114
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -12.128952040647897, 'longitude': 17.11542014300114}
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -12.128952040647897, 'longitude': 17.11542014300114}
+[climatetwin] [2024-03-03 21:13:42] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -12.128952040647897, Longitude - 17.11542014300114
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -12.128952040647897, Longitude - 17.11542014300114
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -0.22495871804621714, 'longitude': 19.851665651789766}
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -0.22495871804621714, 'longitude': 19.851665651789766}
+[climatetwin] [2024-03-03 21:13:42] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -0.22495871804621714, Longitude - 19.851665651789766
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -0.22495871804621714, Longitude - 19.851665651789766
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -0.22495871804621714, 'longitude': 19.851665651789766}
+[climatetwin] [2024-03-03 21:13:42] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -0.22495871804621714, 'longitude': 19.851665651789766}
+[climatetwin] [2024-03-03 21:13:42] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -0.22495871804621714, Longitude - 19.851665651789766
+[climatetwin] [2024-03-03 21:13:42] Received coordinates: Latitude - -0.22495871804621714, Longitude - 19.851665651789766
+[climatetwin] [2024-03-03 21:13:43] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -8.932475723522137, 'longitude': 13.80484201597793}
+[climatetwin] [2024-03-03 21:13:43] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -8.932475723522137, 'longitude': 13.80484201597793}
+[climatetwin] [2024-03-03 21:13:43] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:43] Received coordinates: Latitude - -8.932475723522137, Longitude - 13.80484201597793
+[climatetwin] [2024-03-03 21:13:43] Received coordinates: Latitude - -8.932475723522137, Longitude - 13.80484201597793
+[climatetwin] [2024-03-03 21:13:43] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -8.932475723522137, 'longitude': 13.80484201597793}
+[climatetwin] [2024-03-03 21:13:43] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -8.932475723522137, 'longitude': 13.80484201597793}
+[climatetwin] [2024-03-03 21:13:43] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:43] Received coordinates: Latitude - -8.932475723522137, Longitude - 13.80484201597793
+[climatetwin] [2024-03-03 21:13:43] Received coordinates: Latitude - -8.932475723522137, Longitude - 13.80484201597793
+[climatetwin] [2024-03-03 21:13:43] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 0.5207520304864683, 'longitude': 26.039259084696976}
+[climatetwin] [2024-03-03 21:13:43] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 0.5207520304864683, 'longitude': 26.039259084696976}
+[climatetwin] [2024-03-03 21:13:43] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:43] Received coordinates: Latitude - 0.5207520304864683, Longitude - 26.039259084696976
+[climatetwin] [2024-03-03 21:13:43] Received coordinates: Latitude - 0.5207520304864683, Longitude - 26.039259084696976
+[climatetwin] [2024-03-03 21:13:43] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 0.5207520304864683, 'longitude': 26.039259084696976}
+[climatetwin] [2024-03-03 21:13:43] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 0.5207520304864683, 'longitude': 26.039259084696976}
+[climatetwin] [2024-03-03 21:13:43] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:43] Received coordinates: Latitude - 0.5207520304864683, Longitude - 26.039259084696976
+[climatetwin] [2024-03-03 21:13:43] Received coordinates: Latitude - 0.5207520304864683, Longitude - 26.039259084696976
+[climatetwin] [2024-03-03 21:13:43] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -12.755809200711516, 'longitude': 22.699083431090802}
+[climatetwin] [2024-03-03 21:13:43] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -12.755809200711516, 'longitude': 22.699083431090802}
+[climatetwin] [2024-03-03 21:13:43] Sent WebSocket packet to client for ['10.244.233.190', 47426]
+[climatetwin] [2024-03-03 21:13:43] Received coordinates: Latitude - -12.755809200711516, Longitude - 22.699083431090802
+[climatetwin] [2024-03-03 21:13:43] Received coordinates: Latitude - -12.755809200711516, Longitude - 22.699083431090802
+[climatetwin] [2024-03-03 21:13:43] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -12.755809200711516, 'longitude': 22.699083431090802}
+[climatetwin] [2024-03-03 21:13:43] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': -12.755809200711516, 'longitude': 22.699083431090802}
+[climatetwin] [2024-03-03 21:13:43] Sent WebSocket packet to client for ['10.244.233.190', 40052]
+[climatetwin] [2024-03-03 21:13:43] Received coordinates: Latitude - -12.755809200711516, Longitude - 22.699083431090802
+[climatetwin] [2024-03-03 21:13:43] Received coordinates: Latitude - -12.755809200711516, Longitude - 22.699083431090802
+[climatetwin] [2024-03-03 21:13:43] Received update_coordinates event: {'type': 'update_coordinates', 'latitude': 0.7458643112999948, 'longitude': 25.517554504235683}
+
+{'type': 'update_coordinates', 'latitude': 0.7458643112999948, 'longitude': 25.517554504235683}
+{'type': 'update_coordinates', 'latitude': -8.91877504718559, 'longitude': 27.81704686190792}
+{'type': 'update_coordinates', 'latitude': -8.91877504718559, 'longitude': 27.81704686190792}
+{'type': 'update_coordinates', 'latitude': -9.244427014139813, 'longitude': 15.633271257459462}
+{'type': 'update_coordinates', 'latitude': -9.244427014139813, 'longitude': 15.633271257459462}
+{'type': 'update_coordinates', 'latitude': -12.834820499135795, 'longitude': 13.592134711827521}
+{'type': 'update_coordinates', 'latitude': -12.834820499135795, 'longitude': 13.592134711827521}
+{'type': 'update_coordinates', 'latitude': 47.00810946758513, 'longitude': 11.673468172838872}
+{'type': 'update_coordinates', 'latitude': 47.00810946758513, 'longitude': 11.673468172838872}
+{'type': 'update_coordinates', 'latitude': 48.83971694210871, 'longitude': 15.250618507781068}
+{'type': 'update_coordinates', 'latitude': 48.83971694210871, 'longitude': 15.250618507781068}
+{'type': 'update_coordinates', 'latitude': 46.54825933363781, 'longitude': 10.828675442397229}
+{'type': 'update_coordinates', 'latitude': 46.54825933363781, 'longitude': 10.828675442397229}
+{'type': 'update_coordinates', 'latitude': 4.154545289699492, 'longitude': 24.498944985799554}
+{'type': 'update_coordinates', 'latitude': 4.154545289699492, 'longitude': 24.498944985799554}
+{'type': 'update_coordinates', 'latitude': 5.967828917678484, 'longitude': 26.72288497886411}
+{'type': 'update_coordinates', 'latitude': 5.967828917678484, 'longitude': 26.72288497886411}
+{'type': 'update_coordinates', 'latitude': 3.7223123314311164, 'longitude': 30.540875501455314}
+{'type': 'update_coordinates', 'latitude': 3.7223123314311164, 'longitude': 30.540875501455314}
+{'type': 'update_coordinates', 'latitude': 5.090173139561283, 'longitude': 36.88332100677531}
+{'type': 'update_coordinates', 'latitude': 5.090173139561283, 'longitude': 36.88332100677531}
+{'type': 'update_coordinates', 'latitude': 4.905042152128803, 'longitude': 40.0502852990714}
+{'type': 'update_coordinates', 'latitude': 4.905042152128803, 'longitude': 40.0502852990714}
+{'type': 'update_coordinates', 'latitude': -1.385822098539386, 'longitude': 37.02924462505205}
+{'type': 'update_coordinates', 'latitude': -1.385822098539386, 'longitude': 37.02924462505205}
+{'type': 'update_coordinates', 'latitude': 4.557520947544435, 'longitude': 39.545672767698456}
+{'type': 'update_coordinates', 'latitude': 4.557520947544435, 'longitude': 39.545672767698456}
+{'type': 'update_coordinates', 'latitude': 7.169753781812462, 'longitude': 31.913270046954885}
+{'type': 'update_coordinates', 'latitude': 7.169753781812462, 'longitude': 31.913270046954885}
+{'type': 'update_coordinates', 'latitude': 8.648573520880031, 'longitude': 29.375092521770135}
+{'type': 'update_coordinates', 'latitude': 8.648573520880031, 'longitude': 29.375092521770135}
+{'type': 'update_coordinates', 'latitude': 11.415414800039223, 'longitude': 32.760049061959094}
+{'type': 'update_coordinates', 'latitude': 11.415414800039223, 'longitude': 32.760049061959094}
+{'type': 'update_coordinates', 'latitude': 9.807678109650876, 'longitude': 29.796578565728367}
+{'type': 'update_coordinates', 'latitude': 9.807678109650876, 'longitude': 29.796578565728367}
+{'type': 'update_coordinates', 'latitude': 9.156548930752882, 'longitude': 33.92680679565504}
+{'type': 'update_coordinates', 'latitude': 9.156548930752882, 'longitude': 33.92680679565504}
+{'type': 'update_coordinates', 'latitude': 10.326420043081857, 'longitude': 30.33400226202358}
+{'type': 'update_coordinates', 'latitude': 10.326420043081857, 'longitude': 30.33400226202358}
+{'type': 'update_coordinates', 'latitude': 41.58551595147024, 'longitude': 20.576821246107983}
+{'type': 'update_coordinates', 'latitude': 41.58551595147024, 'longitude': 20.576821246107983}
+{'type': 'update_coordinates', 'latitude': 41.47077257531534, 'longitude': 20.553905166877563}
+{'type': 'update_coordinates', 'latitude': 41.47077257531534, 'longitude': 20.553905166877563}
+{'type': 'update_coordinates', 'latitude': 40.998194251425026, 'longitude': 20.571815330335134}
+{'type': 'update_coordinates', 'latitude': 40.998194251425026, 'longitude': 20.571815330335134}
+{'type': 'update_coordinates', 'latitude': 41.76808027051995, 'longitude': 20.4388625580278}
+{'type': 'update_coordinates', 'latitude': 41.76808027051995, 'longitude': 20.4388625580278}
+{'type': 'update_coordinates', 'latitude': 9.473927706473393, 'longitude': -8.06419653820144}
+{'type': 'update_coordinates', 'latitude': 9.473927706473393, 'longitude': -8.06419653820144}
+{'type': 'update_coordinates', 'latitude': 6.815512361604022, 'longitude': -3.863240999673134}
+{'type': 'update_coordinates', 'latitude': 6.815512361604022, 'longitude': -3.863240999673134}
+{'type': 'update_coordinates', 'latitude': 7.118417590402084, 'longitude': -4.432565301950421}
+{'type': 'update_coordinates', 'latitude': 7.118417590402084, 'longitude': -4.432565301950421}
+{'type': 'update_coordinates', 'latitude': 48.60070268743102, 'longitude': 16.70818100401103}
+{'type': 'update_coordinates', 'latitude': 48.60070268743102, 'longitude': 16.70818100401103}
+{'type': 'update_coordinates', 'latitude': 48.357910580197576, 'longitude': 12.738361561617404}
+{'type': 'update_coordinates', 'latitude': 48.357910580197576, 'longitude': 12.738361561617404}
+{'type': 'update_coordinates', 'latitude': 48.88917282345798, 'longitude': 15.019800027668724}
+{'type': 'update_coordinates', 'latitude': 48.88917282345798, 'longitude': 15.019800027668724}
+{'type': 'update_coordinates', 'latitude': 47.35174332887596, 'longitude': 14.59888231618828}
+{'type': 'update_coordinates', 'latitude': 47.35174332887596, 'longitude': 14.59888231618828}
+{'type': 'update_coordinates', 'latitude': 29.601799868608076, 'longitude': 37.084534668734534}
+{'type': 'update_coordinates', 'latitude': 29.601799868608076, 'longitude': 37.084534668734534}
+{'type': 'update_coordinates', 'latitude': 31.4085034570308, 'longitude': 39.143019323189094}
+{'type': 'update_coordinates', 'latitude': 31.4085034570308, 'longitude': 39.143019323189094}
+{'type': 'update_coordinates', 'latitude': 32.54516370776341, 'longitude': 37.80117378856386}
+{'type': 'update_coordinates', 'latitude': 32.54516370776341, 'longitude': 37.80117378856386}
+{'type': 'update_coordinates', 'latitude': 32.741774908173404, 'longitude': 37.8126202442704}
+{'type': 'update_coordinates', 'latitude': 32.741774908173404, 'longitude': 37.8126202442704}
+{'type': 'update_coordinates', 'latitude': 30.34638284467947, 'longitude': 36.37684312833686}
+{'type': 'update_coordinates', 'latitude': 30.34638284467947, 'longitude': 36.37684312833686}
+{'type': 'update_coordinates', 'latitude': 31.454872490894676, 'longitude': 36.48660216863242}
+{'type': 'update_coordinates', 'latitude': 31.454872490894676, 'longitude': 36.48660216863242}
+{'type': 'update_coordinates', 'latitude': 29.2972459624922, 'longitude': 39.0539089599038}
+{'type': 'update_coordinates', 'latitude': 29.2972459624922, 'longitude': 39.0539089599038}
+{'type': 'update_coordinates', 'latitude': 29.395894974123067, 'longitude': 37.937481825072624}
+{'type': 'update_coordinates', 'latitude': 29.395894974123067, 'longitude': 37.937481825072624}
+{'type': 'update_coordinates', 'latitude': 29.29421658721377, 'longitude': 35.04397538218538}
+{'type': 'update_coordinates', 'latitude': 29.29421658721377, 'longitude': 35.04397538218538}
+{'type': 'update_coordinates', 'latitude': 29.45244343527706, 'longitude': 39.01276537076856}
+{'type': 'update_coordinates', 'latitude': 29.45244343527706, 'longitude': 39.01276537076856}
+{'type': 'update_coordinates', 'latitude': 30.31823551967336, 'longitude': 35.30832120701349}
+{'type': 'update_coordinates', 'latitude': 30.31823551967336, 'longitude': 35.30832120701349}
+{'type': 'update_coordinates', 'latitude': 30.318329836595524, 'longitude': 37.16155502436742}
+{'type': 'update_coordinates', 'latitude': 30.318329836595524, 'longitude': 37.16155502436742}
+{'type': 'update_coordinates', 'latitude': 33.33781906519384, 'longitude': 39.00272091723653}
+{'type': 'update_coordinates', 'latitude': 33.33781906519384, 'longitude': 39.00272091723653}
+{'type': 'update_coordinates', 'latitude': 30.39447888990908, 'longitude': 38.2162679593323}
+{'type': 'update_coordinates', 'latitude': 30.39447888990908, 'longitude': 38.2162679593323}
