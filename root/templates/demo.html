@@ -2273,10 +2273,14 @@
                     if ('choices' in data) {
                         var choices = data.choices;
 
+                        // Create a div for box-result container
+                        var boxResultContainer = document.createElement('div');
+                        boxResultContainer.classList.add('box-result');
+
                         Object.keys(choices).forEach(key => {
                             // Create a div for each key
                             var keyDiv = document.createElement('div');
-                            keyDiv.classList.add('box-result', 'square-container'); // Add 'box-result' class
+                            keyDiv.classList.add('square-container'); // Add 'square-container' class
 
                             // Create a paragraph for the key-value pair
                             var keyParagraph = document.createElement('p');
@@ -2296,9 +2300,12 @@
                             // Append the treasure button to the key div
                             keyDiv.appendChild(treasureButton);
 
-                            // Append the key div to the result container
-                            resultContainer.appendChild(keyDiv);
+                            // Append the key div to the box-result container
+                            boxResultContainer.appendChild(keyDiv);
                         });
+
+                        // Append the box-result container to the result container
+                        resultContainer.appendChild(boxResultContainer);
                     }
 
                     /*
