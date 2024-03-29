@@ -404,7 +404,8 @@
             display: grid; /* Use grid layout */
             grid-template-columns: auto 1fr; /* Key paragraph takes auto size, button takes remaining space */
             align-items: start; 
-            overflow: hidden; /* Hide overflowing content */
+            grid-template-rows: auto auto; 
+            /* overflow: hidden;  Hide overflowing content */
         }
 
 
@@ -533,7 +534,7 @@
             overflow-wrap: break-word;
             height: auto;
             align-self: start; /* Align the key text to the start (top) */
-            justify-self: start; /
+            justify-self: start; 
         }
 
 
