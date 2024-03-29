@@ -528,7 +528,11 @@
 
         .item-choice-key {
             word-wrap: break-word; 
+            width: 100%;
             grid-row: 1; /* Place key paragraph in the first row */
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+            height: auto;
         }
 
 
@@ -544,8 +548,8 @@
             margin: 0 auto;
             margin-bottom: 10px;
             grid-row: 2;
-            width: 100%;
-            height: 100%;
+            width: 100%; 
+            height: 100%;  
         }
 
         .treasure-button:hover {
