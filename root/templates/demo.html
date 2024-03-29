@@ -401,7 +401,11 @@
             font-size: 11px;
             padding: 12px; 
             box-sizing: border-box;  
+            display: grid; /* Use grid layout */
+            grid-template-columns: auto 1fr; /* Key paragraph takes auto size, button takes remaining space */
+            align-items: center; /* Align items vertically */
             overflow: hidden; /* Hide overflowing content */
+            text-overflow: ellipsis;
         }
 
 
@@ -532,8 +536,6 @@
             padding: 3px 10px;
             font-size: 12px;
             font-weight: 400;
-            position: absolute;
-            /* Added when changed to grid layout */
             margin: 0 auto;
             margin-bottom: 10px;
         }
@@ -1232,7 +1234,7 @@
 
                         // Add a button for exploring location
                         var exploreButton = document.createElement('button');
-                        exploreButton.innerText = 'Explore Location';
+                        exploreButton.innerText = 'Go here';
                         exploreButton.classList.add('explore-button');
 
                         // Set the location ID as a data attribute
