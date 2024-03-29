@@ -405,7 +405,6 @@
             grid-template-columns: auto 1fr; /* Key paragraph takes auto size, button takes remaining space */
             align-items: center; /* Align items vertically */
             overflow: hidden; /* Hide overflowing content */
-            text-overflow: ellipsis;
         }
 
 
@@ -2302,7 +2301,7 @@
                             keyParagraph.classList.add('item-choice-key');
 
                                 // Replace underscores with non-breaking spaces for wrapping
-                            var formattedKey = key.replace(/_/g, "&nbsp;");
+                            var formattedKey = key.replace(/_/g, " ");
                             keyParagraph.innerHTML = `<strong>${formattedKey}:</strong>`;
 
                             // keyParagraph.innerHTML = `<strong>${key}:</strong>`;
