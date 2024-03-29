@@ -2308,10 +2308,12 @@
                             keyParagraph.classList.add('item-choice-key');
 
                                 // Replace underscores with non-breaking spaces for wrapping
-                            //var formattedKey = key.replace(/_/g, " ");
-                            //keyParagraph.innerHTML = `<strong>${formattedKey}:</strong>`;
+                            var formattedKey = key.replace(/_/g, " ");
+                            keyParagraph.innerHTML = `<strong>${formattedKey}:</strong>`;
 
-                            keyParagraph.innerHTML = `<strong>${key}:</strong>`;
+                            // keyParagraph.innerHTML = `<strong>${key}:</strong>`;
+
+                            // format or put function to format picture here: if formattedKey == "explore location  street view image":
 
                             // Append the key paragraph to the key div
                             keyDiv.appendChild(keyParagraph);
