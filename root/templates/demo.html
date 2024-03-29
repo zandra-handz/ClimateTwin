@@ -718,11 +718,23 @@
             flex-direction: column;
         }
 
-        .popup-menu input,
-        .popup-menu button {
-            width: calc(100% - 16px); 
+        .popup-menu input {
+            width: calc(100% - 18px); 
             border-radius: 10px;
         }
+
+        .popup-menu button {
+            border-radius: 10px;
+            width: 100%;
+        }
+
+        .popup-menu-close button {
+            border-radius: 10px;
+            width: 25%;
+
+        }
+
+
 
         .popup-menu form .form-group textarea,
         .popup-content form .form-group textarea {
@@ -733,7 +745,8 @@
             resize: vertical; 
         }
 
-        .popup-menu button {
+        .popup-menu button,
+        .popup-menu-close button {
             background-color: #007bff;
             color: #fff;
             border: none;
@@ -742,28 +755,19 @@
             cursor: pointer;
         }
 
-        .popup-menu button:hover {
+        .popup-menu-close button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .popup-menu button:hover,
+        .popup-menu-close button:hover {
             background-color: #0056b3;
             border-radius: 10px;
             color: #fff;
         }
 
-        .popup-menu-close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            border-radius: 10px;
-            font-size: 12px;
-            color: #777;
-        }
-
-        .popup-menu-close:hover {
-            border-radius: 10px;
-            color: #333;
-        }
 
 
 
@@ -921,7 +925,7 @@
                 <textarea id="thirdDataInput" name="third_data" placeholder="Additional Data"></textarea>
             </div>
             <div class="form-group">
-                <button class="popup-button" type="submit">Collect Treasure</button>
+                <button class="popup-menu-button" type="submit">Collect Treasure</button>
             </div>
         </form>
     </div>
@@ -946,7 +950,7 @@
                 </div>
 
                 <div class="form-group">
-                    <button class="popup-button" type="submit">Send Gift</button>
+                    <button class="popup-menu-button" type="submit">Send Gift</button>
                 </div>
             </form>
         </div>
