@@ -2316,6 +2316,9 @@
                             // Append the key paragraph to the key div
                             keyDiv.appendChild(keyParagraph);
 
+                            var treasureButton;
+                            treasureButton.classList.add('treasure-button'); 
+
                             // Create a treasure button for each key
                             if (formattedKey === "explore location street view image") {
                                 // Create an img element for the image
@@ -2345,7 +2348,7 @@
                                 treasureButton.innerText = `${choices[key]}`;
                             }
 
-                            treasureButton.classList.add('treasure-button');
+                            
 
                             // Add a data attribute to store the key
                             treasureButton.dataset.itemKey = key;
