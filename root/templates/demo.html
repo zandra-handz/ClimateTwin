@@ -2285,14 +2285,14 @@
 
                             // Create a paragraph for the key-value pair
                             var keyParagraph = document.createElement('p');
-                            keyParagraph.innerHTML = `<strong>${key}:</strong> ${choices[key]}`;
+                            keyParagraph.innerHTML = `<strong>${key}:</strong>`;
 
                             // Append the key paragraph to the key div
                             keyDiv.appendChild(keyParagraph);
 
                             // Create a treasure button for each key
                             var treasureButton = document.createElement('button');
-                            treasureButton.innerText = 'Get Treasure';
+                            treasureButton.innerText = `${choices[key]}`;
                             treasureButton.classList.add('treasure-button');
 
                             // Add a data attribute to store the key
