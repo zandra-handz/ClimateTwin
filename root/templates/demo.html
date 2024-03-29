@@ -395,16 +395,16 @@
 
         .square-container {
             width: 100%; 
-            height: auto;
+            height: 160px;
             border: 1px solid white; 
             border-radius: 10px;
-            font-size: 11px;
+            font-size: 10px;
             padding: 8px; 
             box-sizing: border-box;  
             display: grid; /* Use grid layout */
             grid-template-columns: 1fr; /* One column */
             align-items: start; 
-            grid-template-rows: auto auto; 
+            grid-template-rows: 1fr 5fr; /* Two rows with heights in proportion */
             /* overflow: hidden;  Hide overflowing content */
         }
 
@@ -532,9 +532,10 @@
             grid-row: 1; /* Place key paragraph in the first row */
             white-space: pre-wrap;
             overflow-wrap: break-word;
-            height: auto;
+            height: 100%;
             align-self: start; /* Align the key text to the start (top) */
             justify-self: start; 
+            margin-top: 0;
         }
 
 
