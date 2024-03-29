@@ -2294,7 +2294,12 @@
                             // Create a paragraph for the key-value pair
                             var keyParagraph = document.createElement('p');
                             keyParagraph.classList.add('item-choice-key');
-                            keyParagraph.innerHTML = `<strong>${key}:</strong>`;
+
+                                // Replace underscores with non-breaking spaces for wrapping
+                            var formattedKey = key.replace(/_/g, "&nbsp;");
+                            keyParagraph.innerHTML = `<strong>${formattedKey}:</strong>`;
+                            
+                            // keyParagraph.innerHTML = `<strong>${key}:</strong>`;
 
                             // Append the key paragraph to the key div
                             keyDiv.appendChild(keyParagraph);
