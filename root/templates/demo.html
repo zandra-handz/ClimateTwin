@@ -2317,26 +2317,31 @@
                             keyDiv.appendChild(keyParagraph);
 
                             // Create a treasure button for each key
-                            var treasureButton = document.createElement('button');
-                            // Check if the formattedKey equals "explore location street view image"
-                            if (formattedKey === "explore location  street view image") {
+                            if (formattedKey === "explore location street view image") {
                                 // Create an img element for the image
                                 var imgElement = document.createElement('img');
 
-                                // Set the src attribute of the img element to the link value
-                                imgElement.src = choices[key]; 
-
-                                // Set alt text for accessibility
-                                imgElement.alt = "Image Link"; // You can set this to whatever alt text you prefer
-                                
-                                imgElement.style.maxWidth = '100%';
-                                imgElement.style.maxHeight = '100%';
-                                // Append the image element to the treasure button
-                                treasureButton.appendChild(imgElement);
-                                
-                                
-                                // treasureButton.innerText = "Image Link";
+                                // Check if the key has a value
+                                if (choices[key]) {
+                                    // If the key has a value, set the src attribute of the img element to the link value
+                                    imgElement.src = choices[key];
+                                    
+                                    // Set alt text for accessibility
+                                    imgElement.alt = "Image Link"; // You can set this to whatever alt text you prefer
+                                    
+                                    // Apply CSS styles to make the image responsive
+                                    imgElement.style.width = '100%';
+                                    imgElement.style.height = '100%';
+                                    imgElement.style.objectFit = 'cover';
+                                    
+                                    // Append the image element to the treasure button
+                                    treasureButton.appendChild(imgElement);
+                                } else {
+                                    // If the key has no value, set the text of the button to "No Image"
+                                    treasureButton.innerText = "No Image";
+                                }
                             } else {
+                                // If the key is not "explore location street view image", set the text of the button to the value
                                 treasureButton.innerText = `${choices[key]}`;
                             }
 
