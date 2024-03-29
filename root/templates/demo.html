@@ -253,7 +253,7 @@
         }
 
         .radio-label {
-            font-size: 16px; /* Adjust as needed */
+            font-size: 12px; /* Adjust as needed */
 
         }
 
@@ -565,7 +565,8 @@
             cursor: pointer;
         }
 
-        .explore-button {
+        .explore-button,
+        .popup-button {
             background-color: #007bff;
             color: #fff;
             border: none;
@@ -576,7 +577,8 @@
             font-weight: 400;
         }
 
-        .explore-button:hover {
+        .explore-button:hover,
+        .popup-button:hover {
             background-color: #0056b3;
             color: #fff;
             border: none;
@@ -688,7 +690,8 @@
             width: 300px; /* Adjust width as needed */
         }
 
-        .popup-menu-header {
+        .popup-menu-header,
+        .popup-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -717,17 +720,17 @@
 
         .popup-menu input,
         .popup-menu button {
-            margin-bottom: 10px;
+            width: calc(100% - 16px); 
             border-radius: 10px;
         }
 
         .popup-menu form .form-group textarea,
         .popup-content form .form-group textarea {
-            width: calc(100% - 16px); /* Adjusting width for padding */
+            width: calc(100% - 16px); 
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 10px;
-            resize: vertical; /* Allow vertical resizing */
+            resize: vertical; 
         }
 
         .popup-menu button {
@@ -918,7 +921,7 @@
                 <textarea id="thirdDataInput" name="third_data" placeholder="Additional Data"></textarea>
             </div>
             <div class="form-group">
-                <button type="submit">Collect Treasure</button>
+                <button class="popup-button" type="submit">Collect Treasure</button>
             </div>
         </form>
     </div>
@@ -928,7 +931,7 @@
     <div class="popup-menu" id="giftTreasurePopup" style="display: none;">
         <div class="popup-content">
             <div class="popup-header">
-                <h2 class="popup-title">Send to a friend</h2>
+                <h2 class="popup-menu-title">Send to a friend</h2>
                 <button class="popup-menu-close" id="popupGiftCloseBtn">Close</button>
             </div>
             <form id="popupGiftForm">
@@ -943,7 +946,7 @@
                 </div>
 
                 <div class="form-group">
-                    <button type="submit">Send Gift</button>
+                    <button class="popup-button" type="submit">Send Gift</button>
                 </div>
             </form>
         </div>
