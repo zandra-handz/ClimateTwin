@@ -526,6 +526,10 @@
           }
         }
 
+        .item-choice-key {
+            grid-row: 1; /* Place key paragraph in the first row */
+        }
+
 
         .treasure-button {
             background-color: limegreen;
@@ -538,6 +542,7 @@
             font-weight: 400;
             margin: 0 auto;
             margin-bottom: 10px;
+            grid-row: 2;
         }
 
         .treasure-button:hover {
@@ -2287,6 +2292,7 @@
 
                             // Create a paragraph for the key-value pair
                             var keyParagraph = document.createElement('p');
+                            keyParagraph.classList.add('item-choice-key');
                             keyParagraph.innerHTML = `<strong>${key}:</strong>`;
 
                             // Append the key paragraph to the key div
