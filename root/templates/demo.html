@@ -707,6 +707,7 @@
         }
 
         .popup-menu-title {
+            width: calc(100% - 50px); 
             font-size: 14px;
             margin-top: 6px;
         }
@@ -728,7 +729,7 @@
 
         .popup-menu-close button {
             border-radius: 10px;
-            width: 5%;
+            width: auto;
 
         }
 
@@ -932,8 +933,7 @@
             </div>
             <div class="form-group">
                 <textarea id="thirdDataInput" name="third_data" placeholder="Additional Data"></textarea>
-            </div>
-            <div class="form-group">
+
                 <button class="popup-menu" type="submit">Collect Treasure</button>
             </div>
         </form>
@@ -954,9 +954,6 @@
                         </div>
                     <div class="form-group">
                     <textarea id="messageInput" name="message" placeholder="Enter your message"></textarea>
-                </div>
-
-                <div class="form-group">
                     <button class="popup-menu" type="submit">Send Gift</button>
                 </div>
             </form>
