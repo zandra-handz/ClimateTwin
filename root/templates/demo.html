@@ -1718,31 +1718,24 @@
                     return;
                 }
             }
-
-            // Function to format datetime objects
+ 
             function formatValue(value) {
-                if (typeof value === 'string') {
-                    // If value is a string, return as is
+                if (typeof value === 'string') { 
                     return value;
-                } else if (value instanceof Date) {
-                    // If value is a Date object, format it as desired
-                    return value.toISOString(); // Example: ISO 8601 format
-                } else {
-                    // For other types, return as is
+                } else if (value instanceof Date) { 
+                    return value.toISOString(); 
+                } else { 
                     return value;
                 }
             }
-
-            // Check if data has the 'detail' key
+ 
             if (data && Array.isArray(data.detail)) {
-                data.detail.forEach(detail => {
-                    // Create a div for each detail item with a soft semi-transparent gray border and padding
+                data.detail.forEach(detail => { 
                     var detailDiv = document.createElement('div');
-                    detailDiv.style.border = '1px solid rgba(0, 0, 0, 0.2)'; // Soft semi-transparent gray border
-                    detailDiv.style.padding = '10px'; // Padding
+                    detailDiv.style.border = '1px solid rgba(0, 0, 0, 0.2)';  
+                    detailDiv.style.padding = '10px'; 
                     detailDiv.classList.add('result');
-
-                    // Iterate through each key-value pair in the detail object
+ 
                     Object.keys(detail).forEach(key => {
                         var paragraph = document.createElement('p');
                         paragraph.innerHTML = `<strong>${key.replace(/_/g, ' ')}:</strong> ${formatValue(detail[key])}`;

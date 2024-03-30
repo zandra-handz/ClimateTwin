@@ -843,6 +843,6 @@ def key_data(request):
             })
 
 
-        return Response(json.dumps({'detail': performance_data}), status=status.HTTP_200_OK)
+        return Response({'performance': performance_data}, status=status.HTTP_200_OK)
 
     return Response({'detail': 'Method not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
