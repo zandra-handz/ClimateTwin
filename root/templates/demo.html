@@ -688,11 +688,9 @@
             width: 300px; /* Adjust width as needed */
         }
 
-        .popup-menu-header,
-        .popup-header {
+        .popup-menu-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             margin-top: 6px;
         }
 
@@ -703,7 +701,6 @@
             font-size: 12px;
             color: #777;
             margin: 0;
-            position: absolute;
             top: 10px;
             right: 10px;
             padding: 0;
@@ -945,7 +942,8 @@
 
     <div class="popup-menu" id="giftTreasurePopup" style="display: none;">
         <div class="popup-content">
-            <div class="popup-header">
+            <button class="popup-menu-close" id="popupGiftCloseBtn">Close</button>
+            <div class="popup-menu-header">
                 <h2 class="popup-menu-title">Send to a friend</h2>
                 <button class="popup-menu-close" id="popupGiftCloseBtn">Close</button>
             </div>
