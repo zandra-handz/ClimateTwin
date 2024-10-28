@@ -35,14 +35,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 AUTH_USER_MODEL = 'users.BadRainbowzUser'
 
 # Convert to Env Variable
-GOOGLE_MAPS_API_KEY = 'AIzaSyBAW09hdzlszciQ4fTiZjfxcVMlEkF5Iqk'
-OPEN_MAP_API_KEY = '54a19c0e6cd35fb9f2d1ec6a87f22dba'
+GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY') 
+OPEN_MAP_API_KEY = os.getenv('OPEN_MAP_API_KEY')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = 'django-insecure-ulk_hius7lv6hv#tm72-+(%^^@0xtz1ze=pzxy$9yil*fo%=!-'
+
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', get_random_secret_key())
 
 
