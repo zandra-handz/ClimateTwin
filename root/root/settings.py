@@ -34,6 +34,9 @@ import sys
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+SECRET_KEY = 'qphf__s=$5d7*w^rd-hl!^mw^8bu97x_w_r@go0lp5yg4)-!(!'
+
 AUTH_USER_MODEL = 'users.BadRainbowzUser'
 
 # Convert to Env Variable
@@ -166,9 +169,9 @@ CELERY_TIMEZONE = TIME_ZONE
 CELERY_WORKER_CONCURRENCY = 10 
     
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-SESSION_COOKIE_AGE = 300
-SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
+# SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+# SESSION_COOKIE_AGE = 300
+# SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
 
 
@@ -400,7 +403,8 @@ REST_FRAMEWORK = {
     
     'DEFAULT_AUTHENTICATION_CLASSES' : [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+       # 'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
         
         #'rest_framework.authentication.SessionAuthentication'
     ],
@@ -411,7 +415,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'AUTH_HEADER_TYPES': ('JWT',),
+    #'AUTH_HEADER_TYPES': ('JWT',),
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=3),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1)
 }
