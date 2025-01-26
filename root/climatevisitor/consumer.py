@@ -15,6 +15,10 @@ import logging
 from urllib.parse import parse_qs
 
 
+from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.exceptions import AuthenticationFailed
+
 logger = logging.getLogger(__name__)
 
 console_handler = logging.StreamHandler()
@@ -36,29 +40,23 @@ def get_user_model():
 class ClimateTwinConsumer(WebsocketConsumer):
     def connect(self):
 
-        self.user_id = 3  # demo User ID is hardcoded for right now
 
-        self.group_name = f'climate_updates_{self.user_id}'
-        async_to_sync(self.channel_layer.group_add)(
-            self.group_name,
-            self.channel_name
-        ) 
-
-        
         self.user = self.authenticate_user()
  
+ 
         if self.user:
+
+            self.group_name = f'climate_updates_{self.user.id}'
+            async_to_sync(self.channel_layer.group_add)(
+                self.group_name,
+                self.channel_name
+            ) 
             self.accept() 
             # logger.info("Coordinates WebSocket connection established")
             self.send(text_data=json.dumps({
                 'message': f"User retrieved: {self.user}"
             }))
-        else:
-            self.accept()
-            # logger.info("Coordinates WebSocket connection established with demo user")
-            self.send(text_data=json.dumps({
-                'message': "Demo user used as authentication failed"
-            }))
+
 
     def disconnect(self, close_code):
         async_to_sync(self.channel_layer.group_discard)(
@@ -79,28 +77,59 @@ class ClimateTwinConsumer(WebsocketConsumer):
         # logger.info(f"Received coordinates: Country - {event['country_name']}, Temperature - {event['temperature']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")
 
     def authenticate_user(self):
+        # Get the query string from the WebSocket connection
         auth = self.scope.get('query_string', b'').decode()
         user_token = parse_qs(auth).get('user_token', [None])[0]
+
         if user_token:
             try:
-                from rest_framework_simplejwt.tokens import AccessToken
-                access_token = AccessToken(user_token)
-                user = self.get_user(access_token)
-                return user
-            except:
-                # Return a demo user with a hardcoded token
+                # Step 1: Authenticate using the DRF token
+                # DRF token authentication
+                user, _ = self.authenticate_with_drf_token(user_token)
+                
+                if user is None:
+                    raise AuthenticationFailed("Invalid DRF token")
+                
+                # Step 2: Generate a JWT token for the authenticated user
+                jwt_token = AccessToken.for_user(user)
+
+                # You can send the JWT token back to the user or use it in your logic
+                logger.debug(f"Generated JWT token in ClimateTwinConsumer for user {user.username}: {jwt_token}")
+                logger.debug(f"Generated JWT token in ClimateTwinConsumer for user {user.id}: {jwt_token}")
+
+                return user #jwt_token
+
+            except AuthenticationFailed as e:
+                logger.error(f"Authentication failed: {e}")
+                return self.get_demo_user()
+            except Exception as e:
+                logger.error(f"Unexpected error: {e}")
                 return self.get_demo_user()
         else:
-            # Return a demo user with a hardcoded token
+            print('Could not parse given user token, fetching demo user')
+            # If no user token is provided, return the demo user
             return self.get_demo_user()
+
+    def authenticate_with_drf_token(self, user_token):
+        """
+        Authenticate the user using the DRF Token authentication.
+        """
+        try:
+            # Authenticate using TokenAuthentication
+            auth = TokenAuthentication()
+            user, token = auth.authenticate_credentials(user_token)
+            return user, token
+        except AuthenticationFailed:
+            return None, None
 
     def get_user(self, access_token):
         try:
             user_id = access_token['user_id']
             user = self.get_user_model().objects.get(id=user_id)
-            return user
+            return user, access_token
         except:
-            return None
+            return None, None
+ 
 
     def get_demo_user(self):
         # Get or create a demo user with a hardcoded token
@@ -130,33 +159,42 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
     def connect(self):
 
-        self.user_id = 3
 
-        self.group_name = f'location_update_{self.user_id}'
+        self.user, self.token = self.authenticate_user() 
+        # logger.info("FOCUS HEEEEEEEEEEEERE Location Update WebSocket connection established")
+        # logger.info(self.user)
+  
+        channel_id = self.user.id
+
+        self.group_name = f'location_update_{channel_id}'
+
+    
         async_to_sync(self.channel_layer.group_add)(
             self.group_name,
             self.channel_name
-        )
-
-        #self.user = self.authenticate_user()
-        self.user, self.token = self.authenticate_user() 
-        # logger.info(f"Location Update Websockey connecting with user: {self.user}, token: {self.token}")
-
+        ) 
         self.accept()
-        # logger.info("Location Update WebSocket connection established")
+        logger.info("FOCUS HERE Location Update WebSocket connection established")
 
         data = self.fetch_data_from_endpoint(self.token)
         
         self.update_location(data)
-        # logger.info(data) 
-
-        # send_location_update_to_celery.delay(self.user_id, data['name'], data['temperature'], data['latitude'], data['longitude'])
-
-
+        # else:
+        #     self.accept()
+        #     # logger.info("Coordinates WebSocket connection established with demo user")
+        #     self.send(text_data=json.dumps({
+        #         'message': "Demo user used as authentication failed"
+        #     }))
 
 
     def fetch_data_from_endpoint(self, token):
         # Fetch data from endpoint(s)
+
+        # local
+        # explore_data_endpoint = 'http://localhost:8000/climatevisitor/currently-exploring/'
+        # discovery_locations_endpoint = 'http://localhost:8000/climatevisitor/locations/nearby/'
+        # twin_endpoint = 'http://localhost:8000/climatevisitor/currently-visiting/'
+    
         explore_data_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-exploring/'
         discovery_locations_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/locations/nearby/'
         twin_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-visiting/'
@@ -236,21 +274,52 @@ class LocationUpdateConsumer(WebsocketConsumer):
         logger.info("Received location update from Celery")
     '''
 
+
     def authenticate_user(self):
+        # Get the query string from the WebSocket connection
         auth = self.scope.get('query_string', b'').decode()
         user_token = parse_qs(auth).get('user_token', [None])[0]
+        print(f'USER TOKEN: ${user_token}')
+
         if user_token:
             try:
-                from rest_framework_simplejwt.tokens import AccessToken
-                access_token = AccessToken(user_token)
-                user = self.get_user(access_token)
-                return user, access_token
-            except:
-                # WARNING: This is returning other token
-                return self.get_demo_user() 
+                # Step 1: Authenticate using the DRF token
+                # DRF token authentication
+                user, _ = self.authenticate_with_drf_token(user_token)
+                
+                if user is None:
+                    raise AuthenticationFailed("Invalid DRF token")
+                
+                # Step 2: Generate a JWT token for the authenticated user
+                jwt_token = AccessToken.for_user(user)
+
+                # You can send the JWT token back to the user or use it in your logic
+                logger.debug(f"Generated JWT token for LocationUpdate for user {user.username}: {jwt_token}")
+
+                return user, user_token #using DRF to make endpoint call, not sure why I originally incorprated JWT, but may be better to use in future
+
+            except AuthenticationFailed as e:
+                logger.error(f"Authentication failed: {e}")
+                return self.get_demo_user()
+            except Exception as e:
+                logger.error(f"Unexpected error: {e}")
+                return self.get_demo_user()
         else:
-            # WARNING: This is returning other token
-            return self.get_demo_user() 
+            print('Could not parse given user token, fetching demo user')
+            # If no user token is provided, return the demo user
+            return self.get_demo_user()
+
+    def authenticate_with_drf_token(self, user_token):
+        """
+        Authenticate the user using the DRF Token authentication.
+        """
+        try:
+            # Authenticate using TokenAuthentication
+            auth = TokenAuthentication()
+            user, token = auth.authenticate_credentials(user_token)
+            return user, token
+        except AuthenticationFailed:
+            return None, None
 
     def get_user(self, access_token):
         try:

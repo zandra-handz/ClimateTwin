@@ -1,0 +1,24 @@
+# Virtual environment
+venv/
+.env/
+.venv/
+env/
+
+# Python compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Other common exclusions
+*.sqlite3
+*.log
+media/
+staticfiles/
+.vscode/
+.idea/
+*.swp
+*.swo
+.env
+.env.local
+node_modules/

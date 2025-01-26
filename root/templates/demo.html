@@ -8,7 +8,8 @@
     <title>ClimateTwin API Demo</title>
     <meta property="og:title" content="ClimateTwin API Demo">
     <meta property="og:description" content="Page to trial key ClimateTwin endpoints and view an animation of the main search algorithm in real time.">
-    <meta property="og:image" content="https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/static/climatevisitor/demo_preview.png">
+    <meta property="og:image" content="http://127.0.0.1:8000/climatevisitor/static/climatevisitor/demo_preview.png">
+    <!-- <meta property="og:image" content="https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/static/climatevisitor/demo_preview.png"> -->
 
     <style>
         * {
@@ -913,24 +914,34 @@
     <script src="{% static 'climatevisitor/js/maploader.js' %}"></script>
     
     <script>
+        var token = "0f27cbcf2998d5141a52ef68caa315f187d2437f";
+ 
 
         (function() {
-            var token = "f38e6b71380f11f62071126b0ff43fc0a2689982";
+ 
+
+ 
+
+            //Digital Ocean
+            //var token = "f38e6b71380f11f62071126b0ff43fc0a2689982";
             displayLoading('climate-updates-container', token);
-            displayLocationUpdate('climate-updates-container');
+            displayLocationUpdate('climate-updates-container', token);
         })();
 
     </script>
     
 
     <script>
+        //local:
+        var token = "0f27cbcf2998d5141a52ef68caa315f187d2437f";
         var endpoint = "/climatevisitor/";
         var userEndpoint = "/users/";
 
-        // local:
-        //var token = "ace6c0b2577a0eb08cedeea947ef3d597f9f67e9";
+      //  const token = "0f27cbcf2998d5141a52ef68caa315f187d2437f";
 
-        var token = "f38e6b71380f11f62071126b0ff43fc0a2689982";
+        // local: 
+
+        //var token = "f38e6b71380f11f62071126b0ff43fc0a2689982";
 
         function makeGetRequest(url, callback) {
             fetch(url, {
@@ -1198,7 +1209,7 @@
                             var locationId = this.getAttribute('data-id');
                             var locationType = this.getAttribute('data-explore_type');
                             exploreLocation(locationId);
-                            displayLocationUpdate('climate-updates-container');
+                            displayLocationUpdate('climate-updates-container', token);
                         });
 
                         // Append the explore button to the div
@@ -1260,7 +1271,11 @@
             event.preventDefault(); // Prevent the default form submission
 
             // Display the loading spinner
-            var token = "f38e6b71380f11f62071126b0ff43fc0a2689982";
+
+                    // local:
+       // var token = "0f27cbcf2998d5141a52ef68caa315f187d2437f";
+        // Digital Ocean
+           // var token = "f38e6b71380f11f62071126b0ff43fc0a2689982";
             displayLoading('climate-updates-container', token); 
  
             showMapContainer();
@@ -1447,7 +1462,8 @@
 
         // Function to make GET request to friends endpoint and display popup/modal for treasures
         function getFriendsAndDisplayTreasurePopup(treasureId) { // Updated parameter
-            var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/friends/';
+            //var url = 'http://127.0.0.1:8000/users/friends/';
+             var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/friends/';
             makeGetRequest(url, function(data) {
                 // Display popup/modal with friends as radio buttons for treasures
                 displayTreasureFriendsPopup(data, treasureId); // Updated function call
@@ -1598,6 +1614,7 @@
 
         // Event listener for "User Profile" button
         document.getElementById('userProfileBtn').addEventListener('click', function() {
+            //var url = 'http://127.0.0.1:8000/users/profile/';
             var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/profile/';
             makeGetRequest(url, function(data) {
                 // Display the result
@@ -1607,7 +1624,8 @@
 
         // Event listener for "User Inbox" button
         document.getElementById('userInboxBtn').addEventListener('click', function() {
-            var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/inbox/items/';
+            // var url = 'http://127.0.0.1:8000/users/inbox/items/';
+             var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/inbox/items/';
             makeGetRequest(url, function(data) {
                 // Display the result
                 displayResultBottom('result', data);
@@ -1617,7 +1635,8 @@
 
                 // Event listener for "Friend Profile" button
         document.getElementById('userFriendProfilesBtn').addEventListener('click', function() {
-            var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/friends/';
+            // var url = 'http://127.0.0.1:8000/climatevisitor/users/friends/';
+             var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/friends/';
             makeGetRequest(url, function(data) {
                 // Display the result
                 displayResultEdit('result', data);
@@ -1626,7 +1645,8 @@
 
         // Event listener for "User Summary" button
         document.getElementById('userSummaryBtn').addEventListener('click', function() {
-            var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/summary';
+            // var url = 'http://127.0.0.1:8000/users/summary';
+             var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/summary';
             makeGetRequest(url, function(data) {
                 // Display the result
                 displayResultSummary('result', data);
@@ -1838,7 +1858,8 @@
                 return; 
             }
 
-            var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/inbox/item/' + itemId;
+           // var url = 'http://127.0.0.1:8000/users/inbox/item/' + itemId;
+             var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/inbox/item/' + itemId;
             makeGetRequest(url, function(data) {
                 var inboxItemDiv = document.createElement('div');
                 inboxItemDiv.classList.add('result-bottom');
@@ -1942,7 +1963,8 @@
 
         // Function to handle accepting/rejecting a request
         function handleRequest(itemId, isAccepted) {
-            var url = `https://climatetwin-lzyyd.ondigitalocean.app/users/inbox/accept-gift-request/${itemId}/`;
+           // var url = `http://127.0.0.1:8000/users/inbox/accept-gift-request/${itemId}/`;
+             var url = `https://climatetwin-lzyyd.ondigitalocean.app/users/inbox/accept-gift-request/${itemId}/`;
             var requestData = {
                 is_accepted: isAccepted,
                 is_rejected: !isAccepted
@@ -2096,7 +2118,8 @@
 
         // Event listener for "User Profile" button
         document.getElementById('userProfileBtn').addEventListener('click', function() {
-            var endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/users/profile/';
+            var endpoint = 'http://127.0.0.1:8000/users/profile/';
+            // var endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/users/profile/';
             updateButtonText('userProfileBtn', endpoint);
             // Revert text of previous button, if any
             if (previousButtonId && previousButtonId !== 'userProfileBtn') {
@@ -2107,7 +2130,8 @@
 
         // Event listener for "User Inbox" button
         document.getElementById('userInboxBtn').addEventListener('click', function() {
-            var endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/users/inbox/items/';
+            var endpoint = 'http://127.0.0.1:8000/users/inbox/items/';
+            // var endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/users/inbox/items/';
             updateButtonText('userInboxBtn', endpoint);
             // Revert text of previous button, if any
             if (previousButtonId && previousButtonId !== 'userInboxBtn') {
@@ -2118,7 +2142,8 @@
 
         // Event listener for "Friend Profile" button
         document.getElementById('userFriendProfilesBtn').addEventListener('click', function() {
-            var endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/users/friends/';
+            var endpoint = 'http://127.0.0.1:8000/users/friends/';
+            // var endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/users/friends/';
             updateButtonText('userFriendProfilesBtn', endpoint);
             // Revert text of previous button, if any
             if (previousButtonId && previousButtonId !== 'userFriendProfilesBtn') {
@@ -2129,7 +2154,8 @@
 
         // Event listener for "User Summary" button
         document.getElementById('userSummaryBtn').addEventListener('click', function() {
-            var endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/users/summary/';
+            var endpoint = 'http://127.0.0.1:8000/users/summary/';
+            // var endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/users/summary/';
             updateButtonText('userSummaryBtn', endpoint);
             // Revert text of previous button, if any
             if (previousButtonId && previousButtonId !== 'userSummaryBtn') {
@@ -2140,7 +2166,8 @@
 
                 // Event listener for "Settings" button
         document.getElementById('userSettingsBtn').addEventListener('click', function() {
-            var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/settings/';
+           // var url = 'http://127.0.0.1:8000/users/settings/';
+             var url = 'https://climatetwin-lzyyd.ondigitalocean.app/users/settings/';
             makeGetRequest(url, function(data) {
                 // Display the result
                 displayResultEdit('result', data);
@@ -2361,7 +2388,8 @@
 
                 // Event listener for "User Performance Data" button
         document.getElementById('userPerfDataBtn').addEventListener('click', function() {
-            var url = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/performance/compare/key-data/';
+            //var url = 'http://127.0.0.1:8000/climatevisitor/performance/compare/key-data/';
+             var url = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/performance/compare/key-data/';
             makeGetRequest(url, function(data) {
                 // Display the result
                 displayResultPerformance('result', data);

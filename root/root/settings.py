@@ -15,6 +15,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 #                                           D:\CodingSpace\Redis\redis-cli -h 127.0.0.1 -p 6379 ping
 #                                           celery -A root worker -l info -E
 
+# need to run this on Windows: celery -A root.celery worker --loglevel=debug --pool=solo
+
 
 #for Digital Ocean use --> celery -A root worker --pool=gevent 
 
@@ -38,6 +40,10 @@ AUTH_USER_MODEL = 'users.BadRainbowzUser'
 GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY') 
 OPEN_MAP_API_KEY = os.getenv('OPEN_MAP_API_KEY')
 
+# local
+# CELERY_WORKER_POOL = 'solo'
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -54,19 +60,19 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', get_random_secret_key())
 #ALLOWED_HOSTS = ['climatetwin-lzyyd.ondigitalocean.app']
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
+
+# True for local
 DEVELOPMENT_MODE = False
 
-#if DEVELOPMENT_MODE == True:
+# uncomment for local
+# if DEVELOPMENT_MODE == True:
 #    DEBUG = True
 #    ALLOWED_HOSTS = []
 
+# comment out for local
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-#DEBUG = False
-    #ALLOWED_HOSTS = ['climatetwin-lzyyd.ondigitalocean.app']
-    #DEBUG = config("DEBUG", default=0)
-    # Digital Ocean droplet IP:
-    #CELERY_BROKER_URL = 'redis://10.108.0.3:6379/0'
+ 
 
 
 INSTALLED_APPS = [
@@ -115,12 +121,11 @@ CSRF_COOKIE_DOMAIN = [
 
 REDIS_URL = os.environ.get('REDIS_URL')
 
-'''
-# Local
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
 
-#CELERY_RESULT_BACKEND = "django-db"
+# Local
+# CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0' 
+# CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+  
 
 CHANNEL_LAYERS = {
     'default': {
@@ -131,8 +136,7 @@ CHANNEL_LAYERS = {
     },
 }
 
-
-'''
+ 
 
 # Digital Ocean
 REDIS_URL_WITH_CERT_OPTION = f'{REDIS_URL}/0?ssl_cert_reqs=CERT_REQUIRED'   
@@ -147,8 +151,12 @@ CHANNEL_LAYERS = {
         },
     },
 }
+ 
+ 
 
-
+# Celery configuration
+CELERY_TASK_RESULT_EXPIRES = 3600
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_ACCEPT_CONTENT = ['json']
@@ -294,7 +302,7 @@ DATABASES = {
 
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-#DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
+# DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
 
 
 if DEVELOPMENT_MODE is True:
@@ -303,7 +311,7 @@ if DEVELOPMENT_MODE is True:
             'ENGINE': 'django.db.backends.mysql',
             'NAME': 'ClimateTwin',
             'USER': 'root',
-            'PASSWORD': 'root123',
+            'PASSWORD': 'bringthemusicbacktome',
             'HOST': '127.0.0.1',
             'PORT': '3306',
             'OPTIONS': {
@@ -374,8 +382,12 @@ AUTH_PASSWORD_VALIDATORS = [
 STATIC_URL = '/static/'
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+ 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
+
+
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -400,9 +412,11 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT',),
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=3)
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=3),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1)
 }
 
+ 
 # Added this to get Swagger UI to send https requests when running on DigitalOcean
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 

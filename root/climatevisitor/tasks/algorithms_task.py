@@ -136,11 +136,12 @@ def run_climate_twin_algorithms_task(user_id, user_address):
 
 @shared_task(bind=True, max_retries=3)
 def process_climate_twin_request(self, user_id, user_address):
+    
     logger.info("Task to process climate twin request received.")
     
     print("Task to process climate twin request sent.")
 
-    user_instance = BadRainbowzUser.objects.get(pk=user_id)
+    #user_instance = BadRainbowzUser.objects.get(pk=user_id)
 
     try:
         run_climate_twin_algorithms_task(user_id, user_address)

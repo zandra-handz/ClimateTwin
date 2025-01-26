@@ -154,6 +154,9 @@ function displayMapAnimation(mapContainerId) {
     
     window.addEventListener('resize', () => handleResize(mapContainer));
 
+// local
+    // const socket = new WebSocket('ws://127.0.0.1:8000/ws/climate-twin/');
+
     const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/');
 
     socket.onopen = function(event) {
@@ -184,6 +187,9 @@ function displayMapUpdate(mapContainerId) {
     loadingDiv.classList.add('loading-container');
     // loadingDiv.innerHTML = '<div class="spinner"></div>';
     mapContainer.appendChild(loadingDiv);
+
+// local
+   // const socket = new WebSocket('ws://127.0.0.1:8000/ws/climate-twin/current/');
 
     const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/current/');
 
