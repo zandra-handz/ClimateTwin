@@ -15,9 +15,7 @@ import logging
 from urllib.parse import parse_qs
 
 
-from rest_framework_simplejwt.tokens import AccessToken
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.exceptions import AuthenticationFailed
+
 
 logger = logging.getLogger(__name__)
 
@@ -77,6 +75,9 @@ class ClimateTwinConsumer(WebsocketConsumer):
         # logger.info(f"Received coordinates: Country - {event['country_name']}, Temperature - {event['temperature']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")
 
     def authenticate_user(self):
+
+        from rest_framework_simplejwt.tokens import AccessToken
+        from rest_framework.exceptions import AuthenticationFailed
         # Get the query string from the WebSocket connection
         auth = self.scope.get('query_string', b'').decode()
         user_token = parse_qs(auth).get('user_token', [None])[0]
@@ -111,6 +112,8 @@ class ClimateTwinConsumer(WebsocketConsumer):
             return self.get_demo_user()
 
     def authenticate_with_drf_token(self, user_token):
+        from rest_framework.authentication import TokenAuthentication
+        from rest_framework.exceptions import AuthenticationFailed
         """
         Authenticate the user using the DRF Token authentication.
         """
@@ -276,6 +279,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
 
     def authenticate_user(self):
+        from rest_framework_simplejwt.tokens import AccessToken
+        from rest_framework.exceptions import AuthenticationFailed
         # Get the query string from the WebSocket connection
         auth = self.scope.get('query_string', b'').decode()
         user_token = parse_qs(auth).get('user_token', [None])[0]
@@ -313,6 +318,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
         """
         Authenticate the user using the DRF Token authentication.
         """
+        from rest_framework.authentication import TokenAuthentication
+        from rest_framework.exceptions import AuthenticationFailed
         try:
             # Authenticate using TokenAuthentication
             auth = TokenAuthentication()
