@@ -3,6 +3,7 @@ from . import serializers
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Q
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from djoser.views import UserViewSet
@@ -45,6 +46,15 @@ class UsernameReset(UserViewSet):
 @swagger_auto_schema(operation_id='resetPassword')
 class PasswordReset(UserViewSet):
     pass
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_current_user(request):
+    if not request.user.is_authenticated:
+        return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    serializer = serializers.BadRainbowzUserSerializer(request.user)
+    return JsonResponse(serializer.data)
    
 
 class TreasuresView(generics.ListCreateAPIView):
@@ -85,8 +95,8 @@ class TreasureView(generics.RetrieveAPIView, generics.DestroyAPIView):
 
 
 class UserProfileView(generics.ListCreateAPIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [AllowAny]
+    #authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.UserProfileSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
     
@@ -131,8 +141,8 @@ class EditUserProfileView(generics.RetrieveUpdateAPIView, generics.DestroyAPIVie
 
 
 class UserSettingsView(generics.ListCreateAPIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [AllowAny]
+   # authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.UserSettingsSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -590,8 +600,8 @@ class GiftRequestDetailView(generics.RetrieveUpdateAPIView):
 
 
 class UserSummaryView(generics.ListAPIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [AllowAny]
+    # authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.UserSummarySerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 

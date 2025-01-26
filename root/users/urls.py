@@ -3,6 +3,9 @@ from . import views
 
 urlpatterns = [
 
+
+    path('get-current/', views.get_current_user, name='get-current-user'),
+   
     path('activate/<uid>/<token>', views.ActivateUser.as_view({'get': 'activation'}), name='activation'),
     path('username/reset/confirm/<uid>/<token>', views.UsernameReset.as_view({'get': 'reset_username'}), name='reset-username'),
     path('password/reset/confirm/<uid>/<token>', views.PasswordReset.as_view({'get': 'reset_password'}), name='reset-password'),
