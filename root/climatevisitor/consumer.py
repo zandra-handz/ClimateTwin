@@ -82,10 +82,11 @@ class ClimateTwinConsumer(WebsocketConsumer):
         auth = self.scope.get('query_string', b'').decode()
         user_token = parse_qs(auth).get('user_token', [None])[0]
 
+        if not user_token:
+            raise AuthenticationFailed("No token provided")
+
         if user_token:
-            try:
-                # Step 1: Authenticate using the DRF token
-                # DRF token authentication
+            try: # DRF token authentication
                 user, _ = self.authenticate_with_drf_token(user_token)
                 
                 if user is None:
@@ -95,17 +96,30 @@ class ClimateTwinConsumer(WebsocketConsumer):
                 jwt_token = AccessToken.for_user(user)
 
                 # You can send the JWT token back to the user or use it in your logic
-                logger.debug(f"Generated JWT token in ClimateTwinConsumer for user {user.username}: {jwt_token}")
-                logger.debug(f"Generated JWT token in ClimateTwinConsumer for user {user.id}: {jwt_token}")
+                # logger.debug(f"Generated JWT token in ClimateTwinConsumer for user {user.username}: {jwt_token}")
+                # logger.debug(f"Generated JWT token in ClimateTwinConsumer for user {user.id}: {jwt_token}")
 
                 return user #jwt_token
+            
+            except AuthenticationFailed as drf_auth_error:
+                print(f"DRF token authentication failed: {drf_auth_error}")
 
-            except AuthenticationFailed as e:
-                logger.error(f"Authentication failed: {e}")
-                return self.get_demo_user()
-            except Exception as e:
-                logger.error(f"Unexpected error: {e}")
-                return self.get_demo_user()
+                # Step 3: Attempt JWT authentication directly
+                try:
+                    jwt_token = AccessToken(user_token)  # Decode the JWT
+                    user_id = jwt_token['user_id']  # Extract user ID from the token payload
+
+                    # Fetch the user from your User model
+                    from django.contrib.auth import get_user_model
+                    User = get_user_model()
+                    user = User.objects.get(id=user_id)
+
+                    return user, #jwt_token
+
+                except Exception as jwt_error:
+                    print(f"JWT authentication failed: {jwt_error}") 
+                    # logger.error(f"Authentication failed: {e}")
+                    return self.get_demo_user() 
         else:
             print('Could not parse given user token, fetching demo user')
             # If no user token is provided, return the demo user
@@ -279,17 +293,18 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
 
     def authenticate_user(self):
+
         from rest_framework_simplejwt.tokens import AccessToken
         from rest_framework.exceptions import AuthenticationFailed
         # Get the query string from the WebSocket connection
         auth = self.scope.get('query_string', b'').decode()
         user_token = parse_qs(auth).get('user_token', [None])[0]
-        print(f'USER TOKEN: ${user_token}')
+
+        if not user_token:
+            raise AuthenticationFailed("No token provided")
 
         if user_token:
-            try:
-                # Step 1: Authenticate using the DRF token
-                # DRF token authentication
+            try: # DRF token authentication
                 user, _ = self.authenticate_with_drf_token(user_token)
                 
                 if user is None:
@@ -299,16 +314,30 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 jwt_token = AccessToken.for_user(user)
 
                 # You can send the JWT token back to the user or use it in your logic
-                logger.debug(f"Generated JWT token for LocationUpdate for user {user.username}: {jwt_token}")
+                # logger.debug(f"Generated JWT token in ClimateTwinConsumer for user {user.username}: {jwt_token}")
+                # logger.debug(f"Generated JWT token in ClimateTwinConsumer for user {user.id}: {jwt_token}")
 
-                return user, user_token #using DRF to make endpoint call, not sure why I originally incorprated JWT, but may be better to use in future
+                return user, user_token
+            
+            except AuthenticationFailed as drf_auth_error:
+                print(f"DRF token authentication failed: {drf_auth_error}")
 
-            except AuthenticationFailed as e:
-                logger.error(f"Authentication failed: {e}")
-                return self.get_demo_user()
-            except Exception as e:
-                logger.error(f"Unexpected error: {e}")
-                return self.get_demo_user()
+                # Step 3: Attempt JWT authentication directly
+                try:
+                    jwt_token = AccessToken(user_token)  # Decode the JWT
+                    user_id = jwt_token['user_id']  # Extract user ID from the token payload
+
+                    # Fetch the user from your User model
+                    from django.contrib.auth import get_user_model
+                    User = get_user_model()
+                    user = User.objects.get(id=user_id)
+
+                    return user, jwt_token
+
+                except Exception as jwt_error:
+                    print(f"JWT authentication failed: {jwt_error}") 
+                    # logger.error(f"Authentication failed: {e}")
+                    return self.get_demo_user() 
         else:
             print('Could not parse given user token, fetching demo user')
             # If no user token is provided, return the demo user
