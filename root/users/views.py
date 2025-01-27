@@ -18,6 +18,8 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 
+from django.views.decorators.csrf import csrf_exempt
+
 
 @swagger_auto_schema(operation_id='activateUser', auto_schema=None)
 class ActivateUser(UserViewSet):
@@ -48,6 +50,7 @@ class PasswordReset(UserViewSet):
     pass
 
 @api_view(['GET'])
+@csrf_exempt
 @permission_classes([IsAuthenticated])
 def get_current_user(request):
     if not request.user.is_authenticated:
