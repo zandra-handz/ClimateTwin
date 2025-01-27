@@ -114,7 +114,7 @@ class ClimateTwinConsumer(WebsocketConsumer):
                     User = get_user_model()
                     user = User.objects.get(id=user_id)
 
-                    return user, #jwt_token
+                    return user #jwt_token
 
                 except Exception as jwt_error:
                     print(f"JWT authentication failed: {jwt_error}") 
