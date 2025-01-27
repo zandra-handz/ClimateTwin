@@ -95,8 +95,8 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'corsheaders',
     #must be placed after rest_framework
-    'allauth',
-    'allauth.account',
+    #'allauth',
+    #'allauth.account',
     'djoser',
     #'djoser.urls.authtoken',
     'templated_email',
@@ -213,8 +213,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
-
-CORS_ALLOW_HEADERS = ['content-type', 'authorization', 'x-csrftoken']
+ 
 
 
 TEMPLATES = [
@@ -430,7 +429,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 AUTHENTICATION_BACKENDS = (
     # ...
-    'allauth.account.auth_backends.AuthenticationBackend',
+    #'allauth.account.auth_backends.AuthenticationBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 

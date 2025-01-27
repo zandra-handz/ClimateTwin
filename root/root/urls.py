@@ -50,7 +50,7 @@ urlpatterns = [
     path('auth/', include('djoser.urls.authtoken')),
     
     # Allauth URLs
-    path('all-auth/', include('allauth.urls')),
+    # path('all-auth/', include('allauth.urls')),
     path('users/', include('users.urls')),
 
     path('users/token/', TokenObtainPairView.as_view(), name='get_token'),
