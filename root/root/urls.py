@@ -26,6 +26,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 from climatevisitor import routing
 
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 #http://127.0.0.1:8000/#/activate/Nw/c1f76q-af6408c556d882b5de0aee38033ee102
 schema_view = get_schema_view((info), public=True,
@@ -51,4 +52,9 @@ urlpatterns = [
     # Allauth URLs
     path('all-auth/', include('allauth.urls')),
     path('users/', include('users.urls')),
+
+    path('users/token/', TokenObtainPairView.as_view(), name='get_token'),
+    path('users/token/refresh/', TokenRefreshView.as_view(), name='refresh_token'),
+
+    
 ]
