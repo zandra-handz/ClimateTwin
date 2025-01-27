@@ -11,12 +11,13 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, throttling, viewsets
 from rest_framework import status
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication 
 from rest_framework.decorators import api_view, authentication_classes, permission_classes, throttle_classes
 from rest_framework.exceptions import PermissionDenied, MethodNotAllowed
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from django.views.decorators.csrf import csrf_exempt
 
@@ -51,6 +52,7 @@ class PasswordReset(UserViewSet):
 
 @api_view(['GET'])
 @csrf_exempt
+@authentication_classes([TokenAuthentication, JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def get_current_user(request):
     if not request.user.is_authenticated:
@@ -61,8 +63,8 @@ def get_current_user(request):
    
 
 class TreasuresView(generics.ListCreateAPIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.TreasureSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -79,8 +81,8 @@ class TreasuresView(generics.ListCreateAPIView):
     
 
 class TreasureView(generics.RetrieveAPIView, generics.DestroyAPIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.TreasureSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -98,7 +100,7 @@ class TreasureView(generics.RetrieveAPIView, generics.DestroyAPIView):
 
 
 class UserProfileView(generics.ListCreateAPIView):
-    #authentication_classes = [TokenAuthentication, SessionAuthentication]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = serializers.UserProfileSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
@@ -116,8 +118,8 @@ class UserProfileView(generics.ListCreateAPIView):
     
     
 class EditUserProfileView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.UserProfileSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -144,7 +146,7 @@ class EditUserProfileView(generics.RetrieveUpdateAPIView, generics.DestroyAPIVie
 
 
 class UserSettingsView(generics.ListCreateAPIView):
-   # authentication_classes = [TokenAuthentication, SessionAuthentication]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = serializers.UserSettingsSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
@@ -162,8 +164,8 @@ class UserSettingsView(generics.ListCreateAPIView):
 
 
 class ChangeUserSettingsView(generics.RetrieveUpdateAPIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.UserSettingsSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -184,8 +186,8 @@ class ChangeUserSettingsView(generics.RetrieveUpdateAPIView):
     
 
 class UserVisitsView(generics.ListAPIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.UserVisitSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -198,8 +200,8 @@ class UserVisitsView(generics.ListAPIView):
     
 
 class UserVisitView(generics.RetrieveAPIView, generics.DestroyAPIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.UserVisitSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -216,8 +218,8 @@ class UserVisitView(generics.RetrieveAPIView, generics.DestroyAPIView):
 
 
 class InboxView(generics.ListAPIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.InboxSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -235,8 +237,8 @@ class InboxView(generics.ListAPIView):
 
 
 class InboxItemDetailView(generics.RetrieveDestroyAPIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.InboxItemSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -278,8 +280,8 @@ class InboxItemDetailView(generics.RetrieveDestroyAPIView):
 
 
 class MessageView(generics.RetrieveUpdateDestroyAPIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.MessageSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -305,9 +307,9 @@ class MessageView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class CreateMessageView(generics.CreateAPIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    serializer_class = serializers.MessageSerializer
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = serializers.MessageSerializer 
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     queryset = models.Message.objects.all()
@@ -349,8 +351,8 @@ def send_message(request):
 
 # Test this (2/22)
 class SendFriendRequestView(generics.CreateAPIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.FriendRequestSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -395,8 +397,8 @@ class SendFriendRequestView(generics.CreateAPIView):
 
 
 class FriendRequestDetailView(generics.RetrieveUpdateAPIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.AcceptRejectFriendRequestSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -455,8 +457,8 @@ class FriendRequestDetailView(generics.RetrieveUpdateAPIView):
 
 
 class FriendProfilesView(generics.ListAPIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.FriendProfileSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -470,8 +472,8 @@ class FriendProfilesView(generics.ListAPIView):
 
 
 class FriendProfileView(generics.RetrieveUpdateAPIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.FriendProfileSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -492,8 +494,8 @@ class FriendProfileView(generics.RetrieveUpdateAPIView):
     
     
 class DeleteFriendshipView(generics.DestroyAPIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.FriendshipSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -507,8 +509,8 @@ class DeleteFriendshipView(generics.DestroyAPIView):
 
 
 class SendGiftRequestView(generics.CreateAPIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.GiftRequestSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -554,8 +556,8 @@ class SendGiftRequestView(generics.CreateAPIView):
 
 # Add line(s) to delete message as well when request object is deleted (2/22)
 class GiftRequestDetailView(generics.RetrieveUpdateAPIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.AcceptRejectGiftRequestSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -603,7 +605,7 @@ class GiftRequestDetailView(generics.RetrieveUpdateAPIView):
 
 
 class UserSummaryView(generics.ListAPIView):
-    # authentication_classes = [TokenAuthentication, SessionAuthentication]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = serializers.UserSummarySerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
@@ -618,8 +620,8 @@ class UserSummaryView(generics.ListAPIView):
 
 
 class UserLinksView(generics.ListAPIView):
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.UserLinksSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
