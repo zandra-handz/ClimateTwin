@@ -114,13 +114,14 @@ USE_TZ = True
 
 ASGI_APPLICATION = 'root.asgi.application'
 
-# CSRF_TRUSTED_ORIGINS = [
-#     'https://climatetwin-lzyyd.ondigitalocean.app' # adding https ended up being really important
-# ]
+# commenting out for testing
+CSRF_TRUSTED_ORIGINS = [
+    'https://climatetwin-lzyyd.ondigitalocean.app' # adding https ended up being really important
+]
 
-# CSRF_COOKIE_DOMAIN = [
-#                       'https://climatetwin-lzyyd.ondigitalocean.app'
-# ]
+CSRF_COOKIE_DOMAIN = [
+                      'https://climatetwin-lzyyd.ondigitalocean.app'
+]
 
 REDIS_URL = os.environ.get('REDIS_URL')
 
@@ -426,7 +427,9 @@ SIMPLE_JWT = {
 
  
 # Added this to get Swagger UI to send https requests when running on DigitalOcean
-# SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_PORT = True
 
 AUTHENTICATION_BACKENDS = (
     # ...
