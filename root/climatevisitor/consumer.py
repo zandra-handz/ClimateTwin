@@ -218,19 +218,21 @@ class LocationUpdateConsumer(WebsocketConsumer):
         twin_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-visiting/'
 
 
+       # Convert token to a string if it's an AccessToken object
+        token_str = str(token) if isinstance(token, AccessToken) else token
+        
         # Check if the token is a JWT by looking for the presence of '.' (periods in a JWT token)
-        if len(token.split('.')) == 3:
+        if len(token_str.split('.')) == 3:
             # It's a JWT token, so use the Bearer scheme
-            auth_header = f'Bearer {token}'
+            auth_header = f'Bearer {token_str}'
         else:
             # Otherwise, it's a DRF token, so use the Token scheme
-            auth_header = f'Token {token}'
+            auth_header = f'Token {token_str}'
         
         headers = {
             'Authorization': auth_header,
             'Content-Type': 'application/json'
         }
-
         explore_response = requests.get(explore_data_endpoint, headers=headers)
 
         if explore_response.status_code == 200:
