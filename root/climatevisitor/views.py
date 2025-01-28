@@ -14,9 +14,11 @@ from asgiref.sync import sync_to_async
 from django.shortcuts import render
 from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
+
 from drf_yasg import openapi
 import json
 from rest_framework import generics, status, throttling
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.decorators import api_view, authentication_classes, parser_classes, throttle_classes, permission_classes, schema
 from rest_framework.exceptions import MethodNotAllowed
@@ -56,8 +58,8 @@ def demo(request):
     ))
 @api_view(['POST'])
 #@throttle_classes([AnonRateThrottle, UserRateThrottle])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
-@permission_classes([AllowAny])
+@authentication_classes([TokenAuthentication, JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def go(request):
     """
     Returns a randomized matching climate location and nearby historical sites and pictures if any. 
@@ -225,8 +227,8 @@ def go(request):
 
 
 class HomeLocationsView(generics.ListAPIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.HomeLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -239,8 +241,8 @@ class HomeLocationsView(generics.ListAPIView):
 
 
 class HomeLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.HomeLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -266,8 +268,8 @@ class HomeLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
 
 
 class TwinLocationsView(generics.ListAPIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.ClimateTwinLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -280,8 +282,8 @@ class TwinLocationsView(generics.ListAPIView):
 
 
 class TwinLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.ClimateTwinLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -307,8 +309,8 @@ class TwinLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
 
 
 class CurrentTwinLocationView(generics.ListAPIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.ClimateTwinLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -332,8 +334,8 @@ class CurrentTwinLocationView(generics.ListAPIView):
             return None
 
 class MostRecentHomeLocationView(generics.ListAPIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.HomeLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -359,8 +361,8 @@ class MostRecentHomeLocationView(generics.ListAPIView):
 
 
 class CurrentLocationMatchView(generics.ListAPIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.ClimateTwinLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -398,8 +400,8 @@ class CurrentLocationMatchView(generics.ListAPIView):
  
 
 class MatchPerformanceView(generics.ListAPIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.ClimateTwinLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -434,8 +436,8 @@ class MatchPerformanceView(generics.ListAPIView):
 
 
 class DiscoveryLocationsView(generics.ListCreateAPIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.ClimateTwinDiscoveryLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -453,8 +455,8 @@ class DiscoveryLocationsView(generics.ListCreateAPIView):
 
 
 class DiscoveryLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.ClimateTwinDiscoveryLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -479,8 +481,8 @@ class DiscoveryLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIV
 
 
 class CurrentDiscoveryLocationsView(generics.ListAPIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.ClimateTwinDiscoveryLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -520,8 +522,8 @@ class CurrentDiscoveryLocationsView(generics.ListAPIView):
 
 
 class CreateExploreLocationView(generics.CreateAPIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.ClimateTwinExploreDiscoveryLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
     
@@ -575,8 +577,8 @@ class CreateExploreLocationView(generics.CreateAPIView):
 
 
 class ExploreLocationsView(generics.ListAPIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.ClimateTwinExploreDiscoveryLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -590,8 +592,8 @@ class ExploreLocationsView(generics.ListAPIView):
 
 
 class ExploreLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.ClimateTwinExploreDiscoveryLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -616,8 +618,8 @@ class ExploreLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIVie
 
 
 class CurrentExploreLocationView(generics.ListAPIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.ClimateTwinExploreDiscoveryLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
@@ -664,8 +666,8 @@ class CurrentExploreLocationView(generics.ListAPIView):
 @api_view(['POST'])
 @throttle_classes([AnonRateThrottle, UserRateThrottle])
 
-@authentication_classes([SessionAuthentication, TokenAuthentication])
-@permission_classes([AllowAny])
+@authentication_classes([TokenAuthentication, JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def collect(request):
     """
     Creates a treasure item from the user's current exploration site and saves as a Treasure instance belonging to user.
@@ -769,8 +771,8 @@ def collect(request):
 @swagger_auto_schema(method='get', operation_id='getItemChoices')
 @api_view(['GET'])
 @throttle_classes([AnonRateThrottle, UserRateThrottle])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
-@permission_classes([AllowAny])
+@authentication_classes([TokenAuthentication, JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def item_choices(request):
     """
     Returns all data from the user's most recently chosen exploration site that can be used as the item base to build an item. 
@@ -820,8 +822,8 @@ def item_choices(request):
 @swagger_auto_schema(method='get', operation_id='getClimateTwinPerformance')
 @api_view(['GET'])
 @throttle_classes([AnonRateThrottle, UserRateThrottle])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
-@permission_classes([AllowAny])
+@authentication_classes([TokenAuthentication, JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def key_data(request): 
 
     if request.method == 'GET':
