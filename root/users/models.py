@@ -107,6 +107,9 @@ class UserSettings(models.Model):
     high_contrast_mode = models.BooleanField(default=False)
     screen_reader = models.BooleanField(default=False)
 
+    manual_dark_mode = models.BooleanField(null=True, blank=True)
+    expo_push_token = models.CharField(max_length=255, null=True, blank=True) 
+
     class Meta:
         verbose_name = "User settings"
         verbose_name_plural = "User settings"
