@@ -206,6 +206,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
 
     def fetch_data_from_endpoint(self, token):
+        from rest_framework_simplejwt.tokens import AccessToken
         # Fetch data from endpoint(s)
 
         # local
