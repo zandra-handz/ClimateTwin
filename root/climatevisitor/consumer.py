@@ -24,6 +24,7 @@ console_handler.setLevel(logging.DEBUG)
 logger.addHandler(console_handler)
 
 import requests
+ 
 
  
 #def updateAnimation(latitude, longitude):
@@ -217,9 +218,16 @@ class LocationUpdateConsumer(WebsocketConsumer):
         twin_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-visiting/'
 
 
-
+        # Check if the token is a JWT by looking for the presence of '.' (periods in a JWT token)
+        if len(token.split('.')) == 3:
+            # It's a JWT token, so use the Bearer scheme
+            auth_header = f'Bearer {token}'
+        else:
+            # Otherwise, it's a DRF token, so use the Token scheme
+            auth_header = f'Token {token}'
+        
         headers = {
-            'Authorization': f'Token {token}',
+            'Authorization': auth_header,
             'Content-Type': 'application/json'
         }
 
