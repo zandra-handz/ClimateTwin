@@ -12,7 +12,8 @@ function displayLoading(resultContainerId, user_token) {
      // local
      // const socket = new WebSocket(`ws://127.0.0.1:8000/ws/climate-twin/?user_token=${user_token}`);
  
-    const socket = new WebSocket(`wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/?user_token=${user_token}`);
+    //const socket = new WebSocket(`wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/?user_token=${user_token}`);
+    const socket = new WebSocket(`wss://climatetwin.com/ws/climate-twin/?user_token=${user_token}`);
  
     socket.onopen = function(event) {
         // console.log('displayLoading WebSocket connection opened');
@@ -204,7 +205,9 @@ function displayLocationUpdate(resultContainerId, user_token) {
  // local
     // const socket = new WebSocket(`ws://127.0.0.1:8000/ws/climate-twin/current/?user_token=${user_token}`);
 
-    const socket = new WebSocket(`wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/current/?user_token=${user_token}`);
+   // const socket = new WebSocket(`wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/current/?user_token=${user_token}`);
+    const socket = new WebSocket(`wss://climatetwin.com/ws/climate-twin/current/?user_token=${user_token}`);
+
 
 
     socket.onopen = function(event) {

@@ -12,7 +12,8 @@ function displayLoading(resultContainerId, user_token) {
      // local
      // const socket = new WebSocket(`ws://127.0.0.1:8000/ws/climate-twin/?user_token=${user_token}`);
  
-    const socket = new WebSocket(`wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/?user_token=${user_token}`);
+    //const socket = new WebSocket(`wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/?user_token=${user_token}`);
+    const socket = new WebSocket(`wss://climatetwin.com/ws/climate-twin/?user_token=${user_token}`);
  
     socket.onopen = function(event) {
         // console.log('displayLoading WebSocket connection opened');
@@ -165,7 +166,7 @@ function replaceUpdate(update) {
             updateElement.innerHTML += `<span style="color: red">${update.latitude}, </span>`;
         } else {
             updateElement.innerHTML += `${update.latitude}, `;
-        }
+        }7888
 
         if (update.longitude > 0) {
             updateElement.innerHTML += `<span style="color: blue">${update.longitude}</span>`;
@@ -204,7 +205,9 @@ function displayLocationUpdate(resultContainerId, user_token) {
  // local
     // const socket = new WebSocket(`ws://127.0.0.1:8000/ws/climate-twin/current/?user_token=${user_token}`);
 
-    const socket = new WebSocket(`wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/current/?user_token=${user_token}`);
+   // const socket = new WebSocket(`wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/current/?user_token=${user_token}`);
+    const socket = new WebSocket(`wss://climatetwin.com/ws/climate-twin/current/?user_token=${user_token}`);
+
 
 
     socket.onopen = function(event) {

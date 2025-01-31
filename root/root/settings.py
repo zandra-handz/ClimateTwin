@@ -60,7 +60,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', get_random_secret_key())
     # pip freeze > requirements.txt
         # if pushing to Digital Oceean, remove this: twisted-iocpsupport==1.0.4
 
-#ALLOWED_HOSTS = ['climatetwin-lzyyd.ondigitalocean.app']
+#git ALLOWED_HOSTS = ['climatetwin-lzyyd.ondigitalocean.app']
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 
@@ -116,11 +116,15 @@ ASGI_APPLICATION = 'root.asgi.application'
 
 # commenting out for testing
 CSRF_TRUSTED_ORIGINS = [
-    'https://climatetwin-lzyyd.ondigitalocean.app' # adding https ended up being really important
+    'https://climatetwin-lzyyd.ondigitalocean.app',
+    'https://climatetwin.com',
+      # adding https ended up being really important
 ]
 
 CSRF_COOKIE_DOMAIN = [
-                      'https://climatetwin-lzyyd.ondigitalocean.app'
+                      'https://climatetwin-lzyyd.ondigitalocean.app',
+                      'https://climatetwin.com',
+
 ]
 
 REDIS_URL = os.environ.get('REDIS_URL')

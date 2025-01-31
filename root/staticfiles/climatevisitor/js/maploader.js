@@ -1,4 +1,4 @@
-function displayMapAnimation(mapContainerId) {
+function displayMapAnimation(mapContainerId, user_token) {
    
     
     function setMapContainerHeight() {
@@ -66,83 +66,9 @@ function displayMapAnimation(mapContainerId) {
     
         dot.classList.add('current');
     }
-    
-    
-    /*
-    function createDot(latitude, longitude, mapContainer) {
-        const dot = document.createElement('div');
-        dot.classList.add('dot');
-    
-        // Convert latitude and longitude to screen coordinates
-        const x = (longitude + 180) * (mapCanvas.offsetWidth / 360);
-        const y = (90 - latitude) * (mapCanvas.offsetHeight / 180);
-    
-        // Check if the calculated coordinates are within the canvas bounds
-        if (x < 0 || x > mapCanvas.offsetWidth || y < 0 || y > mapCanvas.offsetHeight) {
-            console.error('Dot coordinates are outside the canvas bounds.');
-            return; // Exit the function if coordinates are outside bounds
-        }
-    
-        // Set dot position
-        dot.style.left = x + 'px';
-        dot.style.top = y + 'px';
-    
-        // Append dot to the dot container
-        mapContainer.appendChild(dot);
-    
-        // Remove the dot after a certain period (e.g., 5 seconds)
-        setTimeout(() => {
-            mapContainer.removeChild(dot);
-        }, 800); // Adjust this value as needed
-    
-        // Fade out the previous dot, if any
-        const previousDot = mapContainer.querySelector('.dot.current');
-        if (previousDot) {
-            previousDot.style.opacity = 0; // Set opacity to 0 to trigger fade-out
-            // Remove the dot after a short delay
-            setTimeout(() => {
-                mapContainer.removeChild(previousDot);
-            }, 180); // Adjust this value for the fade-out duration
-        }
-    
-        // Set the new dot as the current dot
-        dot.classList.add('current');
-    }
-    */
-    
-    /*
-    function drawCenterDot(mapContainer) {
-        const dot = document.createElement('div');
-        dot.classList.add('center-dot');
+ 
 
-        // Calculate latitude and longitude for the center of the map
-        const centerLatitude = 0;
-        const centerLongitude = 0;
-
-        // Convert latitude and longitude to screen coordinates
-        const x = (centerLongitude + 180) * (mapCanvas.offsetWidth / 360);
-        const y = (90 - centerLatitude) * (mapCanvas.offsetHeight / 180);
-
-        // Set dot position
-        dot.style.left = x + 'px';
-        dot.style.top = y + 'px';
-
-        // Append dot to the dot container
-        mapContainer.appendChild(dot);
-    } */
-
-    function handleResize(mapContainer) {
-        // Remove the previous center dot, if exists
-        /*
-        const previousCenterDot = mapContainer.querySelector('.center-dot');
-        if (previousCenterDot) {
-            mapContainer.removeChild(previousCenterDot);
-        }
-        
-        // Redraw the center dot
-        drawCenterDot(mapContainer);
-        */
-        // Recalculate and update positions of all dots
+    function handleResize(mapContainer) { 
         const dotElements = mapContainer.querySelectorAll('.dot');
         dotElements.forEach(dotElement => {
             const latitude = parseFloat(dotElement.dataset.latitude);
@@ -157,7 +83,8 @@ function displayMapAnimation(mapContainerId) {
 // local
     // const socket = new WebSocket('ws://127.0.0.1:8000/ws/climate-twin/');
 
-    const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/');
+    //const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/');
+    const socket = new WebSocket(`wss://climatetwin.com/ws/climate-twin/?user_token=${user_token}`);
 
     socket.onopen = function(event) {
         console.log('WebSocket connection opened');
@@ -180,7 +107,7 @@ function displayMapAnimation(mapContainerId) {
     //drawCenterDot(mapContainer);
 }
 
-function displayMapUpdate(mapContainerId) {
+function displayMapUpdate(mapContainerId, user_token) {
     var mapContainer = document.getElementById(mapContainerId);
     mapContainer.innerHTML = '';
     var loadingDiv = document.createElement('div');
@@ -191,8 +118,8 @@ function displayMapUpdate(mapContainerId) {
 // local
    // const socket = new WebSocket('ws://127.0.0.1:8000/ws/climate-twin/current/');
 
-    const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/current/');
-
+   // const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/current/');
+   const socket = new WebSocket(`wss://climatetwin.com/ws/climate-twin/current/?user_token=${user_token}`);
     socket.onopen = function(event) {
         console.log('displayMapUpdate WebSocket connection opened');
     };

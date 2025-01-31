@@ -214,9 +214,13 @@ class LocationUpdateConsumer(WebsocketConsumer):
         # discovery_locations_endpoint = 'http://localhost:8000/climatevisitor/locations/nearby/'
         # twin_endpoint = 'http://localhost:8000/climatevisitor/currently-visiting/'
     
-        explore_data_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-exploring/'
-        discovery_locations_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/locations/nearby/'
-        twin_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-visiting/'
+        # explore_data_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-exploring/'
+        # discovery_locations_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/locations/nearby/'
+        # twin_endpoint = 'https://climatetwin-lzyyd.ondigitalocean.app/climatevisitor/currently-visiting/'
+
+        explore_data_endpoint = 'https://climatetwin.com/climatevisitor/currently-exploring/'
+        discovery_locations_endpoint = 'https://climatetwin.com/climatevisitor/locations/nearby/'
+        twin_endpoint = 'https://climatetwin.com/climatevisitor/currently-visiting/'
 
 
        # Convert token to a string if it's an AccessToken object
