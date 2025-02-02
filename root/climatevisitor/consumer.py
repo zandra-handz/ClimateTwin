@@ -120,11 +120,12 @@ class ClimateTwinConsumer(WebsocketConsumer):
                 except Exception as jwt_error:
                     print(f"JWT authentication failed: {jwt_error}") 
                     # logger.error(f"Authentication failed: {e}")
-                    return self.get_demo_user() 
-        else:
-            print('Could not parse given user token, fetching demo user')
-            # If no user token is provided, return the demo user
-            return self.get_demo_user()
+                    raise AuthenticationFailed("JWT authentication failed") 
+                    # return self.get_demo_user() 
+        # else:
+        #     print('Could not parse given user token, fetching demo user')
+        #     # If no user token is provided, return the demo user
+        #     return self.get_demo_user()
 
     def authenticate_with_drf_token(self, user_token):
         from rest_framework.authentication import TokenAuthentication
@@ -352,11 +353,12 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 except Exception as jwt_error:
                     print(f"JWT authentication failed: {jwt_error}") 
                     # logger.error(f"Authentication failed: {e}")
-                    return self.get_demo_user() 
-        else:
-            print('Could not parse given user token, fetching demo user')
-            # If no user token is provided, return the demo user
-            return self.get_demo_user()
+                    # return self.get_demo_user() 
+                    raise AuthenticationFailed("JWT authentication failed") 
+        # else:
+        #     print('Could not parse given user token, fetching demo user')
+        #     # If no user token is provided, return the demo user
+        #     return self.get_demo_user()
 
     def authenticate_with_drf_token(self, user_token):
         """
