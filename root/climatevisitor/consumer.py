@@ -38,23 +38,24 @@ def get_user_model():
 
 class ClimateTwinConsumer(WebsocketConsumer):
     def connect(self):
-
-
         self.user = self.authenticate_user()
- 
- 
-        if self.user:
 
+        if self.user:
             self.group_name = f'climate_updates_{self.user.id}'
             async_to_sync(self.channel_layer.group_add)(
                 self.group_name,
                 self.channel_name
             ) 
-            self.accept() 
-            # logger.info("Coordinates WebSocket connection established")
+            self.accept()
             self.send(text_data=json.dumps({
                 'message': f"User retrieved: {self.user}"
             }))
+        else:
+            self.accept()
+            self.send(text_data=json.dumps({
+                'error': "Authentication failed. Connection closing."
+            }))
+            self.close()
 
 
     def disconnect(self, close_code):
@@ -182,22 +183,30 @@ class LocationUpdateConsumer(WebsocketConsumer):
         self.user, self.token = self.authenticate_user() 
         # logger.info("FOCUS HEEEEEEEEEEEERE Location Update WebSocket connection established")
         # logger.info(self.user)
-  
-        channel_id = self.user.id
+        if self.user and self.token:
+            channel_id = self.user.id
 
-        self.group_name = f'location_update_{channel_id}'
+            self.group_name = f'location_update_{channel_id}'
 
-    
-        async_to_sync(self.channel_layer.group_add)(
-            self.group_name,
-            self.channel_name
-        ) 
-        self.accept()
-        logger.info("FOCUS HERE Location Update WebSocket connection established")
-
-        data = self.fetch_data_from_endpoint(self.token)
         
-        self.update_location(data)
+            async_to_sync(self.channel_layer.group_add)(
+                self.group_name,
+                self.channel_name
+            ) 
+            self.accept()
+            logger.info("FOCUS HERE Location Update WebSocket connection established")
+
+            data = self.fetch_data_from_endpoint(self.token)
+            
+            self.update_location(data)
+
+        else:
+            self.accept()
+            self.send(text_data=json.dumps({
+                'error': "Authentication in LocationUpdateConsumer failed. Connection closing."
+            }))
+            self.close()
+        
         # else:
         #     self.accept()
         #     # logger.info("Coordinates WebSocket connection established with demo user")
