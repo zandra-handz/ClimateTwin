@@ -81,10 +81,10 @@ function displayMapAnimation(mapContainerId, user_token) {
     window.addEventListener('resize', () => handleResize(mapContainer));
 
 // local
-    // const socket = new WebSocket('ws://127.0.0.1:8000/ws/climate-twin/');
+    const socket = new WebSocket(`ws://127.0.0.1:8000/ws/climate-twin/?user_token=${user_token}`);
 
     //const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/');
-    const socket = new WebSocket(`wss://climatetwin.com/ws/climate-twin/?user_token=${user_token}`);
+   // const socket = new WebSocket(`wss://climatetwin.com/ws/climate-twin/?user_token=${user_token}`);
 
     socket.onopen = function(event) {
         console.log('WebSocket connection opened');
@@ -116,10 +116,10 @@ function displayMapUpdate(mapContainerId, user_token) {
     mapContainer.appendChild(loadingDiv);
 
 // local
-   // const socket = new WebSocket('ws://127.0.0.1:8000/ws/climate-twin/current/');
+   const socket = new WebSocket(`ws://127.0.0.1:8000/ws/climate-twin/current/?user_token=${user_token}`);
 
    // const socket = new WebSocket('wss://climatetwin-lzyyd.ondigitalocean.app/ws/climate-twin/current/');
-   const socket = new WebSocket(`wss://climatetwin.com/ws/climate-twin/current/?user_token=${user_token}`);
+  // const socket = new WebSocket(`wss://climatetwin.com/ws/climate-twin/current/?user_token=${user_token}`);
     socket.onopen = function(event) {
         console.log('displayMapUpdate WebSocket connection opened');
     };

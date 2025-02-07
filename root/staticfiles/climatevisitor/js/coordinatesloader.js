@@ -166,7 +166,7 @@ function replaceUpdate(update) {
             updateElement.innerHTML += `<span style="color: red">${update.latitude}, </span>`;
         } else {
             updateElement.innerHTML += `${update.latitude}, `;
-        }7888
+        }
 
         if (update.longitude > 0) {
             updateElement.innerHTML += `<span style="color: blue">${update.longitude}</span>`;
