@@ -427,8 +427,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
             # Extract ID from nested objects
             current_location_id = (
-                explore_data.get('explore_location', {}).get('id') or
-                explore_data.get('twin_location', {}).get('id')
+                (explore_data.get('explore_location') or {}).get('id') or
+                (explore_data.get('twin_location') or {}).get('id')
             )
 
             if not current_location_id:
