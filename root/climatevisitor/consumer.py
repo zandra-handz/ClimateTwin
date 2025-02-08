@@ -394,7 +394,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
             if message.get("action") == "refresh":
                 data = self.fetch_data_from_endpoint(self.token)
                 self.update_location(data)
-
+                
+                    
     def fetch_data_from_endpoint(self, token):
         from rest_framework_simplejwt.tokens import AccessToken
 
@@ -402,11 +403,11 @@ class LocationUpdateConsumer(WebsocketConsumer):
         discovery_locations_endpoint = 'https://climatetwin.com/climatevisitor/locations/nearby/'
         twin_endpoint = 'https://climatetwin.com/climatevisitor/currently-visiting/'
 
+        #         explore_data_endpoint = 'http://localhost:8000/climatevisitor/currently-exploring/'
+    #         discovery_locations_endpoint = 'http://localhost:8000/climatevisitor/locations/nearby/'
+    #         twin_endpoint = 'http://localhost:8000/climatevisitor/currently-visiting/'
+        
 
-        # explore_data_endpoint = 'http://localhost:8000/climatevisitor/currently-exploring/'
-        # discovery_locations_endpoint = 'http://localhost:8000/climatevisitor/locations/nearby/'
-        # twin_endpoint = 'http://localhost:8000/climatevisitor/currently-visiting/'
-     
         token_str = str(token) if isinstance(token, AccessToken) else token
 
         if len(token_str.split('.')) == 3:
@@ -424,33 +425,33 @@ class LocationUpdateConsumer(WebsocketConsumer):
         if explore_response.status_code == 200:
             explore_data = explore_response.json()
 
-            current_location_id = explore_data.get('explore_location')
+            # Extract ID from nested objects
+            current_location_id = (
+                explore_data.get('explore_location', {}).get('id') or
+                explore_data.get('twin_location', {}).get('id')
+            )
 
             if not current_location_id:
-                # Don't actually need to pass in id, there will only ever be one current twin location
-                current_location_id = explore_data.get('twin_location')
+                return None
 
-                if not current_location_id:
-                    return None
-
+            # If it's a twin location, fetch data from twin endpoint
+            if explore_data.get('twin_location'):
                 current_location_data = requests.get(twin_endpoint, headers=headers)
                 return current_location_data.json()
-            
+
+            # If it's an explore location, fetch from discovery locations
             discovery_location_endpoint = f'{discovery_locations_endpoint}{current_location_id}/'
             current_location_data = requests.get(discovery_location_endpoint, headers=headers)
             return current_location_data.json()
-            
-          
 
+        # If no explore location, check twin location
         twin_response = requests.get(twin_endpoint, headers=headers)
 
         if twin_response.status_code == 200:
             return twin_response.json()
         
-        else:
-            # logger.error(f"Error: {twin_response.status_code}")
-            return None
-            
+        return None  # If nothing found
+
 
     def disconnect(self, close_code):
         """
