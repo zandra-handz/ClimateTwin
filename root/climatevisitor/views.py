@@ -8,6 +8,7 @@ from .climatetwinclasses.ClimateObjectClass import ClimateObject
 from .climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
 from .tasks.algorithms_task import run_climate_twin_algorithms_task
 from .tasks.algorithms_task import process_climate_twin_request
+from .tasks.tasks import send_location_update_to_celery
 
 from .climatetwinclasses.OpenMapAPIClass import OpenMapAPI
 from asgiref.sync import sync_to_async
@@ -551,6 +552,8 @@ class CreateExploreLocationView(generics.CreateAPIView):
             if (timezone.now() - twin_location.created_on).total_seconds() >= 7200:
                 return Response({'error': 'The twin location must have been created within the last two hours.'}, status=status.HTTP_400_BAD_REQUEST)
         
+            send_location_update_to_celery(user_id=user.id, temperature=twin_location.temperature, name=twin_location.name, latitude=twin_location.latitude, longitude=twin_location.longitude)
+            
             return super().post(request, *args, **kwargs)
 
         else:
@@ -565,6 +568,8 @@ class CreateExploreLocationView(generics.CreateAPIView):
 
                 return Response({'error': 'The explore location must have been created within the last two hours.'}, status=status.HTTP_400_BAD_REQUEST)
         
+            send_location_update_to_celery(user_id=user.id, name=explore_location.name, latitude=explore_location.latitude, longitude=explore_location.longitude)
+
             return super().post(request, *args, **kwargs)
 
 

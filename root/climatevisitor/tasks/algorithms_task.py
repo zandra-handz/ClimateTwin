@@ -1,5 +1,6 @@
 from ..animations import update_animation
 from ..consumer import ClimateTwinConsumer 
+from ..tasks import send_location_update_to_celery, send_explore_locations_ready
 from asgiref.sync import async_to_sync
 from celery import shared_task, current_app
 from channels.layers import get_channel_layer
@@ -127,6 +128,13 @@ def run_climate_twin_algorithms_task(user_id, user_address):
             print("An error occurred:", e)
 
         
+        try: 
+            send_explore_locations_ready(user_id=user_instance.id)
+                            
+        except Exception as e:
+            logger.error(f"Error occurred while sending explore locations: {str(e)}")
+            # Optionally, you can return an error message or just pass to continue
+            pass
 
         return "Success: Search completed!"
                 
@@ -151,3 +159,5 @@ def process_climate_twin_request(self, user_id, user_address):
     
     logger.info("Task to process climate twin request completed.")
     return "Request sent for processing"
+
+ 
