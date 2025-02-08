@@ -552,7 +552,10 @@ class CreateExploreLocationView(generics.CreateAPIView):
             if (timezone.now() - twin_location.created_on).total_seconds() >= 7200:
                 return Response({'error': 'The twin location must have been created within the last two hours.'}, status=status.HTTP_400_BAD_REQUEST)
         
-            send_location_update_to_celery(user_id=user.id, temperature=twin_location.temperature, name=twin_location.name, latitude=twin_location.latitude, longitude=twin_location.longitude)
+            try:
+                send_location_update_to_celery(user_id=user.id, temperature=twin_location.temperature, name=twin_location.name, latitude=twin_location.latitude, longitude=twin_location.longitude)
+            except Exception as e:
+                return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
             return super().post(request, *args, **kwargs)
 
@@ -568,7 +571,10 @@ class CreateExploreLocationView(generics.CreateAPIView):
 
                 return Response({'error': 'The explore location must have been created within the last two hours.'}, status=status.HTTP_400_BAD_REQUEST)
         
-            send_location_update_to_celery(user_id=user.id, name=explore_location.name, latitude=explore_location.latitude, longitude=explore_location.longitude)
+            try:
+                send_location_update_to_celery(user_id=user.id, temperature=None, name=explore_location.name, latitude=explore_location.latitude, longitude=explore_location.longitude)
+            except Exception as e:
+                return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             return super().post(request, *args, **kwargs)
 

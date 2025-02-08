@@ -66,6 +66,14 @@ class ClimateTwinConsumer(WebsocketConsumer):
         # logger.info("WebSocket connection closed")
 
 
+    def explore_locations_ready(self, event):
+        # logger.debug(f"Received update_coordinates event: {event}")
+        self.send(text_data=json.dumps({
+            'message': event['message'], 
+        }))
+        # logger.info(f"Received coordinates: Country - {event['country_name']}, Temperature - {event['temperature']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")
+
+
         
 
     def update_coordinates(self, event):
