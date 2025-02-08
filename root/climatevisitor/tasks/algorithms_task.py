@@ -1,6 +1,7 @@
 from ..animations import update_animation
-from ..consumer import ClimateTwinConsumer 
-from ..tasks import send_location_update_to_celery, send_explore_locations_ready
+from ..consumer import ClimateTwinConsumer  
+
+from climatevisitor.tasks.tasks import send_explore_locations_ready
 from asgiref.sync import async_to_sync
 from celery import shared_task, current_app
 from channels.layers import get_channel_layer
