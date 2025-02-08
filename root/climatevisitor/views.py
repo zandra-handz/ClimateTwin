@@ -631,7 +631,7 @@ class ExploreLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIVie
 class CurrentExploreLocationView(generics.ListAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    serializer_class = serializers.ClimateTwinExploreDiscoveryLocationSerializer
+    serializer_class = serializers.ClimateTwinExploreDiscoveryLocationWithObjectsSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     @swagger_auto_schema(operation_id='getCurrentExploreDiscoverLocation', operation_description="Returns the most recent explore location.")
