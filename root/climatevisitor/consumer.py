@@ -444,6 +444,12 @@ class LocationUpdateConsumer(WebsocketConsumer):
         
         return None  # If nothing found
 
+    def search_for_ruins(self, event):
+        # logger.debug(f"Received update_coordinates event: {event}")
+        self.send(text_data=json.dumps({
+            'message': event['message'], 
+        }))
+
     def explore_locations_ready(self, event):
         # logger.debug(f"Received update_coordinates event: {event}")
         self.send(text_data=json.dumps({
@@ -451,7 +457,14 @@ class LocationUpdateConsumer(WebsocketConsumer):
         }))
 
 
-    def send_no_ruins_found(self, event):
+    def no_ruins_found(self, event):
+        # logger.debug(f"Received update_coordinates event: {event}")
+        self.send(text_data=json.dumps({
+            'message': event['message'], 
+        }))
+
+
+    def clear_message(self, event):
         # logger.debug(f"Received update_coordinates event: {event}")
         self.send(text_data=json.dumps({
             'message': event['message'], 

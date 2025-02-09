@@ -4,6 +4,7 @@ from celery import shared_task
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from ..animations import update_animation
+import time
 
 
 # Name currently inaccurate; this is getting processed by main server
@@ -29,6 +30,43 @@ def send_coordinate_update_to_celery(user_id, country_name, temp_difference, tem
     )
     print(f"Sending Twin Finder location update: {country_name}, {temperature} degrees F, {temp_difference} degrees off, {latitude}, {longitude}")
 
+
+@shared_task
+def send_search_for_ruins_initiated(user_id):
+    channel_layer = get_channel_layer()
+
+    group_name = f'location_update_{user_id}'
+
+    async_to_sync(channel_layer.group_send)(
+        group_name,
+        {
+            'type': 'search_for_ruins',
+            'message': 'Searching for ruins!',
+        }
+    ) 
+
+
+
+
+@shared_task
+def send_clear_message(user_id):
+    time.sleep(8)
+    channel_layer = get_channel_layer()
+
+    group_name = f'location_update_{user_id}'
+
+    async_to_sync(channel_layer.group_send)(
+        group_name,
+        {
+            'type': 'clear_message',
+            'message': '',
+        }
+    ) 
+
+
+
+
+
 @shared_task
 def send_explore_locations_ready(user_id):
     channel_layer = get_channel_layer()
@@ -41,8 +79,7 @@ def send_explore_locations_ready(user_id):
             'type': 'explore_locations_ready',
             'message': 'Search complete!',
         }
-    )
-    print(f"Sending explore locations ready message to {user_id}")
+    ) 
 
 
 
@@ -59,8 +96,7 @@ def send_no_ruins_found(user_id):
             'type': 'no_ruins_found',
             'message': 'No ruins found',
         }
-    )
-    print(f"Sending explore locations ready message to {user_id}")
+    ) 
 
 
 

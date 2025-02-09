@@ -1,7 +1,7 @@
 from ..animations import update_animation
 from ..consumer import ClimateTwinConsumer  
 
-from climatevisitor.tasks.tasks import send_no_ruins_found, send_explore_locations_ready
+from climatevisitor.tasks.tasks import send_search_for_ruins_initiated, send_no_ruins_found, send_explore_locations_ready, send_clear_message
 from asgiref.sync import async_to_sync
 from celery import shared_task, current_app
 from channels.layers import get_channel_layer
@@ -82,6 +82,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
         climate_twin_location_instance.save()
         user_visit_instance.save()
 
+        send_search_for_ruins_initiated(user_id=user_instance.id)
 
         osm_api = OpenMapAPI()
         osm_results = osm_api.find_ancient_ruins(climate_twin_weather_profile.latitude, climate_twin_weather_profile.longitude, radius=100000, num_results=15)
@@ -139,6 +140,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
             # Optionally, you can return an error message or just pass to continue
             pass
 
+        send_clear_message(user_id=user_instance.id)
         return "Success: Search completed!"
                 
  
