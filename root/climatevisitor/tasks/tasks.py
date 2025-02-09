@@ -33,16 +33,44 @@ def send_coordinate_update_to_celery(user_id, country_name, temp_difference, tem
 def send_explore_locations_ready(user_id):
     channel_layer = get_channel_layer()
 
-    group_name = f'climate_updates_{user_id}'
+    group_name = f'location_update_{user_id}'
 
     async_to_sync(channel_layer.group_send)(
         group_name,
         {
             'type': 'explore_locations_ready',
-            'message': 'Explore locations are ready!',
+            'message': 'Search complete!',
         }
     )
     print(f"Sending explore locations ready message to {user_id}")
+
+
+
+
+@shared_task
+def send_no_ruins_found(user_id):
+    channel_layer = get_channel_layer()
+
+    group_name = f'location_update_{user_id}'
+
+    async_to_sync(channel_layer.group_send)(
+        group_name,
+        {
+            'type': 'no_ruins_found',
+            'message': 'No ruins found',
+        }
+    )
+    print(f"Sending explore locations ready message to {user_id}")
+
+
+
+
+
+
+ 
+
+
+
 
 
 @shared_task

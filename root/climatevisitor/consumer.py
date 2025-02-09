@@ -66,11 +66,7 @@ class ClimateTwinConsumer(WebsocketConsumer):
         # logger.info("WebSocket connection closed")
 
 
-    def explore_locations_ready(self, event):
-        # logger.debug(f"Received update_coordinates event: {event}")
-        self.send(text_data=json.dumps({
-            'message': event['message'], 
-        }))
+
         # logger.info(f"Received coordinates: Country - {event['country_name']}, Temperature - {event['temperature']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")
 
 
@@ -93,7 +89,7 @@ class ClimateTwinConsumer(WebsocketConsumer):
         from rest_framework.exceptions import AuthenticationFailed
         # Get the query string from the WebSocket connection
         auth = self.scope.get('query_string', b'').decode()
-        print(auth)
+        
         user_token = parse_qs(auth).get('user_token', [None])[0]
 
         if not user_token:
@@ -105,14 +101,10 @@ class ClimateTwinConsumer(WebsocketConsumer):
                 
                 if user is None:
                     raise AuthenticationFailed("Invalid DRF token")
-                
-                # Step 2: Generate a JWT token for the authenticated user
+                 
                 jwt_token = AccessToken.for_user(user)
 
-                # You can send the JWT token back to the user or use it in your logic
-                # logger.debug(f"Generated JWT token in ClimateTwinConsumer for user {user.username}: {jwt_token}")
-                # logger.debug(f"Generated JWT token in ClimateTwinConsumer for user {user.id}: {jwt_token}")
-
+                
                 return user #jwt_token
             
             except AuthenticationFailed as drf_auth_error:
@@ -452,6 +444,18 @@ class LocationUpdateConsumer(WebsocketConsumer):
         
         return None  # If nothing found
 
+    def explore_locations_ready(self, event):
+        # logger.debug(f"Received update_coordinates event: {event}")
+        self.send(text_data=json.dumps({
+            'message': event['message'], 
+        }))
+
+
+    def send_no_ruins_found(self, event):
+        # logger.debug(f"Received update_coordinates event: {event}")
+        self.send(text_data=json.dumps({
+            'message': event['message'], 
+        }))
 
     def disconnect(self, close_code):
         """
