@@ -227,6 +227,40 @@ def go(request):
 '''
 
 
+@swagger_auto_schema(method='get', order=2, operation_id='remainingGoesLeft', operation_dscription="Checks amount of trips remaining that user can make ", request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+
+    ))
+@api_view(['POST'])
+#@throttle_classes([AnonRateThrottle, UserRateThrottle])
+@authentication_classes([TokenAuthentication, JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_remaining_goes(request):
+    """
+
+    Gets remaining goes allowed for the day. Max amount is 5.
+
+    """
+
+    if request.method == 'GET':
+        user = request.user 
+ 
+
+        if user and not (user.is_staff or user.is_superuser): 
+            today = timezone.now().date()
+            daily_count = models.ClimateTwinDiscoveryLocation.objects.filter(user=user, created_on__date=today).count()
+            if daily_count >= 5:
+                 return Response({'remaining goes': '0'}, status=status.HTTP_200_OK)
+            return Response({'remaining goes' : f'{daily_count}'}, status=status.HTTP_200_OK)
+ 
+        # Send the task to Celery for execution
+        #run_climate_twin_algorithms_task(user.id, user_address) 
+
+        return Response({'remaining goes': 'No limit'}, status=status.HTTP_200_OK)
+
+    return Response({'detail': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
 class HomeLocationsView(generics.ListAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -320,7 +354,7 @@ class CurrentTwinLocationView(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         latest_location = self.get_latest_location()
         if not latest_location:
-            return Response({'detail': 'You are not visiting anywhere right now.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail': 'You are not visiting anywhere right now.'}, status=status.HTTP_200_OK)
         serializer = self.get_serializer(latest_location)
         return Response(serializer.data)
 
@@ -638,7 +672,7 @@ class CurrentExploreLocationView(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         latest_location = self.get_latest_explore_location(request.user)
         if not latest_location:
-            return Response({'detail': 'You are not exploring any locations right now. Pick an explore location to collect treasure!'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail': 'You are not exploring any locations right now. Pick an explore location to collect treasure!'}, status=status.HTTP_200_OK)
         serializer = self.get_serializer(latest_location)
         return Response(serializer.data)
 
