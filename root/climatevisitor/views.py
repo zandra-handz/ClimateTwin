@@ -227,11 +227,11 @@ def go(request):
 '''
 
 
-@swagger_auto_schema(method='get', order=2, operation_id='remainingGoesLeft', operation_dscription="Checks amount of trips remaining that user can make ", request_body=openapi.Schema(
+@swagger_auto_schema(method='get', operation_id='remainingGoesLeft', operation_dscription="Checks amount of trips remaining that user can make ", request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
 
     ))
-@api_view(['POST'])
+@api_view(['GET'])
 #@throttle_classes([AnonRateThrottle, UserRateThrottle])
 @authentication_classes([TokenAuthentication, JWTAuthentication])
 @permission_classes([IsAuthenticated])
