@@ -250,15 +250,15 @@ def get_remaining_goes(request):
             today = timezone.now().date()
             daily_count = models.ClimateTwinDiscoveryLocation.objects.filter(user=user, created_on__date=today).count()
             if daily_count >= 5:
-                 return Response({'remaining goes': '0'}, status=status.HTTP_200_OK)
-            return Response({'remaining goes' : f'{daily_count}'}, status=status.HTTP_200_OK)
+                 return Response({'remaining_goes': '0'}, status=status.HTTP_200_OK)
+            return Response({'remaining_goes' : f'{daily_count}'}, status=status.HTTP_200_OK)
  
         # Send the task to Celery for execution
         #run_climate_twin_algorithms_task(user.id, user_address) 
 
-        return Response({'remaining goes': 'No limit'}, status=status.HTTP_200_OK)
+        return Response({'remaining_goes': 'No limit'}, status=status.HTTP_200_OK)
 
-    return Response({'detail': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    return Response({'error': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class HomeLocationsView(generics.ListAPIView):
