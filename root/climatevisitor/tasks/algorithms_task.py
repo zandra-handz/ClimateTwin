@@ -139,8 +139,8 @@ def run_climate_twin_algorithms_task(user_id, user_address):
         try:
             current_location = CurrentLocation.update_or_create_location(user=user_instance, twin_location=climate_twin_location_instance)
             
-            # ADD HERE: Schedule the expiration task after updating or creating the current location
-            async_to_sync(schedule_expiration_task.apply_async)(args=[user_id])  # Schedules expiration task in a sync way
+             # Schedule the expiration task after updating or creating the current location
+            schedule_expiration_task(args=[user_id])  # No async_to_sync wrapper needed
 
         except Exception as e:
             print("An error occurred:", e)
@@ -180,7 +180,7 @@ def process_climate_twin_request(self, user_id, user_address):
 
 @shared_task(bind=True, max_retries=3)
 def schedule_expiration_task(self, user_id):
-    sleep(0)
+ 
 
     try:
         # Fetch the current location for the user
@@ -219,8 +219,6 @@ def schedule_expiration_task(self, user_id):
         timeout_seconds = max(0, (expiration_time - timezone.now()).total_seconds())
  
         cache.set(cache_key, True, timeout=int(timeout_seconds))
-
-
 
 
     except CurrentLocation.DoesNotExist:
