@@ -35,6 +35,16 @@ class ClimateTwinDiscoveryLocationSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class ClimateTwinDiscoveryLocationCreateSerializer(serializers.ModelSerializer):
+
+     
+
+    class Meta(object):
+        model = models.ClimateTwinDiscoveryLocation
+        fields = "__all__"
+
+
+
 
 
 

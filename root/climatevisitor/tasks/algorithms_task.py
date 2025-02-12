@@ -112,7 +112,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
                 "origin_location": climate_twin_location_instance.id,
             }
 
-            serializer = serializers.ClimateTwinDiscoveryLocationSerializer(data=formatted_ruin)
+            serializer = serializers.ClimateTwinDiscoveryLocationCreateSerializer(data=formatted_ruin)
             if serializer.is_valid():
                 discovery_location_instance = serializer.save(
                     user=user_instance  
