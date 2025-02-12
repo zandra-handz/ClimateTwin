@@ -36,6 +36,9 @@ class ClimateTwinDiscoveryLocationSerializer(serializers.ModelSerializer):
 
 
 
+
+
+
 class ClimateTwinExploreDiscoveryLocationSerializer(serializers.ModelSerializer):
  
     class Meta:

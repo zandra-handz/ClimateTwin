@@ -527,7 +527,7 @@ class CurrentDiscoveryLocationsView(generics.ListAPIView):
         if not latest_location:
             return Response({'detail': 'You are not visiting anywhere right now.'}, status=status.HTTP_200_OK)
         
-        discovery_locations = models.ClimateTwinDiscoveryLocation.objects.filter(origin_location=latest_location).order_by('miles_away')
+        discovery_locations = models.ClimateTwinDiscoveryLocation.objects.filter(origin_location_id=latest_location.pk).order_by('miles_away')
         if not discovery_locations:
             return Response({"detail": "No ruins were found nearby."}, status=status.HTTP_200_OK)
         

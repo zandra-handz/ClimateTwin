@@ -1,7 +1,7 @@
 from ..animations import update_animation
 from ..consumer import ClimateTwinConsumer  
 
-from climatevisitor.tasks.tasks import send_search_for_ruins_initiated, send_no_ruins_found, send_explore_locations_ready, send_clear_message
+from climatevisitor.tasks.tasks import send_search_for_ruins_initiated, send_no_ruins_found, send_explore_locations_ready, send_clear_message, send_returned_home_message
 from asgiref.sync import async_to_sync
 from celery import shared_task, current_app, current_task
 from channels.layers import get_channel_layer
@@ -11,6 +11,7 @@ from climatevisitor.climatetwinclasses.ClimateEncounterClass import ClimateEncou
 from climatevisitor.climatetwinclasses.OpenMapAPIClass import OpenMapAPI
 from climatevisitor.models import ClimateTwinLocation, ClimateTwinExploreLocation, CurrentLocation
 from climatevisitor import serializers
+
 #from datetime import timezone
 from django.core.cache import cache 
 from django.utils import timezone 
@@ -259,6 +260,10 @@ def process_expiration_task(user_id):
         logger.info(f"User {user_id}'s location expired successfully.")
         print(f"User {user_id}'s location expired successfully.")
 
+        try:
+            send_returned_home_message(user_id=user_id)
+        except Exception as e:
+            print(f"Couldn't send returned home message.")
     except CurrentLocation.DoesNotExist:
         logger.error(f"CurrentLocation for user {user_id} does not exist.")
     except Exception as exc:

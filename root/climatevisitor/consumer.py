@@ -470,6 +470,12 @@ class LocationUpdateConsumer(WebsocketConsumer):
             'message': event['message'], 
         }))
 
+    def returned_home_message(self, event):
+        # logger.debug(f"Received update_coordinates event: {event}")
+        self.send(text_data=json.dumps({
+            'message': event['message'], 
+        }))
+
     def disconnect(self, close_code):
         """
         Handles WebSocket disconnection and cleans up the connection.

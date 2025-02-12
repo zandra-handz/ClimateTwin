@@ -46,6 +46,21 @@ def send_search_for_ruins_initiated(user_id):
     ) 
 
 
+@shared_task
+def send_returned_home_message(user_id):
+    time.sleep(8)
+    channel_layer = get_channel_layer()
+
+    group_name = f'location_update_{user_id}'
+
+    async_to_sync(channel_layer.group_send)(
+        group_name,
+        {
+            'type': 'returned_home_message',
+            'message': 'User has returned home.',
+        }
+    ) 
+
 
 
 @shared_task
