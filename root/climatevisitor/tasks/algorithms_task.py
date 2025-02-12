@@ -219,7 +219,7 @@ def schedule_expiration_task(self, user_id, current_location):
         #process_expiration_task.apply_async((user_id,), countdown=600)  # 10 seconds for testing
 
         # Use countdown to schedule the task to run in 2 hours
-        process_expiration_task.apply_async((user_id,), countdown=2 * 60 * 60)  # 2 hours in seconds
+        process_expiration_task.apply_async((user_id, current_location,), countdown=60)  # 2 hours in seconds
  
         timeout_seconds = max(0, (expiration_time - timezone.now()).total_seconds())
  
@@ -240,24 +240,27 @@ def schedule_expiration_task(self, user_id, current_location):
 
 
 @shared_task
-def process_expiration_task(user_id):
+def process_expiration_task(user_id, current_location):
     try:
         # Fetch the current location for the user
-        current_location = CurrentLocation.objects.get(user_id=user_id)
+       # current_location = CurrentLocation.objects.get(user_id=user_id)
 
         # Ensure the location is not already expired
         if current_location.expired:
             logger.info(f"User {user_id}'s current location is already expired.")
+            print(f"User {user_id}'s current location is already expired.")
             return "Location is already expired."
 
         # Mark the location as expired
         current_location.expired = True
         current_location.save()
         logger.info(f"User {user_id}'s location expired successfully.")
+        print(f"User {user_id}'s location expired successfully.")
 
     except CurrentLocation.DoesNotExist:
         logger.error(f"CurrentLocation for user {user_id} does not exist.")
     except Exception as exc:
         logger.error(f"Error processing expiration: {exc}")
+        print(f"Error processing expiration: {exc}")
 
     return "Expiration task processed successfully."
