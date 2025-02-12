@@ -180,6 +180,8 @@ def process_climate_twin_request(self, user_id, user_address):
 
 @shared_task(bind=True, max_retries=3)
 def schedule_expiration_task(self, user_id, current_location):
+
+    print(current_location)
  
 
     try:
@@ -210,6 +212,7 @@ def schedule_expiration_task(self, user_id, current_location):
 
         # Schedule a new task to update the 'expired' field after 2 hours
         logger.info(f"Scheduling expiration task for user {user_id} in 2 hours")
+         print(f"Scheduling expiration task for user {user_id} in 2 hours")
 
         #process_expiration_task.apply_async((user_id,), countdown=600)  # 10 seconds for testing
 
@@ -223,6 +226,7 @@ def schedule_expiration_task(self, user_id, current_location):
 
     except CurrentLocation.DoesNotExist:
         logger.error(f"CurrentLocation for user {user_id} does not exist.")
+        print(f"CurrentLocation for user {user_id} does not exist.")
 
     except Exception as exc:
         logger.error(f"Error processing expiration request: {exc}. Retrying...")
