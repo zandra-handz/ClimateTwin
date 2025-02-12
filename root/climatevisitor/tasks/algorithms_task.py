@@ -181,12 +181,14 @@ def process_climate_twin_request(self, user_id, user_address):
 @shared_task(bind=True, max_retries=3)
 def schedule_expiration_task(self, user_id):
 
-    print(current_location)
  
 
     try:
         # Fetch the current location for the user
         current_location = CurrentLocation.objects.get(user_id=user_id)
+
+        
+        print(current_location)
 
         # Ensure the location is not already expired
         if current_location.expired:
