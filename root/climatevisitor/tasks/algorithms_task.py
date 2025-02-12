@@ -2,7 +2,7 @@ from ..animations import update_animation
 from ..consumer import ClimateTwinConsumer  
 
 from climatevisitor.tasks.tasks import send_search_for_ruins_initiated, send_no_ruins_found, send_explore_locations_ready, send_clear_message
-from asgiref.sync import async_to_sync
+from asgiref.sync import async_to_sync, sync_to_async
 from celery import shared_task, current_app, current_task
 from channels.layers import get_channel_layer
 from climatevisitor.climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
@@ -140,7 +140,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
             current_location = CurrentLocation.update_or_create_location(user=user_instance, twin_location=climate_twin_location_instance)
             
             # ADD HERE: Schedule the expiration task after updating or creating the current location
-            trigger_expiration_task(user_instance.id)  # Call the expiration task immediately
+            sync_to_async(schedule_expiration_task(user_instance.id))  # Call the expiration task immediately
 
         except Exception as e:
             print("An error occurred:", e)
@@ -258,6 +258,4 @@ def process_expiration_task(user_id):
 
     return "Expiration task processed successfully."
 
-
-def trigger_expiration_task(user_id):
-    schedule_expiration_task.apply_async((user_id,), countdown=0)
+ 
