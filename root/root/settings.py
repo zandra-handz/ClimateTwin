@@ -47,6 +47,13 @@ OPEN_MAP_API_KEY = os.getenv('OPEN_MAP_API_KEY')
 # CELERY_WORKER_POOL = 'solo'
 
 
+CELERY_WORKER_POOL = 'threads'
+
+
+CELERY_ACKS_LATE = True
+CELERYD_PREFETCH_MULTIPLIER = 1
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
