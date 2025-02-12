@@ -2,11 +2,6 @@ from . import models
 from rest_framework import serializers  
 
 
-class ClimateTwinLocationSerializer(serializers.ModelSerializer):
-
-    class Meta(object):
-        model = models.ClimateTwinLocation
-        fields = "__all__"
 
 
 class HomeLocationSerializer(serializers.ModelSerializer):
@@ -16,12 +11,24 @@ class HomeLocationSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class ClimateTwinLocationSerializer(serializers.ModelSerializer):
+
+    home_location = HomeLocationSerializer(read_only=True)
+
+    class Meta(object):
+        model = models.ClimateTwinLocation
+        fields = "__all__"
+
+
+
 class CurrentLocationMatchSerializer(serializers.Serializer):
     twin_instance = ClimateTwinLocationSerializer()
     home_instance = HomeLocationSerializer(required=False)  # Make home_instance optional
 
 
 class ClimateTwinDiscoveryLocationSerializer(serializers.ModelSerializer):
+
+    origin_location = ClimateTwinLocationSerializer(read_only=True)
 
     class Meta(object):
         model = models.ClimateTwinDiscoveryLocation
