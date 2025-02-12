@@ -1,7 +1,7 @@
 from ..animations import update_animation
 from ..consumer import ClimateTwinConsumer  
 
-from climatevisitor.tasks.tasks import send_search_for_ruins_initiated, send_no_ruins_found, send_explore_locations_ready, send_clear_message, send_returned_home_message
+from climatevisitor.tasks.tasks import send_location_update_to_celery, send_search_for_ruins_initiated, send_no_ruins_found, send_explore_locations_ready, send_clear_message, send_returned_home_message
 from asgiref.sync import async_to_sync
 from celery import shared_task, current_app, current_task
 from channels.layers import get_channel_layer
@@ -222,7 +222,7 @@ def schedule_expiration_task(self, user_id):
         #process_expiration_task.apply_async((user_id,), countdown=600)  # 10 seconds for testing
 
         # Use countdown to schedule the task to run in 2 hours
-        process_expiration_task.apply_async((user_id,), countdown=60)  # 2 hours in seconds
+        process_expiration_task.apply_async((user_id,), countdown=300) #7200 is 2 hrs 
  
         timeout_seconds = max(0, (expiration_time - timezone.now()).total_seconds())
  
@@ -260,8 +260,14 @@ def process_expiration_task(user_id):
         logger.info(f"User {user_id}'s location expired successfully.")
         print(f"User {user_id}'s location expired successfully.")
 
+        
         try:
             send_returned_home_message(user_id=user_id)
+        except Exception as e:
+            print(f"Couldn't send returned home message.")
+
+        try:
+            send_location_update_to_celery(user_id=user_id, name=None, temperature=None, latitude=None, longitude=None)
         except Exception as e:
             print(f"Couldn't send returned home message.")
     except CurrentLocation.DoesNotExist:

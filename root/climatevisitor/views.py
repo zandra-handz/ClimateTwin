@@ -545,7 +545,10 @@ class CurrentDiscoveryLocationsView(generics.ListAPIView):
         
 
     def get_queryset(self):
-        return models.ClimateTwinDiscoveryLocation.objects.filter(user=self.request.user)
+        latest_location = self.get_latest_location(self.request.user)
+        if latest_location:
+            return models.ClimateTwinDiscoveryLocation.objects.filter(origin_location_id=latest_location.pk)
+        return models.ClimateTwinDiscoveryLocation.objects.none() 
 
     def get_latest_location(self, user):
         latest_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-created_on').first()
