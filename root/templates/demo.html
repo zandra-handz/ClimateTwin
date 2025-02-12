@@ -1043,7 +1043,7 @@
             }
 
             // Make a POST request to the explore endpoint
-            fetch(endpoint + 'explore/', {
+            fetch(endpoint + 'explore/v2/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -2179,7 +2179,7 @@
         });
 
         document.getElementById('currentlyExploringBtn').addEventListener('click', function() {
-            var url = endpoint + 'currently-exploring/';
+            var url = endpoint + 'currently-exploring/v2/';
             makeGetRequest(url, function(data) {
                 displayResult('result', data);
             });

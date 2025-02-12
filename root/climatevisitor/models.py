@@ -150,6 +150,7 @@ class ClimateTwinExploreLocation(models.Model):
     twin_location = models.ForeignKey(ClimateTwinLocation, on_delete=models.CASCADE, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
     last_accessed = models.DateTimeField(auto_now=True)
+    expired = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-created_on']
@@ -232,27 +233,48 @@ class ClimateTwinExploreLocation(models.Model):
 
         return fields_dict
 
-    '''
-    def to_dict_old_but_newer(self, prefix='', processed_fields=None):
-        """
-        Convert the fields of the instance and the related explore_location into a dictionary dynamically.
-        """
+
+    def __str__(self):
+        if self.explore_location:
+            return f"Explored Discovery Location: {str(self.explore_location)}, {self.pk}"
+        if self.twin_location:
+            return f"Explored Discovery Location: {str(self.twin_location)}, {self.pk}"
+    
+
+class CurrentLocation(models.Model):
+    user = models.OneToOneField(BadRainbowzUser, on_delete=models.CASCADE)
+    explore_location = models.ForeignKey(ClimateTwinDiscoveryLocation, on_delete=models.CASCADE, null=True, blank=True)
+    twin_location = models.ForeignKey(ClimateTwinLocation, on_delete=models.CASCADE, null=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_accessed = models.DateTimeField(auto_now=True)
+    expired = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-created_on']
+        verbose_name = "Current Location"
+        verbose_name_plural = "Current Locations"
+
+    def clean(self):
+        if self.explore_location and self.twin_location:
+            raise ValidationError("Only one of explore_location or twin_location can be specified.")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
+    def to_dict(self, prefix='', processed_fields=None):
         if processed_fields is None:
             processed_fields = set()
 
         fields_dict = {}
 
-        # Include fields from the ClimateTwinExploreDiscoveryLocation model
+        # Include fields from the CurrentLocation model
         for field in self._meta.fields:
             field_name = field.name
-
             if field_name in processed_fields:
                 continue
-
             field_value = getattr(self, field_name)
-
             if isinstance(field_value, Mapping):
-                # Handle nested dictionary
                 processed_fields.add(field_name)
                 nested_dict = field_value
                 for nested_key, nested_value in nested_dict.items():
@@ -265,14 +287,10 @@ class ClimateTwinExploreLocation(models.Model):
         if self.explore_location:
             for field in self.explore_location._meta.fields:
                 field_name = field.name
-
                 if field_name in processed_fields:
                     continue
-
                 field_value = getattr(self.explore_location, field_name)
-
                 if isinstance(field_value, Mapping):
-                    # If the field value is a dictionary, gather its keys and values
                     processed_fields.add(field_name)
                     nested_dict = field_value
                     for nested_key, nested_value in nested_dict.items():
@@ -281,34 +299,48 @@ class ClimateTwinExploreLocation(models.Model):
                 else:
                     fields_dict[f'{prefix}explore_location__{field_name}'] = str(field_value)
 
-        return fields_dict
-
-    def to_dict_old(self):
-        """
-        Convert the fields of the instance and the related explore_location into a dictionary dynamically.
-        """
-        fields_dict = {}
-
-        # Include fields from the ClimateTwinExploreDiscoveryLocation model
-        for field in self._meta.fields:
-            field_name = field.name
-            field_value = getattr(self, field_name)
-            fields_dict[field_name] = str(field_value)
-
-        # Include fields from the related ClimateTwinDiscoveryLocation model
-        if self.explore_location:
-            for field in self.explore_location._meta.fields:
+        # Include fields from the related ClimateTwinLocation model
+        if self.twin_location:
+            for field in self.twin_location._meta.fields:
                 field_name = field.name
-                field_value = getattr(self.explore_location, field_name)
-                fields_dict[f'explore_location__{field_name}'] = str(field_value)
+                if field_name in processed_fields:
+                    continue
+                field_value = getattr(self.twin_location, field_name)
+                if isinstance(field_value, Mapping):
+                    processed_fields.add(field_name)
+                    nested_dict = field_value
+                    for nested_key, nested_value in nested_dict.items():
+                        nested_field_name = f'{field_name}__{nested_key}'
+                        fields_dict[f'{prefix}twin_location__{nested_field_name}'] = str(nested_value)
+                else:
+                    fields_dict[f'{prefix}twin_location__{field_name}'] = str(field_value)
 
         return fields_dict
-    '''
+    
+    @classmethod
+    def update_or_create_location(cls, user, explore_location=None, twin_location=None):
+        """
+        Helper method to update or create the CurrentLocation for the user.
+        It checks whether the user already has a current location and updates it or creates a new one.
+        """
+        # Ensure only one of explore_location or twin_location is set
+        if explore_location and twin_location:
+            raise ValidationError("Only one of explore_location or twin_location can be specified.")
+
+        # Use update_or_create to create or update the CurrentLocation
+        current_location, created = cls.objects.update_or_create(
+            user=user,
+            defaults={
+                'explore_location': explore_location,
+                'twin_location': twin_location,
+                'expired': False  # Set expired as False, or adjust as needed
+            }
+        )
+
+        return current_location
 
     def __str__(self):
         if self.explore_location:
-            return f"Explored Discovery Location: {str(self.explore_location)}, {self.pk}"
+            return f"Current or Most Recent Location: {str(self.explore_location)}, {self.pk}"
         if self.twin_location:
-            return f"Explored Discovery Location: {str(self.twin_location)}, {self.pk}"
-    
-
+            return f"Current or Most Recent Location: {str(self.twin_location)}, {self.pk}"

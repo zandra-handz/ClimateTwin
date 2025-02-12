@@ -586,10 +586,10 @@ class CreateExploreLocationView(generics.CreateAPIView):
             if (timezone.now() - twin_location.created_on).total_seconds() >= 7200:
                 return Response({'error': 'The twin location must have been created within the last two hours.'}, status=status.HTTP_400_BAD_REQUEST)
         
-            try:
-                send_location_update_to_celery(user_id=user.id, temperature=twin_location.temperature, name=twin_location.name, latitude=twin_location.latitude, longitude=twin_location.longitude)
-            except Exception as e:
-                return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            # try:
+            #     send_location_update_to_celery(user_id=user.id, temperature=twin_location.temperature, name=twin_location.name, latitude=twin_location.latitude, longitude=twin_location.longitude)
+            # except Exception as e:
+            #     return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
             return super().post(request, *args, **kwargs)
 
@@ -605,10 +605,10 @@ class CreateExploreLocationView(generics.CreateAPIView):
 
                 return Response({'error': 'The explore location must have been created within the last two hours.'}, status=status.HTTP_400_BAD_REQUEST)
         
-            try:
-                send_location_update_to_celery(user_id=user.id, temperature=None, name=explore_location.name, latitude=explore_location.latitude, longitude=explore_location.longitude)
-            except Exception as e:
-                return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            # try:
+            #     send_location_update_to_celery(user_id=user.id, temperature=None, name=explore_location.name, latitude=explore_location.latitude, longitude=explore_location.longitude)
+            # except Exception as e:
+            #     return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             return super().post(request, *args, **kwargs)
 
@@ -650,10 +650,19 @@ class ExploreLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIVie
     def put(self, request, *args, **kwargs):
         raise MethodNotAllowed('PUT')
 
-    @swagger_auto_schema(operation_id='partialUpdateExploreLocation', auto_schema=None)
+    @swagger_auto_schema(operation_id='partialUpdateExploreLocation', operation_description="Updates the expired field.")
     def patch(self, request, *args, **kwargs):
-        raise MethodNotAllowed('PATCH')
+        # Fetch the instance to update
+        instance = self.get_object()
 
+        # You can update the expired field here if it's part of the request body
+        expired_value = request.data.get('expired', None)
+        if expired_value is not None:
+            instance.expired = expired_value
+            instance.save()
+
+        # Return the updated instance
+        return self.retrieve(request, *args, **kwargs)
     @swagger_auto_schema(operation_id='deleteExploreLocation', operation_description="Deletes explore location.")
     def delete(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
@@ -893,3 +902,120 @@ def key_data(request):
         return Response({'performance': performance_data}, status=status.HTTP_200_OK)
 
     return Response({'detail': 'Method not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+
+
+class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = serializers.CurrentLocationSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+    
+    @swagger_auto_schema(operation_id='createCurrentLocation', operation_description="Creates explore location.")
+    def post(self, request, *args, **kwargs): 
+
+        user = request.user 
+        explore_location_pk = request.data.get('explore_location')
+        twin_location_pk = request.data.get('twin_location')
+
+
+        if twin_location_pk:
+
+            try:
+                twin_location = models.ClimateTwinLocation.objects.get(pk=twin_location_pk, user=user)
+            except models.ClimateTwinLocation.DoesNotExist:
+                return Response({'error': 'The twin location does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Check if the twin location is the most recently saved one for the user
+            most_recent_twin_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-created_on').first()
+            if most_recent_twin_location != twin_location:
+                return Response({'error': 'The specified twin location is not the most recently saved one.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Check if the twin location was created within the last two hours
+            if (timezone.now() - twin_location.created_on).total_seconds() >= 7200:
+                return Response({'error': 'The twin location must have been created within the last two hours.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+            try:
+                send_location_update_to_celery(user_id=user.id, temperature=twin_location.temperature, name=twin_location.name, latitude=twin_location.latitude, longitude=twin_location.longitude)
+            except Exception as e:
+                return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+            return self.update_or_create_location(user, twin_location=twin_location)
+
+        else:
+
+            try:
+                explore_location = models.ClimateTwinDiscoveryLocation.objects.get(pk=explore_location_pk, user=user)
+
+            except models.ClimateTwinDiscoveryLocation.DoesNotExist: 
+                return Response({'error': 'The explore location does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            if (timezone.now() - explore_location.created_on).total_seconds() >= 7200:
+
+                return Response({'error': 'The explore location must have been created within the last two hours.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+            try:
+                send_location_update_to_celery(user_id=user.id, temperature=None, name=explore_location.name, latitude=explore_location.latitude, longitude=explore_location.longitude)
+            except Exception as e:
+                return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            return self.update_or_create_location(user, explore_location=explore_location)
+        
+    def update_or_create_location(self, user, explore_location=None, twin_location=None):
+        """
+        Helper method to update or create the CurrentLocation for the user.
+        It checks whether the user already has a current location and updates it or creates a new one.
+        """
+        # You can decide which location to set, based on what's provided
+        current_location, created = models.CurrentLocation.objects.update_or_create(
+            user=user,
+            defaults={
+                'explore_location': explore_location,
+                'twin_location': twin_location,
+                'expired': False  # You can set this based on your requirements
+            }
+        )
+
+        # You can perform any other operations if needed, for example, logging or tracking events
+        return Response(self.get_serializer(current_location).data, status=status.HTTP_200_OK)
+
+
+
+    def get_queryset(self):
+        return models.CurrentLocation.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user_id=self.request.user.id)  # Save user ID implicitly
+
+
+
+class CurrentLocationView(generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = serializers.CurrentLocationWithObjectsSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    @swagger_auto_schema(operation_id='getCurrentLocation', operation_description="Returns the current location, or message that it has expired.")
+    def get(self, request, *args, **kwargs):
+        user = request.user
+
+        # Try to get the current location for the user
+        current_location = models.CurrentLocation.objects.filter(user=user).first()
+
+        if current_location is None:
+            return Response({'message': 'User is hokme.'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Check if the location has already expired
+        if current_location.expired:
+            return Response({'message': 'User is hhhome.'}, status=status.HTTP_410_GONE)
+
+#(timezone.now() - latest_location.created_on).total_seconds() < 7200
+        # Check if the current location has expired (based on the last_accessed time)
+        if (timezone.now() - current_location.last_accessed).total_seconds() > 7200: # Check if 2 hours have passed
+            current_location.expired = True
+            current_location.save()  # Update the expired field if it's expired
+            return Response({'message': 'User is hooome.'}, status=status.HTTP_410_GONE)
+
+        # Return the current location data using the serializer
+        return Response(self.get_serializer(current_location).data, status=status.HTTP_200_OK)

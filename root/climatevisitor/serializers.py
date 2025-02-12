@@ -41,6 +41,14 @@ class ClimateTwinExploreDiscoveryLocationSerializer(serializers.ModelSerializer)
         validated_data['user'] = self.context['request'].user
         return super().create(validated_data)
     
+    def update(self, instance, validated_data):
+        # Custom update logic, if necessary
+        instance = super().update(instance, validated_data)
+        return instance
+    
+
+
+    
 
 class ClimateTwinExploreDiscoveryLocationWithObjectsSerializer(serializers.ModelSerializer):
 
@@ -56,4 +64,50 @@ class ClimateTwinExploreDiscoveryLocationWithObjectsSerializer(serializers.Model
         validated_data['user'] = self.context['request'].user
         return super().create(validated_data)
     
+
     
+class CurrentLocationSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = models.CurrentLocation
+        fields = '__all__'
+        read_only_fields = ['user']  # Mark the user field as read-only
+
+    def create(self, validated_data):
+        # Automatically associate the user with the object during creation
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
+    
+    def validate(self, data):
+        # Ensure that only one of explore_location or twin_location is set
+        explore_location = data.get('explore_location')
+        twin_location = data.get('twin_location')
+
+        if explore_location and twin_location:
+            raise serializers.ValidationError("Only one of explore_location or twin_location can be specified.")
+        return data
+
+
+class CurrentLocationWithObjectsSerializer(serializers.ModelSerializer):
+
+    explore_location = ClimateTwinDiscoveryLocationSerializer(read_only=True)  # Nested object
+    twin_location = ClimateTwinLocationSerializer(read_only=True)  # Nested object
+    
+    class Meta:
+        model = models.CurrentLocation
+        fields = '__all__'
+        read_only_fields = ['user']  # Mark the user field as read-only
+
+    def create(self, validated_data):
+        # Automatically associate the user with the object during creation
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
+    
+    def validate(self, data):
+        # Ensure that only one of explore_location or twin_location is set
+        explore_location = data.get('explore_location')
+        twin_location = data.get('twin_location')
+
+        if explore_location and twin_location:
+            raise serializers.ValidationError("Only one of explore_location or twin_location can be specified.")
+        return data

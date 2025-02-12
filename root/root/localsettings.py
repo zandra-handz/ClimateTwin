@@ -49,7 +49,13 @@ AUTH_USER_MODEL = 'users.BadRainbowzUser'
  
 
 # local
-CELERY_WORKER_POOL = 'solo'
+#CELERY_WORKER_POOL = 'solo'
+CELERY_WORKER_POOL = 'threads'
+
+
+CELERY_ACKS_LATE = True
+CELERYD_PREFETCH_MULTIPLIER = 1
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -460,4 +466,5 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
+
 

@@ -391,14 +391,14 @@ class LocationUpdateConsumer(WebsocketConsumer):
     def fetch_data_from_endpoint(self, token):
         from rest_framework_simplejwt.tokens import AccessToken
 
-        explore_data_endpoint = 'https://climatetwin.com/climatevisitor/currently-exploring/'
+        explore_data_endpoint = 'https://climatetwin.com/climatevisitor/currently-exploring/v2/'
         discovery_locations_endpoint = 'https://climatetwin.com/climatevisitor/locations/nearby/'
         twin_endpoint = 'https://climatetwin.com/climatevisitor/currently-visiting/'
 
-        #         explore_data_endpoint = 'http://localhost:8000/climatevisitor/currently-exploring/'
-    #         discovery_locations_endpoint = 'http://localhost:8000/climatevisitor/locations/nearby/'
-    #         twin_endpoint = 'http://localhost:8000/climatevisitor/currently-visiting/'
-        
+        # explore_data_endpoint = 'http://localhost:8000/climatevisitor/currently-exploring/v2/'
+        # discovery_locations_endpoint = 'http://localhost:8000/climatevisitor/locations/nearby/'
+        # twin_endpoint = 'http://localhost:8000/climatevisitor/currently-visiting/'
+    
 
         token_str = str(token) if isinstance(token, AccessToken) else token
 
@@ -437,10 +437,10 @@ class LocationUpdateConsumer(WebsocketConsumer):
             return current_location_data.json()
 
         # If no explore location, check twin location
-        twin_response = requests.get(twin_endpoint, headers=headers)
+        # twin_response = requests.get(explore_data_endpoint, headers=headers)
 
-        if twin_response.status_code == 200:
-            return twin_response.json()
+        # if twin_response.status_code == 200:
+        #     return twin_response.json()
         
         return None  # If nothing found
 
