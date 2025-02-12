@@ -140,7 +140,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
             current_location = CurrentLocation.update_or_create_location(user=user_instance, twin_location=climate_twin_location_instance)
             
              # Schedule the expiration task after updating or creating the current location
-            schedule_expiration_task(user_id=user_instance.id, current_location=current_location)# No async_to_sync wrapper needed
+            schedule_expiration_task(user_id=user_instance.id)# No async_to_sync wrapper needed
 
         except Exception as e:
             print("An error occurred:", e)
@@ -179,14 +179,14 @@ def process_climate_twin_request(self, user_id, user_address):
     return "Request sent for processing"
 
 @shared_task(bind=True, max_retries=3)
-def schedule_expiration_task(self, user_id, current_location):
+def schedule_expiration_task(self, user_id):
 
     print(current_location)
  
 
     try:
         # Fetch the current location for the user
-       # current_location = CurrentLocation.objects.get(user_id=user_id)
+        current_location = CurrentLocation.objects.get(user_id=user_id)
 
         # Ensure the location is not already expired
         if current_location.expired:
@@ -219,16 +219,16 @@ def schedule_expiration_task(self, user_id, current_location):
         #process_expiration_task.apply_async((user_id,), countdown=600)  # 10 seconds for testing
 
         # Use countdown to schedule the task to run in 2 hours
-        process_expiration_task.apply_async((user_id, current_location,), countdown=60)  # 2 hours in seconds
+        process_expiration_task.apply_async((user_id,), countdown=60)  # 2 hours in seconds
  
         timeout_seconds = max(0, (expiration_time - timezone.now()).total_seconds())
  
         cache.set(cache_key, True, timeout=int(timeout_seconds))
 
 
-    # except CurrentLocation.DoesNotExist:
-    #     logger.error(f"CurrentLocation for user {user_id} does not exist.")
-    #     print(f"CurrentLocation for user {user_id} does not exist.")
+    except CurrentLocation.DoesNotExist:
+        logger.error(f"CurrentLocation for user {user_id} does not exist.")
+        print(f"CurrentLocation for user {user_id} does not exist.")
 
     except Exception as exc:
         logger.error(f"Error processing expiration request: {exc}. Retrying...")
@@ -240,10 +240,10 @@ def schedule_expiration_task(self, user_id, current_location):
 
 
 @shared_task
-def process_expiration_task(user_id, current_location):
+def process_expiration_task(user_id):
     try:
         # Fetch the current location for the user
-       # current_location = CurrentLocation.objects.get(user_id=user_id)
+        current_location = CurrentLocation.objects.get(user_id=user_id)
 
         # Ensure the location is not already expired
         if current_location.expired:
@@ -257,8 +257,8 @@ def process_expiration_task(user_id, current_location):
         logger.info(f"User {user_id}'s location expired successfully.")
         print(f"User {user_id}'s location expired successfully.")
 
-    # except CurrentLocation.DoesNotExist:
-    #     logger.error(f"CurrentLocation for user {user_id} does not exist.")
+    except CurrentLocation.DoesNotExist:
+        logger.error(f"CurrentLocation for user {user_id} does not exist.")
     except Exception as exc:
         logger.error(f"Error processing expiration: {exc}")
         print(f"Error processing expiration: {exc}")

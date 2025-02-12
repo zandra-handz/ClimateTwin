@@ -977,7 +977,7 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
             }
         )
 
-        schedule_expiration_task.apply_async(args=[user.id, current_location])
+        schedule_expiration_task.apply_async(args=[user.id])
 
         # You can perform any other operations if needed, for example, logging or tracking events
         return Response(self.get_serializer(current_location).data, status=status.HTTP_200_OK)
