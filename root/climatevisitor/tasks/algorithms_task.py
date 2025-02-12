@@ -192,6 +192,7 @@ def schedule_expiration_task(self, user_id, current_location):
         if current_location.expired:
             logger.info(f"User {user_id}'s current location is already expired.")
             return "Location is already expired."
+        print(f"User {user_id}'s current location is not expired.")
 
         # Get the last accessed time (in UTC)
         last_accessed = current_location.last_accessed
@@ -204,6 +205,7 @@ def schedule_expiration_task(self, user_id, current_location):
 
         # Check if the expiration task for this user already exists and cancel it
         cache_key = f"expiration_task_{user_id}"
+        print(f"expiration_task_{user_id}")
         existing_task = cache.get(cache_key)
         
         if existing_task:
@@ -212,7 +214,7 @@ def schedule_expiration_task(self, user_id, current_location):
 
         # Schedule a new task to update the 'expired' field after 2 hours
         logger.info(f"Scheduling expiration task for user {user_id} in 2 hours")
-         print(f"Scheduling expiration task for user {user_id} in 2 hours")
+        print(f"Scheduling expiration task for user {user_id} in 2 hours")
 
         #process_expiration_task.apply_async((user_id,), countdown=600)  # 10 seconds for testing
 
