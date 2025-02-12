@@ -222,7 +222,7 @@ def schedule_expiration_task(self, user_id):
         #process_expiration_task.apply_async((user_id,), countdown=600)  # 10 seconds for testing
 
         # Use countdown to schedule the task to run in 2 hours
-        process_expiration_task.apply_async((user_id,), countdown=300) #7200 is 2 hrs 
+        process_expiration_task.apply_async((user_id,), countdown=3600) #7200 is 2 hrs 
  
         timeout_seconds = max(0, (expiration_time - timezone.now()).total_seconds())
  
