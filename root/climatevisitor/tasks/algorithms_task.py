@@ -2,7 +2,7 @@ from ..animations import update_animation
 from ..consumer import ClimateTwinConsumer  
 
 from climatevisitor.tasks.tasks import send_search_for_ruins_initiated, send_no_ruins_found, send_explore_locations_ready, send_clear_message
-from asgiref.sync import async_to_sync, sync_to_async
+from asgiref.sync import async_to_sync
 from celery import shared_task, current_app, current_task
 from channels.layers import get_channel_layer
 from climatevisitor.climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
@@ -140,7 +140,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
             current_location = CurrentLocation.update_or_create_location(user=user_instance, twin_location=climate_twin_location_instance)
             
             # ADD HERE: Schedule the expiration task after updating or creating the current location
-            schedule_expiration_task(user_instance.id)  # Call the expiration task immediately
+            async_to_sync(schedule_expiration_task.apply_async)(args=[user_id])  # Schedules expiration task in a sync way
 
         except Exception as e:
             print("An error occurred:", e)
@@ -214,7 +214,7 @@ def schedule_expiration_task(self, user_id):
         #process_expiration_task.apply_async((user_id,), countdown=600)  # 10 seconds for testing
 
         # Use countdown to schedule the task to run in 2 hours
-        sync_to_async(process_expiration_task((user_id,), countdown=2 * 60 * 60))  # 2 hours in seconds
+        process_expiration_task.apply_async((user_id,), countdown=2 * 60 * 60)  # 2 hours in seconds
  
         timeout_seconds = max(0, (expiration_time - timezone.now()).total_seconds())
  
@@ -257,5 +257,3 @@ def process_expiration_task(user_id):
         logger.error(f"Error processing expiration: {exc}")
 
     return "Expiration task processed successfully."
-
- 
