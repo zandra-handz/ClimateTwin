@@ -226,9 +226,9 @@ def schedule_expiration_task(self, user_id, current_location):
         cache.set(cache_key, True, timeout=int(timeout_seconds))
 
 
-    except CurrentLocation.DoesNotExist:
-        logger.error(f"CurrentLocation for user {user_id} does not exist.")
-        print(f"CurrentLocation for user {user_id} does not exist.")
+    # except CurrentLocation.DoesNotExist:
+    #     logger.error(f"CurrentLocation for user {user_id} does not exist.")
+    #     print(f"CurrentLocation for user {user_id} does not exist.")
 
     except Exception as exc:
         logger.error(f"Error processing expiration request: {exc}. Retrying...")
@@ -257,8 +257,8 @@ def process_expiration_task(user_id, current_location):
         logger.info(f"User {user_id}'s location expired successfully.")
         print(f"User {user_id}'s location expired successfully.")
 
-    except CurrentLocation.DoesNotExist:
-        logger.error(f"CurrentLocation for user {user_id} does not exist.")
+    # except CurrentLocation.DoesNotExist:
+    #     logger.error(f"CurrentLocation for user {user_id} does not exist.")
     except Exception as exc:
         logger.error(f"Error processing expiration: {exc}")
         print(f"Error processing expiration: {exc}")
