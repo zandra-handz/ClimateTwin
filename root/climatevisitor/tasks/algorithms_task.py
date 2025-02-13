@@ -86,6 +86,31 @@ def run_climate_twin_algorithms_task(user_id, user_address):
         climate_twin_location_instance.save()
         user_visit_instance.save()
 
+        # Create the first current location and set expiration task; 
+        # schedule_expiration_task will pass in the last_accessed string to the async task so that
+        # that task can verify it was meant for the CurrentLocation before setting expired to True
+        try:
+            current_location = CurrentLocation.update_or_create_location(user=user_instance, twin_location=climate_twin_location_instance)
+            
+             # Schedule the expiration task after updating or creating the current location
+            schedule_expiration_task(user_id=user_instance.id)# No async_to_sync wrapper needed
+
+        except Exception as e:
+            print("An error occurred:", e)
+
+        try:
+            explore_location_instance = ClimateTwinExploreLocation.objects.create(
+                user=user_instance,
+                twin_location=climate_twin_location_instance,
+                created_on=timezone.now()  # Set creation time to current time
+            )
+
+            explore_location_instance.save()
+
+        except Exception as e:
+            print("An error occurred:", e)
+
+ 
         send_search_for_ruins_initiated(user_id=user_instance.id)
 
         osm_api = OpenMapAPI()
@@ -123,28 +148,6 @@ def run_climate_twin_algorithms_task(user_id, user_address):
                 print("Error: Discovery Location could not be saved.")
  
  
-        try:
-            explore_location_instance = ClimateTwinExploreLocation.objects.create(
-                user=user_instance,
-                twin_location=climate_twin_location_instance,
-                created_on=timezone.now()  # Set creation time to current time
-            )
-
-            explore_location_instance.save()
-
-        except Exception as e:
-            print("An error occurred:", e)
-
-
-
-        try:
-            current_location = CurrentLocation.update_or_create_location(user=user_instance, twin_location=climate_twin_location_instance)
-            
-             # Schedule the expiration task after updating or creating the current location
-            schedule_expiration_task(user_id=user_instance.id)# No async_to_sync wrapper needed
-
-        except Exception as e:
-            print("An error occurred:", e)
         
         try: 
             send_explore_locations_ready(user_id=user_instance.id)
@@ -179,11 +182,9 @@ def process_climate_twin_request(self, user_id, user_address):
     logger.info("Task to process climate twin request completed.")
     return "Request sent for processing"
 
+
 @shared_task(bind=True, max_retries=3)
 def schedule_expiration_task(self, user_id):
-
- 
-
     try:
         # Fetch the current location for the user
         current_location = CurrentLocation.objects.get(user_id=user_id)
@@ -196,14 +197,11 @@ def schedule_expiration_task(self, user_id):
             logger.info(f"User {user_id}'s current location is already expired.")
             return "Location is already expired."
         print(f"User {user_id}'s current location is not expired.")
-
-        # Get the last accessed time (in UTC)
+ 
         last_accessed = current_location.last_accessed
-
-        # Ensure last_accessed is in UTC time (timezone-aware)
-       # last_accessed = timezone.make_aware(last_accessed, timezone.utc)
-
-        # Calculate the time when the expiration should happen (2 hours after last_accessed)
+ 
+ 
+ 
         expiration_time = last_accessed + timezone.timedelta(hours=2)
 
         # Check if the expiration task for this user already exists and cancel it
@@ -222,7 +220,7 @@ def schedule_expiration_task(self, user_id):
         #process_expiration_task.apply_async((user_id,), countdown=600)  # 10 seconds for testing
 
         # Use countdown to schedule the task to run in 2 hours
-        process_expiration_task.apply_async((user_id,), countdown=3600) #7200 is 2 hrs 
+        process_expiration_task.apply_async((user_id, last_accessed,), countdown=3600) #7200 is 2 hrs 
  
         timeout_seconds = max(0, (expiration_time - timezone.now()).total_seconds())
  
@@ -243,7 +241,7 @@ def schedule_expiration_task(self, user_id):
 
 
 @shared_task
-def process_expiration_task(user_id):
+def process_expiration_task(user_id, last_accessed):
     try:
         # Fetch the current location for the user
         current_location = CurrentLocation.objects.get(user_id=user_id)
@@ -255,10 +253,14 @@ def process_expiration_task(user_id):
             return "Location is already expired."
 
         # Mark the location as expired
-        current_location.expired = True
-        current_location.save()
-        logger.info(f"User {user_id}'s location expired successfully.")
-        print(f"User {user_id}'s location expired successfully.")
+        if last_accessed == current_location.last_accessed:
+            current_location.expired = True
+            current_location.save()
+            logger.info(f"User {user_id}'s location expired successfully.")
+            print(f"User {user_id}'s location expired successfully.")
+        else:
+            logger.info(f"Expiration task no longer applicable -- location has changed.")
+            print(f"Expiration task no longer applicable -- location has changed.")
 
         
         try:
