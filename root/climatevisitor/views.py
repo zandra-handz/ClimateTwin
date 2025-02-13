@@ -92,8 +92,8 @@ def go(request):
 
         if user and not (user.is_staff or user.is_superuser): 
             today = timezone.now().date()
-            daily_count = models.ClimateTwinDiscoveryLocation.objects.filter(user=user, created_on__date=today).count()
-            if daily_count >= 3:
+            daily_count = models.ClimateTwinLocation.objects.filter(user=user, created_on__date=today).count()
+            if daily_count >= 5:
                 return Response({'error': 'You have reached the daily limit of visits.'}, status=status.HTTP_400_BAD_REQUEST)
 
  
