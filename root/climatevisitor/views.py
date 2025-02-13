@@ -527,12 +527,16 @@ class CurrentDiscoveryLocationsView(generics.ListAPIView):
         if not latest_location:
             return Response({'detail': 'You are not visiting anywhere right now.'}, status=status.HTTP_200_OK)
         
-        discovery_locations = models.ClimateTwinDiscoveryLocation.objects.filter(origin_location_id=latest_location.pk).order_by('miles_away')
-        if not discovery_locations:
-            return Response({"detail": "No ruins were found nearby."}, status=status.HTTP_200_OK)
-        
         latest_location_serializer = serializers.ClimateTwinLocationSerializer(latest_location)
         latest_location_data = latest_location_serializer.data
+
+        discovery_locations = models.ClimateTwinDiscoveryLocation.objects.filter(origin_location_id=latest_location.pk).order_by('miles_away')
+        if not discovery_locations:
+            data = [latest_location_data]
+
+            return Response(data)
+        
+
 
         # Serialize the other discovery locations
         serializer = self.get_serializer(discovery_locations, many=True)
