@@ -248,7 +248,7 @@ def get_remaining_goes(request):
 
         if user and not (user.is_staff or user.is_superuser): 
             today = timezone.now().date()
-            daily_count = models.ClimateTwinDiscoveryLocation.objects.filter(user=user, created_on__date=today).count()
+            daily_count = models.ClimateTwinLocation.objects.filter(user=user, created_on__date=today).count()
             if daily_count >= 5:
                  return Response({'remaining_goes': '0'}, status=status.HTTP_200_OK)
           
