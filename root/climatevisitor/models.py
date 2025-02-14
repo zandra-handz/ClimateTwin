@@ -100,6 +100,10 @@ class ClimateTwinLocation(models.Model):
         verbose_name = "Location"
         verbose_name_plural = "Locations"
 
+        indexes = [
+            models.Index(fields=['-created_on']),  # Index for latest queries
+        ]
+
     def __str__(self):
         return f"Location: {str(self.name)}, {self.pk}"
 
@@ -129,7 +133,9 @@ class ClimateTwinDiscoveryLocation(models.Model):
 
     class Meta:
         ordering = ['-id']
-
+        indexes = [
+            models.Index(fields=['origin_location']),
+        ]
         verbose_name = "Discovery Location"
         verbose_name_plural = "Discovery Locations"
 
@@ -156,6 +162,10 @@ class ClimateTwinExploreLocation(models.Model):
         ordering = ['-created_on']
         verbose_name = "Explored Discovery Location"
         verbose_name_plural = "Explored Discovery Locations"
+        indexes = [
+            models.Index(fields=['-created_on']),   
+            models.Index(fields=['user', '-created_on']),   
+        ]
 
     def clean(self):
         if self.explore_location and self.twin_location:

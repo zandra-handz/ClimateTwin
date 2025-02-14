@@ -556,10 +556,16 @@ class CurrentDiscoveryLocationsView(generics.ListAPIView):
         return models.ClimateTwinDiscoveryLocation.objects.none() 
 
     def get_latest_location(self, user):
-        latest_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-created_on').first()
-        if latest_location and (timezone.now() - latest_location.created_on).total_seconds() < 3600: # 7200 
+
+        latest_explore_location = models.CurrentLocation.objects.get(user=user)
+
+        if not latest_explore_location.expired and (timezone.now() - latest_explore_location.last_accessed).total_seconds() < 3600: 
+            latest_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-created_on').first()
+       # if latest_location and (timezone.now() - latest_location.created_on).total_seconds() < 3600: # 7200 
             return latest_location
         else:
+            latest_explore_location.expired = True
+            latest_explore_location.save()
             return None
 
 
@@ -849,25 +855,29 @@ def item_choices(request):
 
         
         try:
-            latest_explore_location = models.ClimateTwinExploreLocation.objects.filter(user=user).latest('created_on')
-    
-            latest_climate_twin_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-created_on').first()
+            latest_explore_location = models.CurrentLocation.objects.get(user=user)
+
+            # Created_on is indexed field
+           # latest_climate_twin_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-created_on').first()
  
             
 
-            if latest_explore_location.twin_location:
+            if not latest_explore_location.expired and (latest_explore_location.twin_location or latest_explore_location.explore_location):
 
-                if (timezone.now() - latest_explore_location.created_on).total_seconds() < 3600: # changed to 1 hr for testing 7200
+                if (timezone.now() - latest_explore_location.last_accessed).total_seconds() < 3600: # changed to 1 hr for testing 7200
                     location_dict = latest_explore_location.to_dict()
                     return Response({'choices': location_dict, 'message': 'choose one.'}, status=status.HTTP_200_OK)
+            
+                latest_explore_location.expired = True
+                latest_explore_location.save()
 
-            else:
+            # if not latest_explore_location.expired and latest_explore_location.explore_location:
 
-                if latest_explore_location.explore_location.origin_location_id == latest_climate_twin_location.pk and \
-                (timezone.now() - latest_explore_location.created_on).total_seconds() < 3600: # changed to 1 hr for testing 7200
+            #     if latest_explore_location.explore_location.origin_location_id == latest_climate_twin_location.pk and \
+            #     (timezone.now() - latest_explore_location.last_accessed).total_seconds() < 3600: # changed to 1 hr for testing 7200
 
-                    location_dict = latest_explore_location.to_dict()
-                    return Response({'choices': location_dict, 'message': 'choose one.'}, status=status.HTTP_200_OK)
+            #         location_dict = latest_explore_location.to_dict()
+            #         return Response({'choices': location_dict, 'message': 'choose one.'}, status=status.HTTP_200_OK)
 
 
                 
@@ -936,13 +946,20 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
                 return Response({'error': 'The twin location does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
 
             # Check if the twin location is the most recently saved one for the user
-            most_recent_twin_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-created_on').first()
-            if most_recent_twin_location != twin_location:
-                return Response({'error': 'The specified twin location is not the most recently saved one.'}, status=status.HTTP_400_BAD_REQUEST)
+
+# not going to check this, going by last access stamp of the current location to determine expiration
+# if somehow an older climate twin location was temporarily saved to the current location i don't think
+# it would cause any notably errors 
+
+            # most_recent_twin_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-created_on').first()
+            # if most_recent_twin_location != twin_location:
+            #     return Response({'error': 'The specified twin location is not the most recently saved one.'}, status=status.HTTP_400_BAD_REQUEST)
 
             # Check if the twin location was created within the last two hours
-            if (timezone.now() - twin_location.created_on).total_seconds() >= 3600: # changed to 1 hr for testing 7200
-                return Response({'error': 'The twin location must have been created within the last hour (testing mode).'}, status=status.HTTP_400_BAD_REQUEST)
+
+# REMOVED 2/13 because this always happens on backend in algorithm right after climate twin instance is created
+            # if (timezone.now() - twin_location.created_on).total_seconds() >= 3600: # changed to 1 hr for testing 7200
+            #     return Response({'error': 'The twin location must have been created within the last hour (testing mode).'}, status=status.HTTP_400_BAD_REQUEST)
         
             try:
                 send_location_update_to_celery(user_id=user.id, temperature=twin_location.temperature, name=twin_location.name, latitude=twin_location.latitude, longitude=twin_location.longitude)
@@ -959,9 +976,9 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
             except models.ClimateTwinDiscoveryLocation.DoesNotExist: 
                 return Response({'error': 'The explore location does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            if (timezone.now() - explore_location.created_on).total_seconds() >= 3600: # 7200
+            # if (timezone.now() - explore_location.created_on).total_seconds() >= 3600: # 7200
 
-                return Response({'error': 'The explore location must have been created within the last one hour (testing mode).'}, status=status.HTTP_400_BAD_REQUEST)
+            #     return Response({'error': 'The explore location must have been created within the last one hour (testing mode).'}, status=status.HTTP_400_BAD_REQUEST)
         
             try:
                 send_location_update_to_celery(user_id=user.id, temperature=None, name=explore_location.name, latitude=explore_location.latitude, longitude=explore_location.longitude)
