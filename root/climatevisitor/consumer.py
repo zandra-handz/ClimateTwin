@@ -349,7 +349,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
     def connect(self):
         self.user, self.token = self.authenticate_user()
-        self.connected = False  # Ensures proper handling of connection state
+        #self.connected = False  # Ensures proper handling of connection state
 
         if self.user and self.token:
             channel_id = self.user.id
@@ -360,7 +360,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 self.channel_name
             )
             self.accept()
-            self.connected = True
+            #self.connected = True
             logger.info("FOCUS HERE Location Update WebSocket connection established")
 
             data = self.fetch_data_from_endpoint(self.token)
@@ -480,7 +480,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         """
         Handles WebSocket disconnection and cleans up the connection.
         """
-        self.connected = False
+        #self.connected = False
         async_to_sync(self.channel_layer.group_discard)(
             self.group_name,
             self.channel_name
