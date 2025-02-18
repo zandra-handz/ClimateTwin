@@ -51,7 +51,7 @@ class ClimateTwinConsumer(WebsocketConsumer):
                 'message': f"User retrieved: {self.user}"
             }))
         else:
-            self.accept()
+            #self.accept()
             self.send(text_data=json.dumps({
                 'error': "Authentication failed. Connection closing."
             }))
@@ -161,189 +161,6 @@ class ClimateTwinConsumer(WebsocketConsumer):
 
 
 
-# class LocationUpdateConsumer(WebsocketConsumer):
-
-#     def connect(self):
-
-
-#         self.user, self.token = self.authenticate_user()  
-#         if self.user and self.token:
-#             channel_id = self.user.id
-
-#             self.group_name = f'location_update_{channel_id}'
-
-        
-#             async_to_sync(self.channel_layer.group_add)(
-#                 self.group_name,
-#                 self.channel_name
-#             ) 
-#             self.accept()
-#             logger.info("FOCUS HERE Location Update WebSocket connection established")
-
-#             data = self.fetch_data_from_endpoint(self.token)
-            
-#             self.update_location(data)
-
-#         else:
-#             self.accept()
-#             self.send(text_data=json.dumps({
-#                 'error': "Authentication in LocationUpdateConsumer failed. Connection closing."
-#             }))
-#             self.close()
-         
-
-
-#     def fetch_data_from_endpoint(self, token):
-#         from rest_framework_simplejwt.tokens import AccessToken
-#         # Fetch data from endpoint(s)
-
-#         # local
-#         # explore_data_endpoint = 'http://localhost:8000/climatevisitor/currently-exploring/'
-#         # discovery_locations_endpoint = 'http://localhost:8000/climatevisitor/locations/nearby/'
-#         # twin_endpoint = 'http://localhost:8000/climatevisitor/currently-visiting/'
-     
-#         explore_data_endpoint = 'https://climatetwin.com/climatevisitor/currently-exploring/'
-#         discovery_locations_endpoint = 'https://climatetwin.com/climatevisitor/locations/nearby/'
-#         twin_endpoint = 'https://climatetwin.com/climatevisitor/currently-visiting/'
-
-
-#        # Convert token to a string if it's an AccessToken object
-#         token_str = str(token) if isinstance(token, AccessToken) else token
-     
-#         if len(token_str.split('.')) == 3: 
-#             auth_header = f'Bearer {token_str}'
-#         else: 
-#             auth_header = f'Token {token_str}'
-        
-#         headers = {
-#             'Authorization': auth_header,
-#             'Content-Type': 'application/json'
-#         }
-#         explore_response = requests.get(explore_data_endpoint, headers=headers)
-
-#         if explore_response.status_code == 200:
-#             explore_data = explore_response.json()
-
-#             current_location_id = explore_data.get('explore_location')
-
-#             if not current_location_id:
-#                 # Don't actually need to pass in id, there will only ever be one current twin location
-#                 current_location_id = explore_data.get('twin_location')
-
-#                 if not current_location_id:
-#                     return None
-
-#                 current_location_data = requests.get(twin_endpoint, headers=headers)
-#                 return current_location_data.json()
-            
-#             discovery_location_endpoint = f'{discovery_locations_endpoint}{current_location_id}/'
-#             current_location_data = requests.get(discovery_location_endpoint, headers=headers)
-#             return current_location_data.json()
-            
-          
-
-#         twin_response = requests.get(twin_endpoint, headers=headers)
-
-#         if twin_response.status_code == 200:
-#             return twin_response.json()
-        
-#         else:
-#             # logger.error(f"Error: {twin_response.status_code}")
-#             return None
-            
-
-#     def disconnect(self, close_code):
-#         async_to_sync(self.channel_layer.group_discard)(
-#             self.group_name,
-#             self.channel_name
-#         )
-#         logger.info("update_locations connection closed")
-
-#     def update_location(self, event):
-#         logger.debug(f"Received update_locations event: {event}")
-#         if event is None:
-#             self.send(text_data=json.dumps({
-#                 'name': "You are home",
-#             }))
-#         elif 'latitude' in event and 'longitude' in event:
-#             self.send(text_data=json.dumps({
-#                 'name': event['name'],
-#                 'latitude': event['latitude'],
-#                 'longitude': event['longitude'],
-#             }))
-
-      
-
-#     def authenticate_user(self):
-
-#         from rest_framework_simplejwt.tokens import AccessToken
-#         from rest_framework.exceptions import AuthenticationFailed
-#         # Get the query string from the WebSocket connection
-#         auth = self.scope.get('query_string', b'').decode()
-#         user_token = parse_qs(auth).get('user_token', [None])[0]
-
-#         if not user_token:
-#             raise AuthenticationFailed("No token provided")
-
-#         if user_token:
-#             try: # DRF token authentication
-#                 user, _ = self.authenticate_with_drf_token(user_token)
-                
-#                 if user is None:
-#                     raise AuthenticationFailed("Invalid DRF token")
-                
-#                 jwt_token = AccessToken.for_user(user)
-
-              
-#                 return user, user_token
-            
-#             except AuthenticationFailed as drf_auth_error:
-#                 print(f"DRF token authentication failed: {drf_auth_error}")
- 
-#                 try:
-#                     jwt_token = AccessToken(user_token)   
-
-#                     user_id = jwt_token['user_id']   
-#                     from django.contrib.auth import get_user_model
-#                     User = get_user_model()
-#                     user = User.objects.get(id=user_id)
-
-#                     return user, jwt_token
-
-#                 except Exception as jwt_error:
-#                     print(f"JWT authentication failed: {jwt_error}")  
-#                     raise AuthenticationFailed("JWT authentication failed") 
-  
-
-#     def authenticate_with_drf_token(self, user_token):
-#         """
-#         Authenticate the user using the DRF Token authentication.
-#         """
-#         from rest_framework.authentication import TokenAuthentication
-#         from rest_framework.exceptions import AuthenticationFailed
-#         try:
-#             # Authenticate using TokenAuthentication
-#             auth = TokenAuthentication()
-#             user, token = auth.authenticate_credentials(user_token)
-#             return user, token
-#         except AuthenticationFailed:
-#             return None, None
-
-#     def get_user(self, access_token):
-#         try:
-#             user_id = access_token['user_id']
-#             user = self.get_user_model().objects.get(id=user_id)
-#             return user, access_token
-#         except:
-#             return None, None
- 
-
-#     @staticmethod
-#     def get_user_model():
-#         return apps.get_model('users', 'BadRainbowzUser')
-    
-
-
 
 class LocationUpdateConsumer(WebsocketConsumer):
 
@@ -361,12 +178,12 @@ class LocationUpdateConsumer(WebsocketConsumer):
             )
             self.accept()
             #self.connected = True
-            logger.info("FOCUS HERE Location Update WebSocket connection established")
+            logger.info("FOCUS HEEEEEERE Location Update WebSocket connection established")
 
             data = self.fetch_data_from_endpoint(self.token)
             self.update_location(data)
         else:
-            self.accept()
+            #self.accept()
             self.send(text_data=json.dumps({
                 'error': "Authentication in LocationUpdateConsumer failed. Connection closing."
             }))
