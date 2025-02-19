@@ -40,22 +40,21 @@ class ClimateTwinConsumer(WebsocketConsumer):
     def connect(self):
         self.user = self.authenticate_user()
 
-        if self.user:
-            self.group_name = f'climate_updates_{self.user.id}'
-            async_to_sync(self.channel_layer.group_add)(
-                self.group_name,
-                self.channel_name
-            ) 
-            self.accept()
-            self.send(text_data=json.dumps({
-                'message': f"User retrieved: {self.user}"
-            }))
-        else:
-            #self.accept()
-            self.send(text_data=json.dumps({
-                'error': "Authentication failed. Connection closing."
-            }))
-            self.close()
+
+        if not self.user:
+            return
+ 
+        self.group_name = f'climate_updates_{self.user.id}'
+
+        async_to_sync(self.channel_layer.group_add)(
+            self.group_name,
+            self.channel_name
+        ) 
+
+        self.accept()
+        self.send(text_data=json.dumps({
+            'message': f"User retrieved: {self.user}"
+        })) 
 
 
     def disconnect(self, close_code):
@@ -63,10 +62,7 @@ class ClimateTwinConsumer(WebsocketConsumer):
             self.group_name,
             self.channel_name
         )
-        # logger.info("WebSocket connection closed")
-
-
-
+        # logger.info("WebSocket connection closed") 
         # logger.info(f"Received coordinates: Country - {event['country_name']}, Temperature - {event['temperature']}, Latitude - {event['latitude']}, Longitude - {event['longitude']}")
 
 
@@ -86,51 +82,38 @@ class ClimateTwinConsumer(WebsocketConsumer):
     def authenticate_user(self):
 
         from rest_framework_simplejwt.tokens import AccessToken
-        from rest_framework.exceptions import AuthenticationFailed
-        # Get the query string from the WebSocket connection
+        from rest_framework.exceptions import AuthenticationFailed 
+
         auth = self.scope.get('query_string', b'').decode()
-        
         user_token = parse_qs(auth).get('user_token', [None])[0]
 
         if not user_token:
-            raise AuthenticationFailed("No token provided")
+            print("No token provided to ClimateTwinConsumer")
+            self.close(code=4001)  
+            return None 
 
-        if user_token:
-            try: # DRF token authentication
+        try:
+            jwt_token = AccessToken(user_token)
+            user_id = jwt_token['user_id']
+            User = self.get_user_model()
+            user = User.objects.get(id=user_id)
+            return user #jwt_token
+
+        except Exception as jwt_error:
+            print(f"JWT authentication failed: {jwt_error}")
+
+            try:
                 user, _ = self.authenticate_with_drf_token(user_token)
-                
                 if user is None:
                     raise AuthenticationFailed("Invalid DRF token")
-                 
-                jwt_token = AccessToken.for_user(user)
+                return user #user_token
+            except AuthenticationFailed:
+                self.close(code=4001)  # Close WebSocket on auth failure
+                return None 
 
-                
-                return user #jwt_token
-            
-            except AuthenticationFailed as drf_auth_error:
-                print(f"DRF token authentication failed: {drf_auth_error}")
 
-                # Step 3: Attempt JWT authentication directly
-                try:
-                    jwt_token = AccessToken(user_token)  # Decode the JWT
-                    user_id = jwt_token['user_id']  # Extract user ID from the token payload
-
-                    # Fetch the user from your User model
-                    from django.contrib.auth import get_user_model
-                    User = get_user_model()
-                    user = User.objects.get(id=user_id)
-
-                    return user #jwt_token
-
-                except Exception as jwt_error:
-                    print(f"JWT authentication failed: {jwt_error}") 
-                    # logger.error(f"Authentication failed: {e}")
-                    raise AuthenticationFailed("JWT authentication failed") 
-                    # return self.get_demo_user() 
-        # else:
-        #     print('Could not parse given user token, fetching demo user')
-        #     # If no user token is provided, return the demo user
-        #     return self.get_demo_user()
+   
+               
 
     def authenticate_with_drf_token(self, user_token):
         from rest_framework.authentication import TokenAuthentication
@@ -138,8 +121,7 @@ class ClimateTwinConsumer(WebsocketConsumer):
         """
         Authenticate the user using the DRF Token authentication.
         """
-        try:
-            # Authenticate using TokenAuthentication
+        try: 
             auth = TokenAuthentication()
             user, token = auth.authenticate_credentials(user_token)
             return user, token
@@ -330,22 +312,25 @@ class LocationUpdateConsumer(WebsocketConsumer):
             return None, None
 
         try:
-            user, _ = self.authenticate_with_drf_token(user_token)
-            if user is None:
-                raise AuthenticationFailed("Invalid DRF token")
-            return user, user_token
-        except AuthenticationFailed:
-            try:
-                jwt_token = AccessToken(user_token)
-                user_id = jwt_token['user_id']
-                User = self.get_user_model()
-                user = User.objects.get(id=user_id)
-                return user, jwt_token
+            jwt_token = AccessToken(user_token)
+            user_id = jwt_token['user_id']
+            User = self.get_user_model()
+            user = User.objects.get(id=user_id)
+            return user, jwt_token
 
-            except Exception as jwt_error:
-                print(f"JWT authentication failed: {jwt_error}")
+        except Exception as jwt_error:
+            print(f"JWT authentication failed: {jwt_error}")
+
+
+            try:
+                user, _ = self.authenticate_with_drf_token(user_token)
+                if user is None:
+                    raise AuthenticationFailed("Invalid DRF token")
+                return user, user_token
+            except AuthenticationFailed:
                 self.close(code=4001)  # Close WebSocket on auth failure
                 return None, None
+
 
     def authenticate_with_drf_token(self, user_token):
         """
@@ -381,166 +366,3 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
 
 
-
-# class LocationUpdateConsumer(AsyncWebsocketConsumer):
-
-#     async def connect(self):
-#         """
-#         Handles WebSocket connection, authenticates the user, and fetches initial location data.
-#         """
-#         self.user, self.token = await self.authenticate_user()
-#         self.connected = False  # Track connection state
-
-#         if self.user and self.token:
-#             channel_id = self.user.id
-#             self.group_name = f'location_update_{channel_id}'
-
-#             await self.channel_layer.group_add(self.group_name, self.channel_name)
-#             await self.accept()
-#             self.connected = True
-#             logger.info("Location Update WebSocket connection established")
-
-#             # Fetch and send initial location data
-#             data = await self.fetch_data_from_endpoint(self.token)
-#             await self.update_location(data)
-#         else:
-#             await self.accept()
-#             await self.send(text_data=json.dumps({'error': "Authentication failed. Connection closing."}))
-#             await self.close()
-
-#     async def receive(self, text_data=None, bytes_data=None):
-#         """
-#         Keeps the connection alive and listens for incoming messages from the client.
-#         """
-#         if text_data:
-#             logger.debug(f"Received WebSocket message: {text_data}")
-#             message = json.loads(text_data)
-            
-#             # Handle incoming messages (e.g., refresh location data)
-#             if message.get("action") == "refresh":
-#                 data = await self.fetch_data_from_endpoint(self.token)
-#                 await self.update_location(data)
-
-#     async def fetch_data_from_endpoint(self, token):
-#         """
-#         Fetches data asynchronously from external API endpoints.
-#         """
-#         from rest_framework_simplejwt.tokens import AccessToken
-
-#         # explore_data_endpoint = 'https://climatetwin.com/climatevisitor/currently-exploring/'
-#         # discovery_locations_endpoint = 'https://climatetwin.com/climatevisitor/locations/nearby/'
-#         # twin_endpoint = 'https://climatetwin.com/climatevisitor/currently-visiting/'
-
-#         explore_data_endpoint = 'http://localhost:8000/climatevisitor/currently-exploring/'
-#         discovery_locations_endpoint = 'http://localhost:8000/climatevisitor/locations/nearby/'
-#         twin_endpoint = 'http://localhost:8000/climatevisitor/currently-visiting/'
-     
-#         token_str = str(token) if isinstance(token, AccessToken) else token
-#         auth_header = f'Bearer {token_str}' if len(token_str.split('.')) == 3 else f'Token {token_str}'
-        
-#         headers = {'Authorization': auth_header, 'Content-Type': 'application/json'}
-
-#         async def async_request(url):
-#             return await sync_to_async(requests.get)(url, headers=headers)
-
-#         explore_response = await async_request(explore_data_endpoint)
-
-#         if explore_response.status_code == 200:
-#             explore_data = explore_response.json()
-#             current_location_id = explore_data.get('explore_location') or explore_data.get('twin_location')
-
-#             if not current_location_id:
-#                 return None
-
-#             if 'twin_location' in explore_data:
-#                 return (await async_request(twin_endpoint)).json()
-
-#             discovery_location_endpoint = f'{discovery_locations_endpoint}{current_location_id}/'
-#             return (await async_request(discovery_location_endpoint)).json()
-
-#         twin_response = await async_request(twin_endpoint)
-#         return twin_response.json() if twin_response.status_code == 200 else None
-
-#     async def disconnect(self, close_code):
-#         """
-#         Handles WebSocket disconnection and removes the connection from the group.
-#         """
-#         self.connected = False
-#         await self.channel_layer.group_discard(self.group_name, self.channel_name)
-#         logger.info("Location Update WebSocket connection closed")
-
-#     async def update_location(self, event):
-#         """
-#         Sends location updates to the client.
-#         """
-#         logger.debug(f"Received update_locations event: {event}")
-#         if event is None:
-#             await self.send(text_data=json.dumps({'name': "You are home"}))
-#         elif 'latitude' in event and 'longitude' in event:
-#             await self.send(text_data=json.dumps({
-#                 'name': event['name'],
-#                 'latitude': event['latitude'],
-#                 'longitude': event['longitude'],
-#             }))
-
-#     async def authenticate_user(self):
-#         """
-#         Authenticates the user using either DRF Token or JWT.
-#         """
-#         from rest_framework_simplejwt.tokens import AccessToken
-#         from rest_framework.exceptions import AuthenticationFailed
-
-#         auth = self.scope.get('query_string', b'').decode()
-#         user_token = parse_qs(auth).get('user_token', [None])[0]
-
-#         if not user_token:
-#             raise AuthenticationFailed("No token provided")
-
-#         try:
-#             user, _ = await self.authenticate_with_drf_token(user_token)
-#             if user is None:
-#                 raise AuthenticationFailed("Invalid DRF token")
-#             return user, user_token
-#         except AuthenticationFailed:
-#             try:
-#                 jwt_token = AccessToken(user_token)
-#                 user_id = jwt_token['user_id']
-#                 User = await self.get_user_model()
-#                 user = await sync_to_async(User.objects.get)(id=user_id)
-#                 return user, jwt_token
-#             except Exception as e:
-#                 logger.error(f"JWT authentication failed: {e}")
-#                 raise AuthenticationFailed("JWT authentication failed")
-
-#     async def authenticate_with_drf_token(self, user_token):
-#         """
-#         Authenticates the user using DRF Token authentication.
-#         """
-#         from rest_framework.authentication import TokenAuthentication
-#         from rest_framework.exceptions import AuthenticationFailed
-
-#         try:
-#             auth = TokenAuthentication()
-#             user, token = await sync_to_async(auth.authenticate_credentials)(user_token)
-#             return user, token
-#         except AuthenticationFailed:
-#             return None, None
-
-#     async def get_user(self, access_token):
-#         """
-#         Retrieves the user asynchronously from the access token.
-#         """
-#         try:
-#             user_id = access_token['user_id']
-#             User = await self.get_user_model()
-#             user = await sync_to_async(User.objects.get)(id=user_id)
-#             return user, access_token
-#         except Exception:
-#             return None, None
-
-#     @staticmethod
-#     async def get_user_model():
-#         """
-#         Returns the custom user model asynchronously.
-#         """
-#         return apps.get_model('users', 'BadRainbowzUser')
