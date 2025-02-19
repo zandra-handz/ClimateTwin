@@ -163,6 +163,8 @@ CHANNEL_LAYERS = {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
             'hosts': [os.environ.get('REDIS_URL')],
+            "capacity": 10000,  # added to debug connection errors
+            "expiry": 10, # added to debug connection errors     
         },
     },
 }
