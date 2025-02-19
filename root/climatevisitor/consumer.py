@@ -166,29 +166,25 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
     def connect(self):
         self.user, self.token = self.authenticate_user()
-        #self.connected = False  # Ensures proper handling of connection state
 
-        if self.user and self.token:
-            channel_id = self.user.id
-            self.group_name = f'location_update_{channel_id}'
-
-            async_to_sync(self.channel_layer.group_add)(
-                self.group_name,
-                self.channel_name
-            )
-            self.accept()
-            #self.connected = True
-            logger.info("FOCUS HEEEEEERE Location Update WebSocket connection established")
-
-            data = self.fetch_data_from_endpoint(self.token)
-            self.update_location(data)
-        else:
-            #self.accept()
-            self.send(text_data=json.dumps({
-                'error': "Authentication in LocationUpdateConsumer failed. Connection closing."
-            }))
-            self.close()
+        if not self.user or not self.token:
+            # If authentication failed, WebSocket is already closed inside authenticate_user()
             return
+
+        channel_id = self.user.id
+        self.group_name = f'location_update_{channel_id}'
+
+        async_to_sync(self.channel_layer.group_add)(
+            self.group_name,
+            self.channel_name
+        )
+
+        self.accept()
+        logger.info("FOCUS HEEEEEERE Location Update WebSocket connection established")
+
+        data = self.fetch_data_from_endpoint(self.token)
+        self.update_location(data)
+
 
     def receive(self, text_data=None, bytes_data=None):
         """
@@ -329,7 +325,9 @@ class LocationUpdateConsumer(WebsocketConsumer):
         user_token = parse_qs(auth).get('user_token', [None])[0]
 
         if not user_token:
-            raise AuthenticationFailed("No token provided")
+            print("No token provided")
+            self.close(code=4001)  # Custom WebSocket close code for auth failure
+            return None, None
 
         try:
             user, _ = self.authenticate_with_drf_token(user_token)
@@ -343,9 +341,11 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 User = self.get_user_model()
                 user = User.objects.get(id=user_id)
                 return user, jwt_token
-            except Exception as e:
-                logger.error(f"JWT authentication failed: {e}")
-                raise AuthenticationFailed("JWT authentication failed")
+
+            except Exception as jwt_error:
+                print(f"JWT authentication failed: {jwt_error}")
+                self.close(code=4001)  # Close WebSocket on auth failure
+                return None, None
 
     def authenticate_with_drf_token(self, user_token):
         """
