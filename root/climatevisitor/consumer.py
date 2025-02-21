@@ -6,6 +6,7 @@ from climatevisitor.tasks.tasks import send_location_update_to_celery
 
 from channels.db import database_sync_to_async
 from django.apps import apps
+from django.core.cache import cache
 import asyncio
  
 
@@ -146,6 +147,8 @@ class ClimateTwinConsumer(WebsocketConsumer):
 
 class LocationUpdateConsumer(WebsocketConsumer):
 
+    last_message = None 
+
     def connect(self):
         self.user, self.token = self.authenticate_user()
 
@@ -166,6 +169,23 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
         data = self.fetch_data_from_endpoint(self.token)
         self.update_location(data)
+
+        last_message = cache.get(f"last_message_{self.user.id}")
+        if last_message:
+            logger.info(f"Sending last_message to user {self.user.id}: {last_message}")
+            self.send(text_data=json.dumps({'message': last_message}))
+
+    def send_message_event(self, event):
+        """Handles sending a 'message' event and stores it in cache."""
+        if not self.user:
+            logger.error("No user found when trying to send message event.")
+            return
+        
+        message_data = event.get("message")
+        if message_data:
+            logger.debug(f"Saving last_message for user {self.user.id}: {message_data}")
+            cache.set(f"last_message_{self.user.id}", message_data, timeout=86400)  # Store for 1 day
+            self.send(text_data=json.dumps({'message': message_data}))
 
 
     def receive(self, text_data=None, bytes_data=None):
@@ -240,36 +260,61 @@ class LocationUpdateConsumer(WebsocketConsumer):
         return None  # If nothing found
 
     def search_for_ruins(self, event):
-        # logger.debug(f"Received update_coordinates event: {event}")
-        self.send(text_data=json.dumps({
-            'message': event['message'], 
-        }))
+        logger.debug(f"Received update_coordinates event: {event}")
+
+        message_data = event['message']
+        cache.set(f"last_message_{self.user.id}", message_data, timeout=86400)
+        self.send(text_data=json.dumps({'message': message_data}))
+
+        # self.send(text_data=json.dumps({
+        #     'message': event['message'], 
+        # }))
 
     def explore_locations_ready(self, event):
-        # logger.debug(f"Received update_coordinates event: {event}")
-        self.send(text_data=json.dumps({
-            'message': event['message'], 
-        }))
+        logger.debug(f"Received update_coordinates event: {event}")
+
+        message_data = event['message']
+        cache.set(f"last_message_{self.user.id}", message_data, timeout=86400)
+        self.send(text_data=json.dumps({'message': message_data}))
+
+        # self.send(text_data=json.dumps({
+        #     'message': event['message'], 
+        # }))
+
 
 
     def no_ruins_found(self, event):
-        # logger.debug(f"Received update_coordinates event: {event}")
-        self.send(text_data=json.dumps({
-            'message': event['message'], 
-        }))
+        logger.debug(f"Received update_coordinates event: {event}")
+
+        message_data = event['message']
+        cache.set(f"last_message_{self.user.id}", message_data, timeout=86400)
+        self.send(text_data=json.dumps({'message': message_data}))
+
+        # self.send(text_data=json.dumps({
+        #     'message': event['message'], 
+        # }))
 
 
     def clear_message(self, event):
-        # logger.debug(f"Received update_coordinates event: {event}")
-        self.send(text_data=json.dumps({
-            'message': event['message'], 
-        }))
+        logger.debug(f"Received update_coordinates event: {event}")
+
+        message_data = event['message']
+        cache.set(f"last_message_{self.user.id}", message_data, timeout=86400)
+        self.send(text_data=json.dumps({'message': message_data}))
+        # self.send(text_data=json.dumps({
+        #     'message': event['message'], 
+        # }))
 
     def returned_home_message(self, event):
-        # logger.debug(f"Received update_coordinates event: {event}")
-        self.send(text_data=json.dumps({
-            'message': event['message'], 
-        }))
+
+        logger.debug(f"Received update_coordinates event: {event}")
+
+        message_data = event['message']
+        cache.set(f"last_message_{self.user.id}", message_data, timeout=86400)
+        self.send(text_data=json.dumps({'message': message_data}))
+        # self.send(text_data=json.dumps({
+        #     'message': event['message'], 
+        # }))
 
     def disconnect(self, close_code):
         """
