@@ -174,6 +174,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
         if last_message:
             logger.info(f"Sending last_message to user {self.user.id}: {last_message}")
             self.send(text_data=json.dumps({'message': last_message}))
+        else:
+               logger.info("No message in cache for this user")
 
     def send_message_event(self, event):
         """Handles sending a 'message' event and stores it in cache."""
