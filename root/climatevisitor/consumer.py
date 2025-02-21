@@ -262,11 +262,32 @@ class LocationUpdateConsumer(WebsocketConsumer):
         return None  # If nothing found
 
     def search_for_ruins(self, event):
+        # Log the incoming event data
         logger.debug(f"Received update_coordinates event: {event}")
 
+        # Extract message data
         message_data = event['message']
-        cache.set(f"last_message_{self.user.id}", message_data, timeout=86400)
+        logger.debug(f"Message data extracted: {message_data}")
+
+        # Cache key being used
+        cache_key = f"last_message_{self.user.id}"
+        logger.debug(f"Caching message for user {self.user.id} with key: {cache_key}")
+
+        # Set the cache and log the result
+        cache.set(cache_key, message_data, timeout=86400)
+        logger.debug(f"Message cached successfully with key: {cache_key} and timeout 86400")
+
+        # Sending the message back to the client
         self.send(text_data=json.dumps({'message': message_data}))
+        logger.debug(f"Sent message to client: {message_data}")
+
+        # Optionally, check and log the cache contents to verify it was stored correctly
+        cached_message = cache.get(cache_key)
+        if cached_message:
+            logger.debug(f"Cache contains the expected message for key {cache_key}: {cached_message}")
+        else:
+            logger.debug(f"Cache does not contain a message for key {cache_key}")
+
 
         # self.send(text_data=json.dumps({
         #     'message': event['message'], 
