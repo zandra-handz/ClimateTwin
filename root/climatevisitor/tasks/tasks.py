@@ -74,7 +74,7 @@ def send_clear_message(user_id):
         group_name,
         {
             'type': 'clear_message',
-            'message': '',
+            'message': 'Clear',
         }
     ) 
 
