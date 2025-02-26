@@ -349,11 +349,19 @@ class LocationUpdateConsumer(WebsocketConsumer):
         #     'message': event['message'], 
         # }))
 
-    def gift_notification(self, recipient_id, event):
+    # def gift_notification(self, recipient_id, event):
 
-        logger.debug(f"Received update_coordinates event: {event}")
+    #     logger.debug(f"Received update_coordinates event: {event}")
+
+    #     notification_data = event['notification']
+    #     cache.set(f"notification_{recipient_id}", notification_data, timeout=86400)
+    #     self.send(text_data=json.dumps({'notification': notification_data}))
+
+    def gift_notification(self, event):
+        logger.debug(f"Received gift_notification event: {event}")
 
         notification_data = event['notification']
+        recipient_id = event['recipient_id']  # Correctly use recipient_id from the event
         cache.set(f"notification_{recipient_id}", notification_data, timeout=86400)
         self.send(text_data=json.dumps({'notification': notification_data}))
 
