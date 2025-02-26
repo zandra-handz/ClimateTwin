@@ -1,6 +1,6 @@
 from . import models
 from . import serializers
-from climatevisitor.tasks.tasks import send_gift_notification, send_gift_accepted_notification
+from climatevisitor.tasks.tasks import send_gift_notification, send_gift_accepted_notification, send_clear_gift_notification, send_friend_request_notification, send_friend_request_accepted_notification, send_clear_friend_request_notification
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -399,6 +399,9 @@ class SendFriendRequestView(generics.CreateAPIView):
         inbox_item = models.InboxItem.objects.create(user=recipient, message=friend_request_message)
         inbox_item.save()
 
+        logger.info("Calling send_friend_request_notification synchronously for testing...")
+        send_friend_request_notification(request.user.id, recipient.id)
+
         return Response({'success': 'Friend request sent successfully.'}, status=status.HTTP_201_CREATED)
 
 
@@ -443,12 +446,21 @@ class FriendRequestDetailView(generics.RetrieveUpdateAPIView):
             with transaction.atomic():
                 instance.delete()
 
+
+            logger.info("Calling send_friend_request_accepted_notification synchronously for testing...")
+            send_friend_request_accepted_notification(request.user.id, friend.id)
+
+                
+
             return Response({'success': 'Friend request accepted successfully!'}, status=status.HTTP_200_OK)
         
         if rejected is not None: 
 
             with transaction.atomic():
                 instance.delete()
+
+            logger.info("Calling send_clear_friend_request_notification synchronously for testing...")
+            send_clear_friend_request_notification(request.user.id, friend.id)
 
             return Response({'success': 'Friend request rejected successfully!'}, status=status.HTTP_200_OK)
 
@@ -623,8 +635,8 @@ class GiftRequestDetailView(generics.RetrieveUpdateAPIView):
             with transaction.atomic():
                 instance.delete()
 
-            logger.info("Calling send_accepted_gift_notification synchronously for testing...")
-            send_gift_accepted_notification(request.user.id, instance.sender.id)
+            logger.info("Calling send_clear_gift_notification synchronously for testing...")
+            send_clear_gift_notification(request.user.id, instance.sender.id)
 
             return Response({'success': 'Gift request rejected successfully!'}, status=status.HTTP_200_OK)
 

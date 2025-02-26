@@ -140,8 +140,7 @@ def send_gift_notification(user_id, recipient_id):
 
 
     
-    try:
-        # Try sending the message to the group
+    try: 
         async_to_sync(channel_layer.group_send)(
             group_name,
             {
@@ -152,9 +151,7 @@ def send_gift_notification(user_id, recipient_id):
         logger.info(f"Notification successfully sent to {group_name}")
     except Exception as e:
         logger.error(f"Failed to send notification to {group_name}: {e}")
-    
-    # Cache the notification regardless of success or failure
-
+     
 
 @shared_task
 def send_gift_accepted_notification(user_id, recipient_id):
@@ -165,7 +162,7 @@ def send_gift_accepted_notification(user_id, recipient_id):
     
     logger.info(f"Attempting to send message to group: {group_name}")
 
-    notification_message = f'User ID {user_id} responded to your treasure gift!'
+    notification_message = f'User ID {user_id} accepted your gift!'
 
     #No time out right now, may need to remove manually once user accepts/declines message
     cache.set(f"last_notification_{recipient_id}", notification_message, timeout=3600)  # Cache for 1 hour
@@ -173,8 +170,7 @@ def send_gift_accepted_notification(user_id, recipient_id):
 
 
     
-    try:
-        # Try sending the message to the group
+    try: 
         async_to_sync(channel_layer.group_send)(
             group_name,
             {
@@ -185,8 +181,133 @@ def send_gift_accepted_notification(user_id, recipient_id):
         logger.info(f"Notification successfully sent to {group_name}")
     except Exception as e:
         logger.error(f"Failed to send notification to {group_name}: {e}")
+     
+
+@shared_task
+def send_friend_request_notification(user_id, recipient_id):
+    logger.info(f"send_friend_request_notification triggered for user_id: {user_id}, recipient_id: {recipient_id}")
+
+    channel_layer = get_channel_layer()
+    group_name = f'location_update_{recipient_id}'
     
-    # Cache the notification regardless of success or failure
+    logger.info(f"Attempting to send message to group: {group_name}")
+
+    notification_message = f'User ID {user_id} wants to be friends!'
+
+    #No time out right now, may need to remove manually once user accepts/declines message
+    cache.set(f"last_notification_{recipient_id}", notification_message, timeout=3600)  # Cache for 1 hour
+    logger.info(f"Notification cached for {recipient_id}: {notification_message}")
+
+
+    
+    try: 
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                'type': 'friend_notification',
+                'notification': notification_message,
+            }
+        )
+        logger.info(f"Notification successfully sent to {group_name}")
+    except Exception as e:
+        logger.error(f"Failed to send notification to {group_name}: {e}")
+
+
+
+@shared_task
+def send_friend_request_accepted_notification(user_id, recipient_id):
+    logger.info(f"send_friend_request_notification triggered for user_id: {user_id}, recipient_id: {recipient_id}")
+
+    channel_layer = get_channel_layer()
+    group_name = f'location_update_{recipient_id}'
+    
+    logger.info(f"Attempting to send message to group: {group_name}")
+
+    notification_message = f'User ID {user_id} accepted your friend request!'
+
+    #No time out right now, may need to remove manually once user accepts/declines message
+    cache.set(f"last_notification_{recipient_id}", notification_message, timeout=3600)  # Cache for 1 hour
+    logger.info(f"Notification cached for {recipient_id}: {notification_message}")
+
+
+    
+    try: 
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                'type': 'friend_notification',
+                'notification': notification_message,
+            }
+        )
+        logger.info(f"Notification successfully sent to {group_name}")
+    except Exception as e:
+        logger.error(f"Failed to send notification to {group_name}: {e}")
+
+
+@shared_task
+def send_clear_friend_request_notification(user_id, recipient_id):
+    logger.info(f"send_clear_friend_request_notification triggered for user_id: {user_id}, recipient_id: {recipient_id}")
+
+    channel_layer = get_channel_layer()
+    group_name = f'location_update_{recipient_id}'
+    
+    logger.info(f"Attempting to send message to group: {group_name}")
+
+    notification_message = ''
+
+    #No time out right now, may need to remove manually once user accepts/declines message
+    cache.set(f"last_notification_{recipient_id}", notification_message, timeout=3600)  # Cache for 1 hour
+    logger.info(f"Notification cached for {recipient_id}: {notification_message}")
+
+
+    
+    try: 
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                'type': 'friend_notification',
+                'notification': notification_message,
+            }
+        )
+        logger.info(f"Notification successfully sent to {group_name}")
+    except Exception as e:
+        logger.error(f"Failed to send notification to {group_name}: {e}")
+
+
+
+
+@shared_task
+def send_clear_gift_notification(user_id, recipient_id):
+    logger.info(f"send_clear_gift_notification triggered for user_id: {user_id}, recipient_id: {recipient_id}")
+
+    channel_layer = get_channel_layer()
+    group_name = f'location_update_{recipient_id}'
+    
+    logger.info(f"Attempting to send message to group: {group_name}")
+
+    notification_message = ''
+
+    #No time out right now, may need to remove manually once user accepts/declines message
+    cache.set(f"last_notification_{recipient_id}", notification_message, timeout=3600)  # Cache for 1 hour
+    logger.info(f"Notification cached for {recipient_id}: {notification_message}")
+
+
+    
+    try: 
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                'type': 'gift_notification',
+                'notification': notification_message,
+            }
+        )
+        logger.info(f"Notification successfully sent to {group_name}")
+    except Exception as e:
+        logger.error(f"Failed to send notification to {group_name}: {e}")
+
+
+
+
 
 
 
