@@ -24,6 +24,11 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.views.decorators.csrf import csrf_exempt
 
 
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 @swagger_auto_schema(operation_id='activateUser', auto_schema=None)
 class ActivateUser(UserViewSet):
 
