@@ -784,7 +784,7 @@ def collect(request):
 
 
         try:
-            latest_explore_location = models.ClimateTwinExploreLocation.objects.filter(user=user).latest('created_on')
+            latest_explore_location = models.CurrentLocation.objects.get(user=user)
             location_dict = latest_explore_location.to_dict()
 
 
@@ -829,7 +829,7 @@ def collect(request):
             else:
                 return Response({"detail": f"Item '{item}' not found in the dictionary.", 'choices': location_dict}, status=status.HTTP_404_NOT_FOUND)
 
-        except models.ClimateTwinExploreLocation.DoesNotExist:
+        except models.CurrentLocation.DoesNotExist:
             return Response({'detail': 'Explore location not found for the user.'}, status=status.HTTP_404_NOT_FOUND)
 
     return Response({'detail': 'Method not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
