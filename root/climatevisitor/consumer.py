@@ -182,7 +182,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         last_notification = cache.get(f"last_notification_{self.user.id}")
         if last_notification:
             logger.info(f"Sending last_notification to user {self.user.id}: {last_notification}")
-            self.send(text_data=json.dumps({'message': last_notification}))
+            self.send(text_data=json.dumps({'notification': last_notification}))
         else:
                logger.info("No notification in cache for this user")
 
