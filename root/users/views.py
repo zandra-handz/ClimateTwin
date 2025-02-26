@@ -545,10 +545,19 @@ class SendGiftRequestView(generics.CreateAPIView):
             inbox_item = models.InboxItem.objects.create(user=gift_request.recipient, message=gift_request_message)
             inbox_item.save()
 
+
+            print(gift_request.recipient.id)
+
+            # Call the function directly for testing (synchronously)
+            logger.info("Calling send_gift_notification synchronously for testing...")
+            send_gift_notification(request.user.id, gift_request.recipient.id)
+
+            # Call the task asynchronously, but without the countdown
+            logger.info("Calling send_gift_notification asynchronously...")
             send_gift_notification.apply_async(
-                args=[request.user.id, gift_request.recipient.id],
-                countdown=1  # Optional
+                args=[request.user.id, gift_request.recipient.id]
             )
+
             gift_request.treasure.pending = True
             gift_request.treasure.save()
 
