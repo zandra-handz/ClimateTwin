@@ -148,6 +148,7 @@ class ClimateTwinConsumer(WebsocketConsumer):
 class LocationUpdateConsumer(WebsocketConsumer):
 
     last_message = None 
+    last_notification = None
 
     def connect(self):
         self.user, self.token = self.authenticate_user()
@@ -176,6 +177,15 @@ class LocationUpdateConsumer(WebsocketConsumer):
             self.send(text_data=json.dumps({'message': last_message}))
         else:
                logger.info("No message in cache for this user")
+
+
+        last_notification = cache.get(f"last_notification_{self.user.id}")
+        if last_notification:
+            logger.info(f"Sending last_notification to user {self.user.id}: {last_notification}")
+            self.send(text_data=json.dumps({'message': last_notification}))
+        else:
+               logger.info("No notification in cache for this user")
+
 
     def send_message_event(self, event):
         """Handles sending a 'message' event and stores it in cache."""
@@ -338,6 +348,25 @@ class LocationUpdateConsumer(WebsocketConsumer):
         # self.send(text_data=json.dumps({
         #     'message': event['message'], 
         # }))
+
+    def gift_notification(self, recipient_id, event):
+
+        logger.debug(f"Received update_coordinates event: {event}")
+
+        notification_data = event['notification']
+        cache.set(f"notification_{self.recipient_id}", notification_data, timeout=86400)
+        self.send(text_data=json.dumps({'notification': notification_data}))
+
+
+    def friend_notification(self, recipient_id, event):
+
+        logger.debug(f"Received update_coordinates event: {event}")
+
+        notification_data = event['notification']
+        cache.set(f"notification_{self.recipient_id}", notification_data, timeout=86400)
+        self.send(text_data=json.dumps({'notification': notification_data}))
+   
+   
 
     def disconnect(self, close_code):
         """

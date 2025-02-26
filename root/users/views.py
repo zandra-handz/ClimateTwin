@@ -1,5 +1,7 @@
 from . import models
 from . import serializers
+from climatevisitor.tasks.tasks import send_gift_notification
+
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Q
@@ -542,6 +544,8 @@ class SendGiftRequestView(generics.CreateAPIView):
 
             inbox_item = models.InboxItem.objects.create(user=gift_request.recipient, message=gift_request_message)
             inbox_item.save()
+
+            send_gift_notification(gift_request.recipient.id)
 
             gift_request.treasure.pending = True
             gift_request.treasure.save()

@@ -115,6 +115,23 @@ def send_no_ruins_found(user_id):
 
 
 
+@shared_task(bind=True, max_retries=3)
+def send_gift_notification(recipient_id):
+    channel_layer = get_channel_layer()
+
+    group_name = f'location_update_{recipient_id}'
+
+    async_to_sync(channel_layer.group_send)(
+        group_name,
+        {
+            'type': 'gift_notification',
+            'notification': 'You have been sent a treasure!',
+        }
+    ) 
+
+
+
+
 
 
 
