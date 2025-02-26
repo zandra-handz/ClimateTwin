@@ -2,6 +2,7 @@
 
 from celery import shared_task
 from channels.layers import get_channel_layer
+from django.core.cache import cache
 from asgiref.sync import async_to_sync
 from ..animations import update_animation
 import logging
@@ -122,26 +123,33 @@ def send_no_ruins_found(user_id):
 
 
 
-@shared_task 
+@shared_task
 def send_gift_notification(user_id, recipient_id):
     logger.info(f"send_gift_notification triggered for user_id: {user_id}, recipient_id: {recipient_id}")
 
     channel_layer = get_channel_layer()
     group_name = f'location_update_{recipient_id}'
     
-    logger.info(f"Sending message to group: {group_name}")
+    logger.info(f"Attempting to send message to group: {group_name}")
 
+    notification_message = 'You have been sent a treasure!'
+    
     try:
+        # Try sending the message to the group
         async_to_sync(channel_layer.group_send)(
             group_name,
             {
                 'type': 'gift_notification',
-                'notification': 'You have been sent a treasure!',
+                'notification': notification_message,
             }
-        ) 
+        )
         logger.info(f"Notification successfully sent to {group_name}")
     except Exception as e:
-        logger.error(f"Failed to send notification: {e}")
+        logger.error(f"Failed to send notification to {group_name}: {e}")
+    
+    # Cache the notification regardless of success or failure
+    cache.set(f"last_notification_{recipient_id}", notification_message, timeout=3600)  # Cache for 1 hour
+    logger.info(f"Notification cached for {recipient_id}: {notification_message}")
 
 
 
