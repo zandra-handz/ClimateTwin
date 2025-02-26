@@ -822,7 +822,6 @@ def collect(request):
                     add_data=add_data
                 )
 
-                
 
                 return Response({"detail": f"Success! Item '{item}' is present in the dictionary with value: {item_name}",
                                 "treasure": treasure_instance.id}, status=status.HTTP_200_OK)

@@ -132,8 +132,42 @@ def send_gift_notification(user_id, recipient_id):
     
     logger.info(f"Attempting to send message to group: {group_name}")
 
-    notification_message = 'You have been sent a treasure!'
+    notification_message = f'User ID {user_id} sent you a treasure!'
 
+    #No time out right now, may need to remove manually once user accepts/declines message
+    cache.set(f"last_notification_{recipient_id}", notification_message) #, timeout=3600)  # Cache for 1 hour
+    logger.info(f"Notification cached for {recipient_id}: {notification_message}")
+
+
+    
+    try:
+        # Try sending the message to the group
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                'type': 'gift_notification',
+                'notification': notification_message,
+            }
+        )
+        logger.info(f"Notification successfully sent to {group_name}")
+    except Exception as e:
+        logger.error(f"Failed to send notification to {group_name}: {e}")
+    
+    # Cache the notification regardless of success or failure
+
+
+@shared_task
+def send_gift_accepted_notification(user_id, recipient_id):
+    logger.info(f"send_gift_accepted_notification triggered for user_id: {user_id}, recipient_id: {recipient_id}")
+
+    channel_layer = get_channel_layer()
+    group_name = f'location_update_{recipient_id}'
+    
+    logger.info(f"Attempting to send message to group: {group_name}")
+
+    notification_message = f'User ID {user_id} responded to your treasure gift!'
+
+    #No time out right now, may need to remove manually once user accepts/declines message
     cache.set(f"last_notification_{recipient_id}", notification_message, timeout=3600)  # Cache for 1 hour
     logger.info(f"Notification cached for {recipient_id}: {notification_message}")
 
@@ -153,6 +187,7 @@ def send_gift_notification(user_id, recipient_id):
         logger.error(f"Failed to send notification to {group_name}: {e}")
     
     # Cache the notification regardless of success or failure
+
 
 
 

@@ -1,6 +1,6 @@
 from . import models
 from . import serializers
-from climatevisitor.tasks.tasks import send_gift_notification
+from climatevisitor.tasks.tasks import send_gift_notification, send_gift_accepted_notification
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -557,11 +557,12 @@ class SendGiftRequestView(generics.CreateAPIView):
             logger.info("Calling send_gift_notification synchronously for testing...")
             send_gift_notification(request.user.id, gift_request.recipient.id)
 
-            # Call the task asynchronously, but without the countdown
-            logger.info("Calling send_gift_notification asynchronously...")
-            send_gift_notification.apply_async(
-                args=[request.user.id, gift_request.recipient.id]
-            )
+            # DOESN'T WORK
+            # # Call the task asynchronously, but without the countdown
+            # logger.info("Calling send_gift_notification asynchronously...")
+            # send_gift_notification.apply_async(
+            #     args=[request.user.id, gift_request.recipient.id]
+            # )
 
             gift_request.treasure.pending = True
             gift_request.treasure.save()
@@ -608,6 +609,9 @@ class GiftRequestDetailView(generics.RetrieveUpdateAPIView):
             with transaction.atomic():
                 instance.delete()
 
+            logger.info("Calling send_accepted_gift_notification synchronously for testing...")
+            send_gift_accepted_notification(request.user.id, instance.sender.id)
+
 
             return Response({'success': 'Gift request accepted successfully!'}, status=status.HTTP_200_OK)
 
@@ -618,6 +622,9 @@ class GiftRequestDetailView(generics.RetrieveUpdateAPIView):
 
             with transaction.atomic():
                 instance.delete()
+
+            logger.info("Calling send_accepted_gift_notification synchronously for testing...")
+            send_gift_accepted_notification(request.user.id, instance.sender.id)
 
             return Response({'success': 'Gift request rejected successfully!'}, status=status.HTTP_200_OK)
 
