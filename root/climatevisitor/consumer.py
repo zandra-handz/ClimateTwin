@@ -354,7 +354,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         logger.debug(f"Received update_coordinates event: {event}")
 
         notification_data = event['notification']
-        cache.set(f"notification_{self.recipient_id}", notification_data, timeout=86400)
+        cache.set(f"notification_{recipient_id}", notification_data, timeout=86400)
         self.send(text_data=json.dumps({'notification': notification_data}))
 
 
@@ -363,7 +363,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         logger.debug(f"Received update_coordinates event: {event}")
 
         notification_data = event['notification']
-        cache.set(f"notification_{self.recipient_id}", notification_data, timeout=86400)
+        cache.set(f"notification_{recipient_id}", notification_data, timeout=86400)
         self.send(text_data=json.dumps({'notification': notification_data}))
    
    
