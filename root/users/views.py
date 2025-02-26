@@ -545,8 +545,10 @@ class SendGiftRequestView(generics.CreateAPIView):
             inbox_item = models.InboxItem.objects.create(user=gift_request.recipient, message=gift_request_message)
             inbox_item.save()
 
-            send_gift_notification(user_id=request.user.id, recipient_id=gift_request.recipient.id)
-
+            send_gift_notification.apply_async(
+                args=[request.user.id, gift_request.recipient.id],
+                countdown=1  # Optional
+            )
             gift_request.treasure.pending = True
             gift_request.treasure.save()
 

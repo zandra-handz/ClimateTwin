@@ -4,11 +4,17 @@ from celery import shared_task
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from ..animations import update_animation
+import logging
 import time
+
+
+logger = logging.getLogger(__name__)
 
 
 # Name currently inaccurate; this is getting processed by main server
 # Testing passing in user
+
+
 
 @shared_task
 def send_coordinate_update_to_celery(user_id, country_name, temp_difference, temperature, latitude, longitude):
@@ -115,22 +121,27 @@ def send_no_ruins_found(user_id):
 
 
 
+
 @shared_task 
 def send_gift_notification(user_id, recipient_id):
+    logger.info(f"send_gift_notification triggered for user_id: {user_id}, recipient_id: {recipient_id}")
+
     channel_layer = get_channel_layer()
-
     group_name = f'location_update_{recipient_id}'
+    
+    logger.info(f"Sending message to group: {group_name}")
 
-    async_to_sync(channel_layer.group_send)(
-        group_name,
-        {
-            'type': 'gift_notification',
-            'notification': 'You have been sent a treasure!',
-        }
-    ) 
-
-
-
+    try:
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                'type': 'gift_notification',
+                'notification': 'You have been sent a treasure!',
+            }
+        ) 
+        logger.info(f"Notification successfully sent to {group_name}")
+    except Exception as e:
+        logger.error(f"Failed to send notification: {e}")
 
 
 
