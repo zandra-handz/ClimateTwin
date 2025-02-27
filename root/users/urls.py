@@ -15,6 +15,7 @@ urlpatterns = [
     path('inbox/item/<int:pk>/', views.InboxItemDetailView.as_view(), name='inbox-item-detail'),
     path('inbox/accept-friend-request/<int:item_view_id>/', views.FriendRequestDetailView.as_view(), name='accept-friend-request'),
     path('inbox/accept-gift-request/<int:item_view_id>/', views.GiftRequestDetailView.as_view(), name='accept-gift-request'),
+    path('clear-notification-cache/', views.clear_notification_cache, name='clear_notification_cache'),   
     path('messages/create/', views.CreateMessageView.as_view(), name='create_message'),
     path('messages/send/', views.send_message, name='send_message'),
     path('message/<int:pk>/', views.MessageView.as_view(), name='message-detail'),

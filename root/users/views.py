@@ -1,6 +1,6 @@
 from . import models
 from . import serializers
-from climatevisitor.tasks.tasks import send_gift_notification, send_gift_accepted_notification, send_clear_gift_notification, send_friend_request_notification, send_friend_request_accepted_notification, send_clear_friend_request_notification
+from climatevisitor.tasks.tasks import send_gift_notification, send_gift_accepted_notification, send_clear_gift_notification, send_friend_request_notification, send_friend_request_accepted_notification, send_clear_friend_request_notification, send_clear_notification_cache
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -67,7 +67,28 @@ def get_current_user(request):
     
     serializer = serializers.BadRainbowzUserSerializer(request.user)
     return JsonResponse(serializer.data)
-   
+
+@api_view(['POST']) 
+@authentication_classes([TokenAuthentication, JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def clear_notification_cache(request):
+
+    if request.method == 'POST':
+        user = request.user 
+ 
+
+        if user: 
+            send_clear_notification_cache(user.id)
+          
+            return Response({'success': 'Request to send cache clearing task sent!'}, status=status.HTTP_200_OK)
+        
+
+        return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    return Response({'error': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+  
 
 class TreasuresView(generics.ListCreateAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
