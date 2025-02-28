@@ -168,10 +168,27 @@ class FriendProfileSerializer(serializers.ModelSerializer):
 
 
 class InboxItemSerializer(serializers.ModelSerializer):
+    display_text = serializers.SerializerMethodField()
+    sender = serializers.SerializerMethodField()
+    content_type = serializers.SerializerMethodField()
 
-    class Meta(object):
+    class Meta:
         model = models.InboxItem
-        fields = "__all__"
+        fields = "__all__"  
+        extra_kwargs = {
+            'display_text': {'read_only': True},
+            'sender': {'read_only': True},
+            'content_type': {'read_only': True}
+        }
+
+    def get_display_text(self, obj):
+        return str(obj)   
+
+    def get_sender(self, obj): 
+        return obj.message.sender if obj.message else "unknown sender"
+
+    def get_content_type(self, obj): 
+        return obj.message.content_type if obj.message else "no content type"
 
 class UserSummarySerializer(serializers.ModelSerializer):
 
