@@ -166,7 +166,6 @@ class FriendProfileSerializer(serializers.ModelSerializer):
 
 
 
-
 class InboxItemSerializer(serializers.ModelSerializer):
     display_text = serializers.SerializerMethodField()
     sender = serializers.SerializerMethodField()
@@ -184,8 +183,10 @@ class InboxItemSerializer(serializers.ModelSerializer):
     def get_display_text(self, obj):
         return str(obj)   
 
-    def get_sender(self, obj): 
-        return obj.message.sender if obj.message else "unknown sender"
+    def get_sender(self, obj):
+        if obj.message and obj.message.sender:
+            return BadRainbowzUserSerializer(obj.message.sender).data
+        return {"id": None, "username": "unknown sender"}
 
     def get_content_type(self, obj): 
         return obj.message.content_type if obj.message else "no content type"
