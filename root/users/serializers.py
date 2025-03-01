@@ -187,9 +187,12 @@ class InboxItemSerializer(serializers.ModelSerializer):
         if obj.message and obj.message.sender:
             return BadRainbowzUserSerializer(obj.message.sender).data
         return {"id": None, "username": "unknown sender"}
+        
+    def get_content_type(self, obj):
+        if obj.message and obj.message.content_type:
+            return str(obj.message.content_type)
+        return "no content type"
 
-    def get_content_type(self, obj): 
-        return obj.message.content_type if obj.message else "no content type"
 
 class UserSummarySerializer(serializers.ModelSerializer):
 
