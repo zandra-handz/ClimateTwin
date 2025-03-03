@@ -1044,7 +1044,7 @@ class ExpireCurrentLocationView(generics.UpdateAPIView):
         )
 
         # Immediately trigger expiration
-        schedule_expiration_task.apply_async(args=[user.id, lifetime])
+        schedule_expiration_task.apply_async(args=[user.id, lifetime, True]) #True allows message to be sent even when location is already expired by the time the task runs
 
         return Response(self.get_serializer(current_location).data, status=status.HTTP_200_OK)
 

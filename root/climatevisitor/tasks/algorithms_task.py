@@ -184,7 +184,7 @@ def process_climate_twin_request(self, user_id, user_address):
 
 
 @shared_task(bind=True, max_retries=3)
-def schedule_expiration_task(self, user_id, duration_seconds=3600): #default
+def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_socket_update=False): #default
     try: 
         current_location = CurrentLocation.objects.get(user_id=user_id)
  
@@ -208,8 +208,11 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600): #default
         logger.info(f"Scheduling expiration task for user {user_id} in {duration_seconds} seconds")
         print(f"Scheduling expiration task for user {user_id} in {duration_seconds} seconds")
  
-        process_expiration_task.apply_async((user_id, last_accessed,), countdown=duration_seconds)  
- 
+        if not always_send_socket_update:
+            process_expiration_task.apply_async((user_id, last_accessed,), countdown=duration_seconds)  
+        else:
+                 process_manual_expiration_task.apply_async((user_id, last_accessed,), countdown=duration_seconds)  
+      
         timeout_seconds = max(0, (expiration_time - timezone.now()).total_seconds())
  
         cache.set(cache_key, True, timeout=int(timeout_seconds))
@@ -239,6 +242,48 @@ def process_expiration_task(user_id, last_accessed):
             logger.info(f"User {user_id}'s current location is already expired.")
             print(f"User {user_id}'s current location is already expired.")
             return "Location is already expired."
+
+        # Mark the location as expired
+        if last_accessed == current_location.last_accessed:
+            current_location.expired = True
+            current_location.save()
+            logger.info(f"User {user_id}'s location expired successfully.")
+            print(f"User {user_id}'s location expired successfully.")
+        else:
+            logger.info(f"Expiration task no longer applicable -- location has changed.")
+            print(f"Expiration task no longer applicable -- location has changed.")
+
+        
+        try:
+            send_returned_home_message(user_id=user_id)
+        except Exception as e:
+            print(f"Couldn't send returned home message.")
+
+        try:
+            send_location_update_to_celery(user_id=user_id, name=None, temperature=None, latitude=None, longitude=None)
+        except Exception as e:
+            print(f"Couldn't send returned home message.")
+    except CurrentLocation.DoesNotExist:
+        logger.error(f"CurrentLocation for user {user_id} does not exist.")
+    except Exception as exc:
+        logger.error(f"Error processing expiration: {exc}")
+        print(f"Error processing expiration: {exc}")
+
+    return "Expiration task processed successfully."
+
+
+
+@shared_task
+def process_manual_expiration_task(user_id, last_accessed):
+    try:
+        # Fetch the current location for the user
+        current_location = CurrentLocation.objects.get(user_id=user_id)
+
+        # Ensure the location is not already expired
+        if current_location.expired:
+            logger.info(f"User {user_id}'s current location is already expired but will proceed sending update.")
+            print(f"User {user_id}'s current location is already expired but will proceed sending update.")
+            #return "Location is already expired."
 
         # Mark the location as expired
         if last_accessed == current_location.last_accessed:
