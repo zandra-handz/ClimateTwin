@@ -184,7 +184,7 @@ def process_climate_twin_request(self, user_id, user_address):
 
 
 @shared_task(bind=True, max_retries=3)
-def schedule_expiration_task(self, user_id):
+def schedule_expiration_task(self, user_id, duration_seconds=3600): #default
     try: 
         current_location = CurrentLocation.objects.get(user_id=user_id)
  
@@ -195,24 +195,20 @@ def schedule_expiration_task(self, user_id):
         print(f"User {user_id}'s current location is not expired.")
  
         last_accessed = current_location.last_accessed 
-        expiration_time = last_accessed + timezone.timedelta(hours=2)
+        expiration_time = last_accessed + timezone.timedelta(seconds=duration_seconds)
  
         cache_key = f"expiration_task_{user_id}"
         print(f"expiration_task_{user_id}")
         existing_task = cache.get(cache_key)
         
         if existing_task:
-            # Cancel the existing task, if any (this is pseudo-code, Celery doesn't support direct cancellation)
-            logger.info(f"Cancelling existing expiration task for user {user_id}")
-
-        # Schedule a new task to update the 'expired' field after 2 hours
-        logger.info(f"Scheduling expiration task for user {user_id} in 2 hours")
-        print(f"Scheduling expiration task for user {user_id} in 2 hours")
-
-        #process_expiration_task.apply_async((user_id,), countdown=600)  # 10 seconds for testing
-
-        # Use countdown to schedule the task to run in 2 hours
-        process_expiration_task.apply_async((user_id, last_accessed,), countdown=3600) #7200 is 2 hrs 
+            # Is it possible to cancel tasks? This won't run but I would rather just cancel it directly if that is possible
+            logger.info(f"Found existing expiration task for user {user_id} that will no longer get triggered (I think)")
+ 
+        logger.info(f"Scheduling expiration task for user {user_id} in {duration_seconds} seconds")
+        print(f"Scheduling expiration task for user {user_id} in {duration_seconds} seconds")
+ 
+        process_expiration_task.apply_async((user_id, last_accessed,), countdown=duration_seconds)  
  
         timeout_seconds = max(0, (expiration_time - timezone.now()).total_seconds())
  

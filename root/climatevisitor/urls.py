@@ -15,13 +15,16 @@ urlpatterns = [
     path('currently-visiting/', views.CurrentTwinLocationView.as_view(), name='currently-visiting-location'),
     path('currently-nearby/', views.CurrentDiscoveryLocationsView.as_view(), name='current-nearby-locations'),
     path('explore/', views.CreateExploreLocationView.as_view(), name='create-explore-location'),
-    path('explore/v2/', views.CreateOrUpdateCurrentLocationView.as_view(), name='create--or-update-current-location'),
+    path('explore/v2/', views.CreateOrUpdateCurrentLocationView.as_view(), name='create-or-update-current-location'),
     
     path('currently-exploring/', views.CurrentExploreLocationView.as_view(), name='currently-exploring'),
-     path('currently-exploring/v2/', views.CurrentLocationView.as_view(), name='currently-exploring-v2'),
+    path('currently-exploring/v2/', views.CurrentLocationView.as_view(), name='currently-exploring-v2'),
    
     path('collect/', views.collect, name='collect-treasure'),
     path('item-choices/', views.item_choices, name="item-choices"),
+
+     path('go-home/', views.ExpireCurrentLocationView.as_view(), name='expire-current-location'),
+    
 
     # Access all data associated with user
     path('locations/home/', views.HomeLocationsView.as_view(), name='home-locations'),

@@ -986,7 +986,7 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
 
             return self.update_or_create_location(user, explore_location=explore_location)
         
-    def update_or_create_location(self, user, explore_location=None, twin_location=None):
+    def update_or_create_location(self, user, explore_location=None, twin_location=None, lifetime=3600):
         """
         Helper method to update or create the CurrentLocation for the user.
         It checks whether the user already has a current location and updates it or creates a new one.
@@ -1001,12 +1001,10 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
             }
         )
 
-        schedule_expiration_task.apply_async(args=[user.id])
+        schedule_expiration_task.apply_async(args=[user.id, lifetime])
 
         # You can perform any other operations if needed, for example, logging or tracking events
         return Response(self.get_serializer(current_location).data, status=status.HTTP_200_OK)
-
-
 
     def get_queryset(self):
         return models.CurrentLocation.objects.filter(user=self.request.user)
@@ -1014,6 +1012,41 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user_id=self.request.user.id)  # Save user ID implicitly
 
+
+class ExpireCurrentLocationView(generics.UpdateAPIView):
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = serializers.CurrentLocationSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    @swagger_auto_schema(operation_id='expireCurrentLocation', operation_description="Expires the current location immediately.")
+    def patch(self, request, *args, **kwargs):
+        user = request.user
+
+        try:
+            current_location = models.CurrentLocation.objects.get(user=user)
+        except models.CurrentLocation.DoesNotExist:
+            return Response({'error': 'No current location found.'}, status=status.HTTP_404_NOT_FOUND)
+ 
+        return self.update_or_create_location(user, explore_location=None, twin_location=None, lifetime=0)
+
+    def update_or_create_location(self, user, explore_location=None, twin_location=None, lifetime=0):
+        """
+        Updates or creates the CurrentLocation for the user and sets it to expire immediately.
+        """
+        current_location, created = models.CurrentLocation.objects.update_or_create(
+            user=user,
+            defaults={
+                'explore_location': explore_location,
+                'twin_location': twin_location,
+                'expired': True  # Mark location as expired
+            }
+        )
+
+        # Immediately trigger expiration
+        schedule_expiration_task.apply_async(args=[user.id, lifetime])
+
+        return Response(self.get_serializer(current_location).data, status=status.HTTP_200_OK)
 
 
 class CurrentLocationView(generics.GenericAPIView):
