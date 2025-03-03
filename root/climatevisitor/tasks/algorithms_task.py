@@ -189,7 +189,7 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_s
         current_location = CurrentLocation.objects.get(user_id=user_id)
  
  
-        if current_location.expired:
+        if current_location.expired and not always_send_socket_update:
             logger.info(f"User {user_id}'s current location is already expired.")
             return "Location is already expired."
         print(f"User {user_id}'s current location is not expired.")
