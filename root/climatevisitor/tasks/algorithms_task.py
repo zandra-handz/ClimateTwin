@@ -195,6 +195,12 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_s
         print(f"User {user_id}'s current location is not expired.")
  
         last_accessed = current_location.last_accessed 
+
+    # I moved this up here to try to get it to activate more quickly
+        if always_send_socket_update:
+            process_manual_expiration_task.apply_async((user_id, last_accessed,))  # Runs immediately
+
+
         expiration_time = last_accessed + timezone.timedelta(seconds=duration_seconds)
  
         cache_key = f"expiration_task_{user_id}"
@@ -210,9 +216,9 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_s
  
         if not always_send_socket_update:
             process_expiration_task.apply_async((user_id, last_accessed,), countdown=duration_seconds)  
-        else:
-                 process_manual_expiration_task.apply_async((user_id, last_accessed,), countdown=duration_seconds)  
-      
+        # else:
+        #     process_manual_expiration_task.apply_async((user_id, last_accessed,))  # Runs immediately
+
         timeout_seconds = max(0, (expiration_time - timezone.now()).total_seconds())
  
         cache.set(cache_key, True, timeout=int(timeout_seconds))
@@ -279,21 +285,22 @@ def process_manual_expiration_task(user_id, last_accessed):
         # Fetch the current location for the user
         current_location = CurrentLocation.objects.get(user_id=user_id)
 
-        # Ensure the location is not already expired
+        # Check that location is expired
         if current_location.expired:
             logger.info(f"User {user_id}'s current location is already expired but will proceed sending update.")
             print(f"User {user_id}'s current location is already expired but will proceed sending update.")
-            #return "Location is already expired."
-
-        # Mark the location as expired
-        if last_accessed == current_location.last_accessed:
-            current_location.expired = True
-            current_location.save()
-            logger.info(f"User {user_id}'s location expired successfully.")
-            print(f"User {user_id}'s location expired successfully.")
-        else:
-            logger.info(f"Expiration task no longer applicable -- location has changed.")
-            print(f"Expiration task no longer applicable -- location has changed.")
+          
+        else: 
+        # Expire location
+            if last_accessed == current_location.last_accessed:
+                current_location.expired = True
+                current_location.save()
+                logger.info(f"User {user_id}'s location expired successfully.")
+                print(f"User {user_id}'s location expired successfully.")
+            else:
+                logger.info(f"Error: last_accessed does not match current location.")
+                print(f"Error: last_accessed does not match current location.")
+                return
 
         
         try:
