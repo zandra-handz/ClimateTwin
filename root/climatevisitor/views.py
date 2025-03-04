@@ -7,7 +7,7 @@ from .climatetwinclasses.ClimateEncounterClass import ClimateEncounter
 from .climatetwinclasses.ClimateObjectClass import ClimateObject
 from .climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
 from .tasks.algorithms_task import run_climate_twin_algorithms_task
-from .tasks.algorithms_task import process_climate_twin_request, schedule_expiration_task
+from .tasks.algorithms_task import process_climate_twin_request, schedule_expiration_task, process_immediate_expiration_task
 from .tasks.tasks import send_location_update_to_celery
 
 from .climatetwinclasses.OpenMapAPIClass import OpenMapAPI
@@ -1001,7 +1001,11 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
             }
         )
 
-        schedule_expiration_task.apply_async(args=[user.id, lifetime])
+        if int(lifetime) != 0: 
+            schedule_expiration_task.apply_async(args=[user.id, lifetime])
+        else: 
+            process_immediate_expiration_task(user_id=user.id)
+
 
         # You can perform any other operations if needed, for example, logging or tracking events
         return Response(self.get_serializer(current_location).data, status=status.HTTP_200_OK)

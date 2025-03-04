@@ -198,7 +198,7 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_s
 
     # I moved this up here to try to get it to activate more quickly
         if always_send_socket_update:
-            process_manual_expiration_task.apply_async((user_id, last_accessed,))  # Runs immediately
+            process_immediate_expiration_task.apply_async((user_id,)) # last_accessed,))  # Runs immediately
 
 
         expiration_time = last_accessed + timezone.timedelta(seconds=duration_seconds)
@@ -217,7 +217,7 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_s
         if not always_send_socket_update:
             process_expiration_task.apply_async((user_id, last_accessed,), countdown=duration_seconds)  
         # else:
-        #     process_manual_expiration_task.apply_async((user_id, last_accessed,))  # Runs immediately
+        #     process_immediate_expiration_task.apply_async((user_id, last_accessed,))  # Runs immediately
 
         timeout_seconds = max(0, (expiration_time - timezone.now()).total_seconds())
  
@@ -280,10 +280,11 @@ def process_expiration_task(user_id, last_accessed):
 
 
 @shared_task
-def process_manual_expiration_task(user_id, last_accessed):
+def process_immediate_expiration_task(user_id): #, last_accessed):
     try:
         # Fetch the current location for the user
         current_location = CurrentLocation.objects.get(user_id=user_id)
+        last_accessed = current_location.last_accessed 
 
         # Check that location is expired
         if current_location.expired:
