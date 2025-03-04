@@ -1000,11 +1000,9 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
                 'expired': False  # You can set this based on your requirements
             }
         )
+ 
 
-        if int(lifetime) != 0: 
-            schedule_expiration_task.apply_async(args=[user.id, lifetime])
-        else: 
-            process_immediate_expiration_task(user_id=user.id)
+        schedule_expiration_task.apply_async(args=[user.id, lifetime])
 
 
         # You can perform any other operations if needed, for example, logging or tracking events
@@ -1046,9 +1044,9 @@ class ExpireCurrentLocationView(generics.UpdateAPIView):
                 'expired': True  # Mark location as expired
             }
         )
-
-        # Immediately trigger expiration
-        schedule_expiration_task.apply_async(args=[user.id, lifetime, True]) #True allows message to be sent even when location is already expired by the time the task runs
+ 
+        if current_location.expired:
+            process_immediate_expiration_task.delay(user_id=user.id) 
 
         return Response(self.get_serializer(current_location).data, status=status.HTTP_200_OK)
 

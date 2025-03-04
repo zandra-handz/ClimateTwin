@@ -197,6 +197,7 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_s
         last_accessed = current_location.last_accessed 
 
     # I moved this up here to try to get it to activate more quickly
+    # no longer using parent function for immediate expirations, can remove below once i'm sure the new approach works
         if always_send_socket_update:
             process_immediate_expiration_task.apply_async((user_id,)) # last_accessed,))  # Runs immediately
 
@@ -288,20 +289,25 @@ def process_immediate_expiration_task(user_id): #, last_accessed):
 
         # Check that location is expired
         if current_location.expired:
-            logger.info(f"User {user_id}'s current location is already expired but will proceed sending update.")
-            print(f"User {user_id}'s current location is already expired but will proceed sending update.")
+            logger.info(f"User {user_id}'s current location confirmed expired, celery task is sending location update.")
+            print(f"User {user_id}'s current location confirmed expired, celery task is sending location update")
+        else:
+            logger.info(f"User {user_id}'s current location not expired, celery task will not send location upcate")
+            print(f"User {user_id}'s current location not expired, celery task will not send location upcate")
+            return
+
           
-        else: 
-        # Expire location
-            if last_accessed == current_location.last_accessed:
-                current_location.expired = True
-                current_location.save()
-                logger.info(f"User {user_id}'s location expired successfully.")
-                print(f"User {user_id}'s location expired successfully.")
-            else:
-                logger.info(f"Error: last_accessed does not match current location.")
-                print(f"Error: last_accessed does not match current location.")
-                return
+        # else: 
+        # # Expire location
+        #     if last_accessed == current_location.last_accessed:
+        #         current_location.expired = True
+        #         current_location.save()
+        #         logger.info(f"User {user_id}'s location expired successfully.")
+        #         print(f"User {user_id}'s location expired successfully.")
+        #     else:
+        #         logger.info(f"Error: last_accessed does not match current location.")
+        #         print(f"Error: last_accessed does not match current location.")
+        #         return
 
         
         try:
