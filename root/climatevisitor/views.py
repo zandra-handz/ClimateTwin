@@ -948,6 +948,8 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
             try:
                 send_location_update_to_celery(user_id=user.id, location_id=twin_location_pk, temperature=twin_location.temperature, name=twin_location.name, latitude=twin_location.latitude, longitude=twin_location.longitude)
             except Exception as e:
+                print(f"Error sending location update to Celery: {str(e)}")  # Print the error to the console/log
+    
                 return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
             return self.update_or_create_location(user, twin_location=twin_location)
@@ -967,6 +969,8 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
             try:
                 send_location_update_to_celery(user_id=user.id, location_id=explore_location_pk, temperature=None, name=explore_location.name, latitude=explore_location.latitude, longitude=explore_location.longitude)
             except Exception as e:
+                print(f"Error sending location update to Celery: {str(e)}")  # Print the error to the console/log
+    
                 return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             return self.update_or_create_location(user, explore_location=explore_location)
