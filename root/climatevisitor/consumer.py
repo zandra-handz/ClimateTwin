@@ -274,8 +274,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
             if current_location_expired or current_location_visiting_id is None or current_location_last_accessed is None:
                 return None, None
             
-            
-            last_accessed_str = current_location_last_accessed.isoformat()  
+            # already a string
+            # last_accessed_str = current_location_last_accessed.isoformat()  
             
             twin_location_id = None  
             explore_location_id = None
@@ -294,7 +294,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
                         'name': explore_object.name,              
                         'latitude': explore_object.latitude,                
                         'longitude': explore_object.longitude,        
-                        'last_accessed': last_accessed_str, 
+                        'last_accessed': current_location_last_accessed, 
                     }
                     return None, event_data
                 return None, None
@@ -313,7 +313,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
                         'name': twin_object.name,              
                         'latitude': twin_object.latitude,                
                         'longitude': twin_object.longitude,        
-                        'last_accessed': last_accessed_str, 
+                        'last_accessed': current_location_last_accessed, 
                     }
                     return event_data, None
                 
