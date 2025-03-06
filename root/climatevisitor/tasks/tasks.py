@@ -3,6 +3,7 @@
 from celery import shared_task
 from channels.layers import get_channel_layer
 from django.core.cache import cache
+from django.core.exceptions import SuspiciousOperation
 from asgiref.sync import async_to_sync
 from ..animations import update_animation
 import logging
@@ -351,23 +352,37 @@ def send_clear_gift_notification(user_id, friend_id):
 
 
 
+
 @shared_task
 def send_location_update_to_celery(user_id, location_id, name, temperature, latitude, longitude, last_accessed):
+     
+    logger.info(f"Preparing to send location update to Celery with data: "
+                f"user_id: {user_id}, location_id: {location_id}, "
+                f"name: {name}, temperature: {temperature}, latitude: {latitude}, "
+                f"longitude: {longitude}, last_accessed: {last_accessed}")
 
-    channel_layer = get_channel_layer()
-    
-    group_name = f'location_update_{user_id}'
-    
-    async_to_sync(channel_layer.group_send)(
-        group_name,
-        {
-            'type': 'update_location',
-            'location_id': location_id,
-            'name': name,
-            'temperature': temperature,
-            'latitude': latitude,
-            'longitude': longitude,
-            'last_accessed' : last_accessed,
-        }
-    )
-    
+    try:
+        channel_layer = get_channel_layer()
+
+        group_name = f'location_update_{user_id}'
+
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                'type': 'update_location',
+                'location_id': location_id,
+                'name': name,
+                'temperature': temperature,
+                'latitude': latitude,
+                'longitude': longitude,
+                'last_accessed': last_accessed,
+            }
+        )
+ 
+        logger.info(f"Location update sent successfully for user_id: {user_id}, location_id: {location_id}")
+
+    except Exception as e: 
+        logger.error(f"Error in send_location_update_to_celery task for user_id: {user_id}, location_id: {location_id}. "
+                     f"Error: {str(e)}")
+        # tbh gpty gave this type of error to me and I'm not sure if it is necessary
+        raise SuspiciousOperation(f"Error sending location update to Celery: {str(e)}")
