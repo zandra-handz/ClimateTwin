@@ -980,9 +980,9 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
             
             try:
                 send_location_update_to_celery(user_id=user.id, location_id=saved_instance.explore_location.id, # = location_visiting_id
-                                               temperature= None, 
-                                               name=saved_instance.explore_location.name, 
-                                               latitude=saved_instance.explore_location.latitude,
+                                                temperature= None, 
+                                                name=saved_instance.explore_location.name, 
+                                                latitude=saved_instance.explore_location.latitude,
                                                 longitude=saved_instance.explore_location.longitude, 
                                                 last_accessed=last_accessed_str)
             except Exception as e:
