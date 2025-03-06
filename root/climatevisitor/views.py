@@ -944,15 +944,21 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
             except models.ClimateTwinLocation.DoesNotExist:
                 return Response({'error': 'The twin location does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
 
+            saved_instance = self.update_or_create_location(user, twin_location=twin_location)
  
             try:
-                send_location_update_to_celery(user_id=user.id, location_id=twin_location_pk, temperature=twin_location.temperature, name=twin_location.name, latitude=twin_location.latitude, longitude=twin_location.longitude, last_accessed=None)
+                send_location_update_to_celery(user_id=user.id, location_id=saved_instance.twin_location.id, 
+                                               temperature=saved_instance.twin_location.temperature, 
+                                               name=saved_instance.twin_location.name, 
+                                               latitude=saved_instance.twin_location.latitude,
+                                                longitude=saved_instance.twin_location.longitude, 
+                                                last_accessed=saved_instance.last_accessed)
             except Exception as e:
                 print(f"Error sending location update to Celery: {str(e)}")  # Print the error to the console/log
     
                 return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
-            return self.update_or_create_location(user, twin_location=twin_location)
+            return Response(self.get_serializer(saved_instance).data, status=status.HTTP_200_OK)
 
         else:
 
