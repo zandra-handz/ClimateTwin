@@ -168,6 +168,13 @@ class LocationUpdateConsumer(WebsocketConsumer):
         self.accept()
         logger.info("FOCUS HEEEEEERE Location Update WebSocket connection established")
 
+        current_location = cache.get(f"current_location_{self.user.id}")
+        if current_location:
+            logger.info(f"Data found in {self.user.id}'s current location cache: {current_location}")
+           # self.send(text_data=json.dumps({'message': last_message}))
+        else:
+               logger.info("No current location data in cache for this user")
+
         data = self.fetch_data_from_endpoint(self.token)
         self.update_location(data)
 
@@ -435,6 +442,19 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 'longitude': event.get('longitude', None), 
                 'last_accessed': event.get('last_accessed', None), 
             }))
+
+        cache_key = f"current_location_{self.user.id}"
+        logger.debug(f"Caching current location for user {self.user.id} with key: {cache_key}")
+ 
+        location_data = {
+            'location_id': event.get('location_id', None),
+            'name': event.get('name', 'Error'),
+            'latitude': event.get('latitude', None),
+            'longitude': event.get('longitude', None),
+            'last_accessed': event.get('last_accessed', None),
+        }
+ 
+        cache.set(cache_key, location_data, timeout=3600) 
 
 
     def authenticate_user(self):

@@ -94,17 +94,15 @@ def run_climate_twin_algorithms_task(user_id, user_address):
         try:
             current_location = CurrentLocation.update_or_create_location(user=user_instance, twin_location=climate_twin_location_instance)
             
+            last_accessed_str = current_location.last_accessed.isoformat()
 
-            # actually I don't think I need this here anymore because the method itself will send the update lol
-            # last_accessed_str = current_location.last_accessed.isoformat()
-
-            # send_location_update_to_celery(user_id=user_instance.id, 
-            #                                location_id=current_location.twin_location.id, # = location_visiting_id
-            #                                temperature=current_location.twin_location.temperature, 
-            #                                name=current_location.twin_location.name, 
-            #                                latitude=current_location.twin_location.latitude, 
-            #                                longitude=current_location.twin_location.longitude,
-            #                                last_accessed=last_accessed_str)
+            send_location_update_to_celery(user_id=user_instance.id, 
+                                           location_id=current_location.twin_location.id, # = location_visiting_id
+                                           temperature=current_location.twin_location.temperature, 
+                                           name=current_location.twin_location.name, 
+                                           latitude=current_location.twin_location.latitude, 
+                                           longitude=current_location.twin_location.longitude,
+                                           last_accessed=last_accessed_str)
 
              # Schedule the expiration task after updating or creating the current location
             schedule_expiration_task(user_id=user_instance.id)# No async_to_sync wrapper needed
