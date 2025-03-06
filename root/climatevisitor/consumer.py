@@ -248,24 +248,35 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
             print('EXPLORE ENDPOINT DATA: ', explore_data)
 
-            # Extract ID from nested objects
-            current_location_id = (
-                (explore_data.get('explore_location') or {}).get('id') or
-                (explore_data.get('twin_location') or {}).get('id')
+            current_location_visiting_id = (
+                explore_data.get('location_visiting_id')
             )
 
-            if not current_location_id:
+            current_location_expired = (
+                explore_data.get('expired')
+            )
+
+            if current_location_expired or current_location_visiting_id is None:
                 return None
+            
+            twin_location_id = explore_data.get('twin_location', {}).get('id')
+            explore_location_id = explore_data.get('explore_location', []).get('id')
+
+            if twin_location_id and twin_location_id == current_location_visiting_id:
+                return explore_data.get('twin_location')
+            
+            elif explore_location_id and explore_location_id == current_location_visiting_id:
+                return explore_data.get('explore_location')
 
             # If it's a twin location, fetch data from twin endpoint
-            if explore_data.get('twin_location'):
-                current_location_data = requests.get(twin_endpoint, headers=headers)
-                return current_location_data.json()
+            # if explore_data.get('twin_location'):
+            #     current_location_data = requests.get(twin_endpoint, headers=headers)
+            #     return current_location_data.json()
 
-            # If it's an explore location, fetch from discovery locations
-            discovery_location_endpoint = f'{discovery_locations_endpoint}{current_location_id}/'
-            current_location_data = requests.get(discovery_location_endpoint, headers=headers)
-            return current_location_data.json()
+            # # If it's an explore location, fetch from discovery locations
+            # discovery_location_endpoint = f'{discovery_locations_endpoint}{current_location_id}/'
+            # current_location_data = requests.get(discovery_location_endpoint, headers=headers)
+            # return current_location_data.json()
 
         # If no explore location, check twin location
         # twin_response = requests.get(explore_data_endpoint, headers=headers)
