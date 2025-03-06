@@ -429,11 +429,11 @@ class LocationUpdateConsumer(WebsocketConsumer):
             }))
         elif 'latitude' in event and 'longitude' in event:
             self.send(text_data=json.dumps({
-                'location_id': event.get('location_id', None),  # Default to None if missing
-                'name': event.get('name', 'Error'),  # Default to None if missing
-                'latitude': event.get('latitude', None),  # Default to None if missing
-                'longitude': event.get('longitude', None),  # Default to None if missing
-                'last_accessed': event.get('last_accessed', None),  # Default to None if missing
+                'location_id': event.get('location_id', None), 
+                'name': event.get('name', 'Error'),  
+                'latitude': event.get('latitude', None),  
+                'longitude': event.get('longitude', None), 
+                'last_accessed': event.get('last_accessed', None), 
             }))
 
 
