@@ -219,6 +219,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
         from rest_framework_simplejwt.tokens import AccessToken
 
         explore_data_endpoint = 'https://climatetwin.com/climatevisitor/currently-exploring/v2/'
+       
+       # i'm including location object in explore endpoint now so I need to not make these calls
         discovery_locations_endpoint = 'https://climatetwin.com/climatevisitor/locations/nearby/'
         twin_endpoint = 'https://climatetwin.com/climatevisitor/currently-visiting/'
 
@@ -243,6 +245,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
         if explore_response.status_code == 200:
             explore_data = explore_response.json()
+
+            print('EXPLORE ENDPOINT DATA: ', explore_data)
 
             # Extract ID from nested objects
             current_location_id = (

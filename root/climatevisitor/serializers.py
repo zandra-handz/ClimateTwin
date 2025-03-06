@@ -118,14 +118,14 @@ class CurrentLocationSerializer(serializers.ModelSerializer):
 class CurrentLocationWithObjectsSerializer(serializers.ModelSerializer):
     explore_location = ClimateTwinDiscoveryLocationSerializer(read_only=True)  # Nested object
     twin_location = ClimateTwinLocationSerializer(read_only=True)  # Nested object
-    location_id = serializers.SerializerMethodField()  # Computed field for location ID
+    location_visiting_id = serializers.SerializerMethodField()  # Computed field for location ID
 
     class Meta:
         model = models.CurrentLocation
         fields = '__all__'
         read_only_fields = ['user']
 
-    def get_location_id(self, obj):
+    def get_location_visiting_id(self, obj):
         """Return the ID of either explore_location or twin_location, whichever exists."""
         if obj.explore_location:
             return obj.explore_location.id
