@@ -168,15 +168,24 @@ class LocationUpdateConsumer(WebsocketConsumer):
         self.accept()
         logger.info("FOCUS HEEEEEERE Location Update WebSocket connection established")
 
-        current_location = cache.get(f"current_location_{self.user.id}")
-        if current_location:
-            logger.info(f"Data found in {self.user.id}'s current location cache: {current_location}")
-           # self.send(text_data=json.dumps({'message': last_message}))
+        current_location_cache = cache.get(f"current_location_{self.user.id}")
+        if current_location_cache and 'location_id' in current_location_cache and 'last_accessed' in current_location_cache:
+            # Send the data from cache
+            self.send(text_data=json.dumps({
+                'location_id': current_location_cache.get('location_id'),
+                'name': current_location_cache.get('name', 'Error getting location name'),  
+                'latitude': current_location_cache.get('latitude', None),
+                'longitude': current_location_cache.get('longitude', None),
+                'last_accessed': current_location_cache.get('last_accessed')
+            }))
         else:
-               logger.info("No current location data in cache for this user")
-
-        data = self.fetch_data_from_endpoint(self.token)
-        self.update_location(data)
+            twin_location_type, explore_location_type = self.fetch_data_from_endpoint(self.token)
+            if twin_location_type:
+                logger.info(f"Sending current location twin type data for {self.user.id}")
+                self.update_location(twin_location_type)
+            elif explore_location_type:
+                logger.info(f"Sending current location explore type data for {self.user.id}")
+                self.update_location(explore_location_type)
 
         last_message = cache.get(f"last_message_{self.user.id}")
         if last_message:
@@ -227,15 +236,9 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
         explore_data_endpoint = 'https://climatetwin.com/climatevisitor/currently-exploring/v2/'
        
-       # i'm including location object in explore endpoint now so I need to not make these calls
-        # discovery_locations_endpoint = 'https://climatetwin.com/climatevisitor/locations/nearby/'
-        # twin_endpoint = 'https://climatetwin.com/climatevisitor/currently-visiting/'
 
         # explore_data_endpoint = 'http://localhost:8000/climatevisitor/currently-exploring/v2/'
-        # discovery_locations_endpoint = 'http://localhost:8000/climatevisitor/locations/nearby/'
-        # twin_endpoint = 'http://localhost:8000/climatevisitor/currently-visiting/'
-    
-
+ 
         token_str = str(token) if isinstance(token, AccessToken) else token
 
         if len(token_str.split('.')) == 3:
@@ -264,7 +267,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             )
 
             if current_location_expired or current_location_visiting_id is None:
-                return None
+                return None, None
             
             twin_location_id = None  
             explore_location_id = None
@@ -273,35 +276,18 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 explore_location_id = explore_data['explore_location'].get('id')
 
                 if explore_location_id and explore_location_id == current_location_visiting_id:
-                    return explore_data.get('explore_location')
-                return None
+                    return None, explore_data.get('explore_location')
+                return None, None
 
             elif explore_data.get('twin_location') is not None:
                 twin_location_id = explore_data['twin_location'].get('id')
                 if twin_location_id and twin_location_id == current_location_visiting_id:
-                    return explore_data.get('twin_location')
-                return None
+                    return explore_data.get('twin_location'), None
+                return 
             
-            return None
-                    
-   
-            # If it's a twin location, fetch data from twin endpoint
-            # if explore_data.get('twin_location'):
-            #     current_location_data = requests.get(twin_endpoint, headers=headers)
-            #     return current_location_data.json()
-
-            # # If it's an explore location, fetch from discovery locations
-            # discovery_location_endpoint = f'{discovery_locations_endpoint}{current_location_id}/'
-            # current_location_data = requests.get(discovery_location_endpoint, headers=headers)
-            # return current_location_data.json()
-
-        # If no explore location, check twin location
-        # twin_response = requests.get(explore_data_endpoint, headers=headers)
-
-        # if twin_response.status_code == 200:
-        #     return twin_response.json()
+            return None, None
         
-        return None  # If nothing found
+        return None, None 
 
     def search_for_ruins(self, event):
         # Log the incoming event data
