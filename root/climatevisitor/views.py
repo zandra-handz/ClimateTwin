@@ -943,11 +943,12 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
                 twin_location = models.ClimateTwinLocation.objects.get(pk=twin_location_pk, user=user)
             except models.ClimateTwinLocation.DoesNotExist:
                 return Response({'error': 'The twin location does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
-
-            saved_instance = self.update_or_create_location(user, twin_location=twin_location)
+           
+            # instead of self.update, otherwise can't access newly saved object when sending update to celery
+            saved_instance = models.CurrentLocation.update_or_create_location(user, twin_location=twin_location)
  
             try:
-                send_location_update_to_celery(user_id=user.id, location_id=saved_instance.twin_location.id, 
+                send_location_update_to_celery(user_id=user.id, location_id=saved_instance.twin_location.id, # = location_visiting_id
                                                temperature=saved_instance.twin_location.temperature, 
                                                name=saved_instance.twin_location.name, 
                                                latitude=saved_instance.twin_location.latitude,
@@ -964,22 +965,25 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
 
             try:
                 explore_location = models.ClimateTwinDiscoveryLocation.objects.get(pk=explore_location_pk, user=user)
-
             except models.ClimateTwinDiscoveryLocation.DoesNotExist: 
                 return Response({'error': 'The explore location does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # if (timezone.now() - explore_location.created_on).total_seconds() >= 3600: # 7200
+            # instead of self.update, otherwise can't access newly saved object when sending update to celery
+            saved_instance =  models.CurrentLocation.update_or_create_location(user, explore_location=explore_location)
 
-            #     return Response({'error': 'The explore location must have been created within the last one hour (testing mode).'}, status=status.HTTP_400_BAD_REQUEST)
-        
             try:
-                send_location_update_to_celery(user_id=user.id, location_id=explore_location_pk, temperature=None, name=explore_location.name, latitude=explore_location.latitude, longitude=explore_location.longitude, last_accessed=None)
+                send_location_update_to_celery(user_id=user.id, location_id=saved_instance.explore_location.id, # = location_visiting_id
+                                               temperature= None, 
+                                               name=saved_instance.explore_location.name, 
+                                               latitude=saved_instance.explore_location.latitude,
+                                                longitude=saved_instance.explore_location.longitude, 
+                                                last_accessed=saved_instance.last_accessed)
             except Exception as e:
                 print(f"Error sending location update to Celery: {str(e)}")  # Print the error to the console/log
     
                 return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-            return self.update_or_create_location(user, explore_location=explore_location)
+            
+            return Response(self.get_serializer(saved_instance).data, status=status.HTTP_200_OK)
         
     def update_or_create_location(self, user, explore_location=None, twin_location=None, lifetime=3600):
         """
