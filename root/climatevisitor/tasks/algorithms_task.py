@@ -259,7 +259,7 @@ def process_expiration_task(user_id, last_accessed):
                 print(f"Couldn't send returned home message.")
 
             try:
-                send_location_update_to_celery(user_id=user_id, name=None, temperature=None, latitude=None, longitude=None)
+                send_location_update_to_celery(user_id=user_id, location_id=None, name=None, temperature=None, latitude=None, longitude=None, last_accessed=None)
             except Exception as e:
                 print(f"Couldn't send returned home message.")
 
@@ -292,7 +292,7 @@ def process_immediate_expiration_task(user_id):
                 print(f"Couldn't send returned home message.")
 
             try:
-                send_location_update_to_celery(user_id=user_id, name=None, temperature=None, latitude=None, longitude=None)
+                send_location_update_to_celery(user_id=user_id, location_id=None, name=None, temperature=None, latitude=None, longitude=None, last_accessed=None)
             except Exception as e:
                 print(f"Couldn't send returned home message.") 
         else:

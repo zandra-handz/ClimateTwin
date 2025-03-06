@@ -944,24 +944,9 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
             except models.ClimateTwinLocation.DoesNotExist:
                 return Response({'error': 'The twin location does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Check if the twin location is the most recently saved one for the user
-
-# not going to check this, going by last access stamp of the current location to determine expiration
-# if somehow an older climate twin location was temporarily saved to the current location i don't think
-# it would cause any notably errors 
-
-            # most_recent_twin_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-created_on').first()
-            # if most_recent_twin_location != twin_location:
-            #     return Response({'error': 'The specified twin location is not the most recently saved one.'}, status=status.HTTP_400_BAD_REQUEST)
-
-            # Check if the twin location was created within the last two hours
-
-# REMOVED 2/13 because this always happens on backend in algorithm right after climate twin instance is created
-            # if (timezone.now() - twin_location.created_on).total_seconds() >= 3600: # changed to 1 hr for testing 7200
-            #     return Response({'error': 'The twin location must have been created within the last hour (testing mode).'}, status=status.HTTP_400_BAD_REQUEST)
-        
+ 
             try:
-                send_location_update_to_celery(user_id=user.id, temperature=twin_location.temperature, name=twin_location.name, latitude=twin_location.latitude, longitude=twin_location.longitude)
+                send_location_update_to_celery(user_id=user.id, location_id=twin_location.id, temperature=twin_location.temperature, name=twin_location.name, latitude=twin_location.latitude, longitude=twin_location.longitude, last_accessed=twin_location.last_accessed)
             except Exception as e:
                 return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
@@ -980,7 +965,7 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
             #     return Response({'error': 'The explore location must have been created within the last one hour (testing mode).'}, status=status.HTTP_400_BAD_REQUEST)
         
             try:
-                send_location_update_to_celery(user_id=user.id, temperature=None, name=explore_location.name, latitude=explore_location.latitude, longitude=explore_location.longitude)
+                send_location_update_to_celery(user_id=user.id, location_id=explore_location.id, temperature=None, name=explore_location.name, latitude=explore_location.latitude, longitude=explore_location.longitude, last_accessed=explore_location.last_accessed)
             except Exception as e:
                 return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

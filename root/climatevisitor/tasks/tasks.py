@@ -352,7 +352,7 @@ def send_clear_gift_notification(user_id, friend_id):
 
 
 @shared_task
-def send_location_update_to_celery(user_id, name, temperature, latitude, longitude):
+def send_location_update_to_celery(user_id, location_id, name, temperature, latitude, longitude, last_accessed):
 
     channel_layer = get_channel_layer()
     
@@ -362,10 +362,12 @@ def send_location_update_to_celery(user_id, name, temperature, latitude, longitu
         group_name,
         {
             'type': 'update_location',
+            'location_id': location_id,
             'name': name,
             'temperature': temperature,
             'latitude': latitude,
             'longitude': longitude,
+            'last_accessed' : last_accessed,
         }
     )
     
