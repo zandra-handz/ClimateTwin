@@ -259,15 +259,25 @@ class LocationUpdateConsumer(WebsocketConsumer):
             if current_location_expired or current_location_visiting_id is None:
                 return None
             
-            twin_location_id = explore_data.get('twin_location', {}).get('id')
-            explore_location_id = explore_data.get('explore_location', []).get('id')
+            twin_location_id = None  
+            explore_location_id = None
 
-            if twin_location_id and twin_location_id == current_location_visiting_id:
-                return explore_data.get('twin_location')
+            if explore_data.get('explore_location') is not None:
+                explore_location_id = explore_data['explore_location'].get('id')
+
+                if explore_location_id and explore_location_id == current_location_visiting_id:
+                    return explore_data.get('explore_location')
+                return None
+
+            elif explore_data.get('twin_location') is not None:
+                twin_location_id = explore_data['twin_location'].get('id')
+                if twin_location_id and twin_location_id == current_location_visiting_id:
+                    return explore_data.get('twin_location')
+                return None
             
-            elif explore_location_id and explore_location_id == current_location_visiting_id:
-                return explore_data.get('explore_location')
-
+            return None
+                    
+   
             # If it's a twin location, fetch data from twin endpoint
             # if explore_data.get('twin_location'):
             #     current_location_data = requests.get(twin_endpoint, headers=headers)
