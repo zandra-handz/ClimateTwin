@@ -87,20 +87,21 @@ class ClimateTwinExploreDiscoveryLocationWithObjectsSerializer(serializers.Model
 
     
 class CurrentLocationSerializer(serializers.ModelSerializer):
-    location_id = serializers.SerializerMethodField()  # Computed field for location ID
+    # only need this when getting the data, not saving it; plus it was causing an error
+    # location_id = serializers.SerializerMethodField()  # Computed field for location ID
 
     class Meta:
         model = models.CurrentLocation
         fields = '__all__'  # Ensures location_id is included
         read_only_fields = ['user']
 
-    def get_location_id(self, obj):
-        """Return the ID of either explore_location or twin_location, whichever exists."""
-        if obj.explore_location:
-            return obj.explore_location.id
-        elif obj.twin_location:
-            return obj.twin_location.id
-        return None
+    # def get_location_id(self, obj):
+    #     """Return the ID of either explore_location or twin_location, whichever exists."""
+    #     if obj.explore_location:
+    #         return obj.explore_location.id
+    #     elif obj.twin_location:
+    #         return obj.twin_location.id
+    #     return None
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
