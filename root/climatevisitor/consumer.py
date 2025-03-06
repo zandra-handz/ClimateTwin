@@ -5,6 +5,7 @@ from channels.layers import get_channel_layer
 from climatevisitor.tasks.tasks import send_location_update_to_celery
 
 from channels.db import database_sync_to_async
+from datetime import datetime
 from django.apps import apps
 from django.core.cache import cache
 import asyncio
@@ -266,8 +267,15 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 explore_data.get('expired')
             )
 
-            if current_location_expired or current_location_visiting_id is None:
+            current_location_last_accessed = (
+                explore_data.get('last_accessed')
+            )    
+
+            if current_location_expired or current_location_visiting_id is None or current_location_last_accessed is None:
                 return None, None
+            
+            
+            last_accessed_str = current_location_last_accessed.isoformat()  
             
             twin_location_id = None  
             explore_location_id = None
@@ -276,13 +284,39 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 explore_location_id = explore_data['explore_location'].get('id')
 
                 if explore_location_id and explore_location_id == current_location_visiting_id:
-                    return None, explore_data.get('explore_location')
+                    explore_object = explore_data.get('explore_location')
+
+                    # this is formatted for update_location method and should only be fetched 
+                    # if there isn't already something in the cache
+                    # update_location method will then cache it
+                    event_data = {
+                        'location_id': current_location_visiting_id,                
+                        'name': explore_object.name,              
+                        'latitude': explore_object.latitude,                
+                        'longitude': explore_object.longitude,        
+                        'last_accessed': last_accessed_str, 
+                    }
+                    return None, event_data
                 return None, None
 
             elif explore_data.get('twin_location') is not None:
                 twin_location_id = explore_data['twin_location'].get('id')
+
                 if twin_location_id and twin_location_id == current_location_visiting_id:
-                    return explore_data.get('twin_location'), None
+                    twin_object = explore_data.get('twin_location')
+
+                    # this is formatted for update_location method and should only be fetched 
+                    # if there isn't already something in the cache
+                    # update_location method will then cache it
+                    event_data = {
+                        'location_id': current_location_visiting_id,                
+                        'name': twin_object.name,              
+                        'latitude': twin_object.latitude,                
+                        'longitude': twin_object.longitude,        
+                        'last_accessed': last_accessed_str, 
+                    }
+                    return event_data, None
+                
                 return 
             
             return None, None
