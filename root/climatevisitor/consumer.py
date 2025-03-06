@@ -221,8 +221,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
         explore_data_endpoint = 'https://climatetwin.com/climatevisitor/currently-exploring/v2/'
        
        # i'm including location object in explore endpoint now so I need to not make these calls
-        discovery_locations_endpoint = 'https://climatetwin.com/climatevisitor/locations/nearby/'
-        twin_endpoint = 'https://climatetwin.com/climatevisitor/currently-visiting/'
+        # discovery_locations_endpoint = 'https://climatetwin.com/climatevisitor/locations/nearby/'
+        # twin_endpoint = 'https://climatetwin.com/climatevisitor/currently-visiting/'
 
         # explore_data_endpoint = 'http://localhost:8000/climatevisitor/currently-exploring/v2/'
         # discovery_locations_endpoint = 'http://localhost:8000/climatevisitor/locations/nearby/'
@@ -419,12 +419,21 @@ class LocationUpdateConsumer(WebsocketConsumer):
         """
         logger.debug(f"Received update_locations event: {event}")
         if event is None:
-            self.send(text_data=json.dumps({'name': "You are home"}))
+            # self.send(text_data=json.dumps({'name': "You are home"}))
+            self.send(text_data=json.dumps({
+                'location_id' : None,
+                'name': "You are home",
+                'latitude': None,
+                'longitude': None,
+                'last_accessed': None,
+            }))
         elif 'latitude' in event and 'longitude' in event:
             self.send(text_data=json.dumps({
+                'location_id': event['location_id'],
                 'name': event['name'],
                 'latitude': event['latitude'],
                 'longitude': event['longitude'],
+                'last_accessed': event['last_accessed'],
             }))
 
     def authenticate_user(self):

@@ -946,7 +946,7 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
 
  
             try:
-                send_location_update_to_celery(user_id=user.id, location_id=twin_location.id, temperature=twin_location.temperature, name=twin_location.name, latitude=twin_location.latitude, longitude=twin_location.longitude, last_accessed=twin_location.last_accessed)
+                send_location_update_to_celery(user_id=user.id, location_id=twin_location_pk, temperature=twin_location.temperature, name=twin_location.name, latitude=twin_location.latitude, longitude=twin_location.longitude, last_accessed=twin_location.last_accessed)
             except Exception as e:
                 return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
@@ -965,7 +965,7 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
             #     return Response({'error': 'The explore location must have been created within the last one hour (testing mode).'}, status=status.HTTP_400_BAD_REQUEST)
         
             try:
-                send_location_update_to_celery(user_id=user.id, location_id=explore_location.id, temperature=None, name=explore_location.name, latitude=explore_location.latitude, longitude=explore_location.longitude, last_accessed=explore_location.last_accessed)
+                send_location_update_to_celery(user_id=user.id, location_id=explore_location_pk, temperature=None, name=explore_location.name, latitude=explore_location.latitude, longitude=explore_location.longitude, last_accessed=explore_location.last_accessed)
             except Exception as e:
                 return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
