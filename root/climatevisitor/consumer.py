@@ -284,16 +284,16 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 explore_location_id = explore_data['explore_location'].get('id')
 
                 if explore_location_id and explore_location_id == current_location_visiting_id:
-                    explore_object = explore_data.get('explore_location')
+                    explore_dict = explore_data.get('explore_location')
 
                     # this is formatted for update_location method and should only be fetched 
                     # if there isn't already something in the cache
                     # update_location method will then cache it
                     event_data = {
-                        'location_id': current_location_visiting_id,                
-                        'name': explore_object.name,              
-                        'latitude': explore_object.latitude,                
-                        'longitude': explore_object.longitude,        
+                        'location_id': current_location_visiting_id,
+                        'name': explore_dict.get('name', 'Unknown'),   
+                        'latitude': explore_dict.get('latitude', None),  
+                        'longitude': explore_dict.get('longitude', None),
                         'last_accessed': current_location_last_accessed, 
                     }
                     return None, event_data
@@ -303,16 +303,16 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 twin_location_id = explore_data['twin_location'].get('id')
 
                 if twin_location_id and twin_location_id == current_location_visiting_id:
-                    twin_object = explore_data.get('twin_location')
+                    twin_dict = explore_data.get('twin_location')
 
                     # this is formatted for update_location method and should only be fetched 
                     # if there isn't already something in the cache
                     # update_location method will then cache it
                     event_data = {
-                        'location_id': current_location_visiting_id,                
-                        'name': twin_object.name,              
-                        'latitude': twin_object.latitude,                
-                        'longitude': twin_object.longitude,        
+                        'location_id': current_location_visiting_id,
+                        'name': twin_dict.get('name', 'Unknown'),  
+                        'latitude': twin_dict.get('latitude', None),  
+                        'longitude': twin_dict.get('longitude', None),
                         'last_accessed': current_location_last_accessed, 
                     }
                     return event_data, None
