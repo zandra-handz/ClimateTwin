@@ -91,24 +91,34 @@ def run_climate_twin_algorithms_task(user_id, user_address):
         # that task can verify it was meant for the CurrentLocation before setting expired to True
         try:
             current_location = CurrentLocation.update_or_create_location(user=user_instance, twin_location=climate_twin_location_instance)
-            
+            send_location_update_to_celery(user_id=user_instance.id, 
+                                           location_id=current_location.twin_location.id, 
+                                           temperature=current_location.twin_location.temperature, 
+                                           name=current_location.twin_location.name, 
+                                           latitude=current_location.twin_location.latitude, 
+                                           longitude=current_location.twin_location.longitude,
+                                           last_accessed=current_location.last_accessed)
+
              # Schedule the expiration task after updating or creating the current location
             schedule_expiration_task(user_id=user_instance.id)# No async_to_sync wrapper needed
 
         except Exception as e:
             print("An error occurred:", e)
 
-        try:
-            explore_location_instance = ClimateTwinExploreLocation.objects.create(
-                user=user_instance,
-                twin_location=climate_twin_location_instance,
-                created_on=timezone.now()  # Set creation time to current time
-            )
+        # try:
+        #     explore_location_instance = ClimateTwinExploreLocation.objects.create(
+        #         user=user_instance,
+        #         twin_location=climate_twin_location_instance,
+        #         created_on=timezone.now()  # Set creation time to current time
+        #     )
 
-            explore_location_instance.save()
+        #     explore_location_instance.save()
 
-        except Exception as e:
-            print("An error occurred:", e)
+
+        # except Exception as e:
+        #     print("An error occurred:", e)
+        #     # added this to abort if error
+        #     return
 
  
         send_search_for_ruins_initiated(user_id=user_instance.id)

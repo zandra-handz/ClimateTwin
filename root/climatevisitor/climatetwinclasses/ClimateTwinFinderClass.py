@@ -567,7 +567,9 @@ class ClimateTwinFinder:
                 #this return ensures only one location; comment out to allow for multiple
                 self.climate_twin = climate_twin
 
-                send_location_update_to_celery(user_id=self.user_id_for_celery, temperature=temp, name=address_str, latitude=latitude, longitude=longitude)
+                # moved to parent algorithms_task to send AFTER this instance is saved and after it is then saved as current explore location
+               # will ONLY be sending explore locations as location updates (except for 'is home' and potentially 'is in flight')
+               # send_location_update_to_celery(user_id=self.user_id_for_celery, temperature=temp, name=address_str, latitude=latitude, longitude=longitude)
 
                 return True
 
