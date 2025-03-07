@@ -193,7 +193,7 @@ class Treasure(models.Model):
     found_at_latitude = models.FloatField(default=0.0)
     found_at_longitude = models.FloatField(default=0.0)
     descriptor = models.CharField(max_length=50, default="Mystery Item")  #type of item found, must be entered
-    description = models.CharField(max_length=600, null=True, blank=True) #description of item
+    description = models.CharField(max_length=10000, null=True, blank=True) #description of item
     item_name = models.CharField(max_length=255, default='') #data item most associated with found item
     item_category = models.CharField(max_length=255, default='') #data item category
 
