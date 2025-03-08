@@ -200,7 +200,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             else:
                 # SEND EMPTY UPDATE if endpoint has no twin or explore location
                 logger.info(f"Explore endpoint returned no current location, sending empty event to location update for {self.user.id}")
-                self.update_location(self.create_empty_location_update)
+                self.update_location(self.create_empty_location_update())
  
 
         last_message = cache.get(f"last_message_{self.user.id}")
@@ -263,6 +263,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         else:
             logger.info("No message in cache for this user")
 
+
     def send_notif_from_cache(self):
         last_notification = cache.get(f"last_notification_{self.user.id}")
         if last_notification:
@@ -309,6 +310,10 @@ class LocationUpdateConsumer(WebsocketConsumer):
             
             # Handle incoming messages (optional, modify as needed)
             if message.get("action") == "refresh":
+
+                self.send_message_from_cache()
+                self.send_notif_from_cache()
+                
 
 
 
