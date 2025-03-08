@@ -438,18 +438,18 @@ class LocationUpdateConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({'notification': notification_data}))
    
    
-def disconnect(self, close_code):
-    """
-    Handles WebSocket disconnection and cleans up the connection.
-    """
-    if hasattr(self, 'group_name'):  # Was getting error upon app reinitializing that this wasn't defined, so added this check
-        async_to_sync(self.channel_layer.group_discard)(
-            self.group_name,
-            self.channel_name
-        )
-        logger.info(f"Location update WebSocket disconnected for group {self.group_name}")
-    else:
-        logger.warning("WebSocket disconnect called, but group_name was never set.")
+    def disconnect(self, close_code):
+        """
+        Handles WebSocket disconnection and cleans up the connection.
+        """
+        if hasattr(self, 'group_name'):  # Was getting error upon app reinitializing that this wasn't defined, so added this check
+            async_to_sync(self.channel_layer.group_discard)(
+                self.group_name,
+                self.channel_name
+            )
+            logger.info(f"Location update WebSocket disconnected for group {self.group_name}")
+        else:
+            logger.warning("WebSocket disconnect called, but group_name was never set.")
 
     def update_location(self, event):
         """
