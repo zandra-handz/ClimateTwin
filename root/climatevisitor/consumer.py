@@ -150,6 +150,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
     last_message = None 
     last_notification = None
+    current_location_cache = None
 
     def connect(self):
         self.user, self.token = self.authenticate_user()
@@ -170,23 +171,32 @@ class LocationUpdateConsumer(WebsocketConsumer):
         logger.info("FOCUS HEEEEEERE Location Update WebSocket connection established")
 
         current_location_cache = cache.get(f"current_location_{self.user.id}")
-        if current_location_cache and 'location_id' in current_location_cache and 'last_accessed' in current_location_cache:
-            # Send the data from cache
-            self.send(text_data=json.dumps({
-                'location_id': current_location_cache.get('location_id'),
-                'name': current_location_cache.get('name', 'Error getting location name'),  
-                'latitude': current_location_cache.get('latitude', None),
-                'longitude': current_location_cache.get('longitude', None),
-                'last_accessed': current_location_cache.get('last_accessed')
-            }))
-        else:
-            twin_location_type, explore_location_type = self.fetch_data_from_endpoint(self.token)
-            if twin_location_type:
-                logger.info(f"Sending current location twin type data for {self.user.id}")
-                self.update_location(twin_location_type)
-            elif explore_location_type:
-                logger.info(f"Sending current location explore type data for {self.user.id}")
-                self.update_location(explore_location_type)
+        if current_location_cache:
+            logger.info(f"Data in current location cache for {self.user.id}")
+            if 'location_id' in current_location_cache and 'last_accessed' in current_location_cache:
+                logger.info(f"location id and last accessed time found in current location cache for {self.user.id}")
+                # Send the data from cache
+                self.send(text_data=json.dumps({
+                    'location_id': current_location_cache.get('location_id'),
+                    'name': current_location_cache.get('name', 'Error getting location name'),  
+                    'latitude': current_location_cache.get('latitude', None),
+                    'longitude': current_location_cache.get('longitude', None),
+                    'last_accessed': current_location_cache.get('last_accessed')
+                }))
+            else:
+                logger.info(f"location id and last accessed time NOT found in current location cache for {self.user.id}, getting data from endpoint")
+               
+                twin_location_type, explore_location_type = self.fetch_data_from_endpoint(self.token)
+                if twin_location_type:
+                    logger.info(f"Sending current location twin type data for {self.user.id}")
+                    self.update_location(twin_location_type)
+                elif explore_location_type:
+                    logger.info(f"Sending current location explore type data for {self.user.id}")
+                    self.update_location(explore_location_type)
+                else:
+                    logger.info(f"Explore endpoint returned no current location, sending empty event to location update for {self.user.id}")
+                    self.update_location(None)
+
 
         last_message = cache.get(f"last_message_{self.user.id}")
         if last_message:
@@ -213,7 +223,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         message_data = event.get("message")
         if message_data:
             logger.debug(f"Saving last_message for user {self.user.id}: {message_data}")
-            cache.set(f"last_message_{self.user.id}", message_data, timeout=86400)  # Store for 1 day
+            cache.set(f"last_message_{self.user.id}", message_data) # no timeout , timeout=86400)  # Store for 1 day
             self.send(text_data=json.dumps({'message': message_data}))
 
 
@@ -336,7 +346,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         logger.debug(f"Caching message for user {self.user.id} with key: {cache_key}")
 
         # Set the cache and log the result
-        cache.set(cache_key, message_data, timeout=86400)
+        cache.set(cache_key, message_data) # no timeout , timeout=86400)
         logger.debug(f"Message cached successfully with key: {cache_key} and timeout 86400")
 
         # Sending the message back to the client
@@ -359,7 +369,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         logger.debug(f"Received update_coordinates event: {event}")
 
         message_data = event['message']
-        cache.set(f"last_message_{self.user.id}", message_data, timeout=86400)
+        cache.set(f"last_message_{self.user.id}", message_data) # no timeout , timeout=86400)
         self.send(text_data=json.dumps({'message': message_data}))
 
         # self.send(text_data=json.dumps({
@@ -372,7 +382,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         logger.debug(f"Received update_coordinates event: {event}")
 
         message_data = event['message']
-        cache.set(f"last_message_{self.user.id}", message_data, timeout=86400)
+        cache.set(f"last_message_{self.user.id}", message_data) # no timeout , timeout=86400)
         self.send(text_data=json.dumps({'message': message_data}))
 
         # self.send(text_data=json.dumps({
@@ -384,7 +394,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         logger.debug(f"Received update_coordinates event: {event}")
 
         message_data = event['message']
-        cache.set(f"last_message_{self.user.id}", message_data, timeout=86400)
+        cache.set(f"last_message_{self.user.id}", message_data) # no timeout, timeout=86400)
         self.send(text_data=json.dumps({'message': message_data}))
         # self.send(text_data=json.dumps({
         #     'message': event['message'], 
@@ -395,7 +405,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         logger.debug(f"Received update_coordinates event: {event}")
 
         message_data = event['message']
-        cache.set(f"last_message_{self.user.id}", message_data, timeout=86400)
+        cache.set(f"last_message_{self.user.id}", message_data) # no timeout , timeout=86400)
         self.send(text_data=json.dumps({'message': message_data}))
         # self.send(text_data=json.dumps({
         #     'message': event['message'], 
@@ -414,7 +424,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
         notification_data = event['notification']
         recipient_id = event['recipient_id']  
-        cache.set(f"notification_{recipient_id}", notification_data, timeout=86400)
+        cache.set(f"notification_{recipient_id}", notification_data) # no timeout , timeout=86400)
         self.send(text_data=json.dumps({'notification': notification_data}))
 
 
@@ -424,21 +434,22 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
         notification_data = event['notification']
         recipient_id = event['recipient_id'] 
-        cache.set(f"notification_{recipient_id}", notification_data, timeout=86400)
+        cache.set(f"notification_{recipient_id}", notification_data) # no timeout, timeout=86400)
         self.send(text_data=json.dumps({'notification': notification_data}))
    
    
-
-    def disconnect(self, close_code):
-        """
-        Handles WebSocket disconnection and cleans up the connection.
-        """
-        #self.connected = False
+def disconnect(self, close_code):
+    """
+    Handles WebSocket disconnection and cleans up the connection.
+    """
+    if hasattr(self, 'group_name'):  # Was getting error upon app reinitializing that this wasn't defined, so added this check
         async_to_sync(self.channel_layer.group_discard)(
             self.group_name,
             self.channel_name
         )
-        logger.info("update_locations connection closed")
+        logger.info(f"Location update WebSocket disconnected for group {self.group_name}")
+    else:
+        logger.warning("WebSocket disconnect called, but group_name was never set.")
 
     def update_location(self, event):
         """
@@ -474,7 +485,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             'last_accessed': event.get('last_accessed', None),
         }
  
-        cache.set(cache_key, location_data, timeout=3600) 
+        cache.set(cache_key, location_data)  # no timeout, always store last location update
 
 
     def authenticate_user(self):
