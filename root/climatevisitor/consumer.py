@@ -171,39 +171,44 @@ class LocationUpdateConsumer(WebsocketConsumer):
         logger.info("FOCUS HEEEEEERE Location Update WebSocket connection established")
 
         current_location_cache = cache.get(f"current_location_{self.user.id}")
-        if current_location_cache:
-            logger.info(f"Data in current location cache for {self.user.id}")
-            if 'location_id' in current_location_cache and 'last_accessed' in current_location_cache:
-                logger.info(f"location id and last accessed time found in current location cache for {self.user.id}")
-                # Send the data from cache
-                self.send(text_data=json.dumps({
-                    'location_id': current_location_cache.get('location_id'),
-                    'name': current_location_cache.get('name', 'Error getting location name'),  
-                    'latitude': current_location_cache.get('latitude', None),
-                    'longitude': current_location_cache.get('longitude', None),
-                    'last_accessed': current_location_cache.get('last_accessed')
-                }))
-            else:
-                logger.info(f"location id and last accessed time NOT found in current location cache for {self.user.id}, getting data from endpoint")
-               
-                twin_location_type, explore_location_type = self.fetch_data_from_endpoint(self.token)
-                if twin_location_type:
-                    logger.info(f"Sending current location twin type data for {self.user.id}")
-                    self.update_location(twin_location_type)
-                elif explore_location_type:
-                    logger.info(f"Sending current location explore type data for {self.user.id}")
-                    self.update_location(explore_location_type)
-                else:
-                    logger.info(f"Explore endpoint returned no current location, sending empty event to location update for {self.user.id}")
-                    self.update_location(None)
 
+        # SEND CACHED DATA if data in cache and if 'location_id' and 'last_accessed' are in data
+        if current_location_cache and 'location_id' in current_location_cache and 'last_accessed' in current_location_cache:
+           
+            logger.info(f"Data in current location cache for {self.user.id}")
+            logger.info(f"location id and last accessed time found in current location cache for {self.user.id}")
+                
+            self.send(text_data=json.dumps({
+                'location_id': current_location_cache.get('location_id'),
+                'name': current_location_cache.get('name', 'Error getting location name'),  
+                'latitude': current_location_cache.get('latitude', None),
+                'longitude': current_location_cache.get('longitude', None),
+                'last_accessed': current_location_cache.get('last_accessed')
+            }))
+        
+        # REFETCH DATA FROM ENDPOINT and save new cache if no cache, or if 'location_id' and 'last_accessed' are not in cache
+        else:
+            logger.info(f"Either current location data does not exist, or it does not contain 'location_id' and/or 'last_accessed' keys for {self.user.id}, getting data from endpoint")
+            
+            twin_location_type, explore_location_type = self.fetch_data_from_endpoint(self.token) # will return 1 of 3 combos: location none, none location, or none none 
+            if twin_location_type:
+                logger.info(f"Sending current location twin type data for {self.user.id}")
+                self.update_location(twin_location_type)
+            elif explore_location_type:
+                logger.info(f"Sending current location explore type data for {self.user.id}")
+                self.update_location(explore_location_type)
+            else:
+                # SEND EMPTY UPDATE if endpoint has no twin or explore location
+                logger.info(f"Explore endpoint returned no current location, sending empty event to location update for {self.user.id}")
+                self.update_location(None)
+ 
 
         last_message = cache.get(f"last_message_{self.user.id}")
         if last_message:
             logger.info(f"Sending last_message to user {self.user.id}: {last_message}")
             self.send(text_data=json.dumps({'message': last_message}))
         else:
-               logger.info("No message in cache for this user")
+            logger.info("No message in cache for this user")
 
 
         last_notification = cache.get(f"last_notification_{self.user.id}")
@@ -211,7 +216,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             logger.info(f"Sending last_notification to user {self.user.id}: {last_notification}")
             self.send(text_data=json.dumps({'notification': last_notification}))
         else:
-               logger.info("No notification in cache for this user")
+            logger.info("No notification in cache for this user")
 
 
     def send_message_event(self, event):
@@ -238,6 +243,10 @@ class LocationUpdateConsumer(WebsocketConsumer):
             
             # Handle incoming messages (optional, modify as needed)
             if message.get("action") == "refresh":
+
+
+
+
                 data = self.fetch_data_from_endpoint(self.token)
                 self.update_location(data)
                 
