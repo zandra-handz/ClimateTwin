@@ -11,9 +11,18 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
 
+
+
+
 # Actual keys are in settings.py
 google_api_key = settings.GOOGLE_MAPS_API_KEY
 open_map_api_key = settings.OPEN_MAP_API_KEY
+
+
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ClimateTwinFinder:
@@ -57,6 +66,11 @@ class ClimateTwinFinder:
 
         self.api_key = open_map_api_key
         self.google_api_key = google_api_key
+        self.divider_for_point_gen_deviation = 4
+        self.number_of_final_candidates_required = 4
+        self.high_variance_trigger = 12
+        self.high_variance_count_limit = 2
+        self.points_generated_in_each_country = 20
         self.origin_lat = 0
         self.origin_lon = 0
         self.google_key_count = 0
@@ -69,6 +83,10 @@ class ClimateTwinFinder:
         self.similar_places = self.configure_similar_places_dict()
         self.search_cycle = 0
         self.climate_twin = None
+        self.countries_searched = 0
+        self.points_generated = 0
+        self.points_generated_on_land = 0
+
 
         self.user_id_for_celery = user_id_for_celery
 
@@ -108,7 +126,8 @@ class ClimateTwinFinder:
         # Debug statements
         # self.print_home_climate_profile_concise()
         # self.print_climate_twin_profile_concise()
-        # self.print_algorithm_data()
+        self.print_algorithm_data()
+        self.log_algorithm_data()
 
 
     def __str__(self):
@@ -146,6 +165,29 @@ class ClimateTwinFinder:
         print(f"OpenWeatherMap calls: {self.key_count}")
         print(f"GoogleMap calls: {self.google_key_count}")
         print(f"High variances: {self.high_variance_count}")
+        print(f"Countries searched: {self.countries_searched}")
+        print(f"Points searched: {self.points_generated_on_land}")
+        print(f"Total points generated: {self.points_generated}")
+        print(f"Points generated in each country: {self.points_generated_in_each_country}")
+        print(f"High variance trigger: {self.high_variance_trigger}")
+        print(f"High variance count limit: {self.high_variance_count_limit}")
+        print(f"Divider for point generation deviation: {self.divider_for_point_gen_deviation}")
+        print(f"Number of final location candidates required: {self.number_of_final_candidates_required}")
+
+
+    # Debug function, may turn this data into model instances and save in DB later
+    def log_algorithm_data(self):
+        logger.info(f"OpenWeatherMap calls: {self.key_count}")
+        logger.info(f"GoogleMap calls: {self.google_key_count}")
+        logger.info(f"High variances: {self.high_variance_count}")
+        logger.info(f"Countries searched: {self.countries_searched}")
+        logger.info(f"Points searched: {self.points_generated_on_land}")
+        logger.info(f"Total points generated: {self.points_generated}")
+        logger.info(f"Points generated in each country: {self.points_generated_in_each_country}")
+        logger.info(f"High variance trigger: {self.high_variance_trigger}")
+        logger.info(f"High variance count limit: {self.high_variance_count_limit}")
+        logger.info(f"Divider for point generation deviation: {self.divider_for_point_gen_deviation}")
+        logger.info(f"Number of final location candidates required: {self.number_of_final_candidates_required}")
 
 
 
@@ -242,13 +284,16 @@ class ClimateTwinFinder:
 
 
     def generate_random_points_within_polygon(self, polygon, num_points):
+
+        # smaller distance from center: 6
+        std_dev_divider = self.divider_for_point_gen_deviation
         
         centroid = polygon.centroid
         centroid_x, centroid_y = centroid.x, centroid.y
         minx, miny, maxx, maxy = polygon.bounds
         
-        std_dev_x = (maxx - minx) / 6
-        std_dev_y = (maxy - miny) / 6
+        std_dev_x = (maxx - minx) / std_dev_divider
+        std_dev_y = (maxy - miny) / std_dev_divider
         
         x = np.random.normal(centroid_x, std_dev_x, num_points)
         y = np.random.normal(centroid_y, std_dev_y, num_points)
@@ -273,7 +318,7 @@ class ClimateTwinFinder:
         spatial_index = land_only.sindex
 
         # Generate random points within one randomly selected country
-        num_points = 14
+        num_points = self.points_generated_in_each_country
         recalculations = 0
 
         while True:
@@ -300,43 +345,54 @@ class ClimateTwinFinder:
 
             points_within_country = self.generate_random_points_within_polygon(random_country['geometry'], num_points)
 
+            if len(points_within_country) > 0:  # Explicitly check if it's non-empty
+                self.points_generated += len(points_within_country)
+
+                points_within_country = points_within_country[land_only.geometry.contains(points_within_country.geometry).any(axis=1)]
+            
+                if len(points_within_country) > 0:
+                    self.points_generated_on_land += len(points_within_country)
+
+                    break
+          
+
             # Check if the generated points fall within land polygons
-            if all(land_only.geometry.contains(point).any() for point in points_within_country.geometry):
-                break
+            # if all(land_only.geometry.contains(point).any() for point in points_within_country.geometry):
+            #     break
 
         # print(f"Country picker recalculations: {recalculations}")
         return country_name, points_within_country
 
 
 
-    # Old approach that has been sidelined
-    def generate_random_points_within_country_old(self):
-        world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+    # # Old approach that has been sidelined
+    # def generate_random_points_within_country_old(self):
+    #     world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
-        # Simplify the geometry for efficiency
-        world['simplified_geometry'] = world['geometry'].simplify(tolerance=0.01)
+    #     # Simplify the geometry for efficiency
+    #     world['simplified_geometry'] = world['geometry'].simplify(tolerance=0.01)
 
-        # Create a spatial index
-        spatial_index = world.sindex
+    #     # Create a spatial index
+    #     spatial_index = world.sindex
 
-        # Generate 10 random points within one randomly selected country
-        num_points = 14
+    #     # Generate 10 random points within one randomly selected country
+    #     num_points = 14
 
-        # Randomly select one country
-        random_country_idx = np.random.choice(world.index)
-        random_country = world.loc[random_country_idx]
+    #     # Randomly select one country
+    #     random_country_idx = np.random.choice(world.index)
+    #     random_country = world.loc[random_country_idx]
 
-        # Use spatial index for efficient point-in-polygon check
-        possible_matches_index = list(spatial_index.intersection(random_country.geometry.bounds))
-        possible_matches = world.iloc[possible_matches_index]
+    #     # Use spatial index for efficient point-in-polygon check
+    #     possible_matches_index = list(spatial_index.intersection(random_country.geometry.bounds))
+    #     possible_matches = world.iloc[possible_matches_index]
 
-        # Extract the simplified geometry from the first matching feature
-        simplified_geometry = possible_matches.simplified_geometry.iloc[0]
+    #     # Extract the simplified geometry from the first matching feature
+    #     simplified_geometry = possible_matches.simplified_geometry.iloc[0]
 
-        # Generate random points within the selected country
-        points_within_country = self.generate_random_points_within_bounds(simplified_geometry.bounds, num_points)
+    #     # Generate random points within the selected country
+    #     points_within_country = self.generate_random_points_within_bounds(simplified_geometry.bounds, num_points)
 
-        return points_within_country
+    #     return points_within_country
 
 
     # Finds twin location or returns None
@@ -355,8 +411,10 @@ class ClimateTwinFinder:
 
     def search_random_coords_in_a_country(self):
         base_url = "https://api.openweathermap.org/data/2.5/find"
-        num_places = 5
+        num_places = self.number_of_final_candidates_required
         high_variance = 0
+        high_variance_trigger = self.high_variance_trigger # degree difference that will add to high variance count
+        high_variance_count_limit = self.high_variance_count_limit # once count exceeds, algo will ditch search in current country and go to new country
         celery_fail_count = 0
 
         while num_places > len(self.similar_places['name']):
@@ -412,11 +470,11 @@ class ClimateTwinFinder:
                             break
 
                     else:
-                        if temperature_difference > 14:
+                        if temperature_difference > high_variance_trigger:
                             high_variance += 1
                             self.high_variance_count += 1
                             # print(f"High variance: {high_variance}")
-                            if high_variance > 2:
+                            if high_variance > high_variance_count_limit:
                                 # Reset high_variance and break to get new coordinates
                                 high_variance = 0
                                 break
