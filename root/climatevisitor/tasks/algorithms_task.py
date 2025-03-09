@@ -81,6 +81,8 @@ def run_climate_twin_algorithms_task(user_id, user_address):
             home_location=home_location_instance
         )
 
+        climate_twin_location_instance.save()
+
         try:
             climate_twin_search_stats_instance = ClimateTwinSearchStats(
                 user=user_instance,
@@ -120,8 +122,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
                                         location_latitude=climate_twin_weather_profile.latitude,
                                          location_longitude=climate_twin_weather_profile.longitude)
         
-
-        climate_twin_location_instance.save()
+ 
         user_visit_instance.save()
 
         # Create the first current location and set expiration task; 
