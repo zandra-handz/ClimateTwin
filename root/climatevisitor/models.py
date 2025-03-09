@@ -389,7 +389,7 @@ class ClimateTwinSearchStats(models.Model):
     last_accessed = models.DateTimeField(auto_now=True)
     
     class Meta:
-        # ordering = ['-id']
+        ordering = ['-id']
         # indexes = [
         #     models.Index(fields=['origin_location']),
         # ]
