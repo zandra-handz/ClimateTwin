@@ -372,7 +372,7 @@ class ClimateTwinSearchStats(models.Model):
      
     
     preset_random_points_in_each_country = models.IntegerField()
-    preset_temp_diff_is_high_variance = models.BooleanField()
+    preset_temp_diff_is_high_variance = models.IntegerField()
     preset_num_high_variances_allowed = models.IntegerField()
     preset_divider_for_point_gen_deviation = models.FloatField()
     preset_num_final_candidates_required = models.IntegerField()
