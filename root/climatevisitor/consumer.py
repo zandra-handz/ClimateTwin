@@ -169,7 +169,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
         self.accept()
         logger.info("FOCUS HEEEEEERE Location Update WebSocket connection established")
-        
+
         self.send_message_from_cache()
         self.send_notif_from_cache()
         self.send_current_location_from_cache_or_endpoint()
@@ -270,13 +270,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 self.send_message_from_cache()
                 self.send_notif_from_cache()
                 self.send_current_location_from_cache_or_endpoint()
-                
-
-
-
-
-                # data = self.fetch_data_from_endpoint(self.token)
-                # self.update_location(data)
+                 
                 
                     
     def fetch_data_from_endpoint(self, token):

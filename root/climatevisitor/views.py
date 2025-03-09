@@ -1050,9 +1050,24 @@ class ExpireCurrentLocationView(generics.UpdateAPIView):
                 'expired': True  # Mark location as expired
             }
         )
- 
-        if current_location.expired:
-            process_immediate_expiration_task.delay(user_id=user.id) 
+
+        if current_location.expired: #check to make sure location was successfully expired, I don't want socket cache to be able
+            # to fall out of sync with DB
+
+            try:
+                send_location_update_to_celery(user_id=user.id, 
+                    location_id=None, # = location_visiting_id
+                    temperature= None, 
+                    name="You are home", 
+                    latitude=None,
+                    longitude=None, 
+                    last_accessed=None)
+            except Exception as e:
+                print(f"Error sending go-home location update to Celery: {str(e)}")  # Print the error to the console/log
+
+        # too slow
+        # if current_location.expired:
+        #     process_immediate_expiration_task.delay(user_id=user.id) 
 
         return Response(self.get_serializer(current_location).data, status=status.HTTP_200_OK)
 
