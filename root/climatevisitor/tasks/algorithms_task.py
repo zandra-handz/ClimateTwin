@@ -9,7 +9,7 @@ from climatevisitor.climatetwinclasses.ClimateTwinFinderClass import ClimateTwin
 from climatevisitor.climatetwinclasses.ClimateObjectClass import ClimateObject
 from climatevisitor.climatetwinclasses.ClimateEncounterClass import ClimateEncounter
 from climatevisitor.climatetwinclasses.OpenMapAPIClass import OpenMapAPI
-from climatevisitor.models import ClimateTwinLocation, ClimateTwinExploreLocation, CurrentLocation
+from climatevisitor.models import ClimateTwinLocation, ClimateTwinExploreLocation, CurrentLocation, ClimateTwinSearchStats
 from climatevisitor import serializers
 
 from datetime import datetime
@@ -78,6 +78,39 @@ def run_climate_twin_algorithms_task(user_id, user_address):
             user_instance, climate_places.climate_twin, weather_messages,
             home_location=home_location_instance
         )
+
+        try:
+            climate_twin_search_stats_instance = ClimateTwinSearchStats(
+                user=user_instance,
+                home_temperature=climate_places.home_temperature,
+                home_address=climate_places.address,
+                climate_twin_temperature=climate_places.climate_twin_temperature,
+                climate_twin_address=climate_places.climate_twin_address,
+                points_searched_on_land=climate_places.points_generated_on_land,
+                countries_searched=climate_places.countries_searched,
+                total_points_generated=climate_places.points_generated,
+                openweathermap_calls=climate_places.key_count,
+                google_map_calls=climate_places.google_key_count,
+                high_variances=climate_places.high_variance_count,
+                preset_random_points_in_each_country=climate_places.preset_points_generated_in_each_country,
+                preset_temp_diff_is_high_variance=climate_places.preset_temp_diff_is_high_variance,
+                preset_num_high_variances_allowed=climate_places.preset_num_high_variances_allowed,
+                preset_divider_for_point_gen_deviation=climate_places.preset_divider_for_point_gen_deviation,
+                preset_num_final_candidates_required=climate_places.preset_num_final_candidates_required,
+                home_latitude=climate_places.origin_lat,
+                home_longitude=climate_places.origin_lon,
+                climate_twin_latitude=climate_places.climate_twin_lat,
+                climate_twin_longitude=climate_places.climate_twin_lon,
+                associated_location=climate_twin_location_instance,
+            )
+
+            # Save the instance to the database
+            climate_twin_search_stats_instance.save()
+            logger.info("Climate Twin Search Stats instance created and saved successfully.")
+
+        except Exception as e:
+            logger.info(f"Error while saving Climate Twin Search Stats instance: {e}")
+
 
         
         user_visit_instance = UserVisit(user=user_instance, location_name=climate_twin_weather_profile.name,

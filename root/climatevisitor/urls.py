@@ -23,7 +23,9 @@ urlpatterns = [
     path('collect/', views.collect, name='collect-treasure'),
     path('item-choices/', views.item_choices, name="item-choices"),
 
-     path('go-home/', views.ExpireCurrentLocationView.as_view(), name='expire-current-location'),
+    path('go-home/', views.ExpireCurrentLocationView.as_view(), name='expire-current-location'),
+
+    path('algo-stats-for-user/', views.ClimateTwinSearchStatsView.as_view(), name='algo-stats-for-user'),
     
 
     # Access all data associated with user

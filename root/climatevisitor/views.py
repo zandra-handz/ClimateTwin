@@ -1101,3 +1101,17 @@ class CurrentLocationView(generics.GenericAPIView):
 
         # Return the current location data using the serializer
         return Response(self.get_serializer(current_location).data, status=status.HTTP_200_OK)
+    
+
+class ClimateTwinSearchStatsView(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = serializers.ClimateTwinSearchStatsSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    @swagger_auto_schema(operation_id='listClimateTwinSearchStats', operation_description="Returns climate twin search stats.")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return models.ClimateTwinSearchStats.objects.filter(user=self.request.user)

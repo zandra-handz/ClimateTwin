@@ -68,7 +68,7 @@ class ClimateTwinFinder:
         self.google_api_key = google_api_key
         self.preset_divider_for_point_gen_deviation = 4
         self.preset_num_final_candidates_required = 4
-        self.preset_temp_dif_is_high_variance = 12
+        self.preset_temp_diff_is_high_variance = 12
         self.preset_num_high_variances_allowed = 2
         self.preset_points_generated_in_each_country = 20
         self.origin_lat = 0
@@ -91,6 +91,7 @@ class ClimateTwinFinder:
         self.climate_twin_temperature = 0
         self.climate_twin_lat = 0
         self.climate_twin_lon = 0
+ 
 
 
         self.user_id_for_celery = user_id_for_celery
@@ -180,7 +181,7 @@ class ClimateTwinFinder:
         print(f"Points searched: {self.points_generated_on_land}")
         print(f"Total points generated: {self.points_generated}")
         print(f"PRESET: Random points to generate in each country: {self.preset_points_generated_in_each_country}")
-        print(f"PRESET: Temp dif is high variance: {self.preset_temp_dif_is_high_variance}")
+        print(f"PRESET: Temp dif is high variance: {self.preset_temp_diff_is_high_variance}")
         print(f"PRESET: Number of high variances allowed: {self.preset_num_high_variances_allowed}")
         print(f"PRESET: Divider for point generation deviation: {self.preset_divider_for_point_gen_deviation}")
         print(f"PRESET: Number of final location candidates required: {self.preset_num_final_candidates_required}")
@@ -202,7 +203,7 @@ class ClimateTwinFinder:
         logger.info(f"Points searched: {self.points_generated_on_land}")
         logger.info(f"Total points generated: {self.points_generated}")
         logger.info(f"PRESET: Random points to generate in each country: {self.preset_points_generated_in_each_country}")
-        logger.info(f"PRESET: temp dif is high variance: {self.preset_temp_dif_is_high_variance}")
+        logger.info(f"PRESET: temp dif is high variance: {self.preset_temp_diff_is_high_variance}")
         logger.info(f"PRESET: Number of high variances allowed: {self.preset_num_high_variances_allowed}")
         logger.info(f"PRESET: Divider for point generation deviation: {self.preset_divider_for_point_gen_deviation}")
         logger.info(f"PRESET: Number of final location candidates required: {self.preset_num_final_candidates_required}")
@@ -439,7 +440,7 @@ class ClimateTwinFinder:
         base_url = "https://api.openweathermap.org/data/2.5/find"
         num_places = self.preset_num_final_candidates_required
         high_variance = 0
-        high_variance_trigger = self.preset_temp_dif_is_high_variance # degree difference that will add to high variance count
+        high_variance_trigger = self.preset_temp_diff_is_high_variance # degree difference that will add to high variance count
         high_variance_count_limit = self.preset_num_high_variances_allowed # once count exceeds, algo will ditch search in current country and go to new country
         celery_fail_count = 0
 
