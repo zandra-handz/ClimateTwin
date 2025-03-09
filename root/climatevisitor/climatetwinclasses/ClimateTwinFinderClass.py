@@ -66,11 +66,11 @@ class ClimateTwinFinder:
 
         self.api_key = open_map_api_key
         self.google_api_key = google_api_key
-        self.divider_for_point_gen_deviation = 4
-        self.number_of_final_candidates_required = 4
-        self.high_variance_trigger = 12
-        self.high_variance_count_limit = 2
-        self.points_generated_in_each_country = 20
+        self.preset_divider_for_point_gen_deviation = 4
+        self.preset_num_final_candidates_required = 4
+        self.preset_temp_dif_is_high_variance = 12
+        self.preset_num_high_variances_allowed = 2
+        self.preset_points_generated_in_each_country = 20
         self.origin_lat = 0
         self.origin_lon = 0
         self.google_key_count = 0
@@ -86,6 +86,9 @@ class ClimateTwinFinder:
         self.countries_searched = 0
         self.points_generated = 0
         self.points_generated_on_land = 0
+        self.home_temperature = 0
+        self.climate_twin_address = None
+        self.climate_twin_temperature = 0
 
 
         self.user_id_for_celery = user_id_for_celery
@@ -162,32 +165,45 @@ class ClimateTwinFinder:
 
     # Debug function
     def print_algorithm_data(self):
+        print(f"Home address: {self.address}")
+        # The below works, but easier to make a new property so I did
+        # print(f"Home temp: {self.home_climate[self.address]['temperature']}")
+        print(f"Home temperatire: {self.home_temperature}")
+        print(f"Twin address: {self.climate_twin_address}")
+        print(f"Twin temperature: {self.climate_twin_temperature}")
         print(f"OpenWeatherMap calls: {self.key_count}")
         print(f"GoogleMap calls: {self.google_key_count}")
         print(f"High variances: {self.high_variance_count}")
         print(f"Countries searched: {self.countries_searched}")
         print(f"Points searched: {self.points_generated_on_land}")
         print(f"Total points generated: {self.points_generated}")
-        print(f"Points generated in each country: {self.points_generated_in_each_country}")
-        print(f"High variance trigger: {self.high_variance_trigger}")
-        print(f"High variance count limit: {self.high_variance_count_limit}")
-        print(f"Divider for point generation deviation: {self.divider_for_point_gen_deviation}")
-        print(f"Number of final location candidates required: {self.number_of_final_candidates_required}")
+        print(f"PRESET: Random points to generate in each country: {self.preset_points_generated_in_each_country}")
+        print(f"PRESET: Temp dif is high variance: {self.preset_temp_dif_is_high_variance}")
+        print(f"PRESET: Number of high variances allowed: {self.preset_num_high_variances_allowed}")
+        print(f"PRESET: Divider for point generation deviation: {self.preset_divider_for_point_gen_deviation}")
+        print(f"PRESET: Number of final location candidates required: {self.preset_num_final_candidates_required}")
 
 
     # Debug function, may turn this data into model instances and save in DB later
     def log_algorithm_data(self):
+        logger.info(f"Home address: {self.address}")
+        # The below works, but easier to make a new property so I did
+        # logger.info(f"Home temp: {self.home_climate[self.address]['temperature']}")
+        logger.info(f"Home temperatire: {self.home_temperature}")
+        logger.info(f"Twin address: {self.climate_twin_address}")
+        logger.info(f"Twin temperature: {self.climate_twin_temperature}")
+
         logger.info(f"OpenWeatherMap calls: {self.key_count}")
         logger.info(f"GoogleMap calls: {self.google_key_count}")
         logger.info(f"High variances: {self.high_variance_count}")
         logger.info(f"Countries searched: {self.countries_searched}")
         logger.info(f"Points searched: {self.points_generated_on_land}")
         logger.info(f"Total points generated: {self.points_generated}")
-        logger.info(f"Points generated in each country: {self.points_generated_in_each_country}")
-        logger.info(f"High variance trigger: {self.high_variance_trigger}")
-        logger.info(f"High variance count limit: {self.high_variance_count_limit}")
-        logger.info(f"Divider for point generation deviation: {self.divider_for_point_gen_deviation}")
-        logger.info(f"Number of final location candidates required: {self.number_of_final_candidates_required}")
+        logger.info(f"PRESET: Random points to generate in each country: {self.preset_points_generated_in_each_country}")
+        logger.info(f"PRESET: temp dif is high variance: {self.preset_temp_dif_is_high_variance}")
+        logger.info(f"PRESET: Number of high variances allowed: {self.preset_num_high_variances_allowed}")
+        logger.info(f"PRESET: Divider for point generation deviation: {self.preset_divider_for_point_gen_deviation}")
+        logger.info(f"PRESET: Number of final location candidates required: {self.preset_num_final_candidates_required}")
 
 
 
@@ -252,6 +268,9 @@ class ClimateTwinFinder:
         address = self.address
         self.home_climate = {address: weather_info}
 
+        # Added for easier record keeping
+        self.home_temperature = weather_info['temperature']
+
 
     def get_coordinates(self, address):
         base_url = "https://maps.googleapis.com/maps/api/geocode/json"
@@ -286,7 +305,7 @@ class ClimateTwinFinder:
     def generate_random_points_within_polygon(self, polygon, num_points):
 
         # smaller distance from center: 6
-        std_dev_divider = self.divider_for_point_gen_deviation
+        std_dev_divider = self.preset_divider_for_point_gen_deviation
         
         centroid = polygon.centroid
         centroid_x, centroid_y = centroid.x, centroid.y
@@ -318,7 +337,7 @@ class ClimateTwinFinder:
         spatial_index = land_only.sindex
 
         # Generate random points within one randomly selected country
-        num_points = self.points_generated_in_each_country
+        num_points = self.preset_points_generated_in_each_country
         logger.info(f"self.points_generated_in_each_country: {num_points}")
         
         recalculations = 0
@@ -413,10 +432,10 @@ class ClimateTwinFinder:
 
     def search_random_coords_in_a_country(self):
         base_url = "https://api.openweathermap.org/data/2.5/find"
-        num_places = self.number_of_final_candidates_required
+        num_places = self.preset_num_final_candidates_required
         high_variance = 0
-        high_variance_trigger = self.high_variance_trigger # degree difference that will add to high variance count
-        high_variance_count_limit = self.high_variance_count_limit # once count exceeds, algo will ditch search in current country and go to new country
+        high_variance_trigger = self.preset_temp_dif_is_high_variance # degree difference that will add to high variance count
+        high_variance_count_limit = self.preset_num_high_variances_allowed # once count exceeds, algo will ditch search in current country and go to new country
         celery_fail_count = 0
 
         while num_places > len(self.similar_places['name']):
@@ -626,6 +645,10 @@ class ClimateTwinFinder:
 
                 #this return ensures only one location; comment out to allow for multiple
                 self.climate_twin = climate_twin
+
+                # Added for easier record keeping
+                self.climate_twin_address = address_str
+                self.climate_twin_temperature = temp
 
                 # moved to parent algorithms_task to send AFTER this instance is saved and after it is then saved as current explore location
                # will ONLY be sending explore locations as location updates (except for 'is home' and potentially 'is in flight')
