@@ -145,3 +145,10 @@ class CurrentLocationWithObjectsSerializer(serializers.ModelSerializer):
         if explore_location and twin_location:
             raise serializers.ValidationError("Only one of explore_location or twin_location can be specified.")
         return data
+
+
+class ClimateTwinSearchStatsSerializer(serializers.ModelSerializer):
+
+    class Meta(object):
+        model = models.ClimateTwinSearchStats
+        fields = "__all__"

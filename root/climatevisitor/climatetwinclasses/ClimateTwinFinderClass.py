@@ -89,6 +89,8 @@ class ClimateTwinFinder:
         self.home_temperature = 0
         self.climate_twin_address = None
         self.climate_twin_temperature = 0
+        self.climate_twin_lat = 0
+        self.climate_twin_lon = 0
 
 
         self.user_id_for_celery = user_id_for_celery
@@ -170,7 +172,7 @@ class ClimateTwinFinder:
         # print(f"Home temp: {self.home_climate[self.address]['temperature']}")
         print(f"Home temperatire: {self.home_temperature}")
         print(f"Twin address: {self.climate_twin_address}")
-        print(f"Twin temperature: {self.climate_twin_temperature}")
+        print(f"Twin temperature: {self.climate_twin_temperature}") 
         print(f"OpenWeatherMap calls: {self.key_count}")
         print(f"GoogleMap calls: {self.google_key_count}")
         print(f"High variances: {self.high_variance_count}")
@@ -373,6 +375,9 @@ class ClimateTwinFinder:
                     lambda point: land_only.geometry.contains(point).any())]
                 if len(points_within_country) > 0:
                     self.points_generated_on_land += len(points_within_country)
+
+                    # Only count the country when confirmed that we will be using some or all of the generated points
+                    self.countries_searched += 1
 
                     break
           
@@ -649,6 +654,8 @@ class ClimateTwinFinder:
                 # Added for easier record keeping
                 self.climate_twin_address = address_str
                 self.climate_twin_temperature = temp
+                self.climate_twin_lat = latitude
+                self.climate_twin_lon = longitude
 
                 # moved to parent algorithms_task to send AFTER this instance is saved and after it is then saved as current explore location
                # will ONLY be sending explore locations as location updates (except for 'is home' and potentially 'is in flight')

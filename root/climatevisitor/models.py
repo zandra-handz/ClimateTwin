@@ -354,3 +354,49 @@ class CurrentLocation(models.Model):
             return f"Current or Most Recent Location: {str(self.explore_location)}, {self.pk}"
         if self.twin_location:
             return f"Current or Most Recent Location: {str(self.twin_location)}, {self.pk}"
+
+
+class ClimateTwinSearchStats(models.Model):
+    user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
+    home_temperature = models.FloatField()
+    home_address = models.CharField(max_length=255) 
+    climate_twin_temperature = models.FloatField()
+    climate_twin_address = models.CharField(max_length=255) 
+
+    points_searched_on_land = models.IntegerField()
+    countries_searched = models.IntegerField()
+    total_points_generated = models.IntegerField()
+    openweathermap_calls = models.IntegerField()
+    google_map_calls = models.IntegerField()
+    high_variances = models.IntegerField() 
+     
+    
+    preset_random_points_in_each_country = models.IntegerField()
+    preset_temp_diff_is_high_variance = models.BooleanField()
+    preset_num_high_variances_allowed = models.IntegerField()
+    preset_divider_for_point_gen_deviation = models.FloatField()
+    preset_num_final_candidates_required = models.IntegerField()
+
+    home_latitude = models.FloatField()
+    home_longitude = models.FloatField() 
+    
+    climate_twin_latitude = models.FloatField()
+    climate_twin_longitude = models.FloatField()
+
+    associated_location = models.ForeignKey(ClimateTwinLocation, on_delete=models.SET_NULL, null=True, blank=True)
+
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_accessed = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        # ordering = ['-id']
+        # indexes = [
+        #     models.Index(fields=['origin_location']),
+        # ]
+        verbose_name = "Twin Search Stats"
+        verbose_name_plural = "Twin Search Stats"
+
+    def __str__(self):
+        return f"Twin Search Stats #{self.pk}"
+
+ 

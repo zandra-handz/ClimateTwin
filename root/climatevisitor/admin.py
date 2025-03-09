@@ -9,3 +9,5 @@ admin.site.register(models.ClimateTwinDiscoveryLocation)
 admin.site.register(models.ClimateTwinExploreLocation)
 
 admin.site.register(models.CurrentLocation)
+
+admin.site.register(models.ClimateTwinSearchStats)
