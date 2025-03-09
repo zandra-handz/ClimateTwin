@@ -27,6 +27,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.decorators import api_view, authentication_classes, parser_classes, throttle_classes, permission_classes, schema
 from rest_framework.exceptions import MethodNotAllowed
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
@@ -1103,11 +1104,20 @@ class CurrentLocationView(generics.GenericAPIView):
         return Response(self.get_serializer(current_location).data, status=status.HTTP_200_OK)
     
 
+
+
+class ClimateTwinStatsPagination(PageNumberPagination):
+    page_size = 30  
+    page_size_query_param = 'page_size'
+    max_page_size = 100   
+
+
 class ClimateTwinSearchStatsView(generics.ListAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = serializers.ClimateTwinSearchStatsSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+    pagination_class = ClimateTwinStatsPagination 
 
     @swagger_auto_schema(operation_id='listClimateTwinSearchStats', operation_description="Returns climate twin search stats.")
     def get(self, request, *args, **kwargs):
