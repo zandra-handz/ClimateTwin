@@ -12,10 +12,12 @@ from climatevisitor.climatetwinclasses.OpenMapAPIClass import OpenMapAPI
 from climatevisitor.models import ClimateTwinLocation, ClimateTwinExploreLocation, CurrentLocation, ClimateTwinSearchStats
 from climatevisitor import serializers
 
+
 from datetime import datetime
 
 #from datetime import timezone
 from django.core.cache import cache 
+from django.db import IntegrityError
 from django.utils import timezone 
 import pytz
 from time import sleep
@@ -108,10 +110,11 @@ def run_climate_twin_algorithms_task(user_id, user_address):
             climate_twin_search_stats_instance.save()
             logger.info("Climate Twin Search Stats instance created and saved successfully.")
 
+        except IntegrityError as e:
+            logger.error(f"Database integrity error occurred while saving Climate Twin Search Stats: {e}")
         except Exception as e:
-            logger.info(f"Error while saving Climate Twin Search Stats instance: {e}")
-
-
+            logger.error(f"An error occurred while creating Climate Twin Search Stats: {e}")
+ 
         
         user_visit_instance = UserVisit(user=user_instance, location_name=climate_twin_weather_profile.name,
                                         location_latitude=climate_twin_weather_profile.latitude,
