@@ -319,6 +319,8 @@ class ClimateTwinFinder:
 
         # Generate random points within one randomly selected country
         num_points = self.points_generated_in_each_country
+        logger.info(f"self.points_generated_in_each_country: {num_points}")
+        
         recalculations = 0
 
         while True:
@@ -348,8 +350,8 @@ class ClimateTwinFinder:
             if len(points_within_country) > 0:  # Explicitly check if it's non-empty
                 self.points_generated += len(points_within_country)
 
-                points_within_country = points_within_country[land_only.geometry.contains(points_within_country.geometry).any(axis=1)]
-            
+                points_within_country = points_within_country[points_within_country.geometry.apply(
+                    lambda point: land_only.geometry.contains(point).any())]
                 if len(points_within_country) > 0:
                     self.points_generated_on_land += len(points_within_country)
 
