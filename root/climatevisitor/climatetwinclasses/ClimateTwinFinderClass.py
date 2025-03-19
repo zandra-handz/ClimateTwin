@@ -475,12 +475,16 @@ class ClimateTwinFinder:
 
            # points_within_country = self.generate_random_points_within_polygon(random_country['geometry'], num_points)
 
-            if len(points_within_country) > 0:  # Explicitly check if it's non-empty
+            if points_within_country and len(points_within_country) > 0:  # Explicitly check if it's non-empty
                 self.points_generated += len(points_within_country)
+
+                logger.info(points_within_country)
 
                 points_within_country = points_within_country[points_within_country.geometry.apply(
                     lambda point: land_only.geometry.contains(point).any())]
-                if len(points_within_country) > 0:
+                if points_within_country and len(points_within_country) > 0:
+
+                    logger.info(points_within_country)
                     self.points_generated_on_land += len(points_within_country)
 
                     # Only count the country when confirmed that we will be using some or all of the generated points
