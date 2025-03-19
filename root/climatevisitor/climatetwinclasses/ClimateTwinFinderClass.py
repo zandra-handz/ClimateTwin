@@ -91,6 +91,7 @@ class ClimateTwinFinder:
         self.climate_twin_temperature = 0
         self.climate_twin_lat = 0
         self.climate_twin_lon = 0
+        self.dataset_for_countries = None
  
 
 
@@ -113,6 +114,9 @@ class ClimateTwinFinder:
                 raise ValueError(f"Could not get weather details.")
 
         self.get_home_climate()
+
+        # Reads in dataset once at the start of the algorithm
+        self.read_in_countries_dataset()
 
         successful = False
 
@@ -324,11 +328,16 @@ class ClimateTwinFinder:
         points_gdf = gpd.GeoDataFrame(geometry=points)
         
         return points_gdf
+    
+
+    def read_in_countries_dataset(self):
+        self.dataset_for_countries = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+
 
 
 
     def generate_random_coords_in_a_country_list(self):
-        world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+        world = self.dataset_for_countries
 
         # Exclude ocean areas from the dataset
         land_only = world[world['geometry'].is_empty == False]
