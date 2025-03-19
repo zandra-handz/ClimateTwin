@@ -92,6 +92,7 @@ class ClimateTwinFinder:
         self.climate_twin_lat = 0
         self.climate_twin_lon = 0
         self.dataset_for_countries = None
+        self.dataset_for_cities = None
  
 
 
@@ -117,6 +118,7 @@ class ClimateTwinFinder:
 
         # Reads in dataset once at the start of the algorithm
         self.read_in_countries_dataset()
+        self.read_in_cities_dataset()
 
         successful = False
 
@@ -301,37 +303,74 @@ class ClimateTwinFinder:
 
 
     # Alternative to points_with_polygon; not in use
-    def generate_random_points_within_bounds(self, bounds, num_points):
-        minx, miny, maxx, maxy = bounds
-        x = np.random.uniform(minx, maxx, num_points)
-        y = np.random.uniform(miny, maxy, num_points)
-        points = gpd.GeoDataFrame(geometry=gpd.points_from_xy(x, y))
-        return points
+    # def generate_random_points_within_bounds(self, bounds, num_points):
+    #     minx, miny, maxx, maxy = bounds
+    #     x = np.random.uniform(minx, maxx, num_points)
+    #     y = np.random.uniform(miny, maxy, num_points)
+    #     points = gpd.GeoDataFrame(geometry=gpd.points_from_xy(x, y))
+    #     return points
 
 
-    def generate_random_points_within_polygon(self, polygon, num_points):
+
+    def generate_random_points_within_polygon(self, polygon, num_points, city_location=None):
 
         # smaller distance from center: 6
         std_dev_divider = self.preset_divider_for_point_gen_deviation
+
+        # If a city location is provided, use it as the starting point; otherwise, use the centroid
+        if city_location:
+            centroid_x, centroid_y = city_location
+        else:
+            centroid = polygon.centroid
+            centroid_x, centroid_y = centroid.x, centroid.y
         
-        centroid = polygon.centroid
-        centroid_x, centroid_y = centroid.x, centroid.y
         minx, miny, maxx, maxy = polygon.bounds
-        
         std_dev_x = (maxx - minx) / std_dev_divider
         std_dev_y = (maxy - miny) / std_dev_divider
-        
+
         x = np.random.normal(centroid_x, std_dev_x, num_points)
         y = np.random.normal(centroid_y, std_dev_y, num_points)
-        
+
         points = [Point(px, py) for px, py in zip(x, y) if polygon.contains(Point(px, py))]
         points_gdf = gpd.GeoDataFrame(geometry=points)
-        
+
         return points_gdf
+
+# Old but tried and true
+    # def generate_random_points_within_polygon(self, polygon, num_points):
+
+    #     # smaller distance from center: 6
+    #     std_dev_divider = self.preset_divider_for_point_gen_deviation
+        
+    #     centroid = polygon.centroid
+    #     centroid_x, centroid_y = centroid.x, centroid.y
+    #     minx, miny, maxx, maxy = polygon.bounds
+        
+    #     std_dev_x = (maxx - minx) / std_dev_divider
+    #     std_dev_y = (maxy - miny) / std_dev_divider
+        
+    #     x = np.random.normal(centroid_x, std_dev_x, num_points)
+    #     y = np.random.normal(centroid_y, std_dev_y, num_points)
+        
+    #     points = [Point(px, py) for px, py in zip(x, y) if polygon.contains(Point(px, py))]
+    #     points_gdf = gpd.GeoDataFrame(geometry=points)
+        
+    #     return points_gdf
     
 
     def read_in_countries_dataset(self):
         self.dataset_for_countries = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+
+
+    def read_in_cities_dataset(self):
+        try:
+            self.dataset_for_cities = gpd.read_file(gpd.datasets.get_path('naturalearth_cities'))
+            logger.info('Cities data set read in successfully')
+        except Exception as e:
+            logger.error('Could not read cities data set in, error:', e)
+
+
+
 
 
 
