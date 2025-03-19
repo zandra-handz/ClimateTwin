@@ -4,7 +4,8 @@ from django.conf import settings
 from shapely.geometry import Point
 import geopandas as gpd
 import numpy as np 
-import requests
+import requests 
+import os
 
 # Added for websocket
 from asgiref.sync import async_to_sync
@@ -363,11 +364,20 @@ class ClimateTwinFinder:
     def read_in_countries_dataset(self):
         self.dataset_for_countries = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
+        # countries_file_path = os.path.join(settings.BASE_DIR, 'static', 'shapefiles', 'ne_110m_admin_0_countries.shp')
+        # cities_file_path = os.path.join(settings.BASE_DIR, 'static', 'shapefiles', 'ne_110m_populated_places.shp')
+        
+        # # Read the shapefiles using geopandas
+        # countries_data = gpd.read_file(countries_file_path)
+        # cities_data = gpd.read_file(cities_file_path)
+
 
     def read_in_cities_dataset(self):
         try:
             self.dataset_for_cities = gpd.read_file(gpd.datasets.get_path('naturalearth_cities'))
             logger.info('Cities data set read in successfully')
+            print(self.dataset_for_cities.head()) 
+            logger.info(self.dataset_for_cities.head())
         except Exception as e:
             logger.error('Could not read cities data set in, error:', e)
 
@@ -428,7 +438,7 @@ class ClimateTwinFinder:
 
                 # Generate points using the city location if available
                 points_within_country = self.generate_random_points_within_polygon(
-                    random_country['geometry'], num_points, city_location
+                    random_country['geometry'], num_points, city_location=None
                 )
 
             # Use spatial index for efficient point-in-polygon check
