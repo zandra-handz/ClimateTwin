@@ -364,8 +364,8 @@ class ClimateTwinFinder:
     def read_in_countries_dataset(self):
         self.dataset_for_countries = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
-        countries_file_path = os.path.join(settings.STATIC_URL, 'shapefiles', 'ne_110m_admin_0_countries.shp')
-        cities_file_path = os.path.join(settings.STATIC_URL, 'shapefiles', 'ne_110m_populated_places.shp')
+        countries_file_path = os.path.join(settings.BASE_DIR, 'static', 'shapefiles', 'ne_110m_admin_0_countries.shp')
+        cities_file_path = os.path.join(settings.BASE_DIR, 'static', 'shapefiles', 'ne_110m_populated_places.shp')
         
         # Read the shapefiles using geopandas
         countries_data = gpd.read_file(countries_file_path)
