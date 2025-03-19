@@ -320,8 +320,8 @@ class ClimateTwinFinder:
 
         # If a city location is provided, use it as the starting point; otherwise, use the centroid
         if city_location:
-            # print('city location exists', city_location)
-            # logger.info('city location exists', city_location)
+            print('city location exists', city_location)
+            logger.info('city location exists', city_location)
             centroid_x, centroid_y = city_location
         else:
             centroid = polygon.centroid
@@ -373,9 +373,11 @@ class ClimateTwinFinder:
 
     def read_in_cities_dataset(self):
 
-        cities_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor','shapefiles', 'ne_110m_populated_places.shp')
+        self.dataset_for_cities = gpd.read_file(gpd.datasets.get_path('naturalearth_cities'))
+
+        # cities_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor','shapefiles', 'ne_110m_populated_places.shp')
         
-        self.dataset_for_cities = gpd.read_file(cities_file_path)
+        # self.dataset_for_cities = gpd.read_file(cities_file_path)
        # logger.info(self.dataset_for_cities.head())
 
 
@@ -423,7 +425,7 @@ class ClimateTwinFinder:
 
             # For algorithm viewing and animation debugging
             try:
-                country_name = random_country['SOVEREIGNT']   
+                country_name = random_country['name']   # once we get dataset working, use sOVEREIGNT here
             except KeyError:
                 country_name = 'Mystery Country'  
 
@@ -468,7 +470,7 @@ class ClimateTwinFinder:
 
                 # Generate points using the city location if available
                 points_within_country = self.generate_random_points_within_polygon(
-                    random_country['geometry'], num_points, city_location=None
+                    random_country['geometry'], num_points, city_location=city_location
                 )
 
 
