@@ -68,9 +68,9 @@ class ClimateTwinFinder:
         self.api_key = open_map_api_key
         self.google_api_key = google_api_key
         self.preset_divider_for_point_gen_deviation = 4
-        self.preset_num_final_candidates_required = 3
+        self.preset_num_final_candidates_required = 4
         self.preset_temp_diff_is_high_variance = 12
-        self.preset_num_high_variances_allowed = 1
+        self.preset_num_high_variances_allowed = 2
         self.preset_points_generated_in_each_country = 20
         self.origin_lat = 0
         self.origin_lon = 0
@@ -324,8 +324,6 @@ class ClimateTwinFinder:
             logger.info('city location exists', city_location)
             centroid_x, centroid_y = city_location
         else:
-            print('city location is none')
-            logger.info('city location is none')
             centroid = polygon.centroid
             centroid_x, centroid_y = centroid.x, centroid.y
         
@@ -452,7 +450,14 @@ class ClimateTwinFinder:
                         logger.info('cities in country not empty')
                         # Choose a random city as the starting point
                         city_row = cities_in_country.sample(1)
-                        city_location = (city_row.geometry.x.values[0], city_row.geometry.y.values[0])
+                        
+                        try:
+                            city_location = (city_row.geometry.x.values[0], city_row.geometry.y.values[0])
+                        except IndexError:  # In case there is no geometry in the selected city
+                            logger.error(f"City {city_row['NAME'].values[0]} does not have valid geometry")
+                            logger.info(city_location)
+                            city_location = None
+                        logger.info(city_location)
                     else:
                         city_location = None  # Fall back to centroid
 
