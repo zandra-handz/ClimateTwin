@@ -320,8 +320,8 @@ class ClimateTwinFinder:
 
         # If a city location is provided, use it as the starting point; otherwise, use the centroid
         if city_location:
-            print('city location exists', city_location)
-            logger.info('city location exists', city_location)
+            # print('city location exists', city_location)
+            # logger.info('city location exists', city_location)
             centroid_x, centroid_y = city_location
         else:
             centroid = polygon.centroid
@@ -367,7 +367,7 @@ class ClimateTwinFinder:
         countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'shapefiles', 'ne_110m_admin_0_countries.shp')
         
         self.dataset_for_countries = gpd.read_file(countries_file_path)
-        logger.info(self.dataset_for_countries.head())
+       # logger.info(self.dataset_for_countries.head())
       
 
 
@@ -376,7 +376,7 @@ class ClimateTwinFinder:
         cities_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor','shapefiles', 'ne_110m_populated_places.shp')
         
         self.dataset_for_cities = gpd.read_file(cities_file_path)
-        logger.info(self.dataset_for_cities.head())
+       # logger.info(self.dataset_for_cities.head())
 
 
         # try:
@@ -411,9 +411,12 @@ class ClimateTwinFinder:
         logger.info(f"self.points_generated_in_each_country: {num_points}")
         
         recalculations = 0
+        points_within_country = None
 
         while True:
             recalculations += 1
+ 
+
             # Randomly select one country
             random_country_idx = np.random.choice(land_only.index)
             random_country = land_only.loc[random_country_idx]
@@ -429,21 +432,21 @@ class ClimateTwinFinder:
                  # check that cities dataset exists first
 
                 city_location = None
-                points_within_country = None
+                
 
 
                 # Use spatial index for efficient point-in-polygon check
           
                 possible_matches_index = list(spatial_index.intersection(random_country.geometry.bounds))
-                possible_matches = land_only.iloc[possible_matches_index]
+                # possible_matches = land_only.iloc[possible_matches_index]
 
-                # # Extract the simplified geometry from the first matching feature
-                simplified_geometry = possible_matches.simplified_geometry.iloc[0]
+                # # # Extract the simplified geometry from the first matching feature
+                # simplified_geometry = possible_matches.simplified_geometry.iloc[0]
                     
                 if not cities.empty:
 
-                    if cities.crs != land_only.crs:
-                        cities = cities.to_crs(land_only.crs)
+                    # if cities.crs != land_only.crs:
+                    #     cities = cities.to_crs(land_only.crs)
                     
                     cities_in_country = cities[cities.contains(random_country.geometry)]
 
@@ -457,7 +460,7 @@ class ClimateTwinFinder:
                             city_location = (city_row.geometry.x.values[0], city_row.geometry.y.values[0])
                         except IndexError:  # In case there is no geometry in the selected city
                             logger.error(f"City {city_row['NAME'].values[0]} does not have valid geometry")
-                            logger.info(city_location)
+                           # logger.info(city_location)
                             city_location = None
                         logger.info(city_location)
                     else:
