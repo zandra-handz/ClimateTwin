@@ -412,8 +412,11 @@ class ClimateTwinFinder:
                  # Find a city in the selected country
                  # check that cities dataset exists first
                 if cities:
+
+                    if cities.crs != land_only.crs:
+                        cities = cities.to_crs(land_only.crs)
                     
-                    cities_in_country = cities[cities.within(random_country.geometry)]
+                    cities_in_country = cities[cities.contains(random_country.geometry)]
                     if not cities_in_country.empty:
                         print('cities in country not empty')
                         logger.info('cities in country not empty')
