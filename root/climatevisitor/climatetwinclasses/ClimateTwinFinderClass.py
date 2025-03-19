@@ -364,8 +364,8 @@ class ClimateTwinFinder:
     def read_in_countries_dataset(self):
         self.dataset_for_countries = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
-        countries_file_path = os.path.join(settings.BASE_DIR, 'static', 'shapefiles', 'ne_110m_admin_0_countries.shp')
-        cities_file_path = os.path.join(settings.BASE_DIR, 'static', 'shapefiles', 'ne_110m_populated_places.shp')
+        countries_file_path = os.path.join(settings.STATIC_URL, 'shapefiles', 'ne_110m_admin_0_countries.shp')
+        cities_file_path = os.path.join(settings.STATIC_URL, 'shapefiles', 'ne_110m_populated_places.shp')
         
         # Read the shapefiles using geopandas
         countries_data = gpd.read_file(countries_file_path)
@@ -424,6 +424,15 @@ class ClimateTwinFinder:
 
                 city_location = None
                 points_within_country = None
+
+
+                # Use spatial index for efficient point-in-polygon check
+          
+                # possible_matches_index = list(spatial_index.intersection(random_country.geometry.bounds))
+                # possible_matches = land_only.iloc[possible_matches_index]
+
+                # # Extract the simplified geometry from the first matching feature
+                # simplified_geometry = possible_matches.simplified_geometry.iloc[0]
                     
                 if cities:
 
@@ -446,13 +455,7 @@ class ClimateTwinFinder:
                     random_country['geometry'], num_points, city_location=city_location
                 )
 
-            # Use spatial index for efficient point-in-polygon check
-          
-            # possible_matches_index = list(spatial_index.intersection(random_country.geometry.bounds))
-            # possible_matches = land_only.iloc[possible_matches_index]
 
-            # # Extract the simplified geometry from the first matching feature
-            # simplified_geometry = possible_matches.simplified_geometry.iloc[0]
 
             # Goes with alternative function
             # points_within_country = self.generate_random_points_within_bounds(simplified_geometry.bounds, num_points)
