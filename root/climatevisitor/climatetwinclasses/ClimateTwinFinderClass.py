@@ -364,12 +364,12 @@ class ClimateTwinFinder:
     def read_in_countries_dataset(self):
         self.dataset_for_countries = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
-        # countries_file_path = os.path.join(settings.BASE_DIR, 'static', 'shapefiles', 'ne_110m_admin_0_countries.shp')
-        # cities_file_path = os.path.join(settings.BASE_DIR, 'static', 'shapefiles', 'ne_110m_populated_places.shp')
+        countries_file_path = os.path.join(settings.BASE_DIR, 'static', 'shapefiles', 'ne_110m_admin_0_countries.shp')
+        cities_file_path = os.path.join(settings.BASE_DIR, 'static', 'shapefiles', 'ne_110m_populated_places.shp')
         
-        # # Read the shapefiles using geopandas
-        # countries_data = gpd.read_file(countries_file_path)
-        # cities_data = gpd.read_file(cities_file_path)
+        # Read the shapefiles using geopandas
+        countries_data = gpd.read_file(countries_file_path)
+        cities_data = gpd.read_file(cities_file_path)
 
 
     def read_in_cities_dataset(self):
@@ -421,24 +421,29 @@ class ClimateTwinFinder:
 
                  # Find a city in the selected country
                  # check that cities dataset exists first
+
+                city_location = None
+                points_within_country = None
+                    
                 if cities:
 
                     if cities.crs != land_only.crs:
                         cities = cities.to_crs(land_only.crs)
                     
                     cities_in_country = cities[cities.contains(random_country.geometry)]
+
                     if not cities_in_country.empty:
                         print('cities in country not empty')
                         logger.info('cities in country not empty')
                         # Choose a random city as the starting point
                         city_row = cities_in_country.sample(1)
                         city_location = (city_row.geometry.x.values[0], city_row.geometry.y.values[0])
-                else:
-                    city_location = None  # Fall back to centroid
+                    else:
+                        city_location = None  # Fall back to centroid
 
                 # Generate points using the city location if available
                 points_within_country = self.generate_random_points_within_polygon(
-                    random_country['geometry'], num_points, city_location=None
+                    random_country['geometry'], num_points, city_location=city_location
                 )
 
             # Use spatial index for efficient point-in-polygon check
