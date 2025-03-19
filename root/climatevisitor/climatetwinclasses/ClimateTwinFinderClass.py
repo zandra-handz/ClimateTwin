@@ -365,21 +365,25 @@ class ClimateTwinFinder:
        #self.dataset_for_countries = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
         countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'shapefiles', 'ne_110m_admin_0_countries.shp')
-        cities_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor','shapefiles', 'ne_110m_populated_places.shp')
         
-        # Read the shapefiles using geopandas
         self.dataset_for_countries = gpd.read_file(countries_file_path)
-        cities_data = gpd.read_file(cities_file_path)
+      
 
 
     def read_in_cities_dataset(self):
-        try:
-            self.dataset_for_cities = gpd.read_file(gpd.datasets.get_path('naturalearth_cities'))
-            logger.info('Cities data set read in successfully')
-            print(self.dataset_for_cities.head()) 
-            logger.info(self.dataset_for_cities.head())
-        except Exception as e:
-            logger.error('Could not read cities data set in, error:', e)
+
+        cities_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor','shapefiles', 'ne_110m_populated_places.shp')
+        
+        self.dataset_for_cities = gpd.read_file(cities_file_path)
+
+
+        # try:
+        #     self.dataset_for_cities = gpd.read_file(gpd.datasets.get_path('naturalearth_cities'))
+        #     logger.info('Cities data set read in successfully')
+        #     print(self.dataset_for_cities.head()) 
+        #     logger.info(self.dataset_for_cities.head())
+        # except Exception as e:
+        #     logger.error('Could not read cities data set in, error:', e)
 
 
 
@@ -434,7 +438,7 @@ class ClimateTwinFinder:
                 # # Extract the simplified geometry from the first matching feature
                 simplified_geometry = possible_matches.simplified_geometry.iloc[0]
                     
-                if cities:
+                if not cities.empty:
 
                     if cities.crs != land_only.crs:
                         cities = cities.to_crs(land_only.crs)
