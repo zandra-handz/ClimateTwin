@@ -319,6 +319,8 @@ class ClimateTwinFinder:
 
         # If a city location is provided, use it as the starting point; otherwise, use the centroid
         if city_location:
+            print('city location exists', city_location)
+            logger.info('city location exists', city_location)
             centroid_x, centroid_y = city_location
         else:
             centroid = polygon.centroid
@@ -410,8 +412,11 @@ class ClimateTwinFinder:
                  # Find a city in the selected country
                  # check that cities dataset exists first
                 if cities:
+                    
                     cities_in_country = cities[cities.within(random_country.geometry)]
                     if not cities_in_country.empty:
+                        print('cities in country not empty')
+                        logger.info('cities in country not empty')
                         # Choose a random city as the starting point
                         city_row = cities_in_country.sample(1)
                         city_location = (city_row.geometry.x.values[0], city_row.geometry.y.values[0])
