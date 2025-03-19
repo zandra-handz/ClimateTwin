@@ -362,13 +362,13 @@ class ClimateTwinFinder:
     
 
     def read_in_countries_dataset(self):
-        self.dataset_for_countries = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+       #self.dataset_for_countries = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
         countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'shapefiles', 'ne_110m_admin_0_countries.shp')
         cities_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor','shapefiles', 'ne_110m_populated_places.shp')
         
         # Read the shapefiles using geopandas
-        countries_data = gpd.read_file(countries_file_path)
+        self.dataset_for_countries = gpd.read_file(countries_file_path)
         cities_data = gpd.read_file(cities_file_path)
 
 
@@ -428,11 +428,11 @@ class ClimateTwinFinder:
 
                 # Use spatial index for efficient point-in-polygon check
           
-                # possible_matches_index = list(spatial_index.intersection(random_country.geometry.bounds))
-                # possible_matches = land_only.iloc[possible_matches_index]
+                possible_matches_index = list(spatial_index.intersection(random_country.geometry.bounds))
+                possible_matches = land_only.iloc[possible_matches_index]
 
                 # # Extract the simplified geometry from the first matching feature
-                # simplified_geometry = possible_matches.simplified_geometry.iloc[0]
+                simplified_geometry = possible_matches.simplified_geometry.iloc[0]
                     
                 if cities:
 
