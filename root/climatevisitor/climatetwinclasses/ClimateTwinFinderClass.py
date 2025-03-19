@@ -377,6 +377,7 @@ class ClimateTwinFinder:
 
     def generate_random_coords_in_a_country_list(self):
         world = self.dataset_for_countries
+        cities = self.dataset_for_cities
 
         # Exclude ocean areas from the dataset
         land_only = world[world['geometry'].is_empty == False]
@@ -405,17 +406,35 @@ class ClimateTwinFinder:
             except KeyError:
                 country_name = 'Mystery Country'  
 
-            # Use spatial index for efficient point-in-polygon check
-            possible_matches_index = list(spatial_index.intersection(random_country.geometry.bounds))
-            possible_matches = land_only.iloc[possible_matches_index]
 
-            # Extract the simplified geometry from the first matching feature
-            simplified_geometry = possible_matches.simplified_geometry.iloc[0]
+                 # Find a city in the selected country
+                 # check that cities dataset exists first
+                if cities:
+                    cities_in_country = cities[cities.within(random_country.geometry)]
+                    if not cities_in_country.empty:
+                        # Choose a random city as the starting point
+                        city_row = cities_in_country.sample(1)
+                        city_location = (city_row.geometry.x.values[0], city_row.geometry.y.values[0])
+                else:
+                    city_location = None  # Fall back to centroid
+
+                # Generate points using the city location if available
+                points_within_country = self.generate_random_points_within_polygon(
+                    random_country['geometry'], num_points, city_location
+                )
+
+            # Use spatial index for efficient point-in-polygon check
+          
+            # possible_matches_index = list(spatial_index.intersection(random_country.geometry.bounds))
+            # possible_matches = land_only.iloc[possible_matches_index]
+
+            # # Extract the simplified geometry from the first matching feature
+            # simplified_geometry = possible_matches.simplified_geometry.iloc[0]
 
             # Goes with alternative function
             # points_within_country = self.generate_random_points_within_bounds(simplified_geometry.bounds, num_points)
 
-            points_within_country = self.generate_random_points_within_polygon(random_country['geometry'], num_points)
+           # points_within_country = self.generate_random_points_within_polygon(random_country['geometry'], num_points)
 
             if len(points_within_country) > 0:  # Explicitly check if it's non-empty
                 self.points_generated += len(points_within_country)
