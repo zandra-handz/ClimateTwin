@@ -367,6 +367,7 @@ class ClimateTwinFinder:
         countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'shapefiles', 'ne_110m_admin_0_countries.shp')
         
         self.dataset_for_countries = gpd.read_file(countries_file_path)
+        logger.info(self.dataset_for_countries.head())
       
 
 
@@ -375,6 +376,7 @@ class ClimateTwinFinder:
         cities_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor','shapefiles', 'ne_110m_populated_places.shp')
         
         self.dataset_for_cities = gpd.read_file(cities_file_path)
+        logger.info(self.dataset_for_cities.head())
 
 
         # try:
