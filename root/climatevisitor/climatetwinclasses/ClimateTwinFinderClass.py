@@ -322,15 +322,12 @@ class ClimateTwinFinder:
         # If a city location is provided, use it as the starting point; otherwise, use the centroid
         
         
-        centroid = polygon.centroid
-        centroid_x, centroid_y = centroid.x, centroid.y
-        minx, miny, maxx, maxy = polygon.bounds
-        
-        
         
         if city_location is not None: 
+            centroid = polygon.centroid
+            centroid_x, centroid_y = centroid.x, centroid.y
 
-            centroid_x, centroid_y = city_location
+            # centroid_x, centroid_y = city_location
         else:
             centroid = polygon.centroid
             centroid_x, centroid_y = centroid.x, centroid.y
@@ -345,7 +342,7 @@ class ClimateTwinFinder:
         points = [Point(px, py) for px, py in zip(x, y) if polygon.contains(Point(px, py))]
         points_gdf = gpd.GeoDataFrame(geometry=points)
 
-        
+
 
         return points_gdf
 
