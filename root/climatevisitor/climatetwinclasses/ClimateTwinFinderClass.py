@@ -319,9 +319,7 @@ class ClimateTwinFinder:
         std_dev_divider = self.preset_divider_for_point_gen_deviation
 
         # If a city location is provided, use it as the starting point; otherwise, use the centroid
-        if city_location:
-            print('city location exists', city_location)
-            logger.info('city location exists', city_location)
+        if city_location is not None: 
             centroid_x, centroid_y = city_location
         else:
             centroid = polygon.centroid
@@ -373,11 +371,11 @@ class ClimateTwinFinder:
 
     def read_in_cities_dataset(self):
 
-        self.dataset_for_cities = gpd.read_file(gpd.datasets.get_path('naturalearth_cities'))
+        #self.dataset_for_cities = gpd.read_file(gpd.datasets.get_path('naturalearth_cities'))
 
-        # cities_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor','shapefiles', 'ne_110m_populated_places.shp')
+        cities_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor','shapefiles', 'ne_110m_populated_places.shp')
         
-        # self.dataset_for_cities = gpd.read_file(cities_file_path)
+        self.dataset_for_cities = gpd.read_file(cities_file_path)
        # logger.info(self.dataset_for_cities.head())
 
 
@@ -480,12 +478,12 @@ class ClimateTwinFinder:
 
            # points_within_country = self.generate_random_points_within_polygon(random_country['geometry'], num_points)
 
-            if len(points_within_country) > 0:  # Explicitly check if it's non-empty
+            if points_within_country and len(points_within_country) > 0:  # Explicitly check if it's non-empty
                 self.points_generated += len(points_within_country)
 
                 points_within_country = points_within_country[points_within_country.geometry.apply(
                     lambda point: land_only.geometry.contains(point).any())]
-                if len(points_within_country) > 0:
+                if points_within_country and len(points_within_country) > 0:
                     self.points_generated_on_land += len(points_within_country)
 
                     # Only count the country when confirmed that we will be using some or all of the generated points
