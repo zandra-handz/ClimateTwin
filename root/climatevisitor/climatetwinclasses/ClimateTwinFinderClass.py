@@ -447,19 +447,11 @@ class ClimateTwinFinder:
             try:
                 country_name = random_country['name']   # once we get dataset working, use SOVEREIGNT here
             except KeyError:
-                country_name = 'Mystery Country'  
-
-
-                 # Find a city in the selected country
-                 # check that cities dataset exists first
- 
-
-                # Use spatial index for efficient point-in-polygon check
+                country_name = 'Mystery Country'   
           
                 possible_matches_index = list(spatial_index.intersection(random_country.geometry.bounds))
                 possible_matches = land_only.iloc[possible_matches_index]
-
-                # # # # Extract the simplified geometry from the first matching feature
+ 
                 simplified_geometry = possible_matches.simplified_geometry.iloc[0]
                     
                 if not cities.empty:
@@ -473,21 +465,21 @@ class ClimateTwinFinder:
                     
                    # cities_in_country = cities[cities.contains(random_country.geometry)]
 
-                    if not cities_in_country.empty: 
-                        # Choose a random city as the starting point
-                        city_row = cities_in_country.sample(1)
+                    # if not cities_in_country.empty: 
+                    #     # Choose a random city as the starting point
+                    #     city_row = cities_in_country.sample(1)
                         
-                        try:
-                            city_location = (city_row.geometry.x.values[0], city_row.geometry.y.values[0])
-                        except IndexError:  # In case there is no geometry in the selected city
+                    #     try:
+                    #         city_location = (city_row.geometry.x.values[0], city_row.geometry.y.values[0])
+                    #     except IndexError:  # In case there is no geometry in the selected city
                             
-                            city_location = None 
-                    else:
-                        city_location = None  # Fall back to centroid
+                    #         city_location = None 
+                    # else:
+                    #     city_location = None  # Fall back to centroid
 
                 # Generate points using the city location if available
                 points_within_country = self.generate_random_points_within_polygon(
-                    random_country['geometry'], num_points, city_location=city_location
+                    random_country['geometry'], num_points, city_location=None
                 )
 
 
