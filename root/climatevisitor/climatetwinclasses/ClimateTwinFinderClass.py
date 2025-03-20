@@ -13,6 +13,9 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
 
+from datasets_loader import DatasetsLoader
+
+
 
 
 
@@ -119,8 +122,12 @@ class ClimateTwinFinder:
         self.get_home_climate()
 
         # Reads in dataset once at the start of the algorithm
-        self.dataset_for_countries = self.read_in_countries_dataset()
-        self.dataset_for_cities = self.read_in_cities_dataset()
+        # self.dataset_for_countries = self.read_in_countries_dataset()
+        # self.dataset_for_cities = self.read_in_cities_dataset()
+
+        self.dataset_for_countries = DatasetsLoader.load_countries_data()
+        self.dataset_for_cities = DatasetsLoader.load_cities_data()
+
 
         successful = False
 
