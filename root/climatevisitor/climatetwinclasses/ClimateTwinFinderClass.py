@@ -118,7 +118,7 @@ class ClimateTwinFinder:
         self.get_home_climate()
 
         # Reads in dataset once at the start of the algorithm
-        self.read_in_countries_dataset()
+        self.dataset_for_countries = self.read_in_countries_dataset()
         self.read_in_cities_dataset()
 
         successful = False
@@ -375,8 +375,9 @@ class ClimateTwinFinder:
       # self.dataset_for_countries = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
         countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'shapefiles', 'ne_110m_admin_0_countries.shp')
+        dataset = gpd.read_file(countries_file_path)
         
-        self.dataset_for_countries = gpd.read_file(countries_file_path)
+        return dataset
        # logger.info(self.dataset_for_countries.head())
       
 
