@@ -390,9 +390,17 @@ class ClimateTwinFinder:
 
 
     def read_in_cities_dataset(self):
-        return gpd.read_file(gpd.datasets.get_path('naturalearth_cities'))
+       # return gpd.read_file(gpd.datasets.get_path('naturalearth_cities'))
 
- 
+        cities_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'shapefiles', 'world_cities.shp')
+        
+        dataset = gpd.read_file(cities_file_path)
+
+        # Ensure CRS is properly set (defaulting to EPSG:4326 if missing)
+        if dataset.crs is None:
+            dataset.set_crs(epsg=4326, inplace=True)
+
+        return dataset
 
         #self.dataset_for_cities = gpd.read_file(gpd.datasets.get_path('naturalearth_cities'))
 
@@ -464,8 +472,7 @@ class ClimateTwinFinder:
                 if cities.crs != land_only.crs:
                     cities = cities.to_crs(land_only.crs)
 
-                cities_in_country = cities[cities.geometry.within(random_country.geometry)]
-                # cities_in_country = cities[cities.simplified_geometry.contains
+                cities_in_country = cities[cities.index == random_country['SOV_A3']]# cities_in_country = cities[cities.simplified_geometry.contains
                 # (random_country.geometry)]
                 
                 # cities_in_country = cities[cities.contains(random_country.geometry)]
