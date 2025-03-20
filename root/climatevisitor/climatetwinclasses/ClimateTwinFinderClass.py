@@ -319,8 +319,12 @@ class ClimateTwinFinder:
         std_dev_divider = self.preset_divider_for_point_gen_deviation
 
         # If a city location is provided, use it as the starting point; otherwise, use the centroid
-        if city_location is not None: 
-            centroid_x, centroid_y = city_location
+        if city_location is not None:
+            logger.info(city_location) 
+            centroid = polygon.centroid
+            centroid_x, centroid_y = centroid.x, centroid.y
+
+            #centroid_x, centroid_y = city_location
         else:
             centroid = polygon.centroid
             centroid_x, centroid_y = centroid.x, centroid.y
@@ -371,11 +375,11 @@ class ClimateTwinFinder:
 
     def read_in_cities_dataset(self):
 
-        #self.dataset_for_cities = gpd.read_file(gpd.datasets.get_path('naturalearth_cities'))
+        self.dataset_for_cities = gpd.read_file(gpd.datasets.get_path('naturalearth_cities'))
 
-        cities_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor','shapefiles', 'ne_110m_populated_places.shp')
+        #cities_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor','shapefiles', 'ne_110m_populated_places.shp')
         
-        self.dataset_for_cities = gpd.read_file(cities_file_path)
+        #self.dataset_for_cities = gpd.read_file(cities_file_path)
        # logger.info(self.dataset_for_cities.head())
 
 
@@ -450,7 +454,8 @@ class ClimateTwinFinder:
 
                     # if cities.crs != land_only.crs:
                     #     cities = cities.to_crs(land_only.crs)
-                    cities_in_country = cities[cities.simplified_geometry.contains(random_country.geometry)]
+                    cities_in_country = cities[cities.simplified_geometry.within
+                    (random_country.geometry)]
                     
                    # cities_in_country = cities[cities.contains(random_country.geometry)]
 
