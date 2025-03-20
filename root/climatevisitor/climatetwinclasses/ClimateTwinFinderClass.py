@@ -2,6 +2,7 @@ from climatevisitor.tasks.tasks import send_coordinate_update_to_celery, send_lo
 from celery import shared_task, current_app
 from django.conf import settings
 from shapely.geometry import Point
+from shapely.geometry import MultiPolygon, Polygon
 import geopandas as gpd
 import numpy as np 
 import requests 
@@ -371,14 +372,29 @@ class ClimateTwinFinder:
     #     return points_gdf
     
 
-    def read_in_countries_dataset(self):
-      # self.dataset_for_countries = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+    # def read_in_countries_dataset(self):
+    #   # self.dataset_for_countries = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
+    #     countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'shapefiles', 'ne_110m_admin_0_countries.shp')
+    #     dataset = gpd.read_file(countries_file_path)
+        
+    #     return dataset
+    #    # logger.info(self.dataset_for_countries.head())
+
+    
+
+    def read_in_countries_dataset(self):
+        # Load the shapefile
         countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'shapefiles', 'ne_110m_admin_0_countries.shp')
         dataset = gpd.read_file(countries_file_path)
-        
+
+        # Ensure all geometries are MultiPolygon
+        dataset["geometry"] = dataset["geometry"].apply(
+            lambda geom: MultiPolygon([geom]) if isinstance(geom, Polygon) else geom
+        )
+
         return dataset
-       # logger.info(self.dataset_for_countries.head())
+
       
 
 
