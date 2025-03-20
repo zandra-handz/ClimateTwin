@@ -368,15 +368,25 @@ class ClimateTwinFinder:
     #     return points_gdf
     
 
-    def read_in_countries_dataset(self): 
+    # def read_in_countries_dataset(self): 
         
-        #return gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-       # logger.info(self.dataset_for_countries.head())
+    #     #return gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+    #    # logger.info(self.dataset_for_countries.head())
 
+    #     countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'shapefiles', 'ne_110m_admin_0_countries.shp')
+    #     return gpd.read_file(countries_file_path)
+
+    def read_in_countries_dataset(self): 
         countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'shapefiles', 'ne_110m_admin_0_countries.shp')
-        return gpd.read_file(countries_file_path)
+        
+        dataset = gpd.read_file(countries_file_path)
 
-     
+        # Ensure CRS is properly set (defaulting to EPSG:4326 if missing)
+        if dataset.crs is None:
+            dataset.set_crs(epsg=4326, inplace=True)
+
+        return dataset
+
 
 
     def read_in_cities_dataset(self):
