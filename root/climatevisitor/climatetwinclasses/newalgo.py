@@ -4,8 +4,7 @@ from django.conf import settings
 from shapely.geometry import Point
 import geopandas as gpd
 import numpy as np 
-import requests 
-import os
+import requests
 
 # Added for websocket
 from asgiref.sync import async_to_sync
@@ -92,8 +91,6 @@ class ClimateTwinFinder:
         self.climate_twin_temperature = 0
         self.climate_twin_lat = 0
         self.climate_twin_lon = 0
-        self.dataset_for_countries = None
-        self.dataset_for_cities = None
  
 
 
@@ -116,10 +113,6 @@ class ClimateTwinFinder:
                 raise ValueError(f"Could not get weather details.")
 
         self.get_home_climate()
-
-        # Reads in dataset once at the start of the algorithm
-        self.read_in_countries_dataset()
-        self.read_in_cities_dataset()
 
         successful = False
 
@@ -304,111 +297,44 @@ class ClimateTwinFinder:
 
 
     # Alternative to points_with_polygon; not in use
-    # def generate_random_points_within_bounds(self, bounds, num_points):
-    #     minx, miny, maxx, maxy = bounds
-    #     x = np.random.uniform(minx, maxx, num_points)
-    #     y = np.random.uniform(miny, maxy, num_points)
-    #     points = gpd.GeoDataFrame(geometry=gpd.points_from_xy(x, y))
-    #     return points
+    def generate_random_points_within_bounds(self, bounds, num_points):
+        minx, miny, maxx, maxy = bounds
+        x = np.random.uniform(minx, maxx, num_points)
+        y = np.random.uniform(miny, maxy, num_points)
+        points = gpd.GeoDataFrame(geometry=gpd.points_from_xy(x, y))
+        return points
 
 
-
-    def generate_random_points_within_polygon(self, polygon, num_points, city_location=None):
+    def generate_random_points_within_polygon(self, polygon, num_points):
 
         # smaller distance from center: 6
         std_dev_divider = self.preset_divider_for_point_gen_deviation
-
-        # If a city location is provided, use it as the starting point; otherwise, use the centroid
-        if city_location is not None:
-            logger.info(city_location) 
-            centroid = polygon.centroid
-            centroid_x, centroid_y = centroid.x, centroid.y
-
-            #centroid_x, centroid_y = city_location
-        else:
-            centroid = polygon.centroid
-            centroid_x, centroid_y = centroid.x, centroid.y
         
+        centroid = polygon.centroid
+        centroid_x, centroid_y = centroid.x, centroid.y
         minx, miny, maxx, maxy = polygon.bounds
+        
         std_dev_x = (maxx - minx) / std_dev_divider
         std_dev_y = (maxy - miny) / std_dev_divider
-
+        
         x = np.random.normal(centroid_x, std_dev_x, num_points)
         y = np.random.normal(centroid_y, std_dev_y, num_points)
-
+        
         points = [Point(px, py) for px, py in zip(x, y) if polygon.contains(Point(px, py))]
         points_gdf = gpd.GeoDataFrame(geometry=points)
-
+        
         return points_gdf
-
-# Old but tried and true
-    # def generate_random_points_within_polygon(self, polygon, num_points):
-
-    #     # smaller distance from center: 6
-    #     std_dev_divider = self.preset_divider_for_point_gen_deviation
-        
-    #     centroid = polygon.centroid
-    #     centroid_x, centroid_y = centroid.x, centroid.y
-    #     minx, miny, maxx, maxy = polygon.bounds
-        
-    #     std_dev_x = (maxx - minx) / std_dev_divider
-    #     std_dev_y = (maxy - miny) / std_dev_divider
-        
-    #     x = np.random.normal(centroid_x, std_dev_x, num_points)
-    #     y = np.random.normal(centroid_y, std_dev_y, num_points)
-        
-    #     points = [Point(px, py) for px, py in zip(x, y) if polygon.contains(Point(px, py))]
-    #     points_gdf = gpd.GeoDataFrame(geometry=points)
-        
-    #     return points_gdf
-    
-
-    def read_in_countries_dataset(self):
-       self.dataset_for_countries = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-
-        # countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'shapefiles', 'ne_110m_admin_0_countries.shp')
-        
-        # self.dataset_for_countries = gpd.read_file(countries_file_path)
-       # logger.info(self.dataset_for_countries.head())
-      
-
-
-    def read_in_cities_dataset(self):
-
-        self.dataset_for_cities = gpd.read_file(gpd.datasets.get_path('naturalearth_cities'))
-
-        #cities_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor','shapefiles', 'ne_110m_populated_places.shp')
-        
-        #self.dataset_for_cities = gpd.read_file(cities_file_path)
-       # logger.info(self.dataset_for_cities.head())
-
-
-        # try:
-        #     self.dataset_for_cities = gpd.read_file(gpd.datasets.get_path('naturalearth_cities'))
-        #     logger.info('Cities data set read in successfully')
-        #     print(self.dataset_for_cities.head()) 
-        #     logger.info(self.dataset_for_cities.head())
-        # except Exception as e:
-        #     logger.error('Could not read cities data set in, error:', e)
-
-
-
-
 
 
 
     def generate_random_coords_in_a_country_list(self):
-        world = self.dataset_for_countries
-        cities = self.dataset_for_cities
+        world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
         # Exclude ocean areas from the dataset
         land_only = world[world['geometry'].is_empty == False]
 
         # Simplify the geometry for efficiency
         land_only['simplified_geometry'] = land_only['geometry'].simplify(tolerance=0.01)
-
-
-        cities['simplified_geometry'] = cities['geometry'].simplify(tolerance=0.01)
 
         # Create a spatial index
         spatial_index = land_only.sindex
@@ -418,81 +344,37 @@ class ClimateTwinFinder:
         logger.info(f"self.points_generated_in_each_country: {num_points}")
         
         recalculations = 0
-        points_within_country = None
 
         while True:
             recalculations += 1
- 
-
             # Randomly select one country
             random_country_idx = np.random.choice(land_only.index)
             random_country = land_only.loc[random_country_idx]
 
             # For algorithm viewing and animation debugging
             try:
-                country_name = random_country['name']   # once we get dataset working, use sOVEREIGNT here
+                country_name = random_country['name']   
             except KeyError:
                 country_name = 'Mystery Country'  
 
+            # Use spatial index for efficient point-in-polygon check
+            possible_matches_index = list(spatial_index.intersection(random_country.geometry.bounds))
+            possible_matches = land_only.iloc[possible_matches_index]
 
-                 # Find a city in the selected country
-                 # check that cities dataset exists first
-
-                city_location = None
-                
-
-
-                # Use spatial index for efficient point-in-polygon check
-          
-                possible_matches_index = list(spatial_index.intersection(random_country.geometry.bounds))
-                possible_matches = land_only.iloc[possible_matches_index]
-
-                # # # Extract the simplified geometry from the first matching feature
-                simplified_geometry = possible_matches.simplified_geometry.iloc[0]
-                    
-                if not cities.empty:
-
-                    # if cities.crs != land_only.crs:
-                    #     cities = cities.to_crs(land_only.crs)
-                    cities_in_country = cities[cities.simplified_geometry.contains
-                    (random_country.geometry)]
-                    
-                   # cities_in_country = cities[cities.contains(random_country.geometry)]
-
-                    if not cities_in_country.empty:
-                        print('cities in country not empty')
-                        logger.info('cities in country not empty')
-                        # Choose a random city as the starting point
-                        city_row = cities_in_country.sample(1)
-                        
-                        try:
-                            city_location = (city_row.geometry.x.values[0], city_row.geometry.y.values[0])
-                        except IndexError:  # In case there is no geometry in the selected city
-                            logger.error(f"City {city_row['NAME'].values[0]} does not have valid geometry")
-                           # logger.info(city_location)
-                            city_location = None
-                        logger.info(city_location)
-                    else:
-                        city_location = None  # Fall back to centroid
-
-                # Generate points using the city location if available
-                points_within_country = self.generate_random_points_within_polygon(
-                    random_country['geometry'], num_points, city_location=None
-                )
-
-
+            # Extract the simplified geometry from the first matching feature
+            simplified_geometry = possible_matches.simplified_geometry.iloc[0]
 
             # Goes with alternative function
             # points_within_country = self.generate_random_points_within_bounds(simplified_geometry.bounds, num_points)
 
-           # points_within_country = self.generate_random_points_within_polygon(random_country['geometry'], num_points)
+            points_within_country = self.generate_random_points_within_polygon(random_country['geometry'], num_points)
 
-            if points_within_country and len(points_within_country) > 0:  # Explicitly check if it's non-empty
+            if len(points_within_country) > 0:  # Explicitly check if it's non-empty
                 self.points_generated += len(points_within_country)
 
                 points_within_country = points_within_country[points_within_country.geometry.apply(
                     lambda point: land_only.geometry.contains(point).any())]
-                if points_within_country and len(points_within_country) > 0:
+                if len(points_within_country) > 0:
                     self.points_generated_on_land += len(points_within_country)
 
                     # Only count the country when confirmed that we will be using some or all of the generated points
@@ -802,4 +684,3 @@ class ClimateTwinFinder:
                 row_values = [str(values[j][i]) for j in range(len(keys))]
                 row = "\t".join(row_values)
                 # print(row)
-
