@@ -403,6 +403,9 @@ class ClimateTwinFinder:
         # Simplify the geometry for efficiency
         land_only['simplified_geometry'] = land_only['geometry'].simplify(tolerance=0.01)
 
+
+        cities['simplified_geometry'] = cities['geometry'].simplify(tolerance=0.01)
+
         # Create a spatial index
         spatial_index = land_only.sindex
 
@@ -447,8 +450,9 @@ class ClimateTwinFinder:
 
                     # if cities.crs != land_only.crs:
                     #     cities = cities.to_crs(land_only.crs)
+                    cities_in_country = cities[cities.simplified_geometry.contains(random_country.geometry)]
                     
-                    cities_in_country = cities[cities.contains(random_country.geometry)]
+                   # cities_in_country = cities[cities.contains(random_country.geometry)]
 
                     if not cities_in_country.empty:
                         print('cities in country not empty')
