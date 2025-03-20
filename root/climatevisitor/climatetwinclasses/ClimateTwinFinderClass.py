@@ -370,31 +370,19 @@ class ClimateTwinFinder:
 
     def read_in_countries_dataset(self): 
         
-        return gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+        #return gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
        # logger.info(self.dataset_for_countries.head())
 
-    
+        countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'shapefiles', 'ne_110m_admin_0_countries.shp')
+        return gpd.read_file(countries_file_path)
 
-    # def read_in_countries_dataset(self):
-    #     # Load the shapefile
-    #     countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'shapefiles', 'ne_110m_admin_0_countries.shp')
-    #     dataset = gpd.read_file(countries_file_path)
-
-    #     # Ensure all geometries are MultiPolygon
-    #     dataset["geometry"] = dataset["geometry"].apply(
-    #         lambda geom: MultiPolygon([geom]) if isinstance(geom, Polygon) else geom
-    #     )
-
-    #     return dataset
-
-      
+     
 
 
     def read_in_cities_dataset(self):
         return gpd.read_file(gpd.datasets.get_path('naturalearth_cities'))
 
-
-        print('removed read_in_cities_dataset for now')
+ 
 
         #self.dataset_for_cities = gpd.read_file(gpd.datasets.get_path('naturalearth_cities'))
 
@@ -445,7 +433,7 @@ class ClimateTwinFinder:
 
             # For algorithm viewing and animation debugging
             try:
-                country_name = random_country['name']   # once we get dataset working, use SOVEREIGNT here
+                country_name = random_country['SOVEREIGNT']   # once we get dataset working, use SOVEREIGNT here
             except KeyError:
                 country_name = 'Mystery Country'  
 
