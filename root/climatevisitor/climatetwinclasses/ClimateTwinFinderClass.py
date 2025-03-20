@@ -455,11 +455,11 @@ class ClimateTwinFinder:
 
                 # Use spatial index for efficient point-in-polygon check
           
-                # possible_matches_index = list(spatial_index.intersection(random_country.geometry.bounds))
-                # possible_matches = land_only.iloc[possible_matches_index]
+                possible_matches_index = list(spatial_index.intersection(random_country.geometry.bounds))
+                possible_matches = land_only.iloc[possible_matches_index]
 
                 # # # # Extract the simplified geometry from the first matching feature
-                # simplified_geometry = possible_matches.simplified_geometry.iloc[0]
+                simplified_geometry = possible_matches.simplified_geometry.iloc[0]
                     
                 # if not cities.empty:
 
@@ -497,12 +497,12 @@ class ClimateTwinFinder:
 
            # points_within_country = self.generate_random_points_within_polygon(random_country['geometry'], num_points)
 
-            if points_within_country and len(points_within_country) > 0:  # Explicitly check if it's non-empty
+            if len(points_within_country) > 0:  # Explicitly check if it's non-empty
                 self.points_generated += len(points_within_country)
 
                 points_within_country = points_within_country[points_within_country.geometry.apply(
                     lambda point: land_only.geometry.contains(point).any())]
-                if points_within_country and len(points_within_country) > 0:
+                if len(points_within_country) > 0:
                     self.points_generated_on_land += len(points_within_country)
 
                     # Only count the country when confirmed that we will be using some or all of the generated points
