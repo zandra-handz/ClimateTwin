@@ -398,9 +398,9 @@ class ClimateTwinFinder:
     #     return gpd.read_file(countries_file_path)
 
     def read_in_countries_dataset(self): 
-        countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'geo_parquet', 'countries_indexed_on_SOV_A3.parquet')
+        countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'shapefiles', 'countries_indexed_on_SOV_A3.shp')
         
-        dataset = gpd.read_parquet(countries_file_path)
+        dataset = gpd.read_file(countries_file_path)
 
         # I preprocessed parquet file, so commenting out below in this case
         # if dataset.crs is None:
