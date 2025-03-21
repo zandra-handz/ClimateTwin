@@ -395,13 +395,13 @@ class ClimateTwinFinder:
     #     return gpd.read_file(countries_file_path)
 
     def read_in_countries_dataset(self): 
-        countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'shapefiles', 'countries_indexed_on_SOV_A3.shp')
+        countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'geo_parquet', 'countries_indexed_on_SOV_A3_simplified.parquet')
         
-        dataset = gpd.read_file(countries_file_path)
+        dataset = gpd.read_parquet(countries_file_path)
 
-        # Ensure CRS is properly set (defaulting to EPSG:4326 if missing)
-        if dataset.crs is None:
-            dataset.set_crs(epsg=4326, inplace=True)
+        # I preprocessed parquet file, so commenting out below in this case
+        # if dataset.crs is None:
+        #     dataset.set_crs(epsg=4326, inplace=True)
 
         return dataset
 
@@ -410,13 +410,13 @@ class ClimateTwinFinder:
     def read_in_cities_dataset(self):
        # return gpd.read_file(gpd.datasets.get_path('naturalearth_cities'))
 
-        cities_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'shapefiles', 'world_cities_indexed_on_SOV_A3.shp')
+        cities_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'geo_parquet', 'world_cities_indexed_on_SOV_A3.parquet')
         
-        dataset = gpd.read_file(cities_file_path)
+        dataset = gpd.read_parquet(cities_file_path)
 
-        # Ensure CRS is properly set (defaulting to EPSG:4326 if missing)
-        if dataset.crs is None:
-            dataset.set_crs(epsg=4326, inplace=True)
+        # I preprocessed parquet file, so commenting out below in this case
+        # if dataset.crs is None:
+        #     dataset.set_crs(epsg=4326, inplace=True)
 
         return dataset
 
