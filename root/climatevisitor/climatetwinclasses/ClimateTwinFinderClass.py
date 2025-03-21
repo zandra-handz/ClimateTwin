@@ -1,6 +1,7 @@
 from climatevisitor.tasks.tasks import send_coordinate_update_to_celery, send_location_update_to_celery
 from celery import shared_task, current_app
 from django.conf import settings
+from django.core.cache import cache
 from shapely.geometry import Point
 from shapely.geometry import MultiPolygon, Polygon
 import geopandas as gpd
@@ -12,8 +13,7 @@ import os
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
-
-from datasets_loader import DatasetsLoader
+ 
 
 
 
@@ -125,8 +125,19 @@ class ClimateTwinFinder:
         # self.dataset_for_countries = self.read_in_countries_dataset()
         # self.dataset_for_cities = self.read_in_cities_dataset()
 
-        self.dataset_for_countries = DatasetsLoader.load_countries_data()
-        self.dataset_for_cities = DatasetsLoader.load_cities_data()
+        self.dataset_for_countries = cache.get('countries_gdf')
+        if self.dataset_for_countries is None:
+            logger.info('No countries data in datasets cache. Loading countries...')
+            self.dataset_for_countries = self.read_in_countries_dataset()
+            cache.set('countries_gdf', self.dataset_for_countries, timeout=86400) 
+
+        self.dataset_for_cities = cache.get('cities_gdf')
+        if self.dataset_for_cities is None:
+            logger.info('No cities data in datasets cache. Loading cities...')
+            self.dataset_for_cities = self.read_in_cities_dataset()
+            cache.set('cities_gdf', self.dataset_for_cities, timeout=86400) 
+
+        
 
 
         successful = False
