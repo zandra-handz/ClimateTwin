@@ -398,7 +398,7 @@ class ClimateTwinFinder:
     #     return gpd.read_file(countries_file_path)
 
     def read_in_countries_dataset(self): 
-        countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'geo_parquet', 'countries_indexed_on_SOV_A3_simplified.parquet')
+        countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'geo_parquet', 'countries_indexed_on_SOV_A3.parquet')
         
         dataset = gpd.read_parquet(countries_file_path)
 
@@ -493,11 +493,9 @@ class ClimateTwinFinder:
 
                 if cities.crs != land_only.crs:
                     cities = cities.to_crs(land_only.crs)
+ 
 
-
-                cities_in_country = cities[cities.index == random_country.name]
-
-                # cities_in_country = cities[cities.index == random_country['SOV_A3']]# cities_in_country = cities[cities.simplified_geometry.contains
+                cities_in_country = cities[cities.index == random_country['SOV_A3']]# cities_in_country = cities[cities.simplified_geometry.contains
                 # (random_country.geometry)]
                 
                 # cities_in_country = cities[cities.contains(random_country.geometry)]
