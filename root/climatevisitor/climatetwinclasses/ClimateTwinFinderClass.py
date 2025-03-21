@@ -398,9 +398,9 @@ class ClimateTwinFinder:
     #     return gpd.read_file(countries_file_path)
 
     def read_in_countries_dataset(self): 
-        countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'shapefiles', 'countries_indexed_on_SOV_A3.shp')
+        countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'geo_parquet', 'countries_indexed_on_SOV_A3_land_only_minimal_columns.shp')
         
-        dataset = gpd.read_file(countries_file_path)
+        dataset = gpd.read_parquet(countries_file_path)
 
         # I preprocessed parquet file, so commenting out below in this case
         if dataset.crs is None:
@@ -449,14 +449,12 @@ class ClimateTwinFinder:
         world = self.dataset_for_countries
         cities = self.dataset_for_cities
 
-        # Exclude ocean areas from the dataset
-        land_only = world[world['geometry'].is_empty == False]
+        # Exclude ocean areas from the dataset (MOVED TO PREPROCESSING OF FILE)
+        # land_only = world[world['geometry'].is_empty == False]
  
-        land_only['simplified_geometry'] = land_only['geometry'].simplify(tolerance=0.01)
+        # land_only['simplified_geometry'] = land_only['geometry'].simplify(tolerance=0.01)
+  
  
-        spatial_index = land_only.sindex
-
-        # Generate random points within one randomly selected country
         num_points = self.preset_points_generated_in_each_country
         logger.info(f"self.points_generated_in_each_country: {num_points}")
         
@@ -467,8 +465,8 @@ class ClimateTwinFinder:
             recalculations += 1
  
  
-            random_country_idx = np.random.choice(land_only.index)
-            random_country = land_only.loc[random_country_idx]
+            random_country_idx = np.random.choice(world.index)
+            random_country = world.loc[random_country_idx]
 
             # For algorithm viewing and animation debugging
             try:
@@ -491,11 +489,11 @@ class ClimateTwinFinder:
                     
             if not cities.empty:
 
-                if cities.crs != land_only.crs:
-                    cities = cities.to_crs(land_only.crs)
+                if cities.crs != world.crs:
+                    cities = cities.to_crs(world.crs)
  
 
-                cities_in_country = cities[cities.index == random_country['SOV_A3']]# cities_in_country = cities[cities.simplified_geometry.contains
+                cities_in_country = cities[cities.index == random_country_idx]# cities_in_country = cities[cities.simplified_geometry.contains
                 # (random_country.geometry)]
                 
                 # cities_in_country = cities[cities.contains(random_country.geometry)]
