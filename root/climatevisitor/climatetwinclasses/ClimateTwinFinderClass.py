@@ -480,17 +480,21 @@ class ClimateTwinFinder:
 
                 # Use spatial index for efficient point-in-polygon check
         
-            possible_matches_index = list(spatial_index.intersection(random_country.geometry.bounds))
-            possible_matches = land_only.iloc[possible_matches_index]
+            # possible_matches_index = list(spatial_index.intersection(random_country.geometry.bounds))
+            
+            # possible_matches = land_only.iloc[possible_matches_index]
  
-            simplified_geometry = possible_matches.simplified_geometry.iloc[0]
+            # simplified_geometry = possible_matches.simplified_geometry.iloc[0]
                     
             if not cities.empty:
 
                 if cities.crs != land_only.crs:
                     cities = cities.to_crs(land_only.crs)
 
-                cities_in_country = cities[cities.index == random_country['SOV_A3']]# cities_in_country = cities[cities.simplified_geometry.contains
+
+                cities_in_country = cities[cities.index == random_country.name]
+
+                # cities_in_country = cities[cities.index == random_country['SOV_A3']]# cities_in_country = cities[cities.simplified_geometry.contains
                 # (random_country.geometry)]
                 
                 # cities_in_country = cities[cities.contains(random_country.geometry)]
