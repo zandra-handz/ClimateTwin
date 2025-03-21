@@ -403,8 +403,8 @@ class ClimateTwinFinder:
         dataset = gpd.read_file(countries_file_path)
 
         # I preprocessed parquet file, so commenting out below in this case
-        # if dataset.crs is None:
-        #     dataset.set_crs(epsg=4326, inplace=True)
+        if dataset.crs is None:
+            dataset.set_crs(epsg=4326, inplace=True)
 
         return dataset
 
@@ -418,8 +418,8 @@ class ClimateTwinFinder:
         dataset = gpd.read_parquet(cities_file_path)
 
         # I preprocessed parquet file, so commenting out below in this case
-        # if dataset.crs is None:
-        #     dataset.set_crs(epsg=4326, inplace=True)
+        if dataset.crs is None:
+            dataset.set_crs(epsg=4326, inplace=True)
 
         return dataset
 
