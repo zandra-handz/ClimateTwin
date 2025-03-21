@@ -89,6 +89,7 @@ class ClimateTwinFinder:
         self.search_cycle = 0
         self.climate_twin = None
         self.countries_searched = 0
+        self.cities_matched = 0
         self.points_generated = 0
         self.points_generated_on_land = 0
         self.home_temperature = 0
@@ -204,6 +205,7 @@ class ClimateTwinFinder:
         print(f"GoogleMap calls: {self.google_key_count}")
         print(f"High variances: {self.high_variance_count}")
         print(f"Countries searched: {self.countries_searched}")
+        print(f"Cities matched: {self.cities_matched}")
         print(f"Points searched: {self.points_generated_on_land}")
         print(f"Total points generated: {self.points_generated}")
         print(f"PRESET: Random points to generate in each country: {self.preset_points_generated_in_each_country}")
@@ -226,6 +228,7 @@ class ClimateTwinFinder:
         logger.info(f"GoogleMap calls: {self.google_key_count}")
         logger.info(f"High variances: {self.high_variance_count}")
         logger.info(f"Countries searched: {self.countries_searched}")
+        logger.info(f"Cities matched: {self.cities_matched}")
         logger.info(f"Points searched: {self.points_generated_on_land}")
         logger.info(f"Total points generated: {self.points_generated}")
         logger.info(f"PRESET: Random points to generate in each country: {self.preset_points_generated_in_each_country}")
@@ -500,6 +503,8 @@ class ClimateTwinFinder:
                 # cities_in_country = cities[cities.contains(random_country.geometry)]
 
                 if not cities_in_country.empty: 
+
+                    self.cities_matched += 1
                     # Choose a random city as the starting point
                     city_row = cities_in_country.sample(1)
                     
