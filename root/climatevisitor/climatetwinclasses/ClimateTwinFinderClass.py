@@ -528,7 +528,7 @@ class ClimateTwinFinder:
                 self.points_generated += len(points_within_country)
 
                 points_within_country = points_within_country[points_within_country.geometry.apply(
-                    lambda point: land_only.geometry.contains(point).any())]
+                    lambda point: world.geometry.contains(point).any())]
                 if len(points_within_country) > 0:
                     self.points_generated_on_land += len(points_within_country)
 
