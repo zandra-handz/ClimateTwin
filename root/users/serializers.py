@@ -1,8 +1,10 @@
 
 from . import models
 from djoser.serializers import UserCreateSerializer
+from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
+from django.utils.timezone import now
 
 class StrLinkSerializer(serializers.Serializer):
     def __init__(self, view_name, *args, **kwargs):
@@ -24,11 +26,12 @@ class CustomUserCreateSerializer(UserCreateSerializer):
         fields = ['id', 'username', 'password', 'email', 'phone_number', 'addresses'] 
 
 
-class BadRainbowzUserSerializer(serializers.ModelSerializer):
+# class BadRainbowzUserSerializer(serializers.ModelSerializer):
 
-    class Meta(object):
-        model = models.BadRainbowzUser
-        fields = ['id', 'username', 'password', 'email', 'phone_number', 'addresses']
+#     class Meta(object):
+#         model = models.BadRainbowzUser
+#         fields = ['id', 'username', 'password', 'email', 'phone_number', 'addresses']
+
 
 
 
@@ -53,6 +56,93 @@ class UserSettingsSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = models.UserSettings
         fields = "__all__"
+
+class BadRainbowzUserSerializer(serializers.ModelSerializer):
+    profile = UserProfileSerializer(required=False)
+    settings = UserSettingsSerializer(required=False)
+
+    class Meta:
+        model = models.BadRainbowzUser
+        fields = ['id', 'created_on', 'is_banned_user', 'username', 'password', 'email', 'phone_number', 'addresses', 'profile', 'settings']
+        extra_kwargs = {"password": {"write_only": True}}
+
+    def create(self, validated_data):
+        profile_data = validated_data.pop('profile', {})
+        settings_data = validated_data.pop('settings', {})
+        user = models.BadRainbowzUser.objects.create_user(**validated_data)
+        if profile_data:
+            models.UserProfile.objects.create(user=user, **profile_data)
+        if settings_data:
+            models.UserSettings.objects.create(user=user, **settings_data)
+        return user
+
+class PasswordResetCodeValidationSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    reset_code = serializers.CharField(max_length=6)
+
+    def validate(self, data):
+        email = data['email']
+        reset_code = data['reset_code']
+
+        try:
+            user = models.BadRainbowzUser.objects.get(email=email)
+        except models.BadRainbowzUser.DoesNotExist:
+            raise serializers.ValidationError("Invalid email or reset code.")
+ 
+        if user.password_reset_code != reset_code:
+            raise serializers.ValidationError("Invalid reset code.")
+        if not user.code_expires_at or user.code_expires_at < now():
+            raise serializers.ValidationError("Reset code has expired.")
+
+        return data
+    
+class PasswordResetSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    reset_code = serializers.CharField(max_length=6)
+    new_password = serializers.CharField()
+
+    def validate(self, data):
+        email = data['email']
+        reset_code = data['reset_code']
+
+        try:
+            user = models.BadRainbowzUser.objects.get(email=email)
+        except models.BadRainbowzUser.DoesNotExist:
+            raise serializers.ValidationError("Invalid email or reset code.")
+
+        # Check if the code is correct and not expired
+        if user.password_reset_code != reset_code:
+            raise serializers.ValidationError("Invalid reset code.")
+        if not user.code_expires_at or user.code_expires_at < now():
+            raise serializers.ValidationError("Reset code has expired.")
+
+        return user
+
+    def save(self, user, new_password):
+        user.set_password(new_password)
+        user.password_reset_code = None  # Clear the reset code
+        user.code_expires_at = None
+        user.save()
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+    def validate_old_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise ValidationError("Old password is incorrect.")
+        return value
+
+    def validate_new_password(self, value):
+        if len(value) < 8:
+            raise ValidationError("New password must be at least 8 characters long.")
+        return value
+    
+    
+
+
 
 
 class UserVisitSerializer(serializers.ModelSerializer):

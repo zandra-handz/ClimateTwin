@@ -2,12 +2,16 @@ from . import models
 from . import serializers
 from climatevisitor.tasks.tasks import send_gift_notification, send_gift_accepted_notification, send_clear_gift_notification, send_friend_request_notification, send_friend_request_accepted_notification, send_clear_friend_request_notification, send_clear_notification_cache
 
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError 
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib.auth import update_session_auth_hash
 from django.db import transaction
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
+
 from djoser.views import UserViewSet
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -21,6 +25,7 @@ from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+from rest_framework.views import APIView 
 from django.views.decorators.csrf import csrf_exempt
 
 
@@ -28,6 +33,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
+class CreateUserView(generics.CreateAPIView):
+
+    queryset = models.BadRainbowzUser.objects.all()
+    serializer_class = serializers.BadRainbowzUserSerializer
+    permission_classes = [AllowAny]
 
 @swagger_auto_schema(operation_id='activateUser', auto_schema=None)
 class ActivateUser(UserViewSet):
@@ -48,14 +59,89 @@ class ActivateUser(UserViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@swagger_auto_schema(operation_id='resetUsername')
-class UsernameReset(UserViewSet):
-    pass
+# @swagger_auto_schema(operation_id='resetUsername')
+# class UsernameReset(UserViewSet):
+#     pass
 
 
-@swagger_auto_schema(operation_id='resetPassword')
-class PasswordReset(UserViewSet):
-    pass
+# @swagger_auto_schema(operation_id='resetPassword')
+# class PasswordReset(UserViewSet):
+#     pass
+
+
+
+class RequestPasswordResetCodeView(APIView):
+    def post(self, request, *args, **kwargs):
+        email = request.data.get('email')
+        if not email:
+            return Response({"detail": "Email is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = models.BadRainbowzUser.objects.get(email=email)
+        except models.BadRainbowzUser.DoesNotExist:
+            # Do not disclose if the email exists to prevent user enumeration
+            return Response({"detail": "If the email exists, a reset code has been sent."}, status=status.HTTP_200_OK)
+
+        # Generate and save the reset code
+        reset_code = user.generate_password_reset_code()
+
+        # Send the reset code via email
+        send_mail(
+            subject="Your Password Reset Code",
+            message=f"Your password reset code is: {reset_code}",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+        )
+
+        return Response({"detail": "If the email exists, a reset code has been sent."}, status=status.HTTP_200_OK)
+
+
+class PasswordResetCodeValidationView(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = serializers.PasswordResetCodeValidationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+         
+        validated_data = serializer.validated_data
+         
+        return Response({
+            "detail": "Reset code and email are valid.",
+            "email": validated_data['email'],
+            "reset_code": validated_data['reset_code']
+        }, status=status.HTTP_200_OK)
+
+
+
+class PasswordResetConfirmView(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = serializers.PasswordResetSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = serializer.validated_data
+        serializer.save(user, request.data.get('new_password'))
+
+        return Response({"detail": "Password has been reset successfully."}, status=status.HTTP_200_OK)
+
+
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = serializers.ChangePasswordSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            user = request.user
+            old_password = serializer.validated_data['old_password']
+            new_password = serializer.validated_data['new_password']
+            
+            # Change the password
+            user.set_password(new_password)
+            user.save()
+
+            # Update the session authentication hash to avoid the user being logged out
+            update_session_auth_hash(request, user)
+
+            return Response({"detail": "Password updated successfully."}, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @csrf_exempt

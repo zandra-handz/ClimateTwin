@@ -53,6 +53,8 @@ urlpatterns = [
     # path('all-auth/', include('allauth.urls')),
     path('users/', include('users.urls')),
 
+
+
     path('users/token/', TokenObtainPairView.as_view(), name='get_token'),
     path('users/token/refresh/', TokenRefreshView.as_view(), name='refresh_token'),
 

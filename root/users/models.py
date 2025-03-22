@@ -31,13 +31,21 @@ class BadRainbowzUser(AbstractUser):
     username = models.CharField(_('username'), unique=True, max_length=150)
     email = models.EmailField(_('email address'), unique=True)
 
+    
+    password_reset_code = models.CharField(max_length=6, blank=True, null=True)
+    code_expires_at = models.DateTimeField(blank=True, null=True)
+
     addresses = models.JSONField(blank=True, null=True)
     phone_number = models.CharField(_('phone number'), max_length=15, blank=True, null=True)
     is_active_user = models.BooleanField(default=True)
     is_inactive_user = models.BooleanField(default=False)
     is_banned_user = models.BooleanField(default=False)
+    is_test_user = models.BooleanField(default=False)
     created_on = models.DateTimeField(default=timezone.now)
     last_updated_at = models.DateTimeField(auto_now=True)
+
+    app_setup_complete = models.BooleanField(default=False)
+
     last_login_at = models.DateTimeField(blank=True, null=True)
     login_attempts = models.PositiveIntegerField(default=0)
 
@@ -51,6 +59,18 @@ class BadRainbowzUser(AbstractUser):
 
     def __str__(self):
         return self.username
+    
+
+    def generate_password_reset_code(self):
+        import random
+        from datetime import timedelta  # You can still use timedelta for durations
+        
+        code = f"{random.randint(100000, 999999)}"  # 6-digit code
+        self.password_reset_code = code
+        self.code_expires_at = timezone.now() + timedelta(minutes=10)  # Use timezone.now()
+        self.save()
+        return code
+    
     
     def add_address(self, address_data):
         """
@@ -91,10 +111,19 @@ class BadRainbowzUser(AbstractUser):
         self.addresses.append(new_address_entry)
         self.save()
 
-    def create_user_profile_and_settings(sender, instance, created, **kwargs):
+    def save(self, *args, **kwargs):
+        created = not self.pk  # Check if the instance is being created
+        super().save(*args, **kwargs)  # Call the original save method
+
+        # If the instance is being created, create UserProfile and UserSettings
         if created:
-            UserProfile.objects.create(user=instance)
-            UserSettings.objects.create(user=instance)
+            UserProfile.objects.create(user=self)
+            UserSettings.objects.create(user=self)
+
+    # def create_user_profile_and_settings(sender, instance, created, **kwargs):
+    #     if created:
+    #         UserProfile.objects.create(user=instance)
+    #         UserSettings.objects.create(user=instance)
 
 
 class UserSettings(models.Model):

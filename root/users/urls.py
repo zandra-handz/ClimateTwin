@@ -5,10 +5,19 @@ urlpatterns = [
 
 
     path('get-current/', views.get_current_user, name='get-current-user'),
-   
+    path('users/sign-up/', views.CreateUserView.as_view(), name='sign_up'),
+    path('users/send-reset-code/', views.RequestPasswordResetCodeView.as_view(), name='send-reset-code'),
+    path('users/verify-reset-code/', views.PasswordResetCodeValidationView.as_view(), name='verify-reset-code'),
+    path('users/reset-password/', views.PasswordResetConfirmView.as_view(), name='reset-password'),
+    path('users/change-password/', views.ChangePasswordView.as_view(), name='change-password'),
+  
+    # Old, not using?
     path('activate/<uid>/<token>', views.ActivateUser.as_view({'get': 'activation'}), name='activation'),
-    path('username/reset/confirm/<uid>/<token>', views.UsernameReset.as_view({'get': 'reset_username'}), name='reset-username'),
-    path('password/reset/confirm/<uid>/<token>', views.PasswordReset.as_view({'get': 'reset_password'}), name='reset-password'),
+   
+   # Old and perhaps never finished
+    # path('username/reset/confirm/<uid>/<token>', views.UsernameReset.as_view({'get': 'reset_username'}), name='reset-username'),
+    # path('password/reset/confirm/<uid>/<token>', views.PasswordReset.as_view({'get': 'reset_password'}), name='reset-password'),
+    
     path('treasures/', views.TreasuresView.as_view(), name='treasures'),
     path('treasure/<int:pk>/', views.TreasureView.as_view(), name='treasure'),
     path('inbox/items/', views.InboxView.as_view(), name='inbox-list'),
