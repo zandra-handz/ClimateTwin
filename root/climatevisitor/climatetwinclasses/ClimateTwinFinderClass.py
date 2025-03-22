@@ -475,6 +475,10 @@ class ClimateTwinFinder:
                 random_country['geometry'], num_points, city_location=city_location
             )
 
+            if points_within_country is None or points_within_country.empty:
+                logger.warning("Warning: No points generated within country")
+                continue
+
             if len(points_within_country) > 0:  # Explicitly check if it's non-empty
                 self.points_generated += len(points_within_country)
 
