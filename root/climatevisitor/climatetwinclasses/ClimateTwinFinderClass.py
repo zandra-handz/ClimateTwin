@@ -456,7 +456,7 @@ class ClimateTwinFinder:
                     self.cities_matched += 1 
                     city_row = cities_in_country.sample(1)
 
-                    self.cities_list.append(city_row)
+                    self.cities_list.append(city_row.city_ascii)
                     
                     try:
                         city_location = (city_row.geometry.x.values[0], city_row.geometry.y.values[0])
