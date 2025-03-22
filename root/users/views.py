@@ -42,9 +42,12 @@ class CreateUserView(generics.CreateAPIView):
 
 
 class ListUsersView(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication, JWTAuthentication] 
     queryset = models.BadRainbowzUser.objects.all()
     serializer_class = serializers.BadRainbowzUserSerializer
     permission_classes = [IsAuthenticated] 
+
+    
 
 @swagger_auto_schema(operation_id='activateUser', auto_schema=None)
 class ActivateUser(UserViewSet):
