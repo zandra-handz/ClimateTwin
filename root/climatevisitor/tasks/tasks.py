@@ -40,6 +40,21 @@ def send_coordinate_update_to_celery(user_id, country_name, temp_difference, tem
 
 
 @shared_task
+def send_twin_location_search_progress_update(user_id, progress_percentage):
+    channel_layer = get_channel_layer()
+
+    group_name = f'location_update_{user_id}'
+
+    async_to_sync(channel_layer.group_send)(
+        group_name,
+        {
+            'type': 'twin_location_search_progress_update',
+            'message': f'progress_percentage',
+        }
+    ) 
+
+
+@shared_task
 def send_search_for_ruins_initiated(user_id):
     channel_layer = get_channel_layer()
 
@@ -56,7 +71,7 @@ def send_search_for_ruins_initiated(user_id):
 
 @shared_task
 def send_returned_home_message(user_id):
-    time.sleep(8)
+    time.sleep(2)
     channel_layer = get_channel_layer()
 
     group_name = f'location_update_{user_id}'
@@ -73,7 +88,7 @@ def send_returned_home_message(user_id):
 
 @shared_task
 def send_clear_message(user_id):
-    time.sleep(8)
+    time.sleep(2)
     channel_layer = get_channel_layer()
 
     group_name = f'location_update_{user_id}'

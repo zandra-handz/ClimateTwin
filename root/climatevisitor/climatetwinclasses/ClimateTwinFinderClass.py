@@ -1,4 +1,4 @@
-from climatevisitor.tasks.tasks import send_coordinate_update_to_celery, send_location_update_to_celery
+from climatevisitor.tasks.tasks import send_coordinate_update_to_celery, send_twin_location_search_progress_update
 from celery import shared_task, current_app
 from django.conf import settings
 from django.core.cache import cache
@@ -622,6 +622,7 @@ class ClimateTwinFinder:
                         self.process_new_entry(new_entry)
 
                         found_count += 1
+ 
 
                         # Check if we have found the desired number of places
                         if num_places <= len(self.similar_places['name']):
@@ -645,35 +646,63 @@ class ClimateTwinFinder:
                     print("missing weather data")
 
         return True
+    
 
-
-
-    def process_new_entry(self, new_entry):
-
-        # Process and add the new entry to self.similar_places
-        if 'similar_places' not in self.__dict__:
+    def process_new_entry(self, new_entry): 
+        if not isinstance(new_entry, dict):
+            raise ValueError("Expected new_entry to be a dictionary.")
+ 
+        if not isinstance(getattr(self, "similar_places", None), dict):
             self.similar_places = {
-                'name': [],
-                'temperature': [],
-                'description': [],
-                'wind_speed': [],
-                'wind_direction': [],
-                'humidity': [],
-                'pressure': [],
-                'cloudiness': [],
-                'sunrise_timestamp': [],
-                'sunset_timestamp': [],
-                'latitude': [],
-                'longitude': []
+                'name': [], 'temperature': [], 'description': [],
+                'wind_speed': [], 'wind_direction': [], 'humidity': [],
+                'pressure': [], 'cloudiness': [], 'sunrise_timestamp': [],
+                'sunset_timestamp': [], 'latitude': [], 'longitude': []
             }
-
+ 
         for key, value in new_entry.items():
-            if key not in self.similar_places:
-                self.similar_places[key] = []
+            key = str(key)   
+
+            if key not in self.similar_places or not isinstance(self.similar_places[key], list):
+                self.similar_places[key] = []  
+
             self.similar_places[key].append(value)
+
+
+
+
+    # def process_new_entry(self, new_entry):
+
+    #     # Process and add the new entry to self.similar_places
+    #     if 'similar_places' not in self.__dict__:
+    #         self.similar_places = {
+    #             'name': [],
+    #             'temperature': [],
+    #             'description': [],
+    #             'wind_speed': [],
+    #             'wind_direction': [],
+    #             'humidity': [],
+    #             'pressure': [],
+    #             'cloudiness': [],
+    #             'sunrise_timestamp': [],
+    #             'sunset_timestamp': [],
+    #             'latitude': [],
+    #             'longitude': []
+    #         }
+
+    #     for key, value in new_entry.items():
+    #         if key not in self.similar_places:
+    #             self.similar_places[key] = []
+    #         self.similar_places[key].append(value)
 
         # print(f"Found {len(self.similar_places['name'])}")
 
+    def send_search_progress_update(self, percentage):
+        try: 
+            send_twin_location_search_progress_update(user_id=self.user_id_for_celery, percentage=percentage)
+        except Exception as e:
+            print(f"Error sending search progress update to Celery task: {e}")
+        
 
 
     def humidity_comparer(self):
