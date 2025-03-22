@@ -75,6 +75,7 @@ class ClimateTwinFinder:
         self.preset_matches_per_country_allowed = 2 # added 3/22/25, intended purpose: more varied results
         self.preset_num_final_candidates_required = 6 #4
         self.preset_temp_diff_is_high_variance = 18 #12
+        self.preset_temp_diff_hotzone = 5
         self.preset_num_high_variances_allowed = 3 #2
         self.preset_points_generated_in_each_country = 30
         self.origin_lat = 0
@@ -218,6 +219,7 @@ class ClimateTwinFinder:
         print(f"PRESET: Matched locations per country allowed: {self.preset_matches_per_country_allowed}")
         print(f"PRESET: Random points to generate in each country: {self.preset_points_generated_in_each_country}")
         print(f"PRESET: Temp dif is high variance: {self.preset_temp_diff_is_high_variance}")
+        print(f"PRESET: Temp dif hotzone: {self.preset_temp_diff_hotzone}")
         print(f"PRESET: Number of high variances allowed: {self.preset_num_high_variances_allowed}")
         print(f"PRESET: Divider for point generation deviation: {self.preset_divider_for_point_gen_deviation}")
         print(f"PRESET: Number of final location candidates required: {self.preset_num_final_candidates_required}")
@@ -244,6 +246,7 @@ class ClimateTwinFinder:
         logger.info(f"PRESET: Matched locations per country allowed: {self.preset_matches_per_country_allowed}")
         logger.info(f"PRESET: Random points to generate in each country: {self.preset_points_generated_in_each_country}")
         logger.info(f"PRESET: temp dif is high variance: {self.preset_temp_diff_is_high_variance}")
+        logger.info(f"PRESET: Temp dif hotzone: {self.preset_temp_diff_hotzone}")
         logger.info(f"PRESET: Number of high variances allowed: {self.preset_num_high_variances_allowed}")
         logger.info(f"PRESET: Divider for point generation deviation: {self.preset_divider_for_point_gen_deviation}")
         logger.info(f"PRESET: Number of final location candidates required: {self.preset_num_final_candidates_required}")
@@ -638,7 +641,7 @@ class ClimateTwinFinder:
 
                         # If temperature difference is excitingly close, remove a high variance strike if one exists
                         # ( allow the searcher some extra goes )
-                        if temperature_difference < 5: # After previously checking that it is more than 2
+                        if temperature_difference < self.preset_temp_diff_hotzone: # After previously checking that it is more than 2
                             if high_variance > 1:
                                 high_variance -= 1
                                 self.high_variance_count -= 1
