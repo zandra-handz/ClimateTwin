@@ -40,6 +40,12 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = serializers.BadRainbowzUserSerializer
     permission_classes = [AllowAny]
 
+
+class ListUsersView(generics.ListAPIView):
+    queryset = models.BadRainbowzUser.objects.all()
+    serializer_class = serializers.BadRainbowzUserSerializer
+    permission_classes = [IsAuthenticated] 
+
 @swagger_auto_schema(operation_id='activateUser', auto_schema=None)
 class ActivateUser(UserViewSet):
 
