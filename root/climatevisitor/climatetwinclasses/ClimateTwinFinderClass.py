@@ -91,6 +91,7 @@ class ClimateTwinFinder:
         self.climate_twin = None
         self.countries_searched = 0
         self.countries_list = []
+        self.dataset_len_cities_in_country = 0
         self.cities_matched = 0
         self.cities_list = []
         self.points_generated = 0
@@ -427,28 +428,28 @@ class ClimateTwinFinder:
         world = self.dataset_for_countries
         cities = self.dataset_for_cities
 
-        # Exclude ocean areas from the dataset (MOVED TO PREPROCESSING OF FILE)
+        # MOVED TO PREPROCESSING OF FILE
+        # Exclude ocean areas from the dataset  
         # land_only = world[world['geometry'].is_empty == False]
- 
         # land_only['simplified_geometry'] = land_only['geometry'].simplify(tolerance=0.01)
-  
  
         num_points = self.preset_points_generated_in_each_country
         logger.info(f"self.points_generated_in_each_country: {num_points}")
         
         recalculations = 0
+        len_cities = 0
         points_within_country = gpd.GeoDataFrame(geometry=[])
 
         while True:
             recalculations += 1
  
- 
             random_country_idx = np.random.choice(world.index)
             random_country = world.loc[random_country_idx]
 
             # For algorithm viewing and animation debugging
+            # This country name is sent to front end via a websocket, and used to log the country as well
             try:
-                country_name = random_country['SOVEREIGNT']   # once we get dataset working, use SOVEREIGNT here
+                country_name = random_country['SOVEREIGNT']   # SOVEREIGNT to match dataset
             except KeyError:
                 country_name = 'Mystery Country'  
  
@@ -458,12 +459,24 @@ class ClimateTwinFinder:
                 if cities.crs != world.crs:
                     cities = cities.to_crs(world.crs)
  
+                # Finds cities with matching SOV_A3 to country
+                # Both datasets are parquet files (as of 3/22/2025) indexed on SOV_A3
                 cities_in_country = cities[cities.index == random_country_idx] 
 
                 if not cities_in_country.empty: 
 
                     self.cities_matched += 1 
-                    city_row = cities_in_country.sample(1)
+
+                    len_cities = len(cities_in_country)
+                    self.dataset_len_cities_in_country = len_cities
+
+                    # Alternative to sample, slightly faster but doesn't have additional functionalities like weighted sampling
+                    random_index = np.random.randint(0, len_cities)
+                    city_row = cities_in_country.iloc[random_index]
+
+                    # Using numpy above instead
+                    # city_row = cities_in_country.sample(1)
+                   
 
                     self.cities_list.append(city_row.city_ascii)
                     
@@ -474,12 +487,9 @@ class ClimateTwinFinder:
                 else:
                     city_location = None   
 
-            
-
 
             points_within_country = self.generate_random_points_within_polygon(
-                random_country['geometry'], num_points, city_location=city_location
-            )
+                random_country['geometry'], num_points, city_location=city_location)
 
             if points_within_country is None or points_within_country.empty:
                 logger.warning("Warning: No points generated within country")
@@ -494,7 +504,8 @@ class ClimateTwinFinder:
                     self.points_generated_on_land += len(points_within_country)
  
                     self.countries_searched += 1
-                    self.countries_list.append(country_name)
+                    self.countries_list.append((country_name, f"cities in dataset: {len_cities}"))
+                    self.dataset_len_cities_in_country = 0 # Reset
 
                     break
           
