@@ -336,36 +336,31 @@ class ClimateTwinFinder:
 
 
     def generate_random_points_within_polygon(self, polygon, num_points, city_location=None):
-
         # smaller distance from center: 6
         std_dev_divider = self.preset_divider_for_point_gen_deviation
 
-        # If a city location is provided, use it as the starting point; otherwise, use the centroid
-        
-        
-        
-        if city_location is not None: 
-            # centroid = polygon.centroid
-            # centroid_x, centroid_y = centroid.x, centroid.y
+        # Reproject the polygon to a projected CRS (e.g., UTM or Mercator) before calculating the centroid
+        polygon_projected = polygon.to_crs(epsg=3395)  # Reproject to Mercator (EPSG:3395)
 
+        # If a city location is provided, use it as the starting point; otherwise, use the centroid
+        if city_location is not None: 
             centroid_x, centroid_y = city_location
         else:
-            centroid = polygon.centroid
+            centroid = polygon_projected.centroid  # Calculate the centroid after reprojecting
             centroid_x, centroid_y = centroid.x, centroid.y
         
-        minx, miny, maxx, maxy = polygon.bounds
+        minx, miny, maxx, maxy = polygon_projected.bounds
         std_dev_x = (maxx - minx) / std_dev_divider
         std_dev_y = (maxy - miny) / std_dev_divider
 
         x = np.random.normal(centroid_x, std_dev_x, num_points)
         y = np.random.normal(centroid_y, std_dev_y, num_points)
 
-        points = [Point(px, py) for px, py in zip(x, y) if polygon.contains(Point(px, py))]
+        points = [Point(px, py) for px, py in zip(x, y) if polygon_projected.contains(Point(px, py))]
         points_gdf = gpd.GeoDataFrame(geometry=points)
 
-
-
         return points_gdf
+
 
 # Old but tried and true
     # def generate_random_points_within_polygon(self, polygon, num_points):
@@ -473,56 +468,31 @@ class ClimateTwinFinder:
                 country_name = random_country['SOVEREIGNT']   # once we get dataset working, use SOVEREIGNT here
             except KeyError:
                 country_name = 'Mystery Country'  
-
-
-                 # Find a city in the selected country
-                 # check that cities dataset exists first
  
-
-                # Use spatial index for efficient point-in-polygon check
-        
-            # possible_matches_index = list(spatial_index.intersection(random_country.geometry.bounds))
-            
-            # possible_matches = land_only.iloc[possible_matches_index]
- 
-            # simplified_geometry = possible_matches.simplified_geometry.iloc[0]
                     
             if not cities.empty:
 
                 if cities.crs != world.crs:
                     cities = cities.to_crs(world.crs)
  
-
-                cities_in_country = cities[cities.index == random_country_idx]# cities_in_country = cities[cities.simplified_geometry.contains
-                # (random_country.geometry)]
-                
-                # cities_in_country = cities[cities.contains(random_country.geometry)]
+                cities_in_country = cities[cities.index == random_country_idx] 
 
                 if not cities_in_country.empty: 
 
-                    self.cities_matched += 1
-                    # Choose a random city as the starting point
+                    self.cities_matched += 1 
                     city_row = cities_in_country.sample(1)
                     
                     try:
                         city_location = (city_row.geometry.x.values[0], city_row.geometry.y.values[0])
-                    except IndexError:  # In case there is no geometry in the selected city
-                        
+                    except IndexError:  
                         city_location = None 
                 else:
-                    city_location = None  # Fall back to centroid
+                    city_location = None   
 
-            # Generate points using the city location if available
+
             points_within_country = self.generate_random_points_within_polygon(
                 random_country['geometry'], num_points, city_location=city_location
             )
-
-
-
-            # Goes with alternative function
-            # points_within_country = self.generate_random_points_within_bounds(simplified_geometry.bounds, num_points)
-
-           # points_within_country = self.generate_random_points_within_polygon(random_country['geometry'], num_points)
 
             if len(points_within_country) > 0:  # Explicitly check if it's non-empty
                 self.points_generated += len(points_within_country)
@@ -531,8 +501,7 @@ class ClimateTwinFinder:
                     lambda point: world.geometry.contains(point).any())]
                 if len(points_within_country) > 0:
                     self.points_generated_on_land += len(points_within_country)
-
-                    # Only count the country when confirmed that we will be using some or all of the generated points
+ 
                     self.countries_searched += 1
 
                     break
