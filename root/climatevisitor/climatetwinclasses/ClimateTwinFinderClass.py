@@ -90,6 +90,7 @@ class ClimateTwinFinder:
         self.climate_twin = None
         self.countries_searched = 0
         self.cities_matched = 0
+        self.cities_list = []
         self.points_generated = 0
         self.points_generated_on_land = 0
         self.home_temperature = 0
@@ -206,6 +207,7 @@ class ClimateTwinFinder:
         print(f"High variances: {self.high_variance_count}")
         print(f"Countries searched: {self.countries_searched}")
         print(f"Cities matched: {self.cities_matched}")
+        print(f"Cities list: {self.cities_list}")
         print(f"Points searched: {self.points_generated_on_land}")
         print(f"Total points generated: {self.points_generated}")
         print(f"PRESET: Random points to generate in each country: {self.preset_points_generated_in_each_country}")
@@ -229,6 +231,7 @@ class ClimateTwinFinder:
         logger.info(f"High variances: {self.high_variance_count}")
         logger.info(f"Countries searched: {self.countries_searched}")
         logger.info(f"Cities matched: {self.cities_matched}")
+        logger.info(f"Cities list: {self.cities_list}")
         logger.info(f"Points searched: {self.points_generated_on_land}")
         logger.info(f"Total points generated: {self.points_generated}")
         logger.info(f"PRESET: Random points to generate in each country: {self.preset_points_generated_in_each_country}")
@@ -366,45 +369,11 @@ class ClimateTwinFinder:
 
 
         return points_gdf
-
-# Old but tried and true
-    # def generate_random_points_within_polygon(self, polygon, num_points):
-
-    #     # smaller distance from center: 6
-    #     std_dev_divider = self.preset_divider_for_point_gen_deviation
-        
-    #     centroid = polygon.centroid
-    #     centroid_x, centroid_y = centroid.x, centroid.y
-    #     minx, miny, maxx, maxy = polygon.bounds
-        
-    #     std_dev_x = (maxx - minx) / std_dev_divider
-    #     std_dev_y = (maxy - miny) / std_dev_divider
-        
-    #     x = np.random.normal(centroid_x, std_dev_x, num_points)
-    #     y = np.random.normal(centroid_y, std_dev_y, num_points)
-        
-    #     points = [Point(px, py) for px, py in zip(x, y) if polygon.contains(Point(px, py))]
-    #     points_gdf = gpd.GeoDataFrame(geometry=points)
-        
-    #     return points_gdf
-    
-
-    # def read_in_countries_dataset(self): 
-        
-    #     #return gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-    #    # logger.info(self.dataset_for_countries.head())
-
-    #     countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'shapefiles', 'ne_110m_admin_0_countries.shp')
-    #     return gpd.read_file(countries_file_path)
-
+ 
     def read_in_countries_dataset(self): 
         countries_file_path = os.path.join(settings.STATIC_ROOT, 'climatevisitor', 'geo_parquet', 'countries_indexed_on_SOV_A3_land_only_minimal_columns.parquet')
         
         dataset = gpd.read_parquet(countries_file_path)
-
-        # I preprocessed parquet file, so commenting out below in this case
-        # if dataset.crs is None:
-        #     dataset.set_crs(epsg=4326, inplace=True)
 
         return dataset
 
@@ -486,6 +455,8 @@ class ClimateTwinFinder:
 
                     self.cities_matched += 1 
                     city_row = cities_in_country.sample(1)
+
+                    self.cities_list.append(city_row)
                     
                     try:
                         city_location = (city_row.geometry.x.values[0], city_row.geometry.y.values[0])
