@@ -471,8 +471,8 @@ class ClimateTwinFinder:
                     self.dataset_len_cities_in_country = len_cities
 
                     # Alternative to sample, slightly faster but doesn't have additional functionalities like weighted sampling
-                    random_index = np.random.randint(0, len_cities)
-                    city_row = cities_in_country.iloc[random_index]
+                    random_index = np.random.randint(0, len(cities_in_country))
+                    city_row = cities_in_country.iloc[[random_index]]  # double brackets to return DATAFRAME, otherwise it will return a Series
 
                     # Using numpy above instead
                     # city_row = cities_in_country.sample(1)
