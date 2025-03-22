@@ -96,6 +96,7 @@ class ClimateTwinFinder:
         self.cities_list = []
         self.points_generated = 0
         self.points_generated_on_land = 0
+        self.final_candidates_count = 0
         self.home_temperature = 0
         self.climate_twin_address = None
         self.climate_twin_temperature = 0
@@ -648,6 +649,7 @@ class ClimateTwinFinder:
         return True
     
 
+
     def process_new_entry(self, new_entry): 
         if not isinstance(new_entry, dict):
             raise ValueError("Expected new_entry to be a dictionary.")
@@ -660,13 +662,49 @@ class ClimateTwinFinder:
                 'sunset_timestamp': [], 'latitude': [], 'longitude': []
             }
  
+        added_data = False
+ 
         for key, value in new_entry.items():
-            key = str(key)   
+            key = str(key)  # Convert key to string if needed
 
             if key not in self.similar_places or not isinstance(self.similar_places[key], list):
-                self.similar_places[key] = []  
+                self.similar_places[key] = []  # Ensure it's a list
 
-            self.similar_places[key].append(value)
+            # Only append non-empty values
+            if value:  
+                self.similar_places[key].append(value)
+                added_data = True
+ 
+        if added_data: 
+            self.final_candidates_count += 1
+
+            percentage = round(100 * (self.final_candidates_count / self.preset_num_final_candidates_required), 2)
+
+
+            self.send_search_progress_update(percentage)
+            
+
+    
+
+    # def process_new_entry(self, new_entry): 
+    #     if not isinstance(new_entry, dict):
+    #         raise ValueError("Expected new_entry to be a dictionary.")
+ 
+    #     if not isinstance(getattr(self, "similar_places", None), dict):
+    #         self.similar_places = {
+    #             'name': [], 'temperature': [], 'description': [],
+    #             'wind_speed': [], 'wind_direction': [], 'humidity': [],
+    #             'pressure': [], 'cloudiness': [], 'sunrise_timestamp': [],
+    #             'sunset_timestamp': [], 'latitude': [], 'longitude': []
+    #         }
+ 
+    #     for key, value in new_entry.items():
+    #         key = str(key)   
+
+    #         if key not in self.similar_places or not isinstance(self.similar_places[key], list):
+    #             self.similar_places[key] = []  
+
+    #         self.similar_places[key].append(value)
 
 
 
