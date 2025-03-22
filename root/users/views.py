@@ -472,7 +472,6 @@ def send_message(request):
     return Response({'success': 'Message sent successfully.'}, status=status.HTTP_200_OK)
 
 
-# Test this (2/22)
 class SendFriendRequestView(generics.CreateAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -481,26 +480,33 @@ class SendFriendRequestView(generics.CreateAPIView):
 
     queryset = models.FriendRequest.objects.all()
 
-    
     @swagger_auto_schema(operation_id='createFriendRequest')
     def post(self, request, *args, **kwargs):
         sender = self.request.user
         message = self.request.data.get('message')
 
         try:
-            recipient = models.BadRainbowzUser.objects.get(pk=request.data['recipient'])
+            recipient_id = request.data.get('recipient')
+            if not isinstance(recipient_id, int):  # Check if recipient_id is a valid integer
+                raise TypeError("Invalid recipient ID. Expected an integer.")
+
+            recipient = models.BadRainbowzUser.objects.get(pk=recipient_id)
         except models.BadRainbowzUser.DoesNotExist:
-            raise PermissionDenied("Recipient user does not exist.")
+            return Response({"error": "Recipient user does not exist."}, status=status.HTTP_404_NOT_FOUND)
+        except TypeError as e:
+            logger.error(f"TypeError: {str(e)}")
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         existing_request = models.FriendRequest.objects.filter(sender=request.user, recipient=recipient)
         if existing_request.exists():
             return Response({'error': 'Friend request already sent.'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        #this should be friendship model
+
         existing_friendship = models.Friendship.objects.filter(initiator=request.user, reciprocator=recipient)
         if existing_friendship.exists():
-            return Response ({'error': 'You are already friends with this person.'}, status=status.HTTP_400_BAD_REQUEST)
-
+            return Response({'error': 'You are already friends with this person.'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -511,7 +517,6 @@ class SendFriendRequestView(generics.CreateAPIView):
         friend_request_message.content_object = friend_request
         friend_request_message.save()
 
-
         inbox_item = models.InboxItem.objects.create(user=recipient, message=friend_request_message)
         inbox_item.save()
 
@@ -519,8 +524,6 @@ class SendFriendRequestView(generics.CreateAPIView):
         send_friend_request_notification(request.user.id, recipient.id)
 
         return Response({'success': 'Friend request sent successfully.'}, status=status.HTTP_201_CREATED)
-
-
 
 class FriendRequestDetailView(generics.RetrieveUpdateAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
