@@ -335,6 +335,7 @@ class ClimateTwinFinder:
 
 
  
+ 
 
     def generate_random_points_within_polygon(self, polygon, num_points, city_location=None):
         # smaller distance from center: 6
@@ -342,6 +343,10 @@ class ClimateTwinFinder:
 
         # Convert polygon to GeoSeries to use the 'to_crs' method
         polygon_gs = gpd.GeoSeries([polygon])  # Convert polygon to a GeoSeries
+
+        # Check if the CRS is defined, and set it if not (assuming WGS84 as the geographic CRS)
+        if polygon_gs.crs is None:
+            polygon_gs.set_crs(epsg=4326, allow_override=True, inplace=True)  # Set CRS to WGS84 (EPSG:4326)
 
         # Reproject the polygon to a projected CRS (e.g., UTM or Mercator)
         polygon_projected = polygon_gs.to_crs(epsg=3395)  # Reproject to Mercator (EPSG:3395)
