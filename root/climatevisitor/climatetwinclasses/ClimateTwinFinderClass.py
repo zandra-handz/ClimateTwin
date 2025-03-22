@@ -61,7 +61,7 @@ class ClimateTwinFinder:
 
     - Some functions are likely unnecessary and weird middlemen left over from previous versions, that can be removed as long as stil readable
     - Search algorithm completion time varies more widely than I like.
-    
+    - Small countries are given as many search allowances as larger countries, not ideal
 
         
     """
@@ -72,7 +72,8 @@ class ClimateTwinFinder:
         self.api_key = open_map_api_key
         self.google_api_key = google_api_key
         self.preset_divider_for_point_gen_deviation = 6 #4
-        self.preset_num_final_candidates_required = 5 #4
+        self.preset_matches_per_country_allowed = 2 # added 3/22/25, intended purpose: more varied results
+        self.preset_num_final_candidates_required = 6 #4
         self.preset_temp_diff_is_high_variance = 18 #12
         self.preset_num_high_variances_allowed = 3 #2
         self.preset_points_generated_in_each_country = 30
@@ -212,6 +213,7 @@ class ClimateTwinFinder:
         print(f"Cities list: {self.cities_list}")
         print(f"Points searched: {self.points_generated_on_land}")
         print(f"Total points generated: {self.points_generated}")
+        print(f"PRESET: Matched locations per country allowed: {self.preset_matches_per_country_allowed}")
         print(f"PRESET: Random points to generate in each country: {self.preset_points_generated_in_each_country}")
         print(f"PRESET: Temp dif is high variance: {self.preset_temp_diff_is_high_variance}")
         print(f"PRESET: Number of high variances allowed: {self.preset_num_high_variances_allowed}")
@@ -237,6 +239,7 @@ class ClimateTwinFinder:
         logger.info(f"Cities list: {self.cities_list}")
         logger.info(f"Points searched: {self.points_generated_on_land}")
         logger.info(f"Total points generated: {self.points_generated}")
+        logger.info(f"PRESET: Matched locations per country allowed: {self.preset_matches_per_country_allowed}")
         logger.info(f"PRESET: Random points to generate in each country: {self.preset_points_generated_in_each_country}")
         logger.info(f"PRESET: temp dif is high variance: {self.preset_temp_diff_is_high_variance}")
         logger.info(f"PRESET: Number of high variances allowed: {self.preset_num_high_variances_allowed}")
@@ -557,6 +560,8 @@ class ClimateTwinFinder:
         high_variance_count_limit = self.preset_num_high_variances_allowed # once count exceeds, algo will ditch search in current country and go to new country
         celery_fail_count = 0
 
+        found_count = self.preset_matches_per_country_allowed
+
         while num_places > len(self.similar_places['name']):
             country_name, random_coords = self.generate_random_coords_in_a_country_list()
 
@@ -605,11 +610,17 @@ class ClimateTwinFinder:
                         }
                         self.process_new_entry(new_entry)
 
+                        found_count += 1
+
                         # Check if we have found the desired number of places
                         if num_places <= len(self.similar_places['name']):
                             break
 
                     else:
+                        # Only two finds allowed per country
+                        if found_count > 1:
+                            self.preset_matches_per_country_allowed = 0 # Reset before breaking
+                            break
                         if temperature_difference > high_variance_trigger:
                             high_variance += 1
                             self.high_variance_count += 1
@@ -618,6 +629,7 @@ class ClimateTwinFinder:
                                 # Reset high_variance and break to get new coordinates
                                 high_variance = 0
                                 break
+
                 else:
                     print("missing weather data")
 
