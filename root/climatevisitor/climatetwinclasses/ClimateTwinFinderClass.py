@@ -623,6 +623,11 @@ class ClimateTwinFinder:
                         self.process_new_entry(new_entry)
 
                         found_count += 1
+
+                        # Only two finds allowed per country
+                        if found_count > 1:
+                            self.preset_matches_per_country_allowed = 0 # Reset before breaking
+                            break
  
 
                         # Check if we have found the desired number of places
@@ -630,10 +635,15 @@ class ClimateTwinFinder:
                             break
 
                     else:
-                        # Only two finds allowed per country
-                        if found_count > 1:
-                            self.preset_matches_per_country_allowed = 0 # Reset before breaking
-                            break
+
+                        # If temperature difference is excitingly close, remove a high variance strike if one exists
+                        # ( allow the searcher some extra goes )
+                        if temperature_difference < 5: # After previously checking that it is more than 2
+                            if high_variance > 1:
+                                high_variance -= 1
+                                self.high_variance_count -= 1
+                       
+
                         if temperature_difference > high_variance_trigger:
                             high_variance += 1
                             self.high_variance_count += 1
