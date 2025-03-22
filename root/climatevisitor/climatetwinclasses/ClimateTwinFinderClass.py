@@ -75,7 +75,7 @@ class ClimateTwinFinder:
         self.preset_num_final_candidates_required = 4
         self.preset_temp_diff_is_high_variance = 12
         self.preset_num_high_variances_allowed = 2
-        self.preset_points_generated_in_each_country = 20
+        self.preset_points_generated_in_each_country = 30
         self.origin_lat = 0
         self.origin_lon = 0
         self.google_key_count = 0
@@ -343,6 +343,9 @@ class ClimateTwinFinder:
         # smaller distance from center: 6
         std_dev_divider = self.preset_divider_for_point_gen_deviation
 
+        if not isinstance(polygon, (Polygon, MultiPolygon)):
+            return None
+
         # If a city location is provided, use it as the starting point; otherwise, use the centroid
         
         
@@ -464,6 +467,8 @@ class ClimateTwinFinder:
                         city_location = None 
                 else:
                     city_location = None   
+
+            
 
 
             points_within_country = self.generate_random_points_within_polygon(
