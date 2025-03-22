@@ -71,10 +71,10 @@ class ClimateTwinFinder:
 
         self.api_key = open_map_api_key
         self.google_api_key = google_api_key
-        self.preset_divider_for_point_gen_deviation = 8
-        self.preset_num_final_candidates_required = 4
-        self.preset_temp_diff_is_high_variance = 18
-        self.preset_num_high_variances_allowed = 2
+        self.preset_divider_for_point_gen_deviation = 6 #4
+        self.preset_num_final_candidates_required = 5 #4
+        self.preset_temp_diff_is_high_variance = 18 #12
+        self.preset_num_high_variances_allowed = 3 #2
         self.preset_points_generated_in_each_country = 30
         self.origin_lat = 0
         self.origin_lon = 0
@@ -89,6 +89,7 @@ class ClimateTwinFinder:
         self.search_cycle = 0
         self.climate_twin = None
         self.countries_searched = 0
+        self.countries_list = []
         self.cities_matched = 0
         self.cities_list = []
         self.points_generated = 0
@@ -206,6 +207,7 @@ class ClimateTwinFinder:
         print(f"GoogleMap calls: {self.google_key_count}")
         print(f"High variances: {self.high_variance_count}")
         print(f"Countries searched: {self.countries_searched}")
+        print(f"Countries list: {self.countries_list}")
         print(f"Cities matched: {self.cities_matched}")
         print(f"Cities list: {self.cities_list}")
         print(f"Points searched: {self.points_generated_on_land}")
@@ -230,6 +232,7 @@ class ClimateTwinFinder:
         logger.info(f"GoogleMap calls: {self.google_key_count}")
         logger.info(f"High variances: {self.high_variance_count}")
         logger.info(f"Countries searched: {self.countries_searched}")
+        logger.info(f"Countries list: {self.countries_list}")
         logger.info(f"Cities matched: {self.cities_matched}")
         logger.info(f"Cities list: {self.cities_list}")
         logger.info(f"Points searched: {self.points_generated_on_land}")
@@ -488,6 +491,7 @@ class ClimateTwinFinder:
                     self.points_generated_on_land += len(points_within_country)
  
                     self.countries_searched += 1
+                    self.countries_list.append(country_name)
 
                     break
           
