@@ -750,7 +750,7 @@ class ClimateTwinFinder:
 
     def send_search_progress_update(self, percentage):
         try: 
-            send_twin_location_search_progress_update(user_id=self.user_id_for_celery, percentage=percentage)
+            send_twin_location_search_progress_update(user_id=self.user_id_for_celery, progress_percentage=percentage)
         except Exception as e:
             print(f"Error sending search progress update to Celery task: {e}")
         
