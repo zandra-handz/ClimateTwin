@@ -336,31 +336,36 @@ class ClimateTwinFinder:
 
 
     def generate_random_points_within_polygon(self, polygon, num_points, city_location=None):
+
         # smaller distance from center: 6
         std_dev_divider = self.preset_divider_for_point_gen_deviation
 
-        # Reproject the polygon to a projected CRS (e.g., UTM or Mercator) before calculating the centroid
-        polygon_projected = polygon.to_crs(epsg=3395)  # Reproject to Mercator (EPSG:3395)
-
         # If a city location is provided, use it as the starting point; otherwise, use the centroid
+        
+        
+        
         if city_location is not None: 
+            # centroid = polygon.centroid
+            # centroid_x, centroid_y = centroid.x, centroid.y
+
             centroid_x, centroid_y = city_location
         else:
-            centroid = polygon_projected.centroid  # Calculate the centroid after reprojecting
+            centroid = polygon.centroid
             centroid_x, centroid_y = centroid.x, centroid.y
         
-        minx, miny, maxx, maxy = polygon_projected.bounds
+        minx, miny, maxx, maxy = polygon.bounds
         std_dev_x = (maxx - minx) / std_dev_divider
         std_dev_y = (maxy - miny) / std_dev_divider
 
         x = np.random.normal(centroid_x, std_dev_x, num_points)
         y = np.random.normal(centroid_y, std_dev_y, num_points)
 
-        points = [Point(px, py) for px, py in zip(x, y) if polygon_projected.contains(Point(px, py))]
+        points = [Point(px, py) for px, py in zip(x, y) if polygon.contains(Point(px, py))]
         points_gdf = gpd.GeoDataFrame(geometry=points)
 
-        return points_gdf
 
+
+        return points_gdf
 
 # Old but tried and true
     # def generate_random_points_within_polygon(self, polygon, num_points):
