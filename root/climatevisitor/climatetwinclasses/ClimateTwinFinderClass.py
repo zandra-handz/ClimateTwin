@@ -344,7 +344,7 @@ class ClimateTwinFinder:
         std_dev_divider = self.preset_divider_for_point_gen_deviation
 
         if not isinstance(polygon, (Polygon, MultiPolygon)):
-            return None
+            return gpd.GeoDataFrame(geometry=[]) 
 
         # If a city location is provided, use it as the starting point; otherwise, use the centroid
         
@@ -431,7 +431,7 @@ class ClimateTwinFinder:
         logger.info(f"self.points_generated_in_each_country: {num_points}")
         
         recalculations = 0
-        points_within_country = None
+        points_within_country = gpd.GeoDataFrame(geometry=[])
 
         while True:
             recalculations += 1
