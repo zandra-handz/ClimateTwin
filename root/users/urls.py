@@ -5,11 +5,11 @@ urlpatterns = [
 
 
     path('get-current/', views.get_current_user, name='get-current-user'),
-    path('users/sign-up/', views.CreateUserView.as_view(), name='sign_up'),
-    path('users/send-reset-code/', views.RequestPasswordResetCodeView.as_view(), name='send-reset-code'),
-    path('users/verify-reset-code/', views.PasswordResetCodeValidationView.as_view(), name='verify-reset-code'),
-    path('users/reset-password/', views.PasswordResetConfirmView.as_view(), name='reset-password'),
-    path('users/change-password/', views.ChangePasswordView.as_view(), name='change-password'),
+    path('sign-up/', views.CreateUserView.as_view(), name='sign_up'),
+    path('send-reset-code/', views.RequestPasswordResetCodeView.as_view(), name='send-reset-code'),
+    path('verify-reset-code/', views.PasswordResetCodeValidationView.as_view(), name='verify-reset-code'),
+    path('reset-password/', views.PasswordResetConfirmView.as_view(), name='reset-password'),
+    path('change-password/', views.ChangePasswordView.as_view(), name='change-password'),
   
     # Old, not using?
     path('activate/<uid>/<token>', views.ActivateUser.as_view({'get': 'activation'}), name='activation'),
