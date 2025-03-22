@@ -73,7 +73,7 @@ class ClimateTwinFinder:
         self.google_api_key = google_api_key
         self.preset_divider_for_point_gen_deviation = 8
         self.preset_num_final_candidates_required = 4
-        self.preset_temp_diff_is_high_variance = 12
+        self.preset_temp_diff_is_high_variance = 18
         self.preset_num_high_variances_allowed = 2
         self.preset_points_generated_in_each_country = 30
         self.origin_lat = 0
