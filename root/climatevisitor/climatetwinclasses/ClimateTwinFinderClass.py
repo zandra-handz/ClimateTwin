@@ -128,10 +128,6 @@ class ClimateTwinFinder:
 
         self.get_home_climate()
 
-
-        send_coordinate_update_to_celery(user_id=self.user_id_for_celery, country_name=country_name, temperature=temperature, temp_difference=temperature_difference_rounded, latitude=latitude, longitude=longitude)
-                       
-
         # Reads in dataset once at the start of the algorithm
         # self.dataset_for_countries = self.read_in_countries_dataset()
         # self.dataset_for_cities = self.read_in_cities_dataset()

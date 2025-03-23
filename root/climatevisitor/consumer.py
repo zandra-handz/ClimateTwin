@@ -176,6 +176,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
         self.send_current_location_from_cache_or_endpoint()
 
 
+# if there is a location ID in cache, sends this, otherwise checks endpoints, if nothing in endpoints,
+# sends 'You are home' message
     def send_current_location_from_cache_or_endpoint(self):
         
         current_location_cache = cache.get(f"current_location_{self.user.id}")
@@ -484,6 +486,12 @@ class LocationUpdateConsumer(WebsocketConsumer):
             logger.info(f"Location update WebSocket disconnected for group {self.group_name}")
         else:
             logger.warning("WebSocket disconnect called, but group_name was never set.")
+
+    # def update_with_old_location_on_fail(self, event):
+    #     """
+    #     Calls fetch from endpoints code to reset location in the event a new one can't be saved.
+    #     """
+
 
     def update_location(self, event):
         """

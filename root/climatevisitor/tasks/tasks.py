@@ -358,8 +358,39 @@ def send_clear_gift_notification(user_id, friend_id):
 
 
 
+@shared_task
+def send_is_pending_location_update_to_celery(user_id):
+     
+    pending_message = 'You are searching' 
 
+    logger.info(f"Preparing to send pending location update to Celery with data: "
+                f"user_id: {user_id}, name: 'You are searching'")
 
+    try:
+        channel_layer = get_channel_layer()
+
+        group_name = f'location_update_{user_id}'
+
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                'type': 'update_location',
+                'location_id': None,
+                'name': pending_message,
+                'temperature': None,
+                'latitude': None,
+                'longitude': None,
+                'last_accessed': None,
+            }
+        )
+ 
+        logger.info(f"Location update sent successfully for user_id: {user_id}, name: {pending_message}")
+
+    except Exception as e: 
+        logger.error(f"Error in send_location_update_to_celery task for user_id: {user_id}, name: {pending_message}. "
+                     f"Error: {str(e)}")
+        # tbh gpty gave this type of error to me and I'm not sure if it is necessary
+        raise SuspiciousOperation(f"Error sending location update to Celery: {str(e)}")
 
  
 
@@ -401,3 +432,26 @@ def send_location_update_to_celery(user_id, location_id, name, temperature, lati
                      f"Error: {str(e)}")
         # tbh gpty gave this type of error to me and I'm not sure if it is necessary
         raise SuspiciousOperation(f"Error sending location update to Celery: {str(e)}")
+
+
+# Not a Celery task but goes with them
+# Cache should fail silently but added try/except anyway
+def extra_coverage_cache_location_update(user_id, location_id, name, latitude, longitude, last_accessed):
+    cache_key = f"current_location_{user_id}"
+    logger.debug(f"Extra coverage caching current location for user {user_id} with key: {cache_key}")
+
+    location_data = {
+        'location_id': location_id,
+        'name': name,
+        'latitude': latitude,
+        'longitude': longitude,
+        'last_accessed': last_accessed,
+    }
+
+    try:
+        cache.set(cache_key, location_data)
+        logger.debug(f"Successfully cached location for user {user_id}")
+    except Exception as e:
+        logger.error(f"Failed to cache location for user {user_id}: {str(e)}")
+
+

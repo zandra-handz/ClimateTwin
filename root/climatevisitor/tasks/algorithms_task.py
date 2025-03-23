@@ -1,7 +1,7 @@
 from ..animations import update_animation
 from ..consumer import ClimateTwinConsumer  
 
-from climatevisitor.tasks.tasks import send_location_update_to_celery, send_search_for_ruins_initiated, send_no_ruins_found, send_explore_locations_ready, send_clear_message, send_returned_home_message
+from climatevisitor.tasks.tasks import send_location_update_to_celery, send_is_pending_location_update_to_celery, send_search_for_ruins_initiated, send_no_ruins_found, send_explore_locations_ready, send_clear_message, send_returned_home_message
 from asgiref.sync import async_to_sync
 from celery import shared_task, current_app, current_task
 from channels.layers import get_channel_layer
@@ -41,8 +41,12 @@ def run_climate_twin_algorithms_task(user_id, user_address):
     except BadRainbowzUser.DoesNotExist:
         print("Could not validate user.")
         return
-    # Your task logic here, using the retrieved user object
     
+    # Send location pending update to socket. Sends name: 'You are searching'
+    send_is_pending_location_update_to_celery(user_id=user_id)
+
+    # Search ends when CurrentLocation instance is saved below (instance method includes socket update)
+
     climate_places = ClimateTwinFinder(user_id_for_celery=user_id, address=user_address)
     print("Twin Location found.")
 
@@ -134,7 +138,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
             # This method now includes send_location_update_to_celery in order to send update every time new current location is chosen
             current_location = CurrentLocation.update_or_create_location(user=user_instance, twin_location=climate_twin_location_instance)
             
-            last_accessed_str = current_location.last_accessed.isoformat()
+            # last_accessed_str = current_location.last_accessed.isoformat()
 
 
             # send_location_update_to_celery(user_id=user_instance.id, 

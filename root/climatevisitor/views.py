@@ -8,14 +8,15 @@ from .climatetwinclasses.ClimateObjectClass import ClimateObject
 from .climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
 from .tasks.algorithms_task import run_climate_twin_algorithms_task
 from .tasks.algorithms_task import process_climate_twin_request, schedule_expiration_task, process_immediate_expiration_task
-from .tasks.tasks import send_location_update_to_celery
-
+from .tasks.tasks import send_location_update_to_celery, extra_coverage_cache_location_update, send_is_pending_location_update_to_celery
+# send_is_pending_location_update_to_celery is in process_climate_twin_request
 from .climatetwinclasses.OpenMapAPIClass import OpenMapAPI
 from asgiref.sync import sync_to_async
 
 # for last_accessed object serialization in CreateOrUpdateCurrentLocation, to send data to socket
 from datetime import datetime
 
+from django.core.cache import cache
 from django.shortcuts import render
 from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
@@ -950,9 +951,19 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
            
             # instead of self.update, otherwise can't access newly saved object when sending update to celery
             saved_instance = models.CurrentLocation.update_or_create_location(user, twin_location=twin_location)
+
+
             
             last_accessed_str = saved_instance.last_accessed.isoformat()
 
+            extra_coverage_cache_location_update(
+                user_id=user.id, 
+                location_id=saved_instance.twin_location.id,
+                name=saved_instance.twin_location.name, 
+                latitude=saved_instance.twin_location.latitude,
+                longitude=saved_instance.twin_location.longitude, 
+                last_accessed=last_accessed_str)
+         
             try:
                 send_location_update_to_celery(user_id=user.id, location_id=saved_instance.twin_location.id, # = location_visiting_id
                                                temperature=saved_instance.twin_location.temperature, 
