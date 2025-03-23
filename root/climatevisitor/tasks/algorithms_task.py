@@ -137,21 +137,23 @@ def run_climate_twin_algorithms_task(user_id, user_address):
         # that task can verify it was meant for the CurrentLocation before setting expired to True
         try:
 
-            # This method now includes send_location_update_to_celery in order to send update every time new current location is chosen
             current_location = CurrentLocation.update_or_create_location(user=user_instance, twin_location=climate_twin_location_instance)
             
             if not current_location:
                 restore_location_from_backup_cache_and_send_update(user_id)
-            # last_accessed_str = current_location.last_accessed.isoformat()
+
+            else:
+                # need this here even though it is also seemingly in the update/create method
+                last_accessed_str = current_location.last_accessed.isoformat()
 
 
-            # send_location_update_to_celery(user_id=user_instance.id, 
-            #                                location_id=current_location.twin_location.id, # = location_visiting_id
-            #                                temperature=current_location.twin_location.temperature, 
-            #                                name=current_location.twin_location.name, 
-            #                                latitude=current_location.twin_location.latitude, 
-            #                                longitude=current_location.twin_location.longitude,
-            #                                last_accessed=last_accessed_str)
+                send_location_update_to_celery(user_id=user_instance.id, 
+                                            location_id=current_location.twin_location.id, # = location_visiting_id
+                                            temperature=current_location.twin_location.temperature, 
+                                            name=current_location.twin_location.name, 
+                                            latitude=current_location.twin_location.latitude, 
+                                            longitude=current_location.twin_location.longitude,
+                                            last_accessed=last_accessed_str)
 
             
              # Schedule the expiration task after updating or creating the current location
