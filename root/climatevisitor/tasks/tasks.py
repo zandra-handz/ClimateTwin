@@ -49,7 +49,7 @@ def send_twin_location_search_progress_update(user_id, progress_percentage):
         group_name,
         {
             'type': 'twin_location_search_progress_update',
-            'message': f'Progress: {progress_percentage}',
+            'search_progress': f'{progress_percentage}',
         }
     ) 
 

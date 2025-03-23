@@ -172,6 +172,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
         self.send_message_from_cache()
         self.send_notif_from_cache()
+        self.send_search_progress_from_cache()
         self.send_current_location_from_cache_or_endpoint()
 
 
@@ -228,6 +229,16 @@ class LocationUpdateConsumer(WebsocketConsumer):
         else:
             logger.info("No notification in cache for this user")
 
+
+    
+    def send_search_progress_from_cache(self):
+        last_search_progress = cache.get(f"last_search_progress_{self.user.id}")
+        if last_search_progress:
+            logger.info(f"Sending last_search_progress to user {self.user.id}: {last_search_progress}")
+            self.send(text_data=json.dumps({'search_progress': last_search_progress}))
+        else:
+            logger.info("No search progress in cache for this user")
+ 
 
     def create_empty_location_update(self):
         empty_update = {
@@ -361,12 +372,12 @@ class LocationUpdateConsumer(WebsocketConsumer):
         return None, None 
     
     def twin_location_search_progress_update(self, event):
-        search_progress_update = event['message']
+        search_progress_update = event['search_progress']
 
-        cache_key = f"last_message_{self.user.id}" 
+        cache_key = f"last_search_progress_{self.user.id}" 
         cache.set(cache_key, search_progress_update) # no timeout , timeout=86400)
 
-        self.send(text_data=json.dumps({'message': search_progress_update}))
+        self.send(text_data=json.dumps({'search_progress': search_progress_update}))
 
     def search_for_ruins(self, event): 
         #logger.debug(f"Received search_for_ruins event: {event}") # log incoming data
