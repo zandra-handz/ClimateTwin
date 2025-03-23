@@ -36,7 +36,8 @@ def send_coordinate_update_to_celery(user_id, country_name, temp_difference, tem
             'longitude': longitude,
         }
     )
-    print(f"Sending Twin Finder location update: {country_name}, {temperature} degrees F, {temp_difference} degrees off, {latitude}, {longitude}")
+    # Helpful to watch algorithm in real time in console, but I think is affecting performance
+   # print(f"Sending Twin Finder location update: {country_name}, {temperature} degrees F, {temp_difference} degrees off, {latitude}, {longitude}")
 
 
 @shared_task
@@ -432,13 +433,118 @@ def send_location_update_to_celery(user_id, location_id, name, temperature, lati
                      f"Error: {str(e)}")
         # tbh gpty gave this type of error to me and I'm not sure if it is necessary
         raise SuspiciousOperation(f"Error sending location update to Celery: {str(e)}")
-
+ 
 
 # Not a Celery task but goes with them
 # Cache should fail silently but added try/except anyway
 def extra_coverage_cache_location_update(user_id, location_id, name, latitude, longitude, last_accessed):
     cache_key = f"current_location_{user_id}"
     logger.debug(f"Extra coverage caching current location for user {user_id} with key: {cache_key}")
+
+    location_data = {
+        'location_id': location_id,
+        'name': name,
+        'latitude': latitude,
+        'longitude': longitude,
+        'last_accessed': last_accessed,
+    }
+
+    try:
+        cache.set(cache_key, location_data)
+        logger.debug(f"Successfully cached location for user {user_id}")
+    except Exception as e:
+        logger.error(f"Failed to cache location for user {user_id}: {str(e)}")
+
+
+# Not a Celery task but goes with them
+# Cache to temporarily store current location when searching for new
+# fall back to in case of search fail
+
+
+def save_current_location_to_backup_cache(user_id):
+    cache_key = f"current_location_{user_id}"
+    backup_cache_key = f"current_location_backup_{user_id}"
+    current_location_cache = cache.get(cache_key)
+ 
+    if current_location_cache and 'location_id' in current_location_cache and 'last_accessed' in current_location_cache:
+        
+        logger.info(f"Backing up current location cache for user {user_id}")
+        
+        backup_data = {
+            'location_id': current_location_cache.get('location_id'),
+            'name': current_location_cache.get('name', 'Error getting location name'),  
+            'latitude': current_location_cache.get('latitude'),
+            'longitude': current_location_cache.get('longitude'),
+            'last_accessed': current_location_cache.get('last_accessed')
+        } 
+
+        if None not in (backup_data['location_id'], backup_data['latitude'], backup_data['longitude']):
+            cache.set(backup_cache_key, backup_data)  
+            logger.info(f"Backup cache set for user {user_id}: {backup_data}")
+        else:
+            logger.warning(f"Skipping backup for user {user_id}, missing critical fields: {backup_data}")
+
+    else:
+        logger.warning(f"No valid location data found in cache for user {user_id}")
+
+
+def restore_location_from_backup_cache_and_send_update(user_id):
+    backup_cache_key = f"current_location_backup_{user_id}"
+    cache_key = f"current_location_{user_id}"
+    backup_location_cache = cache.get(backup_cache_key)
+ 
+    if backup_location_cache and 'location_id' in backup_location_cache and 'last_accessed' in backup_location_cache:
+        
+        logger.info(f"Restoring location from backup cache for user {user_id}")
+        
+        location_data = {
+            'location_id': backup_location_cache.get('location_id'),
+            'name': backup_location_cache.get('name', 'Error getting location name'),  
+            'latitude': backup_location_cache.get('latitude'),
+            'longitude': backup_location_cache.get('longitude'),
+            'last_accessed': backup_location_cache.get('last_accessed')
+        } 
+
+        try:
+            channel_layer = get_channel_layer()
+
+            group_name = f'location_update_{user_id}'
+
+            async_to_sync(channel_layer.group_send)(
+                group_name,
+                {
+                    'type': 'update_location',
+                    'location_id': backup_location_cache.get('location_id'),
+                    'name': backup_location_cache.get('name', 'Error getting location name'),  
+                    'temperature': None,
+                    'latitude': backup_location_cache.get('latitude'),
+                    'longitude': backup_location_cache.get('longitude'),
+                    'last_accessed': backup_location_cache.get('last_accessed')
+                }
+            )
+    
+            logger.info(f"Location update sent successfully for user_id: {user_id}, location_id: {location_id}")
+
+        except Exception as e: 
+            logger.error(f"Error in send_location_update_to_celery task for user_id: {user_id}, location_id: {location_id}. "
+                        f"Error: {str(e)}")
+            # tbh gpty gave this type of error to me and I'm not sure if it is necessary
+            raise SuspiciousOperation(f"Error sending location update to Celery: {str(e)}")
+    
+                
+        if None not in (location_data['location_id'], location_data['latitude'], location_data['longitude']):
+            cache.set(cache_key, location_data)  
+            logger.info(f"Location cache set for user {user_id}: {location_data}")
+        else:
+            logger.warning(f"Skipping backup for user {user_id}, missing critical fields: {location_data}")
+
+    else:
+        logger.warning(f"No valid location data found in backup cache for user {user_id}")
+
+
+def backup_cache_location_update(user_id, location_id, name, latitude, longitude, last_accessed):
+    cache_key = f"previous_location_{user_id}"
+    logger.debug(f"Caching backup location to 'previous_location_[user_id]' for user {user_id} with key: {cache_key}")
 
     location_data = {
         'location_id': location_id,

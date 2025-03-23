@@ -1,7 +1,7 @@
 from ..animations import update_animation
 from ..consumer import ClimateTwinConsumer  
 
-from climatevisitor.tasks.tasks import send_location_update_to_celery, send_is_pending_location_update_to_celery, send_search_for_ruins_initiated, send_no_ruins_found, send_explore_locations_ready, send_clear_message, send_returned_home_message
+from climatevisitor.tasks.tasks import send_location_update_to_celery, send_is_pending_location_update_to_celery, save_current_location_to_backup_cache, restore_location_from_backup_cache_and_send_update, send_search_for_ruins_initiated, send_no_ruins_found, send_explore_locations_ready, send_clear_message, send_returned_home_message
 from asgiref.sync import async_to_sync
 from celery import shared_task, current_app, current_task
 from channels.layers import get_channel_layer
@@ -35,6 +35,7 @@ logger = logging.getLogger(__name__)
 def run_climate_twin_algorithms_task(user_id, user_address):
     sleep(0)
     print(f"run_climate_twin_algorithms_task initiated with args: {user_id}, {user_address}")
+    
 
     try:
         user_instance = BadRainbowzUser.objects.get(pk=user_id)
@@ -42,6 +43,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
         print("Could not validate user.")
         return
     
+    save_current_location_to_backup_cache(user_id)
     # Send location pending update to socket. Sends name: 'You are searching'
     send_is_pending_location_update_to_celery(user_id=user_id)
 
@@ -138,6 +140,8 @@ def run_climate_twin_algorithms_task(user_id, user_address):
             # This method now includes send_location_update_to_celery in order to send update every time new current location is chosen
             current_location = CurrentLocation.update_or_create_location(user=user_instance, twin_location=climate_twin_location_instance)
             
+            if not current_location:
+                restore_location_from_backup_cache_and_send_update(user_id)
             # last_accessed_str = current_location.last_accessed.isoformat()
 
 

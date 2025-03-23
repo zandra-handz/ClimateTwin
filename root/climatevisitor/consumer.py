@@ -195,6 +195,20 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 'longitude': current_location_cache.get('longitude', None),
                 'last_accessed': current_location_cache.get('last_accessed')
             }))
+        elif current_location_cache and 'name' in current_location_cache:
+
+            logger.info(f"Data in current location cache for {self.user.id}")
+            logger.info(f"name found in current location cache for {self.user.id}")
+
+            self.send(text_data=json.dumps({
+                'location_id': None,
+                'name': current_location_cache.get('name', 'Error getting location name'),  
+                'latitude': None,
+                'longitude': None,
+                'last_accessed': None
+            }))
+                
+
         
         # REFETCH DATA FROM ENDPOINT and save new cache if no cache, or if 'location_id' and 'last_accessed' are not in cache
         else:
@@ -487,10 +501,11 @@ class LocationUpdateConsumer(WebsocketConsumer):
         else:
             logger.warning("WebSocket disconnect called, but group_name was never set.")
 
-    # def update_with_old_location_on_fail(self, event):
-    #     """
-    #     Calls fetch from endpoints code to reset location in the event a new one can't be saved.
-    #     """
+    def update_with_old_location_on_fail(self):
+        """
+        Calls fetch from endpoints code to reset location in the event a new one can't be saved.
+        """
+        self.send_current_location_from_cache_or_endpoint()
 
 
     def update_location(self, event):
