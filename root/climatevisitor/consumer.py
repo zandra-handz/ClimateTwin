@@ -251,6 +251,25 @@ class LocationUpdateConsumer(WebsocketConsumer):
         return empty_update
 
 
+    # def send_pending_location_update(self):
+
+    #     if not self.user:
+    #         logger.error("No user found when trying to send location update event.")
+    #         return
+        
+    #     pending_update = {
+    #         'location_id': None,
+    #         'name': 'You are searching', 
+    #         'latitude': None,
+    #         'longitude': None,
+    #         'last_accessed': None,
+    #     }
+
+    #     cache.set(f"current_location_{self.user.id}", pending_update)
+    #     self.send(text_data=json.dumps({'locat'}))
+    #     return pending_update
+
+
 
 
     def send_message_event(self, event):

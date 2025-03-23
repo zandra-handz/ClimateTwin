@@ -76,6 +76,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
 
         weather_messages = weather_encounter.combine_messages()
 
+
         climate_twin_location_instance = ClimateTwinLocation.create_from_dicts(
             user_instance, climate_places.climate_twin, weather_messages,
             home_location=home_location_instance
@@ -129,18 +130,22 @@ def run_climate_twin_algorithms_task(user_id, user_address):
         # schedule_expiration_task will pass in the last_accessed string to the async task so that
         # that task can verify it was meant for the CurrentLocation before setting expired to True
         try:
+
+            # This method now includes send_location_update_to_celery in order to send update every time new current location is chosen
             current_location = CurrentLocation.update_or_create_location(user=user_instance, twin_location=climate_twin_location_instance)
             
             last_accessed_str = current_location.last_accessed.isoformat()
 
-            send_location_update_to_celery(user_id=user_instance.id, 
-                                           location_id=current_location.twin_location.id, # = location_visiting_id
-                                           temperature=current_location.twin_location.temperature, 
-                                           name=current_location.twin_location.name, 
-                                           latitude=current_location.twin_location.latitude, 
-                                           longitude=current_location.twin_location.longitude,
-                                           last_accessed=last_accessed_str)
 
+            # send_location_update_to_celery(user_id=user_instance.id, 
+            #                                location_id=current_location.twin_location.id, # = location_visiting_id
+            #                                temperature=current_location.twin_location.temperature, 
+            #                                name=current_location.twin_location.name, 
+            #                                latitude=current_location.twin_location.latitude, 
+            #                                longitude=current_location.twin_location.longitude,
+            #                                last_accessed=last_accessed_str)
+
+            
              # Schedule the expiration task after updating or creating the current location
             schedule_expiration_task(user_id=user_instance.id)# No async_to_sync wrapper needed
 
