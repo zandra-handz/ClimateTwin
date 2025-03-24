@@ -568,8 +568,8 @@ class ClimateTwinFinder:
 
 
     def search_random_coords_in_a_country(self):
-        #base_url = "https://api.openweathermap.org/data/2.5/find"
-        #num_places = self.preset_num_final_candidates_required
+        base_url = "https://api.openweathermap.org/data/2.5/find"
+        num_places = self.preset_num_final_candidates_required
         high_variance = 0
         high_variance_trigger = self.preset_temp_diff_is_high_variance # degree difference that will add to high variance count
         high_variance_count_limit = self.preset_num_high_variances_allowed # once count exceeds, algo will ditch search in current country and go to new country
@@ -577,13 +577,7 @@ class ClimateTwinFinder:
 
         found_count = 0
 
-        while self.preset_num_final_candidates_required > self.final_candidates_count:
-            
-            logger.info(f'while loop in search_random_coords starting over, current candidate count: {self.final_candidates_count}')
-            print(f'while loop in search_random_coords starting over, current candidate count: {self.final_candidates_count}')
-
-
-        #while self.preset_num_final_candidates_required > len(self.similar_places['name']):
+        while num_places > len(self.similar_places['name']):
             country_name, random_coords = self.generate_random_coords_in_a_country_list()
 
             for idx, point in random_coords.iterrows():
@@ -603,7 +597,9 @@ class ClimateTwinFinder:
                     
 
                     if celery_fail_count < 3:
-                        try: 
+                        try:
+                            # Send coordinates update via WebSocket
+                            #self.send_coordinate_update(latitude, longitude)
                             send_coordinate_update_to_celery(user_id=self.user_id_for_celery, country_name=country_name, temperature=temperature, temp_difference=temperature_difference_rounded, latitude=latitude, longitude=longitude)
                         except Exception as e:
                             # print(f"Error sending to Celery task: {e}")
@@ -611,7 +607,8 @@ class ClimateTwinFinder:
                             continue
 
 
-                    if temperature_difference < 2: 
+                    if temperature_difference < 2:
+                        # Process and add the new entry to self.similar_places
                         new_entry = {
                             'name': [f'climate twin candidate'],
                             'temperature': weather['temperature'],
@@ -628,27 +625,16 @@ class ClimateTwinFinder:
                         }
                         self.process_new_entry(new_entry)
 
-                        logger.info(f'New final candidate count: {self.final_candidates_count}')
-                        print(f'New final candidate count: {self.final_candidates_count}')
-
-                        # breaks out of while loop
-                        if self.preset_num_final_candidates_required <= self.final_candidates_count:
-                            found_count = 0  # may not need to reset 
-                            high_variance = 0
-                            break
-
-
                         found_count += 1
 
                         # Only two finds allowed per country
-                        if found_count >= self.preset_matches_per_country_allowed:
-                            found_count = 0
+                        if found_count > self.preset_matches_per_country_allowed:
+                            found_count = 0 # Reset before breaking
                             break
  
-                        # CHECK IF FOUND ALL CANDIDATES
-                        if self.preset_num_final_candidates_required <= self.final_candidates_count:
-                        #if num_places <= len(self.similar_places['name']):
-                    
+
+                        # Check if we have found the desired number of places
+                        if num_places <= len(self.similar_places['name']):
                             break
 
                     else:
@@ -656,7 +642,7 @@ class ClimateTwinFinder:
                         # If temperature difference is excitingly close, remove a high variance strike if one exists
                         # ( allow the searcher some extra goes )
                         if temperature_difference < self.preset_temp_diff_hotzone: # After previously checking that it is more than 2
-                            if high_variance >= 1:
+                            if high_variance > 1:
                                 high_variance -= 1
                                 self.high_variance_count -= 1
                        
@@ -694,20 +680,16 @@ class ClimateTwinFinder:
         for key, value in new_entry.items():
             key = str(key)  # Convert key to string if needed
 
-        if value and (key not in self.similar_places or not isinstance(self.similar_places[key], list)):
-            self.similar_places[key] = []  
+            if key not in self.similar_places or not isinstance(self.similar_places[key], list):
+                self.similar_places[key] = []  # Ensure it's a list
 
-        if value:  
-            self.similar_places[key].append(value)
-            added_data = True
-
+            # Only append non-empty values
+            if value:  
+                self.similar_places[key].append(value)
+                added_data = True
  
-        if added_data:  
-            self.final_candidates_count = len(self.similar_places['name'])
-            #self.final_candidates_count += 1
-            
-            logger.info(f'LOGGER: process_new_entry calculating percentage, final count: {self.final_candidates_count}, preset requirement: {self.preset_num_final_candidates_required}')
-            print(f'PRINT: process_new_entry calculating percentage, final count: {self.final_candidates_count}, preset requirement: {self.preset_num_final_candidates_required}')
+        if added_data: 
+            self.final_candidates_count += 1
 
             percentage = round(100 * (self.final_candidates_count / self.preset_num_final_candidates_required), 2)
 
@@ -918,4 +900,3 @@ class ClimateTwinFinder:
                 row_values = [str(values[j][i]) for j in range(len(keys))]
                 row = "\t".join(row_values)
                 # print(row)
-
