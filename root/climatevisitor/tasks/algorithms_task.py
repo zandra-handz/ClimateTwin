@@ -160,22 +160,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
             schedule_expiration_task(user_id=user_instance.id)# No async_to_sync wrapper needed
 
         except Exception as e:
-            print("An error occurred:", e)
-
-        # try:
-        #     explore_location_instance = ClimateTwinExploreLocation.objects.create(
-        #         user=user_instance,
-        #         twin_location=climate_twin_location_instance,
-        #         created_on=timezone.now()  # Set creation time to current time
-        #     )
-
-        #     explore_location_instance.save()
-
-
-        # except Exception as e:
-        #     print("An error occurred:", e)
-        #     # added this to abort if error
-        #     return
+            print("An error occurred:", e) 
 
  
         send_search_for_ruins_initiated(user_id=user_instance.id)
