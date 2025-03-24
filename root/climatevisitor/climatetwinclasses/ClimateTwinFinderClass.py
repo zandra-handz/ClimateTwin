@@ -575,7 +575,7 @@ class ClimateTwinFinder:
         high_variance_count_limit = self.preset_num_high_variances_allowed # once count exceeds, algo will ditch search in current country and go to new country
         celery_fail_count = 0
 
-        found_count = self.preset_matches_per_country_allowed
+        found_count = 0
 
         while num_places > len(self.similar_places['name']):
             country_name, random_coords = self.generate_random_coords_in_a_country_list()
@@ -623,19 +623,32 @@ class ClimateTwinFinder:
                             'latitude': weather['latitude'],
                             'longitude': weather['longitude']
                         }
-                        self.process_new_entry(new_entry)
+                        self.final_candidates_count = self.process_new_entry(new_entry)
+
+                        print(f"Final Candidates Count: {self.final_candidates_count}")
+                        print(f"Preset Num Final Candidates Required: {self.preset_num_final_candidates_required}")
+                   
+                        logger.info(f"Final Candidates Count: {self.final_candidates_count}")
+                        logger.info(f"Preset Num Final Candidates Required: {self.preset_num_final_candidates_required}")
+                      
+ 
+                        percentage = round(100 * (self.final_candidates_count / self.preset_num_final_candidates_required), 2)
+                        self.send_search_progress_update(percentage)
 
                         found_count += 1
 
-                        # Only two finds allowed per country
-                        if found_count > 1:
-                            self.preset_matches_per_country_allowed = 0 # Reset before breaking
-                            break
- 
 
                         # Check if we have found the desired number of places
                         if num_places <= len(self.similar_places['name']):
                             break
+
+                        # Only two finds allowed per country
+                        if found_count > self.preset_matches_per_country_allowed:
+                            found_count = 0 # Reset before breaking
+                            break
+ 
+
+
 
                     else:
 
@@ -663,38 +676,69 @@ class ClimateTwinFinder:
     
 
 
-    def process_new_entry(self, new_entry): 
-        if not isinstance(new_entry, dict):
-            raise ValueError("Expected new_entry to be a dictionary.")
+    # def process_new_entry(self, new_entry): 
+    #     if not isinstance(new_entry, dict):
+    #         raise ValueError("Expected new_entry to be a dictionary.")
  
-        if not isinstance(getattr(self, "similar_places", None), dict):
+    #     if not isinstance(getattr(self, "similar_places", None), dict):
+    #         self.similar_places = {
+    #             'name': [], 'temperature': [], 'description': [],
+    #             'wind_speed': [], 'wind_direction': [], 'humidity': [],
+    #             'pressure': [], 'cloudiness': [], 'sunrise_timestamp': [],
+    #             'sunset_timestamp': [], 'latitude': [], 'longitude': []
+    #         }
+ 
+    #     added_data = False
+ 
+    #     for key, value in new_entry.items():
+    #         key = str(key)  # Convert key to string if needed
+
+    #         if key not in self.similar_places or not isinstance(self.similar_places[key], list):
+    #             self.similar_places[key] = []  # Ensure it's a list
+
+    #         # Only append non-empty values
+    #         if value:  
+    #             self.similar_places[key].append(value)
+    #             added_data = True
+ 
+    #     if added_data: 
+    #         #self.final_candidates_count += 1
+    #         self.final_candidates_count = len(self.similar_places['name'])
+
+    #         percentage = round(100 * (self.final_candidates_count / self.preset_num_final_candidates_required), 2)
+
+
+    #         self.send_search_progress_update(percentage)
+
+
+# this function returns total candidate count
+    def process_new_entry(self, new_entry):
+
+        # Process and add the new entry to self.similar_places
+        if 'similar_places' not in self.__dict__:
             self.similar_places = {
-                'name': [], 'temperature': [], 'description': [],
-                'wind_speed': [], 'wind_direction': [], 'humidity': [],
-                'pressure': [], 'cloudiness': [], 'sunrise_timestamp': [],
-                'sunset_timestamp': [], 'latitude': [], 'longitude': []
+                'name': [],
+                'temperature': [],
+                'description': [],
+                'wind_speed': [],
+                'wind_direction': [],
+                'humidity': [],
+                'pressure': [],
+                'cloudiness': [],
+                'sunrise_timestamp': [],
+                'sunset_timestamp': [],
+                'latitude': [],
+                'longitude': []
             }
- 
-        added_data = False
- 
+
         for key, value in new_entry.items():
-            key = str(key)  # Convert key to string if needed
+            if key not in self.similar_places:
+                self.similar_places[key] = []
+            self.similar_places[key].append(value)
 
-            if key not in self.similar_places or not isinstance(self.similar_places[key], list):
-                self.similar_places[key] = []  # Ensure it's a list
+        print(f"Found {len(self.similar_places['name'])}")
 
-            # Only append non-empty values
-            if value:  
-                self.similar_places[key].append(value)
-                added_data = True
- 
-        if added_data: 
-            self.final_candidates_count += 1
-
-            percentage = round(100 * (self.final_candidates_count / self.preset_num_final_candidates_required), 2)
-
-
-            self.send_search_progress_update(percentage)
+        return len(self.similar_places['name'])
             
 
     
@@ -722,31 +766,7 @@ class ClimateTwinFinder:
 
 
 
-    # def process_new_entry(self, new_entry):
 
-    #     # Process and add the new entry to self.similar_places
-    #     if 'similar_places' not in self.__dict__:
-    #         self.similar_places = {
-    #             'name': [],
-    #             'temperature': [],
-    #             'description': [],
-    #             'wind_speed': [],
-    #             'wind_direction': [],
-    #             'humidity': [],
-    #             'pressure': [],
-    #             'cloudiness': [],
-    #             'sunrise_timestamp': [],
-    #             'sunset_timestamp': [],
-    #             'latitude': [],
-    #             'longitude': []
-    #         }
-
-    #     for key, value in new_entry.items():
-    #         if key not in self.similar_places:
-    #             self.similar_places[key] = []
-    #         self.similar_places[key].append(value)
-
-        # print(f"Found {len(self.similar_places['name'])}")
 
     def send_search_progress_update(self, percentage):
         try: 
