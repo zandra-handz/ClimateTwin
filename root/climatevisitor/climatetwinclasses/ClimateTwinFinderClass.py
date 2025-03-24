@@ -575,7 +575,7 @@ class ClimateTwinFinder:
         high_variance_count_limit = self.preset_num_high_variances_allowed # once count exceeds, algo will ditch search in current country and go to new country
         celery_fail_count = 0
 
-        found_count = 0
+        found_count = self.preset_matches_per_country_allowed
 
         while num_places > len(self.similar_places['name']):
             country_name, random_coords = self.generate_random_coords_in_a_country_list()
@@ -628,8 +628,8 @@ class ClimateTwinFinder:
                         found_count += 1
 
                         # Only two finds allowed per country
-                        if found_count > self.preset_matches_per_country_allowed:
-                            found_count = 0 # Reset before breaking
+                        if found_count > 1:
+                            self.preset_matches_per_country_allowed = 0 # Reset before breaking
                             break
  
 
