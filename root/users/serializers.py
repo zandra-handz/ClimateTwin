@@ -249,7 +249,7 @@ class FriendshipSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class FriendProfileSerializer(serializers.ModelSerializer):
-    friend_username = serializers.CharField(source='friend.username', read_only=True)
+    username = serializers.CharField(source='friend.username', read_only=True)
 
 
     class Meta(object):
