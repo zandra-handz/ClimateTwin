@@ -8,18 +8,20 @@ from django.conf import settings
 from django.contrib.auth import update_session_auth_hash
 from django.db import transaction
 from django.db.models import Q
+from django_filters.rest_framework import DjangoFilterBackend # for user search
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
+ 
 
 from djoser.views import UserViewSet
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import generics, throttling, viewsets
-from rest_framework import status
+from rest_framework import generics, filters, status, throttling, viewsets # filters is for user search
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication 
 from rest_framework.decorators import api_view, authentication_classes, permission_classes, throttle_classes
 from rest_framework.exceptions import PermissionDenied, MethodNotAllowed
+from rest_framework.pagination import PageNumberPagination # for user search
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
@@ -32,6 +34,11 @@ from django.views.decorators.csrf import csrf_exempt
 import logging
 
 logger = logging.getLogger(__name__)
+
+class UserSearchPagination(PageNumberPagination):
+    page_size = 10  
+    page_size_query_param = 'page_size'
+    max_page_size = 100
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -46,6 +53,17 @@ class ListUsersView(generics.ListAPIView):
     queryset = models.BadRainbowzUser.objects.all()
     serializer_class = serializers.BadRainbowzUserSerializer
     permission_classes = [IsAuthenticated] 
+
+
+# /api/users/?search=johndoe
+class SearchUsersView(generics.ListAPIView):
+    pagination_class = UserSearchPagination
+    authentication_classes = [TokenAuthentication, JWTAuthentication] 
+    queryset = models.BadRainbowzUser.objects.all()
+    serializer_class = serializers.BadRainbowzUserSerializer
+    permission_classes = [IsAuthenticated] 
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    search_fields = ['username', 'email'] 
 
     
 

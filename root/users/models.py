@@ -32,6 +32,8 @@ class BadRainbowzUser(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
 
     
+
+    
     password_reset_code = models.CharField(max_length=6, blank=True, null=True)
     code_expires_at = models.DateTimeField(blank=True, null=True)
 
