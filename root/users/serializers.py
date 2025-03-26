@@ -284,21 +284,11 @@ class FriendshipSerializer(serializers.ModelSerializer):
 
 class FriendProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='friend.username', read_only=True)
-    friend_profile = serializers.SerializerMethodField()
+    friend_profile = UserProfileSerializer(source='friend.profile', read_only=True) 
 
     class Meta:
         model = models.FriendProfile
         fields = "__all__"
-
-    def get_friend_profile(self, obj):
-        """Returns the friend's profile data"""
-        friend_profile = obj.friend.profile  
-        return {
-            "first_name": friend_profile.first_name,
-            "last_name": friend_profile.last_name,
-            "bio": friend_profile.bio,
-            "gender": friend_profile.gender, 
-        }
 
 
 
