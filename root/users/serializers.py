@@ -44,11 +44,36 @@ class TreasureSerializer(serializers.ModelSerializer):
 
 
 
-class UserProfileSerializer(serializers.ModelSerializer):
+# class UserProfileSerializer(serializers.ModelSerializer):
 
-    class Meta(object):
+#     class Meta(object):
+#         model = models.UserProfile
+#         fields = "__all__"
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    most_recent_visit = serializers.SerializerMethodField()
+    total_visits = serializers.SerializerMethodField()
+
+    class Meta:
         model = models.UserProfile
-        fields = "__all__"
+        fields = "__all__"  
+        extra_fields = ["most_recent_visit", "total_visits"]  
+
+    def get_most_recent_visit(self, obj):
+        """Returns the most recent visit for the user"""
+        recent_visit = obj.user.visits.first()  
+        if recent_visit:
+            return {
+                "location_name": recent_visit.location_name,
+                "latitude": recent_visit.location_latitude,
+                "longitude": recent_visit.location_longitude,
+                "visited_on": recent_visit.visit_created_on
+            }
+        return None  
+
+    def get_total_visits(self, obj): 
+        return obj.user.visits.count()
 
 
 class UserSettingsSerializer(serializers.ModelSerializer):
@@ -248,13 +273,32 @@ class FriendshipSerializer(serializers.ModelSerializer):
         model = models.Friendship
         fields = "__all__"
 
+# class FriendProfileSerializer(serializers.ModelSerializer):
+#     username = serializers.CharField(source='friend.username', read_only=True)
+
+
+#     class Meta(object):
+#         model = models.FriendProfile
+#         fields = "__all__"
+
+
 class FriendProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='friend.username', read_only=True)
+    friend_profile = serializers.SerializerMethodField()
 
-
-    class Meta(object):
+    class Meta:
         model = models.FriendProfile
         fields = "__all__"
+
+    def get_friend_profile(self, obj):
+        """Returns the friend's profile data"""
+        friend_profile = obj.friend.profile  
+        return {
+            "first_name": friend_profile.first_name,
+            "last_name": friend_profile.last_name,
+            "bio": friend_profile.bio,
+            "gender": friend_profile.gender, 
+        }
 
 
 

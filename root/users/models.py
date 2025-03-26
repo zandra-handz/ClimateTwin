@@ -30,9 +30,6 @@ class BadRainbowzUser(AbstractUser):
     # Username and email must be unique.
     username = models.CharField(_('username'), unique=True, max_length=150)
     email = models.EmailField(_('email address'), unique=True)
-
-    
-
     
     password_reset_code = models.CharField(max_length=6, blank=True, null=True)
     code_expires_at = models.DateTimeField(blank=True, null=True)
@@ -43,6 +40,10 @@ class BadRainbowzUser(AbstractUser):
     is_inactive_user = models.BooleanField(default=False)
     is_banned_user = models.BooleanField(default=False)
     is_test_user = models.BooleanField(default=False)
+
+    is_searchable = models.BooleanField(default=True)
+    is_searchable_by_email = models.BooleanField(default=True)
+
     created_on = models.DateTimeField(default=timezone.now)
     last_updated_at = models.DateTimeField(auto_now=True)
 
@@ -130,6 +131,8 @@ class BadRainbowzUser(AbstractUser):
 
 class UserSettings(models.Model):
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, related_name='settings')
+    # not activated yet
+    interests = models.JSONField(blank=True, null=True)
     receive_notifications = models.BooleanField(default=False)
     language_preference = models.CharField(max_length=10, choices=[('en', 'English'), ('es', 'Spanish')], blank=True)
 
@@ -155,6 +158,7 @@ class UserProfile(models.Model):
     first_name = models.CharField(_('first name'), max_length=30, blank=True, default='')
     last_name = models.CharField(_('last name'), max_length=30, blank=True, default='')
     date_of_birth = models.DateField(_('date of birth'), blank=True, null=True)
+    bio = models.CharField(max_length=3000, null=True, blank=True) 
     #profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     gender = models.CharField(_('gender'), max_length=10, choices=[('NB', 'Non-Binary'), ('M', 'Male'), ('F', 'Female'), ('O', 'Other'), ('No answer', 'Uninterested in answering this')], blank=True, default='')
 
