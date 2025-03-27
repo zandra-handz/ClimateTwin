@@ -16,7 +16,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 #                                           celery -A root worker -l info -E
 
 # need to run this on Windows: celery -A root.celery worker --loglevel=debug --pool=solo
-# start memurai first though and ping it: memurai-cli -h localhost -p 6379 ping
 
 
 #for Digital Ocean use --> celery -A root worker --pool=gevent 
@@ -40,26 +39,27 @@ SECRET_KEY = 'qphf__s=$5d7*w^rd-hl!^mw^8bu97x_w_r@go0lp5yg4)-!(!'
 
 AUTH_USER_MODEL = 'users.BadRainbowzUser'
 
-# Digital Ocean
-# GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY') 
-# OPEN_MAP_API_KEY = os.getenv('OPEN_MAP_API_KEY')
-
-
-GOOGLE_MAPS_API_KEY = 'AIzaSyA7TtagaCz61SLn1M1HhNKabA_qj93V7QM'
-OPEN_MAP_API_KEY = '54a19c0e6cd35fb9f2d1ec6a87f22dba'
-
-#Local
-# KEYS IN LOCAL FILES
+# Convert to Env Variable
+GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY') 
+OPEN_MAP_API_KEY = os.getenv('OPEN_MAP_API_KEY')
  
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')  
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')   
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')  
+AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')   
+ 
+AWS_S3_ENDPOINT_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_REGION_NAME}.digitaloceanspaces.com'
+
 
 # local
-#CELERY_WORKER_POOL = 'solo'
+# CELERY_WORKER_POOL = 'solo'
+
+
 CELERY_WORKER_POOL = 'threads'
 
 
 CELERY_ACKS_LATE = True
 CELERYD_PREFETCH_MULTIPLIER = 1
-
 
 
 # Quick-start development settings - unsuitable for production
@@ -80,15 +80,15 @@ ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split('
 
 
 # True for local
-DEVELOPMENT_MODE = True
+DEVELOPMENT_MODE = False
 
 # uncomment for local
-if DEVELOPMENT_MODE == True:
-   DEBUG = True
-   ALLOWED_HOSTS = []
+# if DEVELOPMENT_MODE == True:
+#    DEBUG = True
+#    ALLOWED_HOSTS = []
 
 # comment out for local
-# DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
  
 
@@ -108,6 +108,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_swagger',
+    'storages', # added when I added storages and AWS/DOSpaces stuff
+    # also ran pip install boto3 django-storages
     'corsheaders',
     #must be placed after rest_framework
     #'allauth',
@@ -146,34 +148,36 @@ REDIS_URL = os.environ.get('REDIS_URL')
 
 
 # Local
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0' 
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+# CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0' 
+# CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
   
 # local
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [('127.0.0.1', 6379)],
-        },
-    },
-}
-
- 
-
-# Digital Ocean
-# REDIS_URL_WITH_CERT_OPTION = f'{REDIS_URL}/0?ssl_cert_reqs=CERT_REQUIRED'   
-# CELERY_BROKER_URL = REDIS_URL_WITH_CERT_OPTION
-# CELERY_RESULT_BACKEND = REDIS_URL_WITH_CERT_OPTION
-
 # CHANNEL_LAYERS = {
 #     'default': {
 #         'BACKEND': 'channels_redis.core.RedisChannelLayer',
 #         'CONFIG': {
-#             'hosts': [os.environ.get('REDIS_URL')],
+#             'hosts': [('127.0.0.1', 6379)],
 #         },
 #     },
 # }
+
+ 
+
+# Digital Ocean
+REDIS_URL_WITH_CERT_OPTION = f'{REDIS_URL}/0?ssl_cert_reqs=CERT_REQUIRED'   
+CELERY_BROKER_URL = REDIS_URL_WITH_CERT_OPTION
+CELERY_RESULT_BACKEND = REDIS_URL_WITH_CERT_OPTION
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [os.environ.get('REDIS_URL')],
+            "capacity": 10000,  # added to debug connection errors
+            "expiry": 10, # added to debug connection errors     
+        },
+    },
+}
  
  
 
@@ -406,9 +410,34 @@ AUTH_PASSWORD_VALIDATORS = [
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
+STORAGES = {
+    # Media files storage on DigitalOcean Spaces
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "OPTIONS": {
+            "access_key": AWS_ACCESS_KEY_ID,
+            "secret_key": AWS_SECRET_ACCESS_KEY,
+            "bucket_name": AWS_STORAGE_BUCKET_NAME,
+            "region_name": AWS_S3_REGION_NAME,
+            "endpoint_url": AWS_S3_ENDPOINT_URL,  
+            "file_overwrite": False,
+            "default_acl": 'public-read',  
+            "verify": True,
+        },
+    },
+    # Static files configuration (local)
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
 STATIC_URL = '/static/'
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+
+MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.digitaloceanspaces.com/'
+
  
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -440,6 +469,7 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     #'AUTH_HEADER_TYPES': ('JWT',),
+    #'ACCESS_TOKEN_LIFETIME': timedelta(seconds=30), #for testing
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=3),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1)
 }
@@ -470,5 +500,4 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
-
 
