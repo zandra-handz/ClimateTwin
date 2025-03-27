@@ -289,7 +289,12 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_s
 
 
 @shared_task
-def process_expiration_task(user_id, last_accessed):
+def process_expiration_task(user_id, last_accessed=None):
+
+    if last_accessed is None:
+        logger.warning(f"User {user_id} has no last_accessed timestamp, exiting process_expiration_task.")
+        return
+
     try: 
         current_location = CurrentLocation.objects.get(user_id=user_id)
  
