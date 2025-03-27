@@ -258,10 +258,10 @@ class UserProfileView(generics.ListCreateAPIView):
         return models.UserProfile.objects.filter(user=self.request.user)
     
     
-class EditUserProfileView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
+class UpdateUserProfileView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    serializer_class = serializers.UserProfileSerializer
+    serializer_class = serializers.UpdateUserProfileSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
 

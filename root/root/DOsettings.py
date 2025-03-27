@@ -43,8 +43,24 @@ AUTH_USER_MODEL = 'users.BadRainbowzUser'
 GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY') 
 OPEN_MAP_API_KEY = os.getenv('OPEN_MAP_API_KEY')
 
+# Just set up for DO right now
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')  
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')   
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')  
+AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')   
+ 
+AWS_S3_ENDPOINT_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_REGION_NAME}.digitaloceanspaces.com'
+
+
 # local
 # CELERY_WORKER_POOL = 'solo'
+
+
+CELERY_WORKER_POOL = 'threads'
+
+
+CELERY_ACKS_LATE = True
+CELERYD_PREFETCH_MULTIPLIER = 1
 
 
 # Quick-start development settings - unsuitable for production
@@ -93,6 +109,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_swagger',
+    'storages', # added when I added storages and AWS/DOSpaces stuff
+    # also ran pip install boto3 django-storages
     'corsheaders',
     #must be placed after rest_framework
     #'allauth',
@@ -156,6 +174,8 @@ CHANNEL_LAYERS = {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
             'hosts': [os.environ.get('REDIS_URL')],
+            "capacity": 10000,  # added to debug connection errors
+            "expiry": 10, # added to debug connection errors     
         },
     },
 }
@@ -391,9 +411,34 @@ AUTH_PASSWORD_VALIDATORS = [
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
+STORAGES = {
+    # Media files storage on DigitalOcean Spaces
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "OPTIONS": {
+            "access_key": AWS_ACCESS_KEY_ID,
+            "secret_key": AWS_SECRET_ACCESS_KEY,
+            "bucket_name": AWS_STORAGE_BUCKET_NAME,
+            "region_name": AWS_S3_REGION_NAME,
+            "endpoint_url": AWS_S3_ENDPOINT_URL,  
+            "file_overwrite": False,
+            "default_acl": 'public-read',  
+            "verify": True,
+        },
+    },
+    # Static files configuration (local)
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
 STATIC_URL = '/static/'
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+
+MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.digitaloceanspaces.com/'
+
  
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -425,6 +470,7 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     #'AUTH_HEADER_TYPES': ('JWT',),
+    #'ACCESS_TOKEN_LIFETIME': timedelta(seconds=30), #for testing
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=3),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1)
 }

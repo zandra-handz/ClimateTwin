@@ -55,10 +55,22 @@ class UserProfileSerializer(serializers.ModelSerializer):
     most_recent_visit = serializers.SerializerMethodField()
     total_visits = serializers.SerializerMethodField()
 
+    # Override the avatar image field to return HTTPS URLs (taken from HellofriendFS code)
+    avatar = serializers.SerializerMethodField()
+
     class Meta:
         model = models.UserProfile
         fields = "__all__"  
         extra_fields = ["most_recent_visit", "total_visits"]  
+
+    def get_avatar(self, obj): 
+        avatar_url = obj.avatar.url
+        
+        # Check if the URL starts with "http://", if so, replace it with "https://"
+        if avatar_url.startswith('http://'):
+            avatar_url = avatar_url.replace('http://', 'https://')
+        
+        return avatar_url
 
     def get_most_recent_visit(self, obj):
         """Returns the most recent visit for the user"""
@@ -74,6 +86,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     def get_total_visits(self, obj): 
         return obj.user.visits.count()
+    
+class UpdateUserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.UserProfile
+        fields = '__all__'
 
 
 class UserSettingsSerializer(serializers.ModelSerializer):
