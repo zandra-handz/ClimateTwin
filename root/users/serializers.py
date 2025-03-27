@@ -69,8 +69,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
             return None
         
         try:
-            avatar_url = obj.avatar.url  # Attempt to access the URL
-        except ValueError:  # Handle cases where the avatar file does not exist
+            avatar_url = obj.avatar.url   
+        except ValueError:  
             return None
         
         # Ensure the URL uses HTTPS
