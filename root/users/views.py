@@ -274,9 +274,9 @@ class UpdateUserProfileView(generics.RetrieveUpdateAPIView, generics.DestroyAPIV
         return super().put(request, *args, **kwargs)
 
     @swagger_auto_schema(operation_id='partialUpdateUserProfile', operation_description="Updates user profile via PATCH.", auto_schema=None)
-    def patch(self, request, *args, **kwargs):
-        raise MethodNotAllowed('PATCH')
-
+    def patch(self, request, *args, **kwargs): 
+        return super().partial_update(request, *args, **kwargs)  
+    
     @swagger_auto_schema(operation_id='deleteUserProfile', operation_description="Deletes user profile.", auto_schema=None)
     def delete(self, request, *args, **kwargs):
         raise MethodNotAllowed('DELETE')
