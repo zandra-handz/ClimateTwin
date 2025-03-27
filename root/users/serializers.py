@@ -61,16 +61,24 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserProfile
         fields = "__all__"  
-        extra_fields = ["most_recent_visit", "total_visits"]  
+        #extra_fields = ["most_recent_visit", "total_visits", "avatar"]  
 
-    def get_avatar(self, obj): 
-        avatar_url = obj.avatar.url
+    def get_avatar(self, obj):
+
+        if not obj.avatar:  
+            return None
         
-        # Check if the URL starts with "http://", if so, replace it with "https://"
+        try:
+            avatar_url = obj.avatar.url  # Attempt to access the URL
+        except ValueError:  # Handle cases where the avatar file does not exist
+            return None
+        
+        # Ensure the URL uses HTTPS
         if avatar_url.startswith('http://'):
             avatar_url = avatar_url.replace('http://', 'https://')
-        
+
         return avatar_url
+
 
     def get_most_recent_visit(self, obj):
         """Returns the most recent visit for the user"""
