@@ -42,8 +42,7 @@ AUTH_USER_MODEL = 'users.BadRainbowzUser'
 # Convert to Env Variable
 GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY') 
 OPEN_MAP_API_KEY = os.getenv('OPEN_MAP_API_KEY')
-
-# Just set up for DO right now
+ 
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')  
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')   
 AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')  
