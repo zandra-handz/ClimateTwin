@@ -12,7 +12,7 @@ urlpatterns = [
     path('verify-reset-code/', views.PasswordResetCodeValidationView.as_view(), name='verify-reset-code'),
     path('reset-password/', views.PasswordResetConfirmView.as_view(), name='reset-password'),
     path('change-password/', views.ChangePasswordView.as_view(), name='change-password'),
-  
+    path('delete-account/', views.DeleteUserView.as_view(), name='delete-account'),
     # Old, not using?
     path('activate/<uid>/<token>', views.ActivateUser.as_view({'get': 'activation'}), name='activation'),
    

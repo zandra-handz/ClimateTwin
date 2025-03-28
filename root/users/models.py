@@ -222,6 +222,12 @@ class UserVisit(models.Model):
 
 class Treasure(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='treasures')
+    finder = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.SET_NULL,  # Set finder to NULL instead of deleting Treasure
+        related_name='found_treasures',
+        null=True, blank=True
+    )
     original_user = models.CharField(max_length=50, default='')
     miles_traveled_to_collect = models.FloatField(default=0.0)
     location_name = models.CharField(max_length=255)
@@ -267,6 +273,7 @@ class Treasure(models.Model):
         
         return cls.objects.create(
             user=user,
+            finder=user,
             original_user=user,
             location_name=location_name,
             miles_traveled_to_collect=miles_traveled_to_collect,
