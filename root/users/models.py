@@ -160,7 +160,7 @@ class UserProfile(models.Model):
     date_of_birth = models.DateField(_('date of birth'), blank=True, null=True)
     bio = models.CharField(max_length=3000, null=True, blank=True) 
     avatar = models.ImageField(upload_to='images/', blank=True, null=True)
-    gender = models.CharField(_('gender'), max_length=10, choices=[('NB', 'Non-Binary'), ('M', 'Male'), ('F', 'Female'), ('O', 'Other'), ('No answer', 'Uninterested in answering this')], blank=True, default='')
+    #gender = models.CharField(_('gender'), max_length=10, choices=[('NB', 'Non-Binary'), ('M', 'Male'), ('F', 'Female'), ('O', 'Other'), ('No answer', 'Uninterested in answering this')], blank=True, default='')
 
     def __str__(self):
         return f"Profile for {self.user.username}"
