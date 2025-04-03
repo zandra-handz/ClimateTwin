@@ -1,3 +1,5 @@
+from . import models
+
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -9,6 +11,8 @@ from datetime import datetime
 from django.apps import apps
 from django.core.cache import cache
 import asyncio
+
+
  
 
 import json
@@ -16,6 +20,8 @@ import logging
 
 from urllib.parse import parse_qs
 
+
+EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send"
 
 
 
@@ -37,6 +43,7 @@ import requests
 
 def get_user_model():
     return apps.get_model('users', 'BadRainbowzUser')
+
 
 class ClimateTwinConsumer(WebsocketConsumer):
     def connect(self):
@@ -166,6 +173,9 @@ class LocationUpdateConsumer(WebsocketConsumer):
             self.group_name,
             self.channel_name
         )
+
+        self.send_push_notification(self.user.id, "Push notification", "Test notif!")
+
 
         self.accept()
         logger.info("FOCUS HEEEEEERE Location Update WebSocket connection established")
@@ -316,6 +326,48 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 self.send_message_from_cache()
                 self.send_notif_from_cache()
                 self.send_current_location_from_cache_or_endpoint()
+
+
+    def send_push_notification(self, user_id, title, message):
+        """
+        Function to send a push notification to the user via Expo.
+        """
+        try:
+            # Get the user's Expo push token from the UserSettings model
+            Settings = self.get_user_settings_model() 
+            settings = Settings.objects.get(id=user_id)
+            expo_push_token = settings.expo_push_token
+
+            if not expo_push_token:
+                logger.error(f"No Expo push token found for user {user_id}")
+                return
+            
+        except Exception as e:
+            logger.error(f"Error sending push notification to user {user_id}: {str(e)}")
+
+
+        # Prepare the notification payload
+        data = {
+            "to": expo_push_token,
+            "title": title,
+            "body": message,
+            "priority": "normal",  # Notification priority ("high" for urgent)
+        }
+
+        # Set headers for the request
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
+
+        # Send the request to Expo Push Notification API
+        response = requests.post(EXPO_PUSH_URL, json=data, headers=headers)
+
+        # Check the response from Expo
+        if response.status_code == 200:
+            logger.info(f"Notification sent successfully to user {user_id}")
+        else:
+            logger.error(f"Failed to send notification: {response.status_code} - {response.text}")
                  
                 
                     
@@ -612,6 +664,11 @@ class LocationUpdateConsumer(WebsocketConsumer):
         Returns the custom user model.
         """
         return apps.get_model('users', 'BadRainbowzUser')
+    
+    @staticmethod
+    def get_user_settings_model():
+        return apps.get_model('users', 'UserSettings')
+
 
 
 
