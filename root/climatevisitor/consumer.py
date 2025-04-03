@@ -588,7 +588,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
             location_name = event.get('name', 'Error') # repeat of above
 
-            self.send_push_notification(self.user.id, "ClimateTwin location update", f"You are in {location_name}")
+            self.send_push_notification(self.user.id, "ClimateTwin location update", f"{location_name}")
 
         cache_key = f"current_location_{self.user.id}"
         logger.debug(f"Caching current location for user {self.user.id} with key: {cache_key}")
