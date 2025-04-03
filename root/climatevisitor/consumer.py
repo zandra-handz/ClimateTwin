@@ -572,7 +572,12 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 'longitude': None,
                 'last_accessed': None,
             }))
+
+            self.send_push_notification(self.user.id, "ClimateTwin location update", "You are home")
+
         elif 'latitude' in event and 'longitude' in event:
+
+            
             self.send(text_data=json.dumps({
                 'location_id': event.get('location_id', None), 
                 'name': event.get('name', 'Error'),  
@@ -580,6 +585,10 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 'longitude': event.get('longitude', None), 
                 'last_accessed': event.get('last_accessed', None), 
             }))
+
+            location_name = event.get('name', 'Error') # repeat of above
+
+            self.send_push_notification(self.user.id, "ClimateTwin location update", f"You are in {location_name}")
 
         cache_key = f"current_location_{self.user.id}"
         logger.debug(f"Caching current location for user {self.user.id} with key: {cache_key}")
