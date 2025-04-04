@@ -323,6 +323,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
                 self.send_message_from_cache()
                 self.send_notif_from_cache()
+                self.send_search_progress_from_cache()
                 self.send_current_location_from_cache_or_endpoint()
 
 
@@ -486,7 +487,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
  
 
     def explore_locations_ready(self, event):
-        logger.debug(f"Received update_coordinates event: {event}")
+        logger.debug(f"Received update_location event: {event}")
 
         message_data = event['message']
         cache.set(f"last_message_{self.user.id}", message_data) # no timeout , timeout=86400)
@@ -496,7 +497,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
 
     def no_ruins_found(self, event):
-        logger.debug(f"Received update_coordinates event: {event}")
+        logger.debug(f"Received update_location event: {event}")
 
         message_data = event['message']
         cache.set(f"last_message_{self.user.id}", message_data) # no timeout , timeout=86400)
@@ -504,7 +505,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
 
     def clear_message(self, event):
-        logger.debug(f"Received update_coordinates event: {event}")
+        logger.debug(f"Received update_location event: {event}")
 
         message_data = event['message']
         cache.set(f"last_message_{self.user.id}", message_data) # no timeout, timeout=86400)
@@ -513,7 +514,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
     def returned_home_message(self, event):
 
-        logger.debug(f"Received update_coordinates event: {event}")
+        logger.debug(f"Received update_location event: {event}")
 
         message_data = event['message']
         cache.set(f"last_message_{self.user.id}", message_data) # no timeout , timeout=86400)
@@ -530,7 +531,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
     def friend_notification(self, event):
 
-        logger.debug(f"Received update_coordinates event: {event}")
+        logger.debug(f"Received update_location event: {event}")
 
         notification_data = event['notification']
         recipient_id = event['recipient_id'] 
