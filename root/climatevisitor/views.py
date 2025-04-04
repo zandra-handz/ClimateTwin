@@ -625,11 +625,7 @@ class CreateExploreLocationView(generics.CreateAPIView):
 
                 return Response({'error': 'The explore location must have been created within the last two hours.'}, status=status.HTTP_400_BAD_REQUEST)
         
-            # try:
-            #     send_location_update_to_celery(user_id=user.id, temperature=None, name=explore_location.name, latitude=explore_location.latitude, longitude=explore_location.longitude)
-            # except Exception as e:
-            #     return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+    
             return super().post(request, *args, **kwargs)
 
 
@@ -958,6 +954,7 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
 
             extra_coverage_cache_location_update(
                 user_id=user.id, 
+                state='exploring',
                 location_id=saved_instance.twin_location.id,
                 name=saved_instance.twin_location.name, 
                 latitude=saved_instance.twin_location.latitude,
@@ -965,7 +962,7 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
                 last_accessed=last_accessed_str)
          
             try:
-                send_location_update_to_celery(user_id=user.id, location_id=saved_instance.twin_location.id, # = location_visiting_id
+                send_location_update_to_celery(user_id=user.id, state='exploring', location_id=saved_instance.twin_location.id, # = location_visiting_id
                                                temperature=saved_instance.twin_location.temperature, 
                                                name=saved_instance.twin_location.name, 
                                                latitude=saved_instance.twin_location.latitude,
@@ -991,7 +988,7 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
             last_accessed_str = saved_instance.last_accessed.isoformat()        
             
             try:
-                send_location_update_to_celery(user_id=user.id, location_id=saved_instance.explore_location.id, # = location_visiting_id
+                send_location_update_to_celery(user_id=user.id, state='exploring', location_id=saved_instance.explore_location.id, # = location_visiting_id
                                                 temperature= None, 
                                                 name=saved_instance.explore_location.name, 
                                                 latitude=saved_instance.explore_location.latitude,
@@ -1068,6 +1065,7 @@ class ExpireCurrentLocationView(generics.UpdateAPIView):
 
             try:
                 send_location_update_to_celery(user_id=user.id, 
+                    state='home',
                     location_id=None, # = location_visiting_id
                     temperature= None, 
                     name="You are home", 

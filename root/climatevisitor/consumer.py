@@ -266,6 +266,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
     def create_empty_location_update(self):
         empty_update = {
+            'state': 'home',
             'location_id': None,
             'name': 'You are home', 
             'latitude': None,
@@ -426,6 +427,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
                     # if there isn't already something in the cache
                     # update_location method will then cache it
                     event_data = {
+                        'state': 'exploring',
                         'location_id': current_location_visiting_id,
                         'name': explore_dict.get('name', 'Unknown'),   
                         'latitude': explore_dict.get('latitude', None),  
@@ -445,6 +447,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
                     # if there isn't already something in the cache
                     # update_location method will then cache it
                     event_data = {
+                        'state': 'exploring', # make more accurate later
                         'location_id': current_location_visiting_id,
                         'name': twin_dict.get('name', 'Unknown'),  
                         'latitude': twin_dict.get('latitude', None),  
@@ -567,6 +570,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         if event is None:
             # self.send(text_data=json.dumps({'name': "You are home"}))
             self.send(text_data=json.dumps({
+                'state': 'home',
                 'location_id' : None,
                 'name': "You are home",
                 'latitude': None,
@@ -576,10 +580,12 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
             self.send_push_notification(self.user.id, "ClimateTwin location update", "You are home")
 
-        elif 'latitude' in event and 'longitude' in event:
+    # elif 'latitude' in event and 'longitude' in event:
+        else:
 
             
             self.send(text_data=json.dumps({
+                'state': event.get('state', 'home'),
                 'location_id': event.get('location_id', None), 
                 'name': event.get('name', 'Error'),  
                 'latitude': event.get('latitude', None),  

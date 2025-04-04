@@ -376,6 +376,7 @@ def send_is_pending_location_update_to_celery(user_id):
             group_name,
             {
                 'type': 'update_location',
+                'state': 'searching for twin',
                 'location_id': None,
                 'name': pending_message,
                 'temperature': None,
@@ -401,10 +402,10 @@ def send_is_pending_location_update_to_celery(user_id):
 
 
 @shared_task
-def send_location_update_to_celery(user_id, location_id, name, temperature, latitude, longitude, last_accessed):
+def send_location_update_to_celery(user_id, state, location_id, name, temperature, latitude, longitude, last_accessed):
      
     logger.info(f"Preparing to send location update to Celery with data: "
-                f"user_id: {user_id}, location_id: {location_id}, "
+                f"user_id: {user_id}, state: {state}, location_id: {location_id}, "
                 f"name: {name}, temperature: {temperature}, latitude: {latitude}, "
                 f"longitude: {longitude}, last_accessed: {last_accessed}")
 
@@ -417,6 +418,7 @@ def send_location_update_to_celery(user_id, location_id, name, temperature, lati
             group_name,
             {
                 'type': 'update_location',
+                'state': state,
                 'location_id': location_id,
                 'name': name,
                 'temperature': temperature,
@@ -437,11 +439,12 @@ def send_location_update_to_celery(user_id, location_id, name, temperature, lati
 
 # Not a Celery task but goes with them
 # Cache should fail silently but added try/except anyway
-def extra_coverage_cache_location_update(user_id, location_id, name, latitude, longitude, last_accessed):
+def extra_coverage_cache_location_update(user_id, state, location_id, name, latitude, longitude, last_accessed):
     cache_key = f"current_location_{user_id}"
     logger.debug(f"Extra coverage caching current location for user {user_id} with key: {cache_key}")
 
     location_data = {
+        'state' : state,
         'location_id': location_id,
         'name': name,
         'latitude': latitude,
@@ -471,6 +474,7 @@ def save_current_location_to_backup_cache(user_id):
         logger.info(f"Backing up current location cache for user {user_id}")
         
         backup_data = {
+            'state': current_location_cache.get('state'),
             'location_id': current_location_cache.get('location_id'),
             'name': current_location_cache.get('name', 'Error getting location name'),  
             'latitude': current_location_cache.get('latitude'),
@@ -498,6 +502,7 @@ def restore_location_from_backup_cache_and_send_update(user_id):
         logger.info(f"Restoring location from backup cache for user {user_id}")
         
         location_data = {
+            'state': backup_location_cache.get('state'),
             'location_id': backup_location_cache.get('location_id'),
             'name': backup_location_cache.get('name', 'Error getting location name'),  
             'latitude': backup_location_cache.get('latitude'),
@@ -514,6 +519,7 @@ def restore_location_from_backup_cache_and_send_update(user_id):
                 group_name,
                 {
                     'type': 'update_location',
+                    'state': backup_location_cache.get('state', 'Error getting location state'),
                     'location_id': backup_location_cache.get('location_id'),
                     'name': backup_location_cache.get('name', 'Error getting location name'),  
                     'temperature': None,
@@ -540,24 +546,5 @@ def restore_location_from_backup_cache_and_send_update(user_id):
 
     else:
         logger.warning(f"No valid location data found in backup cache for user {user_id}")
-
-
-def backup_cache_location_update(user_id, location_id, name, latitude, longitude, last_accessed):
-    cache_key = f"previous_location_{user_id}"
-    logger.debug(f"Caching backup location to 'previous_location_[user_id]' for user {user_id} with key: {cache_key}")
-
-    location_data = {
-        'location_id': location_id,
-        'name': name,
-        'latitude': latitude,
-        'longitude': longitude,
-        'last_accessed': last_accessed,
-    }
-
-    try:
-        cache.set(cache_key, location_data)
-        logger.debug(f"Successfully cached location for user {user_id}")
-    except Exception as e:
-        logger.error(f"Failed to cache location for user {user_id}: {str(e)}")
 
 

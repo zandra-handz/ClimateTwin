@@ -147,7 +147,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
                 last_accessed_str = current_location.last_accessed.isoformat()
 
 
-                send_location_update_to_celery(user_id=user_instance.id, 
+                send_location_update_to_celery(user_id=user_instance.id, state='searching for ruins',
                                             location_id=current_location.twin_location.id, # = location_visiting_id
                                             temperature=current_location.twin_location.temperature, 
                                             name=current_location.twin_location.name, 
@@ -316,7 +316,7 @@ def process_expiration_task(user_id, last_accessed=None):
                 print(f"Couldn't send returned home message.")
 
             try:
-                send_location_update_to_celery(user_id=user_id, location_id=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
+                send_location_update_to_celery(user_id=user_id, state='home', location_id=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
             except Exception as e:
                 print(f"Couldn't send returned home message.")
 
@@ -349,7 +349,7 @@ def process_immediate_expiration_task(user_id):
                 print(f"Couldn't send returned home message.")
 
             try:
-                send_location_update_to_celery(user_id=user_id, location_id=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
+                send_location_update_to_celery(user_id=user_id, state='home', location_id=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
             except Exception as e:
                 print(f"Couldn't send returned home message.") 
         else:
