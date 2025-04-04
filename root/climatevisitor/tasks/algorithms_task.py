@@ -139,7 +139,9 @@ def run_climate_twin_algorithms_task(user_id, user_address):
 
             current_location = CurrentLocation.update_or_create_location(user=user_instance, twin_location=climate_twin_location_instance)
             
-            if not current_location:
+            if not current_location: # If not current location, won't get ruins 
+                # This and the try block in general are here to allow fallback to previous explore location
+                # in case of a failure in the algo here, so that user can still keep exploring where they were
                 restore_location_from_backup_cache_and_send_update(user_id)
 
             else:
@@ -156,62 +158,72 @@ def run_climate_twin_algorithms_task(user_id, user_address):
                                             last_accessed=last_accessed_str)
 
             
-             # Schedule the expiration task after updating or creating the current location
-            schedule_expiration_task(user_id=user_instance.id)# No async_to_sync wrapper needed
+                # Schedule the expiration task after updating or creating the current location
+                schedule_expiration_task(user_id=user_instance.id)# No async_to_sync wrapper needed
+    
+                send_search_for_ruins_initiated(user_id=user_instance.id)
 
+                osm_api = OpenMapAPI()
+                osm_results = osm_api.find_ancient_ruins(climate_twin_weather_profile.latitude, climate_twin_weather_profile.longitude, radius=100000, num_results=15)
+                nearby_ruins = osm_api.format_ruins_with_wind_compass_for_post(osm_results, climate_twin_weather_profile.wind_direction)
+                if not nearby_ruins:
+                    send_no_ruins_found(user_id=user_instance.id)
+
+                if isinstance(nearby_ruins, dict): # added 4/3/2025
+                    for name, ruin in nearby_ruins.items():
+                        formatted_ruin = {
+                            "name": name,
+                            "user": user_instance.id,
+                            "direction_degree": ruin['direction_deg'],
+                            "direction": ruin.get('direction'),
+                            "miles_away": round(ruin['miles_away']),
+                            "location_id": ruin['id'],
+                            "latitude": ruin['latitude'],
+                            "longitude": ruin['longitude'],
+                            "tags": ruin["tags"],
+                            "wind_compass": ruin['wind_compass'],
+                            "wind_agreement_score": (round(ruin['wind_agreement_score'])),
+                            "wind_harmony": ruin['wind_harmony'],
+                            "street_view_image": ruin.get("street_view_image", ''),
+                            "origin_location": climate_twin_location_instance.id,
+                        }
+
+                        serializer = serializers.ClimateTwinDiscoveryLocationCreateSerializer(data=formatted_ruin)
+                        if serializer.is_valid():
+                            discovery_location_instance = serializer.save(
+                                user=user_instance  
+                            )
+                            print("Success: Discovery Location saved.")
+                        else:
+                            # Handle invalid data
+                            print("Error: Discovery Location could not be saved.")
+            
+        
+                
+                try: 
+                    send_explore_locations_ready(user_id=user_instance.id) # eventually get rid of this and just use location update below
+
+                    send_location_update_to_celery(user_id=user_instance.id, state='exploring',
+                            location_id=current_location.twin_location.id, # = location_visiting_id
+                            temperature=current_location.twin_location.temperature, 
+                            name=current_location.twin_location.name, 
+                            latitude=current_location.twin_location.latitude, 
+                            longitude=current_location.twin_location.longitude,
+                            last_accessed=last_accessed_str)
+
+
+                                    
+                except Exception as e:
+                    logger.error(f"Error occurred while sending explore locations: {str(e)}")
+                    # Optionally, you can return an error message or just pass to continue
+                    pass
+
+                send_clear_message(user_id=user_instance.id)
+                return "Success: Search completed!"
+        
         except Exception as e:
             print("An error occurred:", e) 
-
- 
-        send_search_for_ruins_initiated(user_id=user_instance.id)
-
-        osm_api = OpenMapAPI()
-        osm_results = osm_api.find_ancient_ruins(climate_twin_weather_profile.latitude, climate_twin_weather_profile.longitude, radius=100000, num_results=15)
-        nearby_ruins = osm_api.format_ruins_with_wind_compass_for_post(osm_results, climate_twin_weather_profile.wind_direction)
-        if not nearby_ruins:
-            send_no_ruins_found(user_id=user_instance.id)
-
-        for name, ruin in nearby_ruins.items():
-            formatted_ruin = {
-                "name": name,
-                "user": user_instance.id,
-                "direction_degree": ruin['direction_deg'],
-                "direction": ruin.get('direction'),
-                "miles_away": round(ruin['miles_away']),
-                "location_id": ruin['id'],
-                "latitude": ruin['latitude'],
-                "longitude": ruin['longitude'],
-                "tags": ruin["tags"],
-                "wind_compass": ruin['wind_compass'],
-                "wind_agreement_score": (round(ruin['wind_agreement_score'])),
-                "wind_harmony": ruin['wind_harmony'],
-                "street_view_image": ruin.get("street_view_image", ''),
-                "origin_location": climate_twin_location_instance.id,
-            }
-
-            serializer = serializers.ClimateTwinDiscoveryLocationCreateSerializer(data=formatted_ruin)
-            if serializer.is_valid():
-                discovery_location_instance = serializer.save(
-                    user=user_instance  
-                )
-                print("Success: Discovery Location saved.")
-            else:
-                # Handle invalid data
-                print("Error: Discovery Location could not be saved.")
- 
- 
-        
-        try: 
-            send_explore_locations_ready(user_id=user_instance.id)
-                            
-        except Exception as e:
-            logger.error(f"Error occurred while sending explore locations: {str(e)}")
-            # Optionally, you can return an error message or just pass to continue
-            pass
-
-        send_clear_message(user_id=user_instance.id)
-        return "Success: Search completed!"
-                
+                    
  
  
 
