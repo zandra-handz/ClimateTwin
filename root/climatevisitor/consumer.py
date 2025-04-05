@@ -153,7 +153,7 @@ class ClimateTwinConsumer(WebsocketConsumer):
 
 class LocationUpdateConsumer(WebsocketConsumer):
 
-    last_message = None 
+    # last_message = None 
     last_notification = None
     current_location_cache = None
 
@@ -178,14 +178,14 @@ class LocationUpdateConsumer(WebsocketConsumer):
         self.accept()
         logger.info("FOCUS HEEEEEERE Location Update WebSocket connection established")
 
-        self.send_message_from_cache()
+        # self.send_message_from_cache()
         self.send_notif_from_cache()
         self.send_search_progress_from_cache()
         self.send_current_location_from_cache_or_endpoint()
 
 
 # if there is a location ID in cache, sends this, otherwise checks endpoints, if nothing in endpoints,
-# sends 'You are home' message
+ 
     def send_current_location_from_cache_or_endpoint(self):
         
         current_location_cache = cache.get(f"current_location_{self.user.id}")
@@ -197,6 +197,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             logger.info(f"location id and last accessed time found in current location cache for {self.user.id}")
                 
             self.send(text_data=json.dumps({
+                'state': current_location_cache.get('state', None),
                 'location_id': current_location_cache.get('location_id'),
                 'name': current_location_cache.get('name', 'Error getting location name'),  
                 'latitude': current_location_cache.get('latitude', None),
@@ -210,6 +211,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
             self.send(text_data=json.dumps({
                 'location_id': None,
+                'state': current_location_cache.get('state', None),
                 'name': current_location_cache.get('name', 'Error getting location name'),  
                 'latitude': None,
                 'longitude': None,
@@ -236,13 +238,13 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 self.update_location(self.create_empty_location_update())
 
 
-    def send_message_from_cache(self):
-        last_message = cache.get(f"last_message_{self.user.id}")
-        if last_message:
-            logger.info(f"Sending last_message to user {self.user.id}: {last_message}")
-            self.send(text_data=json.dumps({'message': last_message}))
-        else:
-            logger.info("No message in cache for this user")
+    # def send_message_from_cache(self):
+    #     last_message = cache.get(f"last_message_{self.user.id}")
+    #     if last_message:
+    #         logger.info(f"Sending last_message to user {self.user.id}: {last_message}")
+    #         self.send(text_data=json.dumps({'message': last_message}))
+    #     else:
+    #         logger.info("No message in cache for this user")
 
 
     def send_notif_from_cache(self):
@@ -276,38 +278,20 @@ class LocationUpdateConsumer(WebsocketConsumer):
         return empty_update
 
 
-    # def send_pending_location_update(self):
+ 
 
+
+    # def send_message_event(self, event):
+    #     """Handles sending a 'message' event and stores it in cache."""
     #     if not self.user:
-    #         logger.error("No user found when trying to send location update event.")
+    #         logger.error("No user found when trying to send message event.")
     #         return
         
-    #     pending_update = {
-    #         'location_id': None,
-    #         'name': 'You are searching', 
-    #         'latitude': None,
-    #         'longitude': None,
-    #         'last_accessed': None,
-    #     }
-
-    #     cache.set(f"current_location_{self.user.id}", pending_update)
-    #     self.send(text_data=json.dumps({'locat'}))
-    #     return pending_update
-
-
-
-
-    def send_message_event(self, event):
-        """Handles sending a 'message' event and stores it in cache."""
-        if not self.user:
-            logger.error("No user found when trying to send message event.")
-            return
-        
-        message_data = event.get("message")
-        if message_data:
-            logger.debug(f"Saving last_message for user {self.user.id}: {message_data}")
-            cache.set(f"last_message_{self.user.id}", message_data) # no timeout , timeout=86400)  # Store for 1 day
-            self.send(text_data=json.dumps({'message': message_data}))
+    #     message_data = event.get("message")
+    #     if message_data:
+    #         logger.debug(f"Saving last_message for user {self.user.id}: {message_data}")
+    #         cache.set(f"last_message_{self.user.id}", message_data) # no timeout , timeout=86400)  # Store for 1 day
+    #         self.send(text_data=json.dumps({'message': message_data}))
 
 
     def receive(self, text_data=None, bytes_data=None):
@@ -322,7 +306,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             # Handle incoming messages (optional, modify as needed)
             if message.get("action") == "refresh":
 
-                self.send_message_from_cache()
+               # self.send_message_from_cache()
                 self.send_notif_from_cache()
                 self.send_search_progress_from_cache()
                 self.send_current_location_from_cache_or_endpoint()
@@ -468,60 +452,56 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
         self.send(text_data=json.dumps({'search_progress': search_progress_update}))
 
-    def search_for_ruins(self, event): 
-        #logger.debug(f"Received search_for_ruins event: {event}") # log incoming data
-        message_data = event['message']
-        #logger.debug(f"Message data extracted: {message_data}")
 
-        cache_key = f"last_message_{self.user.id}" 
-        cache.set(cache_key, message_data) # no timeout , timeout=86400)
-        logger.debug(f"search_for_ruins message cached successfully  for user {self.user.id} with key: {cache_key} and timeout 86400")
+    # REMOVE, BECAUSE I ADDED THE MESSAGES TO THE LOCATION UPDATES INSTEAD
+    # def search_for_ruins(self, event): 
+    #     #logger.debug(f"Received search_for_ruins event: {event}") # log incoming data
+    #     message_data = event['message']
+    #     #logger.debug(f"Message data extracted: {message_data}")
+
+    #     cache_key = f"last_message_{self.user.id}" 
+    #     cache.set(cache_key, message_data) # no timeout , timeout=86400)
+    #     logger.debug(f"search_for_ruins message cached successfully  for user {self.user.id} with key: {cache_key} and timeout 86400")
  
-        self.send(text_data=json.dumps({'message': message_data}))
-        logger.debug(f"Sent search_for_ruins message to client: {message_data}")
+    #     self.send(text_data=json.dumps({'message': message_data}))
+    #     logger.debug(f"Sent search_for_ruins message to client: {message_data}")
 
-      
-        # Optionally, check and log the cache contents to verify it was stored correctly
-        # cached_message = cache.get(cache_key)
-        # if cached_message:
-        #     logger.debug(f"Cache contains the expected message for key {cache_key}: {cached_message}")
-        # else:
-        #     logger.debug(f"Cache does not contain a message for key {cache_key}")
+       
  
 
-    def explore_locations_ready(self, event):
-        logger.debug(f"Received update_location event: {event}")
+    # def explore_locations_ready(self, event):
+    #     logger.debug(f"Received update_location event: {event}")
 
-        message_data = event['message']
-        cache.set(f"last_message_{self.user.id}", message_data) # no timeout , timeout=86400)
-        self.send(text_data=json.dumps({'message': message_data}))
-
-
+    #     message_data = event['message']
+    #     cache.set(f"last_message_{self.user.id}", message_data) # no timeout , timeout=86400)
+    #     self.send(text_data=json.dumps({'message': message_data}))
 
 
-    def no_ruins_found(self, event):
-        logger.debug(f"Received update_location event: {event}")
-
-        message_data = event['message']
-        cache.set(f"last_message_{self.user.id}", message_data) # no timeout , timeout=86400)
-        self.send(text_data=json.dumps({'message': message_data}))
 
 
-    def clear_message(self, event):
-        logger.debug(f"Received update_location event: {event}")
+    # def no_ruins_found(self, event):
+    #     logger.debug(f"Received update_location event: {event}")
 
-        message_data = event['message']
-        cache.set(f"last_message_{self.user.id}", message_data) # no timeout, timeout=86400)
-        self.send(text_data=json.dumps({'message': message_data}))
+    #     message_data = event['message']
+    #     cache.set(f"last_message_{self.user.id}", message_data) # no timeout , timeout=86400)
+    #     self.send(text_data=json.dumps({'message': message_data}))
 
 
-    def returned_home_message(self, event):
+    # def clear_message(self, event):
+    #     logger.debug(f"Received update_location event: {event}")
 
-        logger.debug(f"Received update_location event: {event}")
+    #     message_data = event['message']
+    #     cache.set(f"last_message_{self.user.id}", message_data) # no timeout, timeout=86400)
+    #     self.send(text_data=json.dumps({'message': message_data}))
 
-        message_data = event['message']
-        cache.set(f"last_message_{self.user.id}", message_data) # no timeout , timeout=86400)
-        self.send(text_data=json.dumps({'message': message_data})) 
+
+    # def returned_home_message(self, event):
+
+    #     logger.debug(f"Received update_location event: {event}")
+
+    #     message_data = event['message']
+    #     cache.set(f"last_message_{self.user.id}", message_data) # no timeout , timeout=86400)
+    #     self.send(text_data=json.dumps({'message': message_data})) 
 
     def gift_notification(self, event):
         logger.debug(f"Received gift_notification event: {event}")
@@ -602,6 +582,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
  
         location_data = {
             'location_id': event.get('location_id', None),
+            'state': event.get('state', None),
             'name': event.get('name', 'Error'),
             'latitude': event.get('latitude', None),
             'longitude': event.get('longitude', None),

@@ -1,7 +1,7 @@
 from ..animations import update_animation
 from ..consumer import ClimateTwinConsumer  
 
-from climatevisitor.tasks.tasks import send_location_update_to_celery, send_is_pending_location_update_to_celery, save_current_location_to_backup_cache, restore_location_from_backup_cache_and_send_update, send_search_for_ruins_initiated, send_no_ruins_found, send_explore_locations_ready, send_clear_message, send_returned_home_message
+from climatevisitor.tasks.tasks import send_location_update_to_celery, send_is_pending_location_update_to_celery, save_current_location_to_backup_cache, restore_location_from_backup_cache_and_send_update
 from asgiref.sync import async_to_sync
 from celery import shared_task, current_app, current_task
 from channels.layers import get_channel_layer
@@ -160,15 +160,12 @@ def run_climate_twin_algorithms_task(user_id, user_address):
             
                 # Schedule the expiration task after updating or creating the current location
                 schedule_expiration_task(user_id=user_instance.id)# No async_to_sync wrapper needed
-    
-                send_search_for_ruins_initiated(user_id=user_instance.id)
 
                 osm_api = OpenMapAPI()
                 osm_results = osm_api.find_ancient_ruins(climate_twin_weather_profile.latitude, climate_twin_weather_profile.longitude, radius=100000, num_results=15)
                 nearby_ruins = osm_api.format_ruins_with_wind_compass_for_post(osm_results, climate_twin_weather_profile.wind_direction)
-                if not nearby_ruins:
-                    send_no_ruins_found(user_id=user_instance.id)
 
+                # Not strictly necessary to check if dict, because function sets an empty dict at beginning
                 if isinstance(nearby_ruins, dict): # added 4/3/2025
                     for name, ruin in nearby_ruins.items():
                         formatted_ruin = {
@@ -201,8 +198,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
         
                 
                 try: 
-                    send_explore_locations_ready(user_id=user_instance.id) # eventually get rid of this and just use location update below
-
+        
                     send_location_update_to_celery(user_id=user_instance.id, state='exploring',
                             location_id=current_location.twin_location.id, # = location_visiting_id
                             temperature=current_location.twin_location.temperature, 
@@ -217,8 +213,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
                     logger.error(f"Error occurred while sending explore locations: {str(e)}")
                     # Optionally, you can return an error message or just pass to continue
                     pass
-
-                send_clear_message(user_id=user_instance.id)
+ 
                 return "Success: Search completed!"
         
         except Exception as e:
@@ -320,13 +315,7 @@ def process_expiration_task(user_id, last_accessed=None):
             current_location.save()
             logger.info(f"User {user_id}'s location expired successfully.")
             print(f"User {user_id}'s location expired successfully.")
-
-
-            try:
-                send_returned_home_message(user_id=user_id)
-            except Exception as e:
-                print(f"Couldn't send returned home message.")
-
+ 
             try:
                 send_location_update_to_celery(user_id=user_id, state='home', location_id=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
             except Exception as e:
@@ -354,12 +343,7 @@ def process_immediate_expiration_task(user_id):
         if current_location.expired:
             logger.info(f"User {user_id}'s current location confirmed expired, celery task is sending location update.")
             print(f"User {user_id}'s current location confirmed expired, celery task is sending location update")
-        
-            try:
-                send_returned_home_message(user_id=user_id)
-            except Exception as e:
-                print(f"Couldn't send returned home message.")
-
+ 
             try:
                 send_location_update_to_celery(user_id=user_id, state='home', location_id=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
             except Exception as e:
