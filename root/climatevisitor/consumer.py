@@ -335,7 +335,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             "to": expo_push_token,
             "title": title,
             "body": message,
-            "priority": "normal",  # Notification priority ("high" for urgent)
+            "priority": "high",  # Notification priority ("high" for urgent)
         }
 
         # Set headers for the request
