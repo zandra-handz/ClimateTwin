@@ -8,7 +8,7 @@ from asgiref.sync import async_to_sync
 from ..animations import update_animation
 import logging
 import time
-
+from send_utils import process_location_update
 
 logger = logging.getLogger(__name__)
 
@@ -342,6 +342,8 @@ def send_location_update_to_celery(user_id, state, location_id, name, temperatur
                 'last_accessed': last_accessed,
             }
         )
+
+        process_location_update(user_id, state, location_id, name, temperature, latitude, longitude, last_accessed)
  
         logger.info(f"Location update sent successfully for user_id: {user_id}, location_id: {location_id}")
 

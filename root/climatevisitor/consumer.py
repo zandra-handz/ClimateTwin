@@ -10,6 +10,7 @@ from django.apps import apps
 from django.core.cache import cache
 import asyncio
 
+from .send_utils import process_location_update
 
  
 
@@ -552,54 +553,102 @@ class LocationUpdateConsumer(WebsocketConsumer):
         self.send_current_location_from_cache_or_endpoint()
 
 
+    # def update_location(self, event):
+    #     """
+    #     Sends location updates to the client.
+    #     """
+    #     logger.debug(f"Received update_locations event: {event}")
+    #     if event is None:
+    #         # self.send(text_data=json.dumps({'name': "You are home"}))
+    #         self.send(text_data=json.dumps({
+    #             'state': 'home',
+    #             'location_id' : None,
+    #             'name': "You are home",
+    #             'latitude': None,
+    #             'longitude': None,
+    #             'last_accessed': None,
+    #         }))
+
+    #         self.send_push_notification(self.user.id, "ClimateTwin location update", "You are home")
+
+    # # elif 'latitude' in event and 'longitude' in event:
+    #     else:
+
+            
+    #         self.send(text_data=json.dumps({
+    #             'state': event.get('state', 'home'),
+    #             'location_id': event.get('location_id', None), 
+    #             'name': event.get('name', 'Error'),  
+    #             'latitude': event.get('latitude', None),  
+    #             'longitude': event.get('longitude', None), 
+    #             'last_accessed': event.get('last_accessed', None), 
+    #         }))
+
+    #         location_name = event.get('name', 'Error') # repeat of above
+
+    #         self.send_push_notification(self.user.id, "ClimateTwin location update", f"{location_name}")
+
+    #     cache_key = f"current_location_{self.user.id}"
+    #     logger.debug(f"Caching current location for user {self.user.id} with key: {cache_key}")
+ 
+    #     location_data = {
+    #         'location_id': event.get('location_id', None),
+    #         'state': event.get('state', None),
+    #         'name': event.get('name', 'Error'),
+    #         'latitude': event.get('latitude', None),
+    #         'longitude': event.get('longitude', None),
+    #         'last_accessed': event.get('last_accessed', None),
+    #     }
+ 
+    #     cache.set(cache_key, location_data)  # no timeout, always store last location update
     def update_location(self, event):
         """
         Sends location updates to the client.
         """
         logger.debug(f"Received update_locations event: {event}")
+
+        user_id = self.user.id
+
         if event is None:
-            # self.send(text_data=json.dumps({'name': "You are home"}))
             self.send(text_data=json.dumps({
                 'state': 'home',
-                'location_id' : None,
+                'location_id': None,
                 'name': "You are home",
                 'latitude': None,
                 'longitude': None,
                 'last_accessed': None,
             }))
 
-            self.send_push_notification(self.user.id, "ClimateTwin location update", "You are home")
-
-    # elif 'latitude' in event and 'longitude' in event:
+            # Still call the utility function to handle cache + push
+            process_location_update(
+                user_id=user_id,
+                state='home',
+                location_id=None,
+                name="You are home",
+                latitude=None,
+                longitude=None,
+                last_accessed=None,
+            )
         else:
-
-            
             self.send(text_data=json.dumps({
                 'state': event.get('state', 'home'),
-                'location_id': event.get('location_id', None), 
-                'name': event.get('name', 'Error'),  
-                'latitude': event.get('latitude', None),  
-                'longitude': event.get('longitude', None), 
-                'last_accessed': event.get('last_accessed', None), 
+                'location_id': event.get('location_id', None),
+                'name': event.get('name', 'Error'),
+                'latitude': event.get('latitude', None),
+                'longitude': event.get('longitude', None),
+                'last_accessed': event.get('last_accessed', None),
             }))
 
-            location_name = event.get('name', 'Error') # repeat of above
-
-            self.send_push_notification(self.user.id, "ClimateTwin location update", f"{location_name}")
-
-        cache_key = f"current_location_{self.user.id}"
-        logger.debug(f"Caching current location for user {self.user.id} with key: {cache_key}")
- 
-        location_data = {
-            'location_id': event.get('location_id', None),
-            'state': event.get('state', None),
-            'name': event.get('name', 'Error'),
-            'latitude': event.get('latitude', None),
-            'longitude': event.get('longitude', None),
-            'last_accessed': event.get('last_accessed', None),
-        }
- 
-        cache.set(cache_key, location_data)  # no timeout, always store last location update
+            # Use utility function to handle caching and push
+            process_location_update(
+                user_id=user_id,
+                state=event.get('state', 'home'),
+                location_id=event.get('location_id', None),
+                name=event.get('name', 'Error'),
+                latitude=event.get('latitude', None),
+                longitude=event.get('longitude', None),
+                last_accessed=event.get('last_accessed', None),
+            )
 
 
     def authenticate_user(self):
