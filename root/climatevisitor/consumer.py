@@ -311,31 +311,41 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 self.send_search_progress_from_cache()
                 self.send_current_location_from_cache_or_endpoint()
 
+                user_id = self.user.id
+                self.send_push_notification(user_id, 'Manual Notification', 'This is a manually triggered notification!')
+
+
+   
 
     def send_push_notification(self, user_id, title, message):
         """
         Function to send a push notification to the user via Expo.
         """
-        try:
-            # Get the user's Expo push token from the UserSettings model
-            Settings = self.get_user_settings_model() 
-            settings = Settings.objects.get(id=user_id)
-            expo_push_token = settings.expo_push_token
+        from django.core.exceptions import ObjectDoesNotExist
 
-            if not expo_push_token:
-                logger.error(f"No Expo push token found for user {user_id}")
+        try:
+           
+            Settings = self.get_user_settings_model() 
+            try:
+                settings = Settings.objects.get(id=user_id)
+                expo_push_token = settings.expo_push_token
+
+                if not expo_push_token:
+                    logger.error(f"No Expo push token found for user {user_id}")
+                    return
+            except ObjectDoesNotExist: 
+                logger.error(f"No settings found for user {user_id}")
                 return
-            
+
         except Exception as e:
             logger.error(f"Error sending push notification to user {user_id}: {str(e)}")
-
-
-        # Prepare the notification payload
+            return  
+ 
         data = {
             "to": expo_push_token,
             "title": title,
             "body": message,
-            "priority": "high",  # Notification priority ("high" for urgent)
+            "priority": "high", 
         }
 
         # Set headers for the request
@@ -352,8 +362,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             logger.info(f"Notification sent successfully to user {user_id}")
         else:
             logger.error(f"Failed to send notification: {response.status_code} - {response.text}")
-                 
-                
+
                     
     def fetch_data_from_endpoint(self, token):
         from rest_framework_simplejwt.tokens import AccessToken
