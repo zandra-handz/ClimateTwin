@@ -351,7 +351,7 @@ def send_location_update_to_celery(user_id, state, location_id, name, temperatur
 
     
     # Push notification is inside this
-    process_location_update(user_id, state, location_id, name, temperature, latitude, longitude, last_accessed)
+    process_location_update(user_id, state, location_id, name, latitude, longitude, last_accessed)
     
     logger.info(f"Location update complete for user_id: {user_id}, location_id: {location_id}")
  
