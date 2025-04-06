@@ -173,7 +173,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             self.channel_name
         )
 
-        self.send_push_notification(self.user.id, "Push notification", "Test notif!")
+        # self.send_push_notification(self.user.id, "Push notification", "Test notif!")
 
 
         self.accept()
@@ -455,11 +455,12 @@ class LocationUpdateConsumer(WebsocketConsumer):
             return None, None
         return None, None 
     
+    # setting cache in ClimateTwinFinder in case websocket connection is closed, so that it can be accessed quickly 
     def twin_location_search_progress_update(self, event):
         search_progress_update = event['search_progress']
 
-        cache_key = f"last_search_progress_{self.user.id}" 
-        cache.set(cache_key, search_progress_update) # no timeout , timeout=86400)
+        # cache_key = f"last_search_progress_{self.user.id}" 
+        # cache.set(cache_key, search_progress_update) # no timeout , timeout=86400)
 
         self.send(text_data=json.dumps({'search_progress': search_progress_update}))
 

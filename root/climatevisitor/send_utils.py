@@ -75,5 +75,6 @@ def process_location_update(user_id, state, location_id, name, latitude, longitu
         'last_accessed': last_accessed,
     }
     cache.set(cache_key, location_data)
+    
 
     send_push_notification(user_id, "ClimateTwin location update", name)

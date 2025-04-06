@@ -576,7 +576,7 @@ class ClimateTwinFinder:
         celery_fail_count = 0
 
         found_count = 0
-        self.send_search_progress_update(0)
+        self.send_search_progress_update('00.0')
 
         while num_places > len(self.similar_places['name']):
             country_name, random_coords = self.generate_random_coords_in_a_country_list()
@@ -641,7 +641,7 @@ class ClimateTwinFinder:
 
                         # Check if we have found the desired number of places
                         if num_places <= len(self.similar_places['name']):
-                            self.send_search_progress_update(0)
+                            self.send_search_progress_update('00.0')
                             break
 
                         # Only two finds allowed per country
@@ -769,10 +769,13 @@ class ClimateTwinFinder:
 
 
 
-
+    # should get moved into send_utils 
     def send_search_progress_update(self, percentage):
         try: 
             send_twin_location_search_progress_update(user_id=self.user_id_for_celery, progress_percentage=percentage)
+            cache_key = f"last_search_progress_{self.user_id_for_celery}" 
+            cache.set(cache_key, percentage)
+        
         except Exception as e:
             print(f"Error sending search progress update to Celery task: {e}")
         
