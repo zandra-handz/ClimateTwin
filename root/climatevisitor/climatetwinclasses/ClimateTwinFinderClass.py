@@ -576,6 +576,7 @@ class ClimateTwinFinder:
         celery_fail_count = 0
 
         found_count = 0
+        self.send_search_progress_update(0)
 
         while num_places > len(self.similar_places['name']):
             country_name, random_coords = self.generate_random_coords_in_a_country_list()
@@ -640,6 +641,7 @@ class ClimateTwinFinder:
 
                         # Check if we have found the desired number of places
                         if num_places <= len(self.similar_places['name']):
+                            self.send_search_progress_update(0)
                             break
 
                         # Only two finds allowed per country

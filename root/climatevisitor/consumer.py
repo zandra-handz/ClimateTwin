@@ -437,6 +437,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
                         'latitude': twin_dict.get('latitude', None),  
                         'longitude': twin_dict.get('longitude', None),
                         'last_accessed': current_location_last_accessed, 
+                        
                     }
                     return event_data, None
                 # Not sure I need all these return statements below or why the top one isn't returning None, None...
