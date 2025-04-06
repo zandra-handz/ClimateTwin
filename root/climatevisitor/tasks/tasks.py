@@ -8,7 +8,7 @@ from asgiref.sync import async_to_sync
 from ..animations import update_animation
 import logging
 import time
-from send_utils import process_location_update
+from climatevisitor.send_utils import process_location_update
 
 logger = logging.getLogger(__name__)
 

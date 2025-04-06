@@ -10,7 +10,7 @@ from django.apps import apps
 from django.core.cache import cache
 import asyncio
 
-from .send_utils import process_location_update
+from climatevisitor.send_utils import process_location_update
 
  
 
