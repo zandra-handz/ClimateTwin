@@ -1,9 +1,7 @@
 
-from django.apps import apps
-from django.core.cache import cache 
+  
 import logging
 logger = logging.getLogger(__name__)
-
 
 
 import requests
@@ -12,6 +10,8 @@ EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send"
 
  
 def get_user_settings_model():
+    from django.apps import apps
+
     return apps.get_model('users', 'UserSettings')
 
 
@@ -19,7 +19,7 @@ def send_push_notification(user_id, title, message):
     """
     Function to send a push notification to the user via Expo.
     """
-    from django.core.exceptions import ObjectDoesNotExist
+    from django.core.exceptions import ObjectDoesNotExist 
 
     try:
         
@@ -63,6 +63,8 @@ def send_push_notification(user_id, title, message):
 
 
 def process_location_update(user_id, state, location_id, name, latitude, longitude, last_accessed):
+    from django.core.cache import cache 
+    
     cache_key = f"current_location_{user_id}"
     location_data = {
         'location_id': location_id,

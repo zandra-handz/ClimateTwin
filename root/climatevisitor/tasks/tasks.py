@@ -343,15 +343,17 @@ def send_location_update_to_celery(user_id, state, location_id, name, temperatur
             }
         )
 
-        process_location_update(user_id, state, location_id, name, temperature, latitude, longitude, last_accessed)
- 
+       
         logger.info(f"Location update sent successfully for user_id: {user_id}, location_id: {location_id}")
 
-    except Exception as e: 
-        logger.error(f"Error in send_location_update_to_celery task for user_id: {user_id}, location_id: {location_id}. "
-                     f"Error: {str(e)}")
-        # tbh gpty gave this type of error to me and I'm not sure if it is necessary
-        raise SuspiciousOperation(f"Error sending location update to Celery: {str(e)}")
+    except Exception as e:
+        logger.warning(f"No active connection for user_id: {user_id}, or failed to send via channel layer. Error: {str(e)}")
+
+    
+    # Push notification is inside this
+    process_location_update(user_id, state, location_id, name, temperature, latitude, longitude, last_accessed)
+    
+    logger.info(f"Location update complete for user_id: {user_id}, location_id: {location_id}")
  
 
 # Not a Celery task but goes with them
