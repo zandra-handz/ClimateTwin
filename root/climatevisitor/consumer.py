@@ -313,7 +313,9 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 self.send_current_location_from_cache_or_endpoint()
 
                 user_id = self.user.id
-                self.send_push_notification(user_id, 'Manual Notification', 'This is a manually triggered notification!')
+
+                # FOR BEBUGGING, annoying otherwise
+                # self.send_push_notification(user_id, 'Manual Notification', 'This is a manually triggered notification!')
 
 
    

@@ -244,6 +244,7 @@ def process_climate_twin_request(self, user_id, user_address):
 
 @shared_task(bind=True, max_retries=3)
 def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_socket_update=False): #default
+    push_expiration_task_scheduled(user_id, 'INITIATED')
     try: 
         current_location = CurrentLocation.objects.get(user_id=user_id)
  
