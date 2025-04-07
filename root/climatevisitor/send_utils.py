@@ -62,7 +62,7 @@ def send_push_notification(user_id, title, message):
         logger.error(f"Failed to send notification: {response.status_code} - {response.text}")
 
 
-def process_location_update(user_id, state, location_id, name, latitude, longitude, last_accessed):
+def cache_and_push_notif_location_update(user_id, state, location_id, name, latitude, longitude, last_accessed):
     from django.core.cache import cache 
     
     cache_key = f"current_location_{user_id}"
@@ -75,6 +75,41 @@ def process_location_update(user_id, state, location_id, name, latitude, longitu
         'last_accessed': last_accessed,
     }
     cache.set(cache_key, location_data)
-    
-
     send_push_notification(user_id, "ClimateTwin location update", name)
+
+
+
+def cache_and_push_notif_new_gift(user_id, user_username, recipient_id):
+    from django.core.cache import cache 
+
+    cache_key = f"last_notification_{recipient_id}"
+    new_gift_message = f'{user_username} sent you a treasure!'
+    cache.set(cache_key, new_gift_message) #, timeout=3600) 
+    send_push_notification(user_id, "ClimateTwin", new_gift_message)
+
+
+def cache_and_push_notif_accepted_gift(user_id, user_username, recipient_id):
+    from django.core.cache import cache 
+
+    cache_key = f"last_notification_{recipient_id}"
+    accepted_gift_message = f'{user_username} accepted the treasure you sent them :)'
+    cache.set(cache_key, accepted_gift_message) #, timeout=3600) 
+    send_push_notification(user_id, "ClimateTwin", accepted_gift_message)
+    
+    
+# I want to test treasures methods above first before implementing these
+def cache_and_push_notif_friend_request():
+    pass
+
+def cache_and_push_notif_friend_request_accepted():
+    pass
+
+ # FOR DEBUGGING, using in algorithms_tasks.py
+def push_expiration_task_scheduled(user_id, timeout_seconds):
+   
+    send_push_notification(user_id, 'DEBUGGING', f'Expiration task scheduled to expire location {timeout_seconds} seconds from now.')
+
+ # FOR DEBUGGING, using in algorithms_tasks.py
+def push_expiration_task_executed(user_id):
+   
+    send_push_notification(user_id, 'DEBUGGING', f'Expiration task to expire location has been executed.')

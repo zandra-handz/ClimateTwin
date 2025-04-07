@@ -716,17 +716,10 @@ class SendGiftRequestView(generics.CreateAPIView):
 
 
             print(gift_request.recipient.id)
+ 
+            send_gift_notification(request.user.id, request.user.username, gift_request.recipient.id)
 
-            # Call the function directly for testing (synchronously)
-            logger.info("Calling send_gift_notification synchronously for testing...")
-            send_gift_notification(request.user.id, gift_request.recipient.id)
-
-            # DOESN'T WORK
-            # # Call the task asynchronously, but without the countdown
-            # logger.info("Calling send_gift_notification asynchronously...")
-            # send_gift_notification.apply_async(
-            #     args=[request.user.id, gift_request.recipient.id]
-            # )
+        
 
             gift_request.treasure.pending = True
             gift_request.treasure.save()

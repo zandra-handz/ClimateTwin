@@ -8,8 +8,8 @@ from asgiref.sync import async_to_sync
 from ..animations import update_animation
 import logging
 import time
-from climatevisitor.send_utils import process_location_update
-
+from climatevisitor.send_utils import cache_and_push_notif_location_update, cache_and_push_notif_new_gift
+from climatevisitor.send_utils import cache_and_push_notif_accepted_gift
 logger = logging.getLogger(__name__)
 
 
@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 # Testing passing in user
 
 
+# PUSH NOTIFICATIONS TRIGGERED HERE DO NOT DEPEND ON WEBSOCKET CONNECTION REMAINING OPEN
 
 @shared_task
 def send_coordinate_update_to_celery(user_id, country_name, temp_difference, temperature, latitude, longitude):
@@ -56,7 +57,7 @@ def send_twin_location_search_progress_update(user_id, progress_percentage):
 
 
 @shared_task
-def send_gift_notification(user_id, recipient_id):
+def send_gift_notification(user_id, user_username, recipient_id):
     logger.info(f"send_gift_notification triggered for user_id: {user_id}, recipient_id: {recipient_id}")
 
     channel_layer = get_channel_layer()
@@ -64,13 +65,12 @@ def send_gift_notification(user_id, recipient_id):
     
     logger.info(f"Attempting to send message to group: {group_name}")
 
-    notification_message = f'User ID {user_id} sent you a treasure!'
+    cache_and_push_notif_new_gift(user_id, user_username, recipient_id)
 
-    #No time out right now, may need to remove manually once user accepts/declines message
-    cache.set(f"last_notification_{recipient_id}", notification_message) #, timeout=3600)  # Cache for 1 hour
-    logger.info(f"Notification cached for {recipient_id}: {notification_message}")
+    notification_message = f'{user_username} sent you a treasure!'
+    # sending clear method will remove the notification, if I remember correctly
 
-
+ 
     
     try: 
         async_to_sync(channel_layer.group_send)(
@@ -86,7 +86,7 @@ def send_gift_notification(user_id, recipient_id):
      
 
 @shared_task
-def send_gift_accepted_notification(user_id, recipient_id):
+def send_gift_accepted_notification(user_id, user_username, recipient_id):
     logger.info(f"send_gift_accepted_notification triggered for user_id: {user_id}, recipient_id: {recipient_id}")
 
     channel_layer = get_channel_layer()
@@ -96,9 +96,7 @@ def send_gift_accepted_notification(user_id, recipient_id):
 
     notification_message = f'User ID {user_id} accepted your gift!'
 
-    #No time out right now, may need to remove manually once user accepts/declines message
-    cache.set(f"last_notification_{recipient_id}", notification_message, timeout=3600)  # Cache for 1 hour
-    logger.info(f"Notification cached for {recipient_id}: {notification_message}")
+    cache_and_push_notif_accepted_gift(user_id, user_username, recipient_id)
 
 
     
@@ -351,7 +349,7 @@ def send_location_update_to_celery(user_id, state, location_id, name, temperatur
 
     
     # Push notification is inside this
-    process_location_update(user_id, state, location_id, name, latitude, longitude, last_accessed)
+    cache_and_push_notif_location_update(user_id, state, location_id, name, latitude, longitude, last_accessed)
     
     logger.info(f"Location update complete for user_id: {user_id}, location_id: {location_id}")
  

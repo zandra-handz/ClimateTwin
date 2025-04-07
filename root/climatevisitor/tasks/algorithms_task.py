@@ -12,7 +12,7 @@ from climatevisitor.climatetwinclasses.OpenMapAPIClass import OpenMapAPI
 from climatevisitor.models import ClimateTwinLocation, ClimateTwinExploreLocation, CurrentLocation, ClimateTwinSearchStats
 from climatevisitor import serializers
 
-
+from climatevisitor.send_utils import push_expiration_task_scheduled, push_expiration_task_executed
 from datetime import datetime
 
 #from datetime import timezone
@@ -280,6 +280,7 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_s
         timeout_seconds = max(0, (expiration_time - timezone.now()).total_seconds())
  
         cache.set(cache_key, True, timeout=int(timeout_seconds))
+        push_expiration_task_scheduled(user_id, timeout_seconds)
 
 
     except CurrentLocation.DoesNotExist:
@@ -314,6 +315,7 @@ def process_expiration_task(user_id, last_accessed=None):
             current_location.expired = True
             current_location.save()
             logger.info(f"User {user_id}'s location expired successfully.")
+            push_expiration_task_executed(user_id)
             print(f"User {user_id}'s location expired successfully.")
  
             try:

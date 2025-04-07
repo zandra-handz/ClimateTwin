@@ -10,7 +10,7 @@ from django.apps import apps
 from django.core.cache import cache
 import asyncio
 
-from climatevisitor.send_utils import process_location_update
+from climatevisitor.send_utils import cache_and_push_notif_location_update
 
  
 
@@ -463,58 +463,9 @@ class LocationUpdateConsumer(WebsocketConsumer):
         # cache.set(cache_key, search_progress_update) # no timeout , timeout=86400)
 
         self.send(text_data=json.dumps({'search_progress': search_progress_update}))
-
-
-    # REMOVE, BECAUSE I ADDED THE MESSAGES TO THE LOCATION UPDATES INSTEAD
-    # def search_for_ruins(self, event): 
-    #     #logger.debug(f"Received search_for_ruins event: {event}") # log incoming data
-    #     message_data = event['message']
-    #     #logger.debug(f"Message data extracted: {message_data}")
-
-    #     cache_key = f"last_message_{self.user.id}" 
-    #     cache.set(cache_key, message_data) # no timeout , timeout=86400)
-    #     logger.debug(f"search_for_ruins message cached successfully  for user {self.user.id} with key: {cache_key} and timeout 86400")
  
-    #     self.send(text_data=json.dumps({'message': message_data}))
-    #     logger.debug(f"Sent search_for_ruins message to client: {message_data}")
-
-       
  
-
-    # def explore_locations_ready(self, event):
-    #     logger.debug(f"Received update_location event: {event}")
-
-    #     message_data = event['message']
-    #     cache.set(f"last_message_{self.user.id}", message_data) # no timeout , timeout=86400)
-    #     self.send(text_data=json.dumps({'message': message_data}))
-
-
-
-
-    # def no_ruins_found(self, event):
-    #     logger.debug(f"Received update_location event: {event}")
-
-    #     message_data = event['message']
-    #     cache.set(f"last_message_{self.user.id}", message_data) # no timeout , timeout=86400)
-    #     self.send(text_data=json.dumps({'message': message_data}))
-
-
-    # def clear_message(self, event):
-    #     logger.debug(f"Received update_location event: {event}")
-
-    #     message_data = event['message']
-    #     cache.set(f"last_message_{self.user.id}", message_data) # no timeout, timeout=86400)
-    #     self.send(text_data=json.dumps({'message': message_data}))
-
-
-    # def returned_home_message(self, event):
-
-    #     logger.debug(f"Received update_location event: {event}")
-
-    #     message_data = event['message']
-    #     cache.set(f"last_message_{self.user.id}", message_data) # no timeout , timeout=86400)
-    #     self.send(text_data=json.dumps({'message': message_data})) 
-
+ 
     def gift_notification(self, event):
         logger.debug(f"Received gift_notification event: {event}")
 
@@ -621,7 +572,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             }))
 
             # Still call the utility function to handle cache + push
-            process_location_update(
+            cache_and_push_notif_location_update(
                 user_id=user_id,
                 state='home',
                 location_id=None,
@@ -641,7 +592,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             }))
 
             # Use utility function to handle caching and push
-            process_location_update(
+            cache_and_push_notif_location_update(
                 user_id=user_id,
                 state=event.get('state', 'home'),
                 location_id=event.get('location_id', None),
