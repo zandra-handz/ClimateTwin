@@ -973,7 +973,7 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
                 print(f"Error sending location update to Celery: {str(e)}")  # Print the error to the console/log
     
                 return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
+            schedule_expiration_task.apply_async(args=[user.id])
             return Response(self.get_serializer(saved_instance).data, status=status.HTTP_200_OK)
 
         else:
@@ -995,11 +995,15 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
                                                 latitude=saved_instance.explore_location.latitude,
                                                 longitude=saved_instance.explore_location.longitude, 
                                                 last_accessed=last_accessed_str)
+                
+                
             except Exception as e:
                 print(f"Error sending location update to Celery: {str(e)}")  # Print the error to the console/log
     
                 return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
+            schedule_expiration_task(user_id=user.id)
+            #schedule_expiration_task.apply_async(args=[user.id])
             return Response(self.get_serializer(saved_instance).data, status=status.HTTP_200_OK)
         
     def update_or_create_location(self, user, explore_location=None, twin_location=None, lifetime=3600):
@@ -1017,13 +1021,13 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
             }
         )
  
-
-        try:
-            push_expiration_task_scheduled(user.id, 'INITIATING IN UPDATE CREATE METHOD')
-            schedule_expiration_task.apply_async(args=[user.id, lifetime])
-        except Exception as e:
-            push_expiration_task_scheduled(user.id, 'FAILED TO SCHEDULE EXPIRATION TASK')
-            pass
+        # doesn't seem to be running
+        # try:
+        #     push_expiration_task_scheduled(user.id, 'INITIATING IN UPDATE CREATE METHOD')
+        #     schedule_expiration_task.apply_async(args=[user.id, lifetime])
+        # except Exception as e:
+        #     push_expiration_task_scheduled(user.id, 'FAILED TO SCHEDULE EXPIRATION TASK')
+        #     pass
 
         # You can perform any other operations if needed, for example, logging or tracking events
         return Response(self.get_serializer(current_location).data, status=status.HTTP_200_OK)
