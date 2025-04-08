@@ -280,7 +280,7 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_s
  
         cache.set(cache_key, True, timeout=int(timeout_seconds))
         push_expiration_task_scheduled(user_id, timeout_seconds)
-        
+
         process_impending_expiration_warning_task.apply_async((user_id, expiration_time, last_accessed,), countdown=120)
         
 
@@ -299,8 +299,10 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_s
 
 @shared_task
 def process_impending_expiration_warning_task(user_id, expiration_time=None, last_accessed=None):
+    push_expiration_task_scheduled(user_id, f'MINUTES REMAINING 1')
 
     if last_accessed is None or expiration_time is None:
+        push_expiration_task_scheduled(user_id, f'MINUTES REMAINING NONE')
         return
     
     try:
@@ -309,11 +311,13 @@ def process_impending_expiration_warning_task(user_id, expiration_time=None, las
             return "No warning message necessary, location already expired."
         
         if last_accessed == current_location.last_accessed:
+            push_expiration_task_scheduled(user_id, f'MINUTES REMAINING SENDING WARNING')
 
             minutes_remaining = max(0, int((expiration_time - timezone.now()).total_seconds() / 60))
-            push_expiration_task_scheduled.apply_async((user_id, f'MINUTES REMAINING: {minutes_remaining}',), countdown=100)
+            push_expiration_task_scheduled(user_id, f'MINUTES REMAINING: {minutes_remaining}')
 
     except Exception as e:
+        push_expiration_task_scheduled(user_id, f'MINUTES REMAINING ERROR')
         print(f"Couldn't send location expiration warning message.")
 
 @shared_task
