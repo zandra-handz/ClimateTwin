@@ -274,13 +274,15 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_s
         logger.info(f"Scheduling expiration task for user {user_id} in {duration_seconds} seconds")
         print(f"Scheduling expiration task for user {user_id} in {duration_seconds} seconds")
   
-        process_impending_expiration_warning_task.apply_async((user_id, expiration_time, last_accessed,), countdown=120)
         process_expiration_task.apply_async((user_id, last_accessed,), countdown=duration_seconds)  
    
         timeout_seconds = max(0, (expiration_time - timezone.now()).total_seconds())
  
         cache.set(cache_key, True, timeout=int(timeout_seconds))
         push_expiration_task_scheduled(user_id, timeout_seconds)
+        
+        process_impending_expiration_warning_task.apply_async((user_id, expiration_time, last_accessed,), countdown=120)
+        
 
 
     except CurrentLocation.DoesNotExist:
