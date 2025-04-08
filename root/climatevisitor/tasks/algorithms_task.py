@@ -159,7 +159,9 @@ def run_climate_twin_algorithms_task(user_id, user_address):
 
             
                 # Schedule the expiration task after updating or creating the current location
-                schedule_expiration_task(user_id=user_instance.id)# No async_to_sync wrapper needed
+               
+                # the create/update method schedules this
+                # schedule_expiration_task(user_id=user_instance.id)# No async_to_sync wrapper needed
 
                 osm_api = OpenMapAPI()
                 osm_results = osm_api.find_ancient_ruins(climate_twin_weather_profile.latitude, climate_twin_weather_profile.longitude, radius=100000, num_results=15)

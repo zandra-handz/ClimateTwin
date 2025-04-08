@@ -1002,8 +1002,8 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
     
                 return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
-            schedule_expiration_task(user_id=user.id)
-            #schedule_expiration_task.apply_async(args=[user.id])
+            #schedule_expiration_task(user_id=user.id)
+            schedule_expiration_task.apply_async(args=[user.id])
             return Response(self.get_serializer(saved_instance).data, status=status.HTTP_200_OK)
         
     def update_or_create_location(self, user, explore_location=None, twin_location=None, lifetime=3600):
