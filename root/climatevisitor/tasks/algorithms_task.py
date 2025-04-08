@@ -274,7 +274,7 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_s
         logger.info(f"Scheduling expiration task for user {user_id} in {duration_seconds} seconds")
         print(f"Scheduling expiration task for user {user_id} in {duration_seconds} seconds")
   
-        push_expiration_task_scheduled.apply_async((user_id, 'TESTING EXPIRATION WARNING NOTIF',), countdown=100)
+        process_impending_expiration_warning_task.apply_async((user_id, expiration_time, last_accessed,), countdown=120)
         process_expiration_task.apply_async((user_id, last_accessed,), countdown=duration_seconds)  
    
         timeout_seconds = max(0, (expiration_time - timezone.now()).total_seconds())
@@ -295,6 +295,24 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_s
     return "Expiration task scheduled and expired field updated."
 
 
+@shared_task
+def process_impending_expiration_warning_task(user_id, expiration_time=None, last_accessed=None):
+
+    if last_accessed is None or expiration_time is None:
+        return
+    
+    try:
+        current_location = CurrentLocation.objects.get(user_id=user_id)
+        if current_location.expired:
+            return "No warning message necessary, location already expired."
+        
+        if last_accessed == current_location.last_accessed:
+
+            minutes_remaining = max(0, int((expiration_time - timezone.now()).total_seconds() / 60))
+            push_expiration_task_scheduled.apply_async((user_id, f'MINUTES REMAINING: {minutes_remaining}',), countdown=100)
+
+    except Exception as e:
+        print(f"Couldn't send location expiration warning message.")
 
 @shared_task
 def process_expiration_task(user_id, last_accessed=None):
