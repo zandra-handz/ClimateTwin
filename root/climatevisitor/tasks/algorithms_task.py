@@ -261,12 +261,6 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_s
  
         last_accessed = current_location.last_accessed 
 
-    # I moved this up here to try to get it to activate more quickly
-    # no longer using parent function for immediate expirations, can remove below once i'm sure the new approach works
-        if always_send_socket_update:
-            process_immediate_expiration_task.apply_async((user_id,)) # last_accessed,))  # Runs immediately
-
-
         expiration_time = last_accessed + timezone.timedelta(seconds=duration_seconds)
  
         cache_key = f"expiration_task_{user_id}"
@@ -279,9 +273,9 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_s
  
         logger.info(f"Scheduling expiration task for user {user_id} in {duration_seconds} seconds")
         print(f"Scheduling expiration task for user {user_id} in {duration_seconds} seconds")
- 
-        if not always_send_socket_update:
-            process_expiration_task.apply_async((user_id, last_accessed,), countdown=duration_seconds)  
+  
+        push_expiration_task_scheduled.apply_async((user_id, 'TESTING EXPIRATION WARNING NOTIF',), countdown=100)
+        process_expiration_task.apply_async((user_id, last_accessed,), countdown=duration_seconds)  
    
         timeout_seconds = max(0, (expiration_time - timezone.now()).total_seconds())
  
