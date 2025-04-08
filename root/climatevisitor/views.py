@@ -6,6 +6,7 @@ from celery.result import AsyncResult
 from .climatetwinclasses.ClimateEncounterClass import ClimateEncounter
 from .climatetwinclasses.ClimateObjectClass import ClimateObject
 from .climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
+from climatevisitor.send_utils import push_expiration_task_scheduled
 from .tasks.algorithms_task import run_climate_twin_algorithms_task
 from .tasks.algorithms_task import process_climate_twin_request, schedule_expiration_task, process_immediate_expiration_task
 from .tasks.tasks import send_location_update_to_celery, extra_coverage_cache_location_update, send_is_pending_location_update_to_celery
@@ -1017,8 +1018,12 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
         )
  
 
-        schedule_expiration_task.apply_async(args=[user.id, lifetime])
-
+        try:
+            push_expiration_task_scheduled(user.id, 'INITIATING IN UPDATE CREATE METHOD')
+            schedule_expiration_task.apply_async(args=[user.id, lifetime])
+        except Exception as e:
+            push_expiration_task_scheduled(user.id, 'FAILED TO SCHEDULE EXPIRATION TASK')
+            pass
 
         # You can perform any other operations if needed, for example, logging or tracking events
         return Response(self.get_serializer(current_location).data, status=status.HTTP_200_OK)

@@ -10,7 +10,7 @@ from django.apps import apps
 from django.core.cache import cache
 import asyncio
 
-from climatevisitor.send_utils import cache_and_push_notif_location_update
+from climatevisitor.send_utils import cache_notif_location_update, cache_and_push_notif_location_update
 
  
 
@@ -574,7 +574,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             }))
 
             # Still call the utility function to handle cache + push
-            cache_and_push_notif_location_update(
+            cache_notif_location_update(
                 user_id=user_id,
                 state='home',
                 location_id=None,
@@ -594,7 +594,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             }))
 
             # Use utility function to handle caching and push
-            cache_and_push_notif_location_update(
+            cache_notif_location_update(
                 user_id=user_id,
                 state=event.get('state', 'home'),
                 location_id=event.get('location_id', None),

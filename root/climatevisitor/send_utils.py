@@ -78,6 +78,23 @@ def cache_and_push_notif_location_update(user_id, state, location_id, name, lati
     send_push_notification(user_id, "ClimateTwin location update", name)
 
 
+# No push
+def cache_notif_location_update(user_id, state, location_id, name, latitude, longitude, last_accessed):
+    from django.core.cache import cache 
+    
+    cache_key = f"current_location_{user_id}"
+    location_data = {
+        'location_id': location_id,
+        'state': state,
+        'name': name,
+        'latitude': latitude,
+        'longitude': longitude,
+        'last_accessed': last_accessed,
+    }
+    cache.set(cache_key, location_data)
+    # send_push_notification(user_id, "ClimateTwin location update", name)
+
+
 
 def cache_and_push_notif_new_gift(user_id, user_username, recipient_id):
     from django.core.cache import cache 
