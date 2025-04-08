@@ -13,6 +13,8 @@ from climatevisitor.models import ClimateTwinLocation, ClimateTwinExploreLocatio
 from climatevisitor import serializers
 
 from climatevisitor.send_utils import push_expiration_task_scheduled, push_expiration_task_executed
+from climatevisitor.send_utils import push_warning_location_expiring_soon
+
 from datetime import datetime
 
 #from datetime import timezone
@@ -249,7 +251,9 @@ def process_climate_twin_request(self, user_id, user_address):
 
 @shared_task(bind=True, max_retries=3)
 def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_socket_update=False): #default
-    push_expiration_task_scheduled(user_id, 'INITIATED')
+    
+    # FOR DEBUGGING:
+    # push_expiration_task_scheduled(user_id, 'INITIATED')
     try: 
         current_location = CurrentLocation.objects.get(user_id=user_id)
  
@@ -299,25 +303,30 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_s
 
 @shared_task
 def process_impending_expiration_warning_task(user_id, expiration_time=None, last_accessed=None):
-    push_expiration_task_scheduled(user_id, f'MINUTES REMAINING 1')
 
-    if last_accessed is None or expiration_time is None:
-        push_expiration_task_scheduled(user_id, f'MINUTES REMAINING NONE')
+    if last_accessed is None or expiration_time is None: 
+        print("Can't sent location exp warning message, either no last_access or expiration_time passed in to function")
         return
     
     try:
         current_location = CurrentLocation.objects.get(user_id=user_id)
+
+        location_name = 'location'
+
+        if current_location.twin_location:
+            location_name = current_location.twin_location.name
+        elif current_location.explore_location:
+            location_name = current_location.explore_location.name
+            
         if current_location.expired:
-            return "No warning message necessary, location already expired."
+            return "No location exp warning message necessary, location already expired."
         
-        if last_accessed == current_location.last_accessed:
-            push_expiration_task_scheduled(user_id, f'MINUTES REMAINING SENDING WARNING')
+        if last_accessed == current_location.last_accessed: 
 
             minutes_remaining = max(0, int((expiration_time - timezone.now()).total_seconds() / 60))
-            push_expiration_task_scheduled(user_id, f'MINUTES REMAINING: {minutes_remaining}')
+            push_warning_location_expiring_soon(user_id, location_name, minutes_remaining)
 
-    except Exception as e:
-        push_expiration_task_scheduled(user_id, f'MINUTES REMAINING ERROR')
+    except Exception as e: 
         print(f"Couldn't send location expiration warning message.")
 
 @shared_task

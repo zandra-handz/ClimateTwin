@@ -130,3 +130,13 @@ def push_expiration_task_scheduled(user_id, timeout_seconds):
 def push_expiration_task_executed(user_id):
    
     send_push_notification(user_id, 'DEBUGGING', f'Expiration task to expire location has been executed.')
+
+
+def push_warning_location_expiring_soon(user_id, location_name, minutes_remaining):
+
+    pluralized = 'minutes'
+
+    if minutes_remaining and int(minutes_remaining) <= 1:
+        pluralized = 'minute'
+
+    send_push_notification(user_id, f'Heads up!', f'You have {minutes_remaining} {pluralized} left in {location_name}.')
