@@ -36,6 +36,11 @@ from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from users.models import Treasure
 
 
+def acquire_user_lock(user_id, ttl=60*5): # resets in five mins if not unlocked within process_climate_twin_request
+    lock_key = f"search_active_{user_id}"
+    return cache.add(lock_key, "LOCKED", timeout=ttl)
+
+
 
 # Create your views here.
 @swagger_auto_schema(operation_id='index')
@@ -103,7 +108,10 @@ def go(request):
             if daily_count >= 5:
                 return Response({'error': 'You have reached the daily limit of visits.'}, status=status.HTTP_400_BAD_REQUEST)
 
- 
+        if not acquire_user_lock(user.id):
+            return Response({'error': 'A search is already running for your account.'},
+                        status=status.HTTP_429_TOO_MANY_REQUESTS)
+        
         # Send the task to Celery for execution
         #run_climate_twin_algorithms_task(user.id, user_address)
         process_climate_twin_request.apply_async(args=[user.id, user_address])

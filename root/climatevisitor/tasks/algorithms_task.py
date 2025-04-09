@@ -234,16 +234,24 @@ def run_climate_twin_algorithms_task(user_id, user_address):
 def process_climate_twin_request(self, user_id, user_address):
     
     logger.info("Task to process climate twin request received.")
-    
     print("Task to process climate twin request sent.")
 
-    #user_instance = BadRainbowzUser.objects.get(pk=user_id)
+    
+    lock_key = f"search_active_for_{user_id}"
+    lock_ttl = 60 * 5  # 5 minutes
+ 
+    if not cache.add(lock_key, "LOCKED", timeout=lock_ttl):
+        logger.warning(f"Lock already active for user {user_id}. Skipping task.")
+        return "Another request is already running."
 
     try:
         run_climate_twin_algorithms_task(user_id, user_address)
     except Exception as exc:
         logger.error(f"Error processing climate twin request: {exc}. Retrying...")
         raise self.retry(exc=exc)
+    finally:
+        # Always release the lock
+        cache.delete(lock_key)
     
     logger.info("Task to process climate twin request completed.")
     return "Request sent for processing"
