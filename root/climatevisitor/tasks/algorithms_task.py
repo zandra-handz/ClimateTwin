@@ -285,7 +285,7 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_s
         cache.set(cache_key, True, timeout=int(timeout_seconds))
         push_expiration_task_scheduled(user_id, timeout_seconds)
 
-        process_impending_expiration_warning_task.apply_async((user_id, expiration_time, last_accessed,), countdown=120)
+        process_impending_expiration_warning_task.apply_async((user_id, expiration_time, last_accessed,), countdown=3000)
         
 
 

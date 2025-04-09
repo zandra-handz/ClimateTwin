@@ -9,7 +9,7 @@ from ..animations import update_animation
 import logging
 import time
 from climatevisitor.send_utils import cache_and_push_notif_location_update, cache_and_push_notif_new_gift
-from climatevisitor.send_utils import cache_and_push_notif_accepted_gift
+from climatevisitor.send_utils import cache_and_push_notif_accepted_gift, cache_and_push_notif_friend_request, cache_and_push_notif_friend_request_accepted
 logger = logging.getLogger(__name__)
 
 
@@ -114,7 +114,7 @@ def send_gift_accepted_notification(user_id, user_username, recipient_id):
      
 
 @shared_task
-def send_friend_request_notification(user_id, recipient_id):
+def send_friend_request_notification(user_id, user_username, recipient_id):
     logger.info(f"send_friend_request_notification triggered for user_id: {user_id}, recipient_id: {recipient_id}")
 
     channel_layer = get_channel_layer()
@@ -122,13 +122,11 @@ def send_friend_request_notification(user_id, recipient_id):
     
     logger.info(f"Attempting to send message to group: {group_name}")
 
+    
+    #Sending clear message will remove 
+    cache_and_push_notif_friend_request(user_id, user_username, recipient_id)
+
     notification_message = f'User ID {user_id} wants to be friends!'
-
-    #No time out right now, may need to remove manually once user accepts/declines message
-    cache.set(f"last_notification_{recipient_id}", notification_message, timeout=3600)  # Cache for 1 hour
-    logger.info(f"Notification cached for {recipient_id}: {notification_message}")
-
-
     
     try: 
         async_to_sync(channel_layer.group_send)(
@@ -145,7 +143,7 @@ def send_friend_request_notification(user_id, recipient_id):
 
 
 @shared_task
-def send_friend_request_accepted_notification(user_id, recipient_id):
+def send_friend_request_accepted_notification(user_id, user_username, recipient_id):
     logger.info(f"send_friend_request_notification triggered for user_id: {user_id}, recipient_id: {recipient_id}")
 
     channel_layer = get_channel_layer()
@@ -153,13 +151,10 @@ def send_friend_request_accepted_notification(user_id, recipient_id):
     
     logger.info(f"Attempting to send message to group: {group_name}")
 
+    # believe this gets cleared by sending clear message, same as above
+    cache_and_push_notif_friend_request_accepted(user_id, user_username, recipient_id)
+
     notification_message = f'User ID {user_id} accepted your friend request!'
-
-    #No time out right now, may need to remove manually once user accepts/declines message
-    cache.set(f"last_notification_{recipient_id}", notification_message, timeout=3600)  # Cache for 1 hour
-    logger.info(f"Notification cached for {recipient_id}: {notification_message}")
-
-
     
     try: 
         async_to_sync(channel_layer.group_send)(

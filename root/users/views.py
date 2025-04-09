@@ -554,7 +554,7 @@ class SendFriendRequestView(generics.CreateAPIView):
         inbox_item.save()
 
         logger.info("Calling send_friend_request_notification synchronously for testing...")
-        send_friend_request_notification(request.user.id, recipient.id)
+        send_friend_request_notification(request.user.id, request.user.username, recipient.id)
 
         return Response({'success': 'Friend request sent successfully.'}, status=status.HTTP_201_CREATED)
 
@@ -600,7 +600,7 @@ class FriendRequestDetailView(generics.RetrieveUpdateAPIView):
 
 
             logger.info("Calling send_friend_request_accepted_notification synchronously for testing...")
-            send_friend_request_accepted_notification(request.user.id, friend.id)
+            send_friend_request_accepted_notification(request.user.id, request.user.username, friend.id)
 
                 
 
