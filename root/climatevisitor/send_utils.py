@@ -152,3 +152,10 @@ def push_warning_location_expiring_soon(user_id, location_name, minutes_remainin
         pluralized = 'minute'
 
     send_push_notification(user_id, f'Heads up!', f'You have {minutes_remaining} {pluralized} left in {location_name}.')
+
+
+def cache_twin_search_progress(user_id, percentage):
+    from django.core.cache import cache 
+
+    cache_key = f"last_search_progress_{user_id}"
+    cache.set(cache_key, percentage)

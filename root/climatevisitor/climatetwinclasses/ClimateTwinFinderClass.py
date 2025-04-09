@@ -1,4 +1,5 @@
 from climatevisitor.tasks.tasks import send_coordinate_update_to_celery, send_twin_location_search_progress_update
+from climatevisitor.tasks.tasks import reset_twin_location_search_progress_update
 from celery import shared_task, current_app
 from django.conf import settings
 from django.core.cache import cache
@@ -167,6 +168,9 @@ class ClimateTwinFinder:
         # self.print_climate_twin_profile_concise()
         self.print_algorithm_data()
         self.log_algorithm_data()
+
+        reset_twin_location_search_progress_update(self.user_id_for_celery)
+                           
 
 
     def __str__(self):
@@ -634,14 +638,23 @@ class ClimateTwinFinder:
                       
  
                         percentage = round(100 * (self.final_candidates_count / self.preset_num_final_candidates_required), 2)
-                        self.send_search_progress_update(percentage)
+                
+
+                        try: 
+                            send_twin_location_search_progress_update(self.user_id_for_celery, percentage)
+                        
+                        except Exception as e:
+                            print(f"Error sending search progress update to Celery task: {e}")
 
                         found_count += 1
 
 
                         # Check if we have found the desired number of places
                         if num_places <= len(self.similar_places['name']):
-                            self.send_search_progress_update('00.0')
+
+                            # moved to end of init
+                            # reset_twin_location_search_progress_update(self.user_id_for_celery)
+                           
                             break
 
                         # Only two finds allowed per country
@@ -773,8 +786,6 @@ class ClimateTwinFinder:
     def send_search_progress_update(self, percentage):
         try: 
             send_twin_location_search_progress_update(user_id=self.user_id_for_celery, progress_percentage=percentage)
-            cache_key = f"last_search_progress_{self.user_id_for_celery}" 
-            cache.set(cache_key, percentage)
         
         except Exception as e:
             print(f"Error sending search progress update to Celery task: {e}")

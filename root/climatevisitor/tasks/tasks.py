@@ -10,6 +10,8 @@ import logging
 import time
 from climatevisitor.send_utils import cache_and_push_notif_location_update, cache_and_push_notif_new_gift
 from climatevisitor.send_utils import cache_and_push_notif_accepted_gift, cache_and_push_notif_friend_request, cache_and_push_notif_friend_request_accepted
+from climatevisitor.send_utils import cache_twin_search_progress
+
 logger = logging.getLogger(__name__)
 
 
@@ -43,9 +45,11 @@ def send_coordinate_update_to_celery(user_id, country_name, temp_difference, tem
 
 @shared_task
 def send_twin_location_search_progress_update(user_id, progress_percentage):
+    
     channel_layer = get_channel_layer()
-
     group_name = f'location_update_{user_id}'
+
+    cache_twin_search_progress(user_id, progress_percentage)
 
     async_to_sync(channel_layer.group_send)(
         group_name,
@@ -54,6 +58,25 @@ def send_twin_location_search_progress_update(user_id, progress_percentage):
             'search_progress': f'{progress_percentage}',
         }
     ) 
+
+@shared_task
+def reset_twin_location_search_progress_update(user_id):
+
+    progress_percentage='00.0'
+    
+    channel_layer = get_channel_layer()
+    group_name = f'location_update_{user_id}'
+
+    cache_twin_search_progress(user_id, progress_percentage)
+
+    async_to_sync(channel_layer.group_send)(
+        group_name,
+        {
+            'type': 'twin_location_search_progress_update',
+            'search_progress': f'{progress_percentage}',
+        }
+    ) 
+
 
 
 @shared_task
