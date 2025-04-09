@@ -985,7 +985,9 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
 
             # instead of self.update, otherwise can't access newly saved object when sending update to celery
             saved_instance =  models.CurrentLocation.update_or_create_location(user, explore_location=explore_location)
-            push_expiration_task_scheduled(user.id, 'RAN UPDATE OR CREATE LOCATION')
+            
+            # FOR DEBUGGING
+            # push_expiration_task_scheduled(user.id, 'RAN UPDATE OR CREATE LOCATION')
             last_accessed_str = saved_instance.last_accessed.isoformat()        
             
             try:
