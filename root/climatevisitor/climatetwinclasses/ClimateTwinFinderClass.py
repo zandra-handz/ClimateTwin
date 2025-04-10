@@ -605,7 +605,7 @@ class ClimateTwinFinder:
 
                 # Stop searching early if max OWM calls reached and 
                 # use the final candidates we have
-                if self.key_count <= self.max_key_count:
+                if self.key_count >= self.max_key_count:
                     logger.info(f"Max amount of OWM calls reached, returning early")
                     logger.info(f"Number of candidates found: {len(self.similar_places['name'])}")
                     
