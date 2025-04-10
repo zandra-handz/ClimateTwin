@@ -1096,7 +1096,7 @@ class ExpireCurrentLocationView(generics.UpdateAPIView):
 
         if current_location.expired: #check to make sure location was successfully expired, I don't want socket cache to be able
             # to fall out of sync with DB
-
+            print('current location now expired, attempting to delete lock')
             remove_twin_search_lock(user.id)
 
             try:

@@ -279,6 +279,7 @@ def process_climate_twin_request(self, user_id, user_address):
 
     if not check_and_set_twin_search_lock(user_id):
         logger.warning(f"Lock already active for user {user_id}. Skipping task.")
+        push_expiration_task_scheduled(user_id, f'Oops! A search is already running.')
         return "Another request is already running."
 
     retry_exc = None
