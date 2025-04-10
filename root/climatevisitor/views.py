@@ -1094,9 +1094,8 @@ class ExpireCurrentLocationView(generics.UpdateAPIView):
             except Exception as e:
                 print(f"Error sending go-home location update to Celery: {str(e)}")  # Print the error to the console/log
 
-        # too slow
-        # if current_location.expired:
-        #     process_immediate_expiration_task.delay(user_id=user.id) 
+            lock_key = f"search_active_for_{user.id}"
+            cache.delete(lock_key)
 
         return Response(self.get_serializer(current_location).data, status=status.HTTP_200_OK)
 

@@ -767,7 +767,7 @@ class GiftRequestDetailView(generics.RetrieveUpdateAPIView):
                 instance.delete()
 
             logger.info("Calling send_accepted_gift_notification synchronously for testing...")
-            send_gift_accepted_notification(request.user.id, instance.sender.id)
+            send_gift_accepted_notification(request.user.id, request.user.username, instance.sender.id)
 
 
             return Response({'success': 'Gift request accepted successfully!'}, status=status.HTTP_200_OK)

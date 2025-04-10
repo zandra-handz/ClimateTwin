@@ -251,7 +251,8 @@ def process_climate_twin_request(self, user_id, user_address):
         raise self.retry(exc=exc)
     finally:
         # Always release the lock
-        cache.delete(lock_key)
+        cache.delete(lock_key)  # also deleting in ExpireCurrentLocationView in case
+        # user wants to go home and immediately fire another search
     
     logger.info("Task to process climate twin request completed.")
     return "Request sent for processing"
