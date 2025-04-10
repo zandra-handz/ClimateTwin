@@ -597,6 +597,21 @@ class ClimateTwinFinder:
             for idx, point in random_coords.iterrows():
                 latitude, longitude = point.geometry.y, point.geometry.x
 
+
+
+                # Stop searching early if max OWM calls reached and 
+                # use the final candidates we have
+                if self.key_count <= self.max_key_count:
+                    logger.info(f"Max amount of OWM calls reached, returning early")
+                    logger.info(f"Number of candidates found: {len(self.similar_places['name'])}")
+                    
+                    if len(self.similar_places['name']) > 0:
+                        num_places = len(self.similar_places['name'])
+                    else:
+                        num_places = 0
+                    break
+
+
                 weather = self.get_weather(latitude, longitude)
 
                 if weather:
@@ -666,13 +681,7 @@ class ClimateTwinFinder:
                            
                             break
 
-                        # Stop searching early if max OWM calls reached and 
-                        # use the final candidates we have
-                        if self.key_count <= self.max_key_count:
-                            logger.info(f"Max amount of OWM calls reached, returning early")
-                            logger.info(f"Number of candidates found: {len(self.similar_places['name'])}")
-                            if len(self.similar_places['name']) > 0:
-                                break
+
 
                         # Only two finds allowed per country
                         if found_count > self.preset_matches_per_country_allowed:
@@ -704,7 +713,7 @@ class ClimateTwinFinder:
                 else:
                     print("missing weather data")
 
-        return True
+        # return True
     
 
 
