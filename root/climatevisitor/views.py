@@ -1059,11 +1059,18 @@ class ExpireCurrentLocationView(generics.UpdateAPIView):
     def patch(self, request, *args, **kwargs):
         user = request.user
 
+
+        # Removes lock regardless if request to 'go home' succeeds or fails
+        lock_key = f"search_active_for_{user.id}"
+        cache.delete(lock_key)
+
         try:
             current_location = models.CurrentLocation.objects.get(user=user)
         except models.CurrentLocation.DoesNotExist:
             return Response({'error': 'No current location found.'}, status=status.HTTP_404_NOT_FOUND)
  
+
+
         return self.update_or_create_location(user, explore_location=None, twin_location=None, lifetime=0)
 
     def update_or_create_location(self, user, explore_location=None, twin_location=None, lifetime=0):
@@ -1093,9 +1100,6 @@ class ExpireCurrentLocationView(generics.UpdateAPIView):
                     last_accessed=None)
             except Exception as e:
                 print(f"Error sending go-home location update to Celery: {str(e)}")  # Print the error to the console/log
-
-            lock_key = f"search_active_for_{user.id}"
-            cache.delete(lock_key)
 
         return Response(self.get_serializer(current_location).data, status=status.HTTP_200_OK)
 
