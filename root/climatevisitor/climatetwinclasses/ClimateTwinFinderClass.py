@@ -83,7 +83,7 @@ class ClimateTwinFinder:
         self.origin_lon = 0
         self.google_key_count = 0
         self.key_count = 0
-        self.max_key_count = 500
+        self.max_key_count = 100
         self.high_variance_count = 0
         self.address = address
         self.home_climate = None
