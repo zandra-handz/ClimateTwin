@@ -62,6 +62,16 @@ def acquire_user_lock(user_id, ttl=60*5): # resets in five mins if not unlocked 
     lock_key = f"search_active_for_{user_id}"
     return cache.add(lock_key, "LOCKED", timeout=ttl)
 
+def is_user_locked(user_id):
+    lock_key = f"search_active_for_{user_id}"
+    return cache.get(lock_key) is not None
+
+
+def set_user_lock(user_id, ttl=60*5):
+    lock_key = f"search_active_for_{user_id}"
+    cache.set(lock_key, "LOCKED", timeout=ttl)
+
+
 
 
 @swagger_auto_schema(method='post', order=1, operation_id='createGo', operation_dscription="Main feature of app", request_body=openapi.Schema(
@@ -113,6 +123,12 @@ def go(request):
         if not acquire_user_lock(user.id):
             return Response({'error': 'A search is already running for your account.'},
                         status=status.HTTP_429_TOO_MANY_REQUESTS)
+        
+        if is_user_locked(user.id):
+            return Response({'error': 'A search is already running for your account.'},
+                        status=status.HTTP_429_TOO_MANY_REQUESTS)
+        
+        set_user_lock(user.id)
         
         # Send the task to Celery for execution
         #run_climate_twin_algorithms_task(user.id, user_address)
