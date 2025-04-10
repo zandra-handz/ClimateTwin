@@ -83,6 +83,7 @@ class ClimateTwinFinder:
         self.origin_lon = 0
         self.google_key_count = 0
         self.key_count = 0
+        self.max_key_count = 100
         self.high_variance_count = 0
         self.address = address
         self.home_climate = None
@@ -154,9 +155,9 @@ class ClimateTwinFinder:
         while not successful:
 
             # Finds five candidate places
-            five_locations_found = self.completion_checker_similar_places()
+            locations_found = self.completion_checker_similar_places()
 
-            if five_locations_found:
+            if locations_found:
             # Selects one or more with closest humidity, returns False if no value for country
                 successful = self.managing_function_to_find_climate_twin()
 
@@ -560,6 +561,7 @@ class ClimateTwinFinder:
     # Finds twin location or returns None
     def completion_checker_similar_places(self):
 
+        # check key_count
         result = self.search_random_coords_in_a_country()
 
         if result:
@@ -571,8 +573,9 @@ class ClimateTwinFinder:
     # Added for websocket
 
 
-    def search_random_coords_in_a_country(self):
-        base_url = "https://api.openweathermap.org/data/2.5/find"
+    def search_random_coords_in_a_country(self): 
+
+        # check
         num_places = self.preset_num_final_candidates_required
         high_variance = 0
         high_variance_trigger = self.preset_temp_diff_is_high_variance # degree difference that will add to high variance count
@@ -689,41 +692,6 @@ class ClimateTwinFinder:
 
         return True
     
-
-
-    # def process_new_entry(self, new_entry): 
-    #     if not isinstance(new_entry, dict):
-    #         raise ValueError("Expected new_entry to be a dictionary.")
- 
-    #     if not isinstance(getattr(self, "similar_places", None), dict):
-    #         self.similar_places = {
-    #             'name': [], 'temperature': [], 'description': [],
-    #             'wind_speed': [], 'wind_direction': [], 'humidity': [],
-    #             'pressure': [], 'cloudiness': [], 'sunrise_timestamp': [],
-    #             'sunset_timestamp': [], 'latitude': [], 'longitude': []
-    #         }
- 
-    #     added_data = False
- 
-    #     for key, value in new_entry.items():
-    #         key = str(key)  # Convert key to string if needed
-
-    #         if key not in self.similar_places or not isinstance(self.similar_places[key], list):
-    #             self.similar_places[key] = []  # Ensure it's a list
-
-    #         # Only append non-empty values
-    #         if value:  
-    #             self.similar_places[key].append(value)
-    #             added_data = True
- 
-    #     if added_data: 
-    #         #self.final_candidates_count += 1
-    #         self.final_candidates_count = len(self.similar_places['name'])
-
-    #         percentage = round(100 * (self.final_candidates_count / self.preset_num_final_candidates_required), 2)
-
-
-    #         self.send_search_progress_update(percentage)
 
 
 # this function returns total candidate count
@@ -845,8 +813,7 @@ class ClimateTwinFinder:
 
 
     def managing_function_to_find_climate_twin(self):
-        closest_humidity = self.humidity_comparer()
-        # print(f"CLOSEST HUMIDITY = {closest_humidity}")
+        closest_humidity = self.humidity_comparer() 
         places_semifinalists = self.similar_places
         climate_twin = {}
 
@@ -858,21 +825,11 @@ class ClimateTwinFinder:
 
             if humidity == closest_humidity:
                 results = self.reverse_geocode(latitude, longitude)
-                # print(f"GEOCODE RESULTS: {results}")
                 country = results['country']
-                if country is None: # or not country.strip() or "None":
-                    # print("FIND CLIMATE TWIN RETURNED FALSE ON COUNTRY CHECK")
+                if country is None: 
                     return False
-                location_name = results['location_name']
-                location_name = results['location_name']
-                location_name = results['location_name']
-                location_name = results['location_name']
-                city = results['city']
-
-
-                # print(f"location name: {location_name}")
-
-                # print(f"country: {country}")
+                location_name = results['location_name'] 
+                city = results['city'] 
 
                 if " " in location_name:
                     code, address = location_name.split(" ", 1)
@@ -881,8 +838,7 @@ class ClimateTwinFinder:
                 else:
                     if country:
                         complete_address = f"an uncharted location in {country}"
-                    else:
-                        # print("FIND CLIMATE TWIN RETURNED FALSE")
+                    else: 
                         return False
 
                 address_str = complete_address

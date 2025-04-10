@@ -36,11 +36,6 @@ from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from users.models import Treasure
 
 
-def acquire_user_lock(user_id, ttl=60*5): # resets in five mins if not unlocked within process_climate_twin_request
-    lock_key = f"search_active_{user_id}"
-    return cache.add(lock_key, "LOCKED", timeout=ttl)
-
-
 
 # Create your views here.
 @swagger_auto_schema(operation_id='index')
@@ -60,6 +55,13 @@ def endpoints(request):
 #@throttle_classes([AnonRateThrottle, UserRateThrottle])
 def demo(request):
     return render(request, 'demo.html', {})
+
+
+
+def acquire_user_lock(user_id, ttl=60*5): # resets in five mins if not unlocked within process_climate_twin_request
+    lock_key = f"search_active_for_{user_id}"
+    return cache.add(lock_key, "LOCKED", timeout=ttl)
+
 
 
 @swagger_auto_schema(method='post', order=1, operation_id='createGo', operation_dscription="Main feature of app", request_body=openapi.Schema(
