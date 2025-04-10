@@ -13,7 +13,7 @@ from climatevisitor.models import ClimateTwinLocation, ClimateTwinExploreLocatio
 from climatevisitor import serializers
 
 from climatevisitor.send_utils import push_expiration_task_scheduled, push_expiration_task_executed
-from climatevisitor.send_utils import push_warning_location_expiring_soon, check_and_set_twin_search_lock, remove_twin_search_lock
+from climatevisitor.send_utils import  check_for_twin_search_lock, push_warning_location_expiring_soon, check_and_set_twin_search_lock, remove_twin_search_lock
 
 from datetime import datetime
 
@@ -277,7 +277,8 @@ def process_climate_twin_request(self, user_id, user_address):
     logger.info("Task to process climate twin request received.")
     print("Task to process climate twin request sent.")
 
-    if not check_and_set_twin_search_lock(user_id):
+    if check_for_twin_search_lock(user_id):
+    # if not check_and_set_twin_search_lock(user_id):
         logger.warning(f"Lock already active for user {user_id}. Skipping task.")
         push_expiration_task_scheduled(user_id, f'Oops! A search is already running.')
         return "Another request is already running."

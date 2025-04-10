@@ -179,11 +179,17 @@ def check_and_set_twin_search_lock(user_id, ttl=60*2):
     return cache.add(lock_key, "LOCKED", timeout=ttl)
 
 
+# def remove_twin_search_lock(user_id):
+#     from django.core.cache import cache
+#     print(cache.__class__)
+#     lock_key = f"search_active_for_{user_id}"
+#     cache.set(lock_key, None)
+
+
 def remove_twin_search_lock(user_id):
     from django.core.cache import cache
-    print(cache.__class__)
     lock_key = f"search_active_for_{user_id}"
-    cache.set(lock_key, None)
+    cache.delete(lock_key)
 
 
 
