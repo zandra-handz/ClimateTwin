@@ -7,7 +7,7 @@ from .climatetwinclasses.ClimateEncounterClass import ClimateEncounter
 from .climatetwinclasses.ClimateObjectClass import ClimateObject
 from .climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
 from climatevisitor.send_utils import push_expiration_task_scheduled
-from .tasks.algorithms_task import run_climate_twin_algorithms_task
+from .tasks.algorithms_task import remove_search_lock_immediately
 from .tasks.algorithms_task import process_climate_twin_request, schedule_expiration_task, process_immediate_expiration_task
 from .tasks.tasks import send_location_update_to_celery, extra_coverage_cache_location_update, send_is_pending_location_update_to_celery
 # send_is_pending_location_update_to_celery is in process_climate_twin_request
@@ -1058,11 +1058,7 @@ class ExpireCurrentLocationView(generics.UpdateAPIView):
     @swagger_auto_schema(operation_id='expireCurrentLocation', operation_description="Expires the current location immediately.")
     def patch(self, request, *args, **kwargs):
         user = request.user
-
-
-        # Removes lock regardless if request to 'go home' succeeds or fails
-        lock_key = f"search_active_for_{user.id}"
-        cache.delete(lock_key)
+ 
 
         try:
             current_location = models.CurrentLocation.objects.get(user=user)
@@ -1088,6 +1084,8 @@ class ExpireCurrentLocationView(generics.UpdateAPIView):
 
         if current_location.expired: #check to make sure location was successfully expired, I don't want socket cache to be able
             # to fall out of sync with DB
+
+            remove_search_lock_immediately.apply_async(args=[user.id])
 
             try:
                 send_location_update_to_celery(user_id=user.id, 

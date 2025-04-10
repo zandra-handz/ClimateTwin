@@ -227,6 +227,10 @@ def run_climate_twin_algorithms_task(user_id, user_address):
             print("An error occurred:", e) 
                     
  
+@shared_task
+def remove_search_lock_immediately(self, user_id):
+    lock_key = f"search_active_for{user_id}"
+    cache.delete(lock_key)
  
 
 
