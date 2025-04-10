@@ -337,7 +337,7 @@ def send_is_pending_location_update_to_celery(user_id):
 def send_location_update_to_celery(user_id, state, is_twin_location, location_id, name, temperature, latitude, longitude, last_accessed):
      
     logger.info(f"Preparing to send location update to Celery with data: "
-                f"user_id: {user_id}, state: {state}, location_id: {location_id}, "
+                f"user_id: {user_id}, state: {state}, is_twin_location: {is_twin_location}, location_id: {location_id}, "
                 f"name: {name}, temperature: {temperature}, latitude: {latitude}, "
                 f"longitude: {longitude}, last_accessed: {last_accessed}")
 
@@ -369,7 +369,7 @@ def send_location_update_to_celery(user_id, state, is_twin_location, location_id
 
     
     # Push notification is inside this
-    cache_and_push_notif_location_update(user_id, state, location_id, name, latitude, longitude, last_accessed)
+    cache_and_push_notif_location_update(user_id, state, is_twin_location, location_id, name, latitude, longitude, last_accessed)
     
     logger.info(f"Location update complete for user_id: {user_id}, location_id: {location_id}")
  

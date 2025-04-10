@@ -162,7 +162,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
 
 
                 send_location_update_to_celery(user_id=user_instance.id, state='searching for ruins',
-                                               is_twin_location='yes',
+                                            is_twin_location='yes',
                                             location_id=current_location.twin_location.id, # = location_visiting_id
                                             temperature=current_location.twin_location.temperature, 
                                             name=current_location.twin_location.name, 
@@ -225,7 +225,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
                 try: 
         
                     send_location_update_to_celery(user_id=user_instance.id, state='exploring',
-                                                    is_twin_location='yes',
+                            is_twin_location='yes',
                             location_id=current_location.twin_location.id, # = location_visiting_id
                             temperature=current_location.twin_location.temperature, 
                             name=current_location.twin_location.name, 
