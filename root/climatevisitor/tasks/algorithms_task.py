@@ -9,7 +9,7 @@ from climatevisitor.climatetwinclasses.ClimateTwinFinderClass import ClimateTwin
 from climatevisitor.climatetwinclasses.ClimateObjectClass import ClimateObject
 from climatevisitor.climatetwinclasses.ClimateEncounterClass import ClimateEncounter
 from climatevisitor.climatetwinclasses.OpenMapAPIClass import OpenMapAPI
-from climatevisitor.models import ClimateTwinLocation, ClimateTwinExploreLocation, CurrentLocation, ClimateTwinSearchStats
+from climatevisitor.models import ClimateTwinLocation, HomeLocation, CurrentLocation, ClimateTwinSearchStats
 from climatevisitor import serializers
 
 from climatevisitor.send_utils import push_expiration_task_scheduled, push_expiration_task_executed
@@ -409,11 +409,24 @@ def process_expiration_task(user_id, last_accessed=None):
         if current_location.expired:
             logger.info(f"User {user_id}'s current location is already expired.")
             print(f"User {user_id}'s current location is already expired.")
+
+            # Deleting home location will cascade-delete all the other locations except for the current location
+            # To save data, we will need to save more stuff to the uservisits. 
+            home_location = HomeLocation.objects.filter(user=user_id).first()
+            if home_location:
+                home_location.delete()
+                
             return "Location is already expired."
  
         if last_accessed == current_location.last_accessed:
             current_location.expired = True
             current_location.save()
+
+            # Deleting home location will cascade-delete all the other locations except for the current location
+            # To save data, we will need to save more stuff to the uservisits. 
+            home_location = HomeLocation.objects.filter(user=user_id).first()
+            if home_location:
+                home_location.delete()
             logger.info(f"User {user_id}'s location expired successfully.")
             
             # FOR DEBUGGING

@@ -6,6 +6,9 @@ from users.models import BadRainbowzUser
 
 # Create your models here.
 
+
+# HomeLocation.objects.filter(user=my_user).first()
+# I think this should eventually be a one-to-one that rewrites, like current location
 class HomeLocation(models.Model):
     user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
     last_accessed = models.DateTimeField(auto_now=True)
@@ -253,8 +256,8 @@ class ClimateTwinExploreLocation(models.Model):
 
 class CurrentLocation(models.Model):
     user = models.OneToOneField(BadRainbowzUser, on_delete=models.CASCADE)
-    explore_location = models.ForeignKey(ClimateTwinDiscoveryLocation, on_delete=models.CASCADE, null=True, blank=True)
-    twin_location = models.ForeignKey(ClimateTwinLocation, on_delete=models.CASCADE, null=True, blank=True)
+    explore_location = models.ForeignKey(ClimateTwinDiscoveryLocation, on_delete=models.SET_NULL, null=True, blank=True)
+    twin_location = models.ForeignKey(ClimateTwinLocation, on_delete=models.SET_NULL, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
     last_accessed = models.DateTimeField(auto_now=True)
     expired = models.BooleanField(default=False)

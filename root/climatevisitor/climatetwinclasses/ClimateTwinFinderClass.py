@@ -160,6 +160,8 @@ class ClimateTwinFinder:
 
         if locations_found:
             # Selects one or more with closest humidity, returns False if no value for country
+            # This should only run if there is something in similar places,
+            # but humidity comparer function within also checks 
             self.managing_function_to_find_climate_twin()
           
         
