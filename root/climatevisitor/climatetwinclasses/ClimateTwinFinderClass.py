@@ -660,6 +660,14 @@ class ClimateTwinFinder:
                            
                             break
 
+                        # Stop searching early if max OWM calls reached and 
+                        # use the final candidates we have
+                        if self.key_count <= self.max_key_count:
+                            logger.info(f"Max amount of OWM calls reached, returning early")
+                            logger.info(f"numver")
+                            if len(self.similar_places['name']) > 0:
+                                break
+
                         # Only two finds allowed per country
                         if found_count > self.preset_matches_per_country_allowed:
                             found_count = 0 # Reset before breaking

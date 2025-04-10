@@ -120,9 +120,9 @@ def go(request):
             if daily_count >= 5:
                 return Response({'error': 'You have reached the daily limit of visits.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        if not acquire_user_lock(user.id):
-            return Response({'error': 'A search is already running for your account.'},
-                        status=status.HTTP_429_TOO_MANY_REQUESTS)
+        # if not acquire_user_lock(user.id):
+        #     return Response({'error': 'A search is already running for your account.'},
+        #                 status=status.HTTP_429_TOO_MANY_REQUESTS)
         
         if is_user_locked(user.id):
             return Response({'error': 'A search is already running for your account.'},
