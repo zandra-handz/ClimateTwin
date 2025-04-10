@@ -227,8 +227,11 @@ def run_climate_twin_algorithms_task(user_id, user_address):
             print("An error occurred:", e) 
                     
  
-@shared_task
-def remove_search_lock_immediately(self, user_id):
+#@shared_task(bind=True, max_retries=3)
+@shared_task # It's not a big deal if this fails, since the lock is
+# already scheduled to get removed; this only exists to improve user experience
+# in the case where they want to go home and research immediately without waiting 
+def remove_search_lock_immediately(user_id):
     lock_key = f"search_active_for{user_id}"
     cache.delete(lock_key)
  
