@@ -83,7 +83,7 @@ class ClimateTwinFinder:
         self.origin_lon = 0
         self.google_key_count = 0
         self.key_count = 0
-        self.max_key_count = 100
+        self.max_key_count = 500
         self.high_variance_count = 0
         self.address = address
         self.home_climate = None
@@ -149,19 +149,22 @@ class ClimateTwinFinder:
         
 
 
-        successful = False
+        # successful = False
 
-        # May handle differently in future
-        while not successful:
+        # # May handle differently in future
+        # while not successful:
 
             # Finds five candidate places
-            locations_found = self.completion_checker_similar_places()
+        locations_found = self.completion_checker_similar_places()
 
-            if locations_found:
+        if locations_found:
             # Selects one or more with closest humidity, returns False if no value for country
-                successful = self.managing_function_to_find_climate_twin()
-
+            successful = self.managing_function_to_find_climate_twin()
             self.configure_similar_places_dict()
+        
+        else:
+            print(f'ERROR: No Climate Twin locations found')
+            logger.info(f'ERROR: No Climate Twin locations found')
 
 
         # Debug statements
@@ -573,6 +576,9 @@ class ClimateTwinFinder:
     # Added for websocket
 
 
+    # THIS SEARCHES FOR ALL THE LOCATIONS
+    # RETURNS FEWER THAN THE REQUIRED FINAL CANDIDATES IF OWM MAX CALL NUMBER IS TRIGGERED
+    # RETURNS NOTHING IF NOTHING IS FOUND
     def search_random_coords_in_a_country(self): 
 
         # check
@@ -664,7 +670,7 @@ class ClimateTwinFinder:
                         # use the final candidates we have
                         if self.key_count <= self.max_key_count:
                             logger.info(f"Max amount of OWM calls reached, returning early")
-                            logger.info(f"numver")
+                            logger.info(f"Number of candidates found: {len(self.similar_places['name'])}")
                             if len(self.similar_places['name']) > 0:
                                 break
 
