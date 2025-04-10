@@ -6,7 +6,7 @@ from celery.result import AsyncResult
 from .climatetwinclasses.ClimateEncounterClass import ClimateEncounter
 from .climatetwinclasses.ClimateObjectClass import ClimateObject
 from .climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
-from climatevisitor.send_utils import push_expiration_task_scheduled
+from climatevisitor.send_utils import check_and_set_twin_search_lock
 from .tasks.algorithms_task import remove_search_lock_immediately
 from .tasks.algorithms_task import process_climate_twin_request, schedule_expiration_task, process_immediate_expiration_task
 from .tasks.tasks import send_location_update_to_celery, extra_coverage_cache_location_update, send_is_pending_location_update_to_celery
@@ -120,18 +120,12 @@ def go(request):
             if daily_count >= 5:
                 return Response({'error': 'You have reached the daily limit of visits.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # if not acquire_user_lock(user.id):
-        #     return Response({'error': 'A search is already running for your account.'},
-        #                 status=status.HTTP_429_TOO_MANY_REQUESTS)
-        
-        if is_user_locked(user.id):
+        if not check_and_set_twin_search_lock(user.id):
             return Response({'error': 'A search is already running for your account.'},
                         status=status.HTTP_429_TOO_MANY_REQUESTS)
         
-        # set_user_lock(user.id)
-        
-        # Send the task to Celery for execution
-        #run_climate_twin_algorithms_task(user.id, user_address)
+   
+         
         process_climate_twin_request.apply_async(args=[user.id, user_address])
 
         return Response({'detail': 'Search initiated!'}, status=status.HTTP_200_OK)

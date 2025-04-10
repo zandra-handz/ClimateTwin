@@ -159,3 +159,31 @@ def cache_twin_search_progress(user_id, percentage):
 
     cache_key = f"last_search_progress_{user_id}"
     cache.set(cache_key, percentage)
+
+def set_twin_search_lock(user_id, ttl=60*2):
+    from django.core.cache import cache 
+
+    lock_key = f"search_active_for_{user_id}"
+    cache.set(lock_key, "LOCKED", timeout=ttl)
+
+
+def check_for_twin_search_lock(user_id):
+    from django.core.cache import cache 
+
+    lock_key = f"search_active_for_{user_id}"
+    return cache.get(lock_key) is not None
+
+
+def check_and_set_twin_search_lock(user_id, ttl=60*2):
+    from django.core.cache import cache
+    lock_key = f"search_active_for_{user_id}"
+    return cache.add(lock_key, "LOCKED", timeout=ttl)
+
+def remove_twin_search_lock(user_id):
+    from django.core.cache import cache
+
+    lock_key = f"search_active_for{user_id}"
+    cache.delete(lock_key)
+
+
+
