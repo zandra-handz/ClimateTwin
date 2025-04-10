@@ -717,7 +717,7 @@ class ClimateTwinFinder:
                 else:
                     print("missing weather data")
 
-        # return True
+        return True
     
 
 
