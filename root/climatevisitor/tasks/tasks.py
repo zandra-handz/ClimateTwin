@@ -308,6 +308,7 @@ def send_is_pending_location_update_to_celery(user_id):
             {
                 'type': 'update_location',
                 'state': 'searching for twin',
+                'is_twin_location': None,
                 'location_id': None,
                 'name': pending_message,
                 'temperature': None,
@@ -333,7 +334,7 @@ def send_is_pending_location_update_to_celery(user_id):
 
 
 @shared_task
-def send_location_update_to_celery(user_id, state, location_id, name, temperature, latitude, longitude, last_accessed):
+def send_location_update_to_celery(user_id, state, is_twin_location, location_id, name, temperature, latitude, longitude, last_accessed):
      
     logger.info(f"Preparing to send location update to Celery with data: "
                 f"user_id: {user_id}, state: {state}, location_id: {location_id}, "
@@ -350,6 +351,7 @@ def send_location_update_to_celery(user_id, state, location_id, name, temperatur
             {
                 'type': 'update_location',
                 'state': state,
+                'is_twin_location': is_twin_location,
                 'location_id': location_id,
                 'name': name,
                 'temperature': temperature,
@@ -374,12 +376,13 @@ def send_location_update_to_celery(user_id, state, location_id, name, temperatur
 
 # Not a Celery task but goes with them
 # Cache should fail silently but added try/except anyway
-def extra_coverage_cache_location_update(user_id, state, location_id, name, latitude, longitude, last_accessed):
+def extra_coverage_cache_location_update(user_id, state, is_twin_location, location_id, name, latitude, longitude, last_accessed):
     cache_key = f"current_location_{user_id}"
     logger.debug(f"Extra coverage caching current location for user {user_id} with key: {cache_key}")
 
     location_data = {
         'state' : state,
+        'is_twin_location': is_twin_location,
         'location_id': location_id,
         'name': name,
         'latitude': latitude,
@@ -410,6 +413,7 @@ def save_current_location_to_backup_cache(user_id):
         
         backup_data = {
             'state': current_location_cache.get('state'),
+            'is_twin_location': current_location_cache.get('is_twin_location'),
             'location_id': current_location_cache.get('location_id'),
             'name': current_location_cache.get('name', 'Error getting location name'),  
             'latitude': current_location_cache.get('latitude'),
@@ -438,6 +442,7 @@ def restore_location_from_backup_cache_and_send_update(user_id):
         
         location_data = {
             'state': backup_location_cache.get('state'),
+            'is_twin_location': backup_location_cache.get('is_twin_location'),
             'location_id': backup_location_cache.get('location_id'),
             'name': backup_location_cache.get('name', 'Error getting location name'),  
             'latitude': backup_location_cache.get('latitude'),
@@ -455,6 +460,7 @@ def restore_location_from_backup_cache_and_send_update(user_id):
                 {
                     'type': 'update_location',
                     'state': backup_location_cache.get('state', 'Error getting location state'),
+                    'is_twin_location': backup_location_cache.get('is_twin_location'),
                     'location_id': backup_location_cache.get('location_id'),
                     'name': backup_location_cache.get('name', 'Error getting location name'),  
                     'temperature': None,

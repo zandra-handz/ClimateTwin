@@ -199,6 +199,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 
             self.send(text_data=json.dumps({
                 'state': current_location_cache.get('state', None),
+                'is_twin_location': current_location_cache.get('is_twin_location', None),
                 'location_id': current_location_cache.get('location_id'),
                 'name': current_location_cache.get('name', 'Error getting location name'),  
                 'latitude': current_location_cache.get('latitude', None),
@@ -213,6 +214,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             self.send(text_data=json.dumps({
                 'location_id': None,
                 'state': current_location_cache.get('state', None),
+                'is_twin_location': current_location_cache.get('is_twin_location', None),
                 'name': current_location_cache.get('name', 'Error getting location name'),  
                 'latitude': None,
                 'longitude': None,
@@ -270,6 +272,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
     def create_empty_location_update(self):
         empty_update = {
             'state': 'home',
+            'is_twin_location': None,
             'location_id': None,
             'name': 'You are home', 
             'latitude': None,
@@ -424,6 +427,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
                     # update_location method will then cache it
                     event_data = {
                         'state': 'exploring',
+                        'is_twin_location': None,
                         'location_id': current_location_visiting_id,
                         'name': explore_dict.get('name', 'Unknown'),   
                         'latitude': explore_dict.get('latitude', None),  
@@ -444,6 +448,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
                     # update_location method will then cache it
                     event_data = {
                         'state': 'exploring', # make more accurate later
+                        'is_twin_location': 'yes',
                         'location_id': current_location_visiting_id,
                         'name': twin_dict.get('name', 'Unknown'),  
                         'latitude': twin_dict.get('latitude', None),  
@@ -566,6 +571,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         if event is None:
             self.send(text_data=json.dumps({
                 'state': 'home',
+                'is_twin_location': None,
                 'location_id': None,
                 'name': "You are home",
                 'latitude': None,
@@ -586,6 +592,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         else:
             self.send(text_data=json.dumps({
                 'state': event.get('state', 'home'),
+                'is_twin_location': event.get('is_twin_location', None),
                 'location_id': event.get('location_id', None),
                 'name': event.get('name', 'Error'),
                 'latitude': event.get('latitude', None),
@@ -597,6 +604,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             cache_notif_location_update(
                 user_id=user_id,
                 state=event.get('state', 'home'),
+                is_twin_location=event.get('is_twin_location', None),
                 location_id=event.get('location_id', None),
                 name=event.get('name', 'Error'),
                 latitude=event.get('latitude', None),
