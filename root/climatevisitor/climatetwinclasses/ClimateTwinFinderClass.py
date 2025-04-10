@@ -159,7 +159,7 @@ class ClimateTwinFinder:
 
         if locations_found:
             # Selects one or more with closest humidity, returns False if no value for country
-            successful = self.managing_function_to_find_climate_twin()
+            self.managing_function_to_find_climate_twin()
             self.configure_similar_places_dict()
         
         else:

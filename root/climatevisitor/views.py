@@ -128,7 +128,7 @@ def go(request):
             return Response({'error': 'A search is already running for your account.'},
                         status=status.HTTP_429_TOO_MANY_REQUESTS)
         
-        set_user_lock(user.id)
+        # set_user_lock(user.id)
         
         # Send the task to Celery for execution
         #run_climate_twin_algorithms_task(user.id, user_address)
