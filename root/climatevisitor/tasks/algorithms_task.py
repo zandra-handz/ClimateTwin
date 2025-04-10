@@ -52,7 +52,9 @@ def run_climate_twin_algorithms_task(user_id, user_address):
     # Search ends when CurrentLocation instance is saved below (instance method includes socket update)
 
     climate_places = ClimateTwinFinder(user_id_for_celery=user_id, address=user_address)
-    print("Twin Location found.")
+    
+    if climate_places:
+        print(f"Twin Location found: {climate_places.home_climate}")
 
     if climate_places and climate_places.home_climate:
         print("climate_places.home_climate exists -- proceeding")
@@ -240,6 +242,15 @@ def run_climate_twin_algorithms_task(user_id, user_address):
         
         except Exception as e:
             print("An error occurred:", e) 
+
+    # Reset socket to 'home' if no climate twin location returned in ClimateTwinFinder object
+    else:
+        try:
+            push_expiration_task_scheduled(user_id, f'Oops! Could not find a twin location. Please try searching again.')
+            send_location_update_to_celery(user_id=user_id, state='home', location_id=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
+        except Exception as e:
+            print(f"Couldn't send returned home message.")
+
                     
  
  
