@@ -54,7 +54,8 @@ def run_climate_twin_algorithms_task(user_id, user_address):
     climate_places = ClimateTwinFinder(user_id_for_celery=user_id, address=user_address)
     print("Twin Location found.")
 
-    if climate_places.home_climate:
+    if climate_places and climate_places.home_climate:
+        print("climate_places.home_climate exists -- proceeding")
         address = list(climate_places.home_climate.keys())[0]
         home_data = climate_places.home_climate[address]
         home_data["name"] = address
@@ -67,7 +68,8 @@ def run_climate_twin_algorithms_task(user_id, user_address):
             home_location_instance = None
             print("Error:", home_location_serializer.errors)
 
-    if climate_places.climate_twin:
+    if climate_places and climate_places.climate_twin:
+        print("climate_places.home_twin exists -- proceeding")
         home_weather_profile = ClimateObject(climate_places.home_climate)
         climate_twin_weather_profile = ClimateObject(climate_places.climate_twin)
 
@@ -119,11 +121,17 @@ def run_climate_twin_algorithms_task(user_id, user_address):
 
             # Save the instance to the database
             climate_twin_search_stats_instance.save()
+            print("Climate Twin Search Stats instance created and saved successfully.")
+
             logger.info("Climate Twin Search Stats instance created and saved successfully.")
 
         except IntegrityError as e:
+            print(f"Database integrity error occurred while saving Climate Twin Search Stats: {e}")
             logger.error(f"Database integrity error occurred while saving Climate Twin Search Stats: {e}")
+        
         except Exception as e:
+            print(f"An error occurred while creating Climate Twin Search Stats: {e}")
+ 
             logger.error(f"An error occurred while creating Climate Twin Search Stats: {e}")
  
         
@@ -169,38 +177,45 @@ def run_climate_twin_algorithms_task(user_id, user_address):
                 schedule_expiration_task(user_id=user_instance.id)# No async_to_sync wrapper needed
 
                 osm_api = OpenMapAPI()
-                osm_results = osm_api.find_ancient_ruins(climate_twin_weather_profile.latitude, climate_twin_weather_profile.longitude, radius=100000, num_results=15)
-                nearby_ruins = osm_api.format_ruins_with_wind_compass_for_post(osm_results, climate_twin_weather_profile.wind_direction)
+                try:
+                    osm_results = osm_api.find_ancient_ruins(climate_twin_weather_profile.latitude, climate_twin_weather_profile.longitude, radius=100000, num_results=15)
+                    nearby_ruins = osm_api.format_ruins_with_wind_compass_for_post(osm_results, climate_twin_weather_profile.wind_direction)
 
-                # Not strictly necessary to check if dict, because function sets an empty dict at beginning
-                if isinstance(nearby_ruins, dict): # added 4/3/2025
-                    for name, ruin in nearby_ruins.items():
-                        formatted_ruin = {
-                            "name": name,
-                            "user": user_instance.id,
-                            "direction_degree": ruin['direction_deg'],
-                            "direction": ruin.get('direction'),
-                            "miles_away": round(ruin['miles_away']),
-                            "location_id": ruin['id'],
-                            "latitude": ruin['latitude'],
-                            "longitude": ruin['longitude'],
-                            "tags": ruin["tags"],
-                            "wind_compass": ruin['wind_compass'],
-                            "wind_agreement_score": (round(ruin['wind_agreement_score'])),
-                            "wind_harmony": ruin['wind_harmony'],
-                            "street_view_image": ruin.get("street_view_image", ''),
-                            "origin_location": climate_twin_location_instance.id,
-                        }
+                    # Not strictly necessary to check if dict, because function sets an empty dict at beginning
+                    if isinstance(nearby_ruins, dict): # added 4/3/2025
+                        for name, ruin in nearby_ruins.items():
+                            formatted_ruin = {
+                                "name": name,
+                                "user": user_instance.id,
+                                "direction_degree": ruin['direction_deg'],
+                                "direction": ruin.get('direction'),
+                                "miles_away": round(ruin['miles_away']),
+                                "location_id": ruin['id'],
+                                "latitude": ruin['latitude'],
+                                "longitude": ruin['longitude'],
+                                "tags": ruin["tags"],
+                                "wind_compass": ruin['wind_compass'],
+                                "wind_agreement_score": (round(ruin['wind_agreement_score'])),
+                                "wind_harmony": ruin['wind_harmony'],
+                                "street_view_image": ruin.get("street_view_image", ''),
+                                "origin_location": climate_twin_location_instance.id,
+                            }
 
-                        serializer = serializers.ClimateTwinDiscoveryLocationCreateSerializer(data=formatted_ruin)
-                        if serializer.is_valid():
-                            discovery_location_instance = serializer.save(
-                                user=user_instance  
-                            )
-                            print("Success: Discovery Location saved.")
-                        else:
-                            # Handle invalid data
-                            print("Error: Discovery Location could not be saved.")
+                            serializer = serializers.ClimateTwinDiscoveryLocationCreateSerializer(data=formatted_ruin)
+                            if serializer.is_valid():
+                                discovery_location_instance = serializer.save(
+                                    user=user_instance  
+                                )
+                                print("Success: Discovery Location saved.")
+                            else:
+                                # Handle invalid data
+                                print("Error: Discovery Location could not be saved.")
+                    
+                    
+                except Exception as e:
+                    print(f"Error fetching OSM results: {e}")
+               # osm_results = osm_api.find_ancient_ruins(climate_twin_weather_profile.latitude, climate_twin_weather_profile.longitude, radius=100000, num_results=15)
+                
             
         
                 
@@ -227,15 +242,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
             print("An error occurred:", e) 
                     
  
-#@shared_task(bind=True, max_retries=3)
-@shared_task # It's not a big deal if this fails, since the lock is
-# already scheduled to get removed; this only exists to improve user experience
-# in the case where they want to go home and research immediately without waiting 
-def remove_search_lock_immediately(user_id):
-    lock_key = f"search_active_for{user_id}"
-    cache.delete(lock_key)
  
-
 
 # @shared_task(bind=True, max_retries=3)
 # def process_climate_twin_request(self, user_id, user_address):
