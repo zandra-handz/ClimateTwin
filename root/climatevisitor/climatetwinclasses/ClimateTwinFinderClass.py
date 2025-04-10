@@ -1,5 +1,6 @@
 from climatevisitor.tasks.tasks import send_coordinate_update_to_celery, send_twin_location_search_progress_update
 from climatevisitor.tasks.tasks import reset_twin_location_search_progress_update
+from climatevisitor.send_utils import push_expiration_task_scheduled
 from celery import shared_task, current_app
 from django.conf import settings
 from django.core.cache import cache
@@ -163,6 +164,9 @@ class ClimateTwinFinder:
             self.configure_similar_places_dict()
         
         else:
+
+            # FOR DEBUGGING
+            push_expiration_task_scheduled(user_id_for_celery, 'Oops, could not find a portal. Please try searching again')
             print(f'ERROR: No Climate Twin locations found')
             logger.info(f'ERROR: No Climate Twin locations found')
 
@@ -595,7 +599,7 @@ class ClimateTwinFinder:
             country_name, random_coords = self.generate_random_coords_in_a_country_list()
 
             for idx, point in random_coords.iterrows():
-                latitude, longitude = point.geometry.y, point.geometry.x
+                
 
 
 
@@ -611,7 +615,7 @@ class ClimateTwinFinder:
                         num_places = 0
                     break
 
-
+                latitude, longitude = point.geometry.y, point.geometry.x
                 weather = self.get_weather(latitude, longitude)
 
                 if weather:
