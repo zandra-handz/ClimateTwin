@@ -161,7 +161,7 @@ class ClimateTwinFinder:
         if locations_found:
             # Selects one or more with closest humidity, returns False if no value for country
             self.managing_function_to_find_climate_twin()
-            self.configure_similar_places_dict()
+          
         
         else:
 
@@ -170,6 +170,7 @@ class ClimateTwinFinder:
             print(f'ERROR: No Climate Twin locations found')
             logger.info(f'ERROR: No Climate Twin locations found')
 
+        # self.configure_similar_places_dict()
 
         # Debug statements
         # self.print_home_climate_profile_concise()
@@ -788,7 +789,10 @@ class ClimateTwinFinder:
 
 
     def humidity_comparer(self):
-        # print(self.similar_places)
+        # Check if 'humidity' exists in similar_places and is not empty
+        if 'humidity' not in self.similar_places or not self.similar_places['humidity']:
+            return None  # or handle the case accordingly (raise an exception, return a default value, etc.)
+        
         difference = 100
         closest = 0
         for value in self.similar_places['humidity']:
@@ -798,7 +802,6 @@ class ClimateTwinFinder:
                 difference = new_difference
                 closest = value
         return closest
-
 
 
 
@@ -840,9 +843,12 @@ class ClimateTwinFinder:
 
 
     def managing_function_to_find_climate_twin(self):
-        closest_humidity = self.humidity_comparer() 
+        closest_humidity = self.humidity_comparer()  # This checks if similar places is empty
         places_semifinalists = self.similar_places
         climate_twin = {}
+ 
+        if closest_humidity is None:
+            return  
 
         for name, temp, desc, wind_speed, wind_direction, humidity, pressure, cloudiness, sunrise_timestamp, sunset_timestamp, latitude, longitude in zip(
                 places_semifinalists['name'], places_semifinalists['temperature'], places_semifinalists['description'],
