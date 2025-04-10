@@ -62,13 +62,14 @@ def send_push_notification(user_id, title, message):
         logger.error(f"Failed to send notification: {response.status_code} - {response.text}")
 
 
-def cache_and_push_notif_location_update(user_id, state, location_id, name, latitude, longitude, last_accessed):
+def cache_and_push_notif_location_update(user_id, state, is_twin_location, location_id, name, latitude, longitude, last_accessed):
     from django.core.cache import cache 
     
     cache_key = f"current_location_{user_id}"
     location_data = {
         'location_id': location_id,
         'state': state,
+        'is_twin_location': is_twin_location,
         'name': name,
         'latitude': latitude,
         'longitude': longitude,
@@ -79,13 +80,14 @@ def cache_and_push_notif_location_update(user_id, state, location_id, name, lati
 
 
 # No push
-def cache_notif_location_update(user_id, state, location_id, name, latitude, longitude, last_accessed):
+def cache_notif_location_update(user_id, state, is_twin_location, location_id, name, latitude, longitude, last_accessed):
     from django.core.cache import cache 
     
     cache_key = f"current_location_{user_id}"
     location_data = {
         'location_id': location_id,
         'state': state,
+        'is_twin_location': is_twin_location,
         'name': name,
         'latitude': latitude,
         'longitude': longitude,

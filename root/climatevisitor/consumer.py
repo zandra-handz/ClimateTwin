@@ -583,6 +583,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             cache_notif_location_update(
                 user_id=user_id,
                 state='home',
+                is_twin_location=None,
                 location_id=None,
                 name="You are home",
                 latitude=None,
