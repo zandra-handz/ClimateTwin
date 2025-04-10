@@ -41,6 +41,9 @@ class BadRainbowzUser(AbstractUser):
     is_banned_user = models.BooleanField(default=False)
     is_test_user = models.BooleanField(default=False)
 
+    is_subscribed_user = models.BooleanField(default=False)
+    subscription_expiration_date = models.DateTimeField(null=True, blank=True)
+
     is_searchable = models.BooleanField(default=True)
     is_searchable_by_email = models.BooleanField(default=True)
 
