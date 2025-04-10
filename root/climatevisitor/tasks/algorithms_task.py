@@ -283,7 +283,7 @@ def process_climate_twin_request(self, user_id, user_address):
         retry_exc = exc
     finally:
         remove_twin_search_lock(user_id)
-        logger.info(f"Deleted lock for user {user_id}: {deleted}")
+        logger.info(f"Deleted lock for user {user_id}")
 
     if retry_exc:
         raise self.retry(exc=retry_exc)
