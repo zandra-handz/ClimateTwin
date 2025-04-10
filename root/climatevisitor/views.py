@@ -6,8 +6,8 @@ from celery.result import AsyncResult
 from .climatetwinclasses.ClimateEncounterClass import ClimateEncounter
 from .climatetwinclasses.ClimateObjectClass import ClimateObject
 from .climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
-from climatevisitor.send_utils import check_and_set_twin_search_lock
-from .tasks.algorithms_task import remove_search_lock_immediately
+from climatevisitor.send_utils import check_and_set_twin_search_lock, remove_twin_search_lock
+ 
 from .tasks.algorithms_task import process_climate_twin_request, schedule_expiration_task, process_immediate_expiration_task
 from .tasks.tasks import send_location_update_to_celery, extra_coverage_cache_location_update, send_is_pending_location_update_to_celery
 # send_is_pending_location_update_to_celery is in process_climate_twin_request
@@ -1097,7 +1097,7 @@ class ExpireCurrentLocationView(generics.UpdateAPIView):
         if current_location.expired: #check to make sure location was successfully expired, I don't want socket cache to be able
             # to fall out of sync with DB
 
-            remove_search_lock_immediately.apply_async(args=[user.id])
+            remove_twin_search_lock(user.id)
 
             try:
                 send_location_update_to_celery(user_id=user.id, 
