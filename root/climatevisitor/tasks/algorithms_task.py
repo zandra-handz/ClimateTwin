@@ -237,32 +237,63 @@ def remove_search_lock_immediately(user_id):
  
 
 
+# @shared_task(bind=True, max_retries=3)
+# def process_climate_twin_request(self, user_id, user_address):
+    
+#     logger.info("Task to process climate twin request received.")
+#     print("Task to process climate twin request sent.")
+
+    
+#     lock_key = f"search_active_for_{user_id}"
+#     lock_ttl = 60 * 5  # 5 minutes
+ 
+#     if not cache.add(lock_key, "LOCKED", timeout=lock_ttl):
+#         logger.warning(f"Lock already active for user {user_id}. Skipping task.")
+#         return "Another request is already running."
+
+#     try:
+#         run_climate_twin_algorithms_task(user_id, user_address)
+#     except Exception as exc:
+#         logger.error(f"Error processing climate twin request: {exc}. Retrying...")
+#         raise self.retry(exc=exc)
+#     finally:
+#         # Always release the lock
+#         cache.delete(lock_key)  # also deleting in ExpireCurrentLocationView in case
+#         # user wants to go home and immediately fire another search
+    
+#     logger.info("Task to process climate twin request completed.")
+#     return "Request sent for processing"
+
+
 @shared_task(bind=True, max_retries=3)
 def process_climate_twin_request(self, user_id, user_address):
-    
     logger.info("Task to process climate twin request received.")
     print("Task to process climate twin request sent.")
 
-    
     lock_key = f"search_active_for_{user_id}"
     lock_ttl = 60 * 5  # 5 minutes
- 
+
     if not cache.add(lock_key, "LOCKED", timeout=lock_ttl):
         logger.warning(f"Lock already active for user {user_id}. Skipping task.")
         return "Another request is already running."
+
+    retry_exc = None
 
     try:
         run_climate_twin_algorithms_task(user_id, user_address)
     except Exception as exc:
         logger.error(f"Error processing climate twin request: {exc}. Retrying...")
-        raise self.retry(exc=exc)
+        retry_exc = exc
     finally:
-        # Always release the lock
-        cache.delete(lock_key)  # also deleting in ExpireCurrentLocationView in case
-        # user wants to go home and immediately fire another search
-    
+        deleted = cache.delete(lock_key)
+        logger.info(f"Deleted lock for user {user_id}: {deleted}")
+
+    if retry_exc:
+        raise self.retry(exc=retry_exc)
+
     logger.info("Task to process climate twin request completed.")
     return "Request sent for processing"
+
 
 
 @shared_task(bind=True, max_retries=3)
