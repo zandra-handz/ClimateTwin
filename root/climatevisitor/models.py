@@ -340,19 +340,18 @@ class CurrentLocation(models.Model):
         """
         Helper method to update or create the CurrentLocation for the user.
         It checks whether the user already has a current location and updates it or creates a new one.
-        """
-        # Ensure only one of explore_location or twin_location is set
+        """ 
+        
         if explore_location and twin_location:
             raise ValidationError("Only one of explore_location or twin_location can be specified.")
-
-        # Use update_or_create to create or update the CurrentLocation
+ 
         current_location, created = cls.objects.update_or_create(
             user=user,
             defaults={
                 'base_location': base_location,
                 'explore_location': explore_location,
                 'twin_location': twin_location,
-                'expired': False  # Set expired as False, or adjust as needed
+                'expired': False 
             }
         )
 

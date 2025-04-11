@@ -199,7 +199,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 
             self.send(text_data=json.dumps({
                 'state': current_location_cache.get('state', None),
-                'origin_location': current_location_cache.get('origin_location', None),
+                'base_location': current_location_cache.get('base_location', None),
                 'location_id': current_location_cache.get('location_id'),
                 'name': current_location_cache.get('name', 'Error getting location name'),  
                 'latitude': current_location_cache.get('latitude', None),
@@ -214,7 +214,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             self.send(text_data=json.dumps({
                 'location_id': None,
                 'state': current_location_cache.get('state', None),
-                'origin_location': current_location_cache.get('origin_location', None),
+                'base_location': current_location_cache.get('base_location', None),
                 'name': current_location_cache.get('name', 'Error getting location name'),  
                 'latitude': None,
                 'longitude': None,
@@ -272,7 +272,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
     def create_empty_location_update(self):
         empty_update = {
             'state': 'home',
-            'origin_location': None,
+            'base_location': None,
             'location_id': None,
             'name': 'You are home', 
             'latitude': None,
@@ -397,8 +397,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
 
             # added to help front end known when to refresh/NOT refresh nearby locations
-            current_location_origin_id = (
-                current_location_data.get('origin_location')
+            current_location_base_id = (
+                current_location_data.get('base_location')
             )
 
             current_location_visiting_id = (
@@ -433,7 +433,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
                     # update_location method will then cache it
                     event_data = {
                         'state': 'exploring',
-                        'origin_location': current_location_origin_id,
+                        'base_location': current_location_base_id,
                         'location_id': current_location_visiting_id,
                         'name': explore_dict.get('name', 'Unknown'),   
                         'latitude': explore_dict.get('latitude', None),  
@@ -454,7 +454,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
                     # update_location method will then cache it
                     event_data = {
                         'state': 'exploring', # make more accurate later
-                        'origin_location': current_location_origin_id,
+                        'base_location': current_location_base_id,
                         'location_id': current_location_visiting_id,
                         'name': twin_dict.get('name', 'Unknown'),  
                         'latitude': twin_dict.get('latitude', None),  
@@ -577,7 +577,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         if event is None:
             self.send(text_data=json.dumps({
                 'state': 'home',
-                'origin_location': None,
+                'base_location': None,
                 'location_id': None,
                 'name': "You are home",
                 'latitude': None,
@@ -589,7 +589,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             cache_notif_location_update(
                 user_id=user_id,
                 state='home',
-                origin_location=None,
+                base_location=None,
                 location_id=None,
                 name="You are home",
                 latitude=None,
@@ -599,7 +599,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         else:
             self.send(text_data=json.dumps({
                 'state': event.get('state', 'home'),
-                'origin_location': event.get('origin_location', None),
+                'base_location': event.get('base_location', None),
                 'location_id': event.get('location_id', None),
                 'name': event.get('name', 'Error'),
                 'latitude': event.get('latitude', None),
@@ -611,7 +611,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             cache_notif_location_update(
                 user_id=user_id,
                 state=event.get('state', 'home'),
-                origin_location=event.get('origin_location', None),
+                base_location=event.get('base_location', None),
                 location_id=event.get('location_id', None),
                 name=event.get('name', 'Error'),
                 latitude=event.get('latitude', None),

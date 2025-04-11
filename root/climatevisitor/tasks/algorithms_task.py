@@ -149,7 +149,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
         # that task can verify it was meant for the CurrentLocation before setting expired to True
         try:
 
-            current_location = CurrentLocation.update_or_create_location(user=user_instance, origin_location=climate_twin_location_instance, twin_location=climate_twin_location_instance)
+            current_location = CurrentLocation.update_or_create_location(user=user_instance, base_location=climate_twin_location_instance, twin_location=climate_twin_location_instance)
             
             if not current_location: # If not current location, won't get ruins 
                 # This and the try block in general are here to allow fallback to previous explore location
@@ -162,7 +162,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
 
 
                 send_location_update_to_celery(user_id=user_instance.id, state='searching for ruins',
-                                            origin_location=current_location.origin_location.id,
+                                            base_location=current_location.base_location.id,
                                             location_id=current_location.twin_location.id, # = location_visiting_id
                                             temperature=current_location.twin_location.temperature, 
                                             name=current_location.twin_location.name, 
@@ -225,7 +225,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
                 try: 
         
                     send_location_update_to_celery(user_id=user_instance.id, state='exploring',
-                            origin_location=current_location.origin_location.id,
+                            base_location=current_location.base_location.id,
                             location_id=current_location.twin_location.id, # = location_visiting_id
                             temperature=current_location.twin_location.temperature, 
                             name=current_location.twin_location.name, 
@@ -249,7 +249,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
     else:
         try:
             push_expiration_task_scheduled(user_id, f'Oops! Could not find a twin location. Please try searching again.')
-            send_location_update_to_celery(user_id=user_id, state='home', origin_location=None, location_id=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
+            send_location_update_to_celery(user_id=user_id, state='home', base_location=None, location_id=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
         except Exception as e:
             print(f"Couldn't send returned home message.")
 
@@ -436,7 +436,7 @@ def process_expiration_task(user_id, last_accessed=None):
             print(f"User {user_id}'s location expired successfully.")
  
             try:
-                send_location_update_to_celery(user_id=user_id, state='home', origin_location=None, location_id=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
+                send_location_update_to_celery(user_id=user_id, state='home', base_location=None, location_id=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
             except Exception as e:
                 print(f"Couldn't send returned home message.")
 
@@ -464,7 +464,7 @@ def process_immediate_expiration_task(user_id):
             print(f"User {user_id}'s current location confirmed expired, celery task is sending location update")
  
             try:
-                send_location_update_to_celery(user_id=user_id, state='home', origin_location=None, location_id=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
+                send_location_update_to_celery(user_id=user_id, state='home', base_location=None, location_id=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
             except Exception as e:
                 print(f"Couldn't send returned home message.") 
         else:
