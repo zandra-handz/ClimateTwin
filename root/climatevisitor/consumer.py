@@ -199,7 +199,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 
             self.send(text_data=json.dumps({
                 'state': current_location_cache.get('state', None),
-                'is_twin_location': current_location_cache.get('is_twin_location', None),
+                'origin_location': current_location_cache.get('origin_location', None),
                 'location_id': current_location_cache.get('location_id'),
                 'name': current_location_cache.get('name', 'Error getting location name'),  
                 'latitude': current_location_cache.get('latitude', None),
@@ -214,7 +214,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             self.send(text_data=json.dumps({
                 'location_id': None,
                 'state': current_location_cache.get('state', None),
-                'is_twin_location': current_location_cache.get('is_twin_location', None),
+                'origin_location': current_location_cache.get('origin_location', None),
                 'name': current_location_cache.get('name', 'Error getting location name'),  
                 'latitude': None,
                 'longitude': None,
@@ -272,7 +272,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
     def create_empty_location_update(self):
         empty_update = {
             'state': 'home',
-            'is_twin_location': None,
+            'origin_location': None,
             'location_id': None,
             'name': 'You are home', 
             'latitude': None,
@@ -373,8 +373,10 @@ class LocationUpdateConsumer(WebsocketConsumer):
     def fetch_data_from_endpoint(self, token):
         from rest_framework_simplejwt.tokens import AccessToken
 
-        explore_data_endpoint = 'https://climatetwin.com/climatevisitor/currently-exploring/v2/'
-        # explore_data_endpoint = 'http://localhost:8000/climatevisitor/currently-exploring/v2/'
+
+    # this is CurrentLocationView
+        current_location_endpoint = 'https://climatetwin.com/climatevisitor/currently-exploring/v2/'
+        # current_location_endpoint = 'http://localhost:8000/climatevisitor/currently-exploring/v2/'
  
         token_str = str(token) if isinstance(token, AccessToken) else token
 
@@ -388,23 +390,27 @@ class LocationUpdateConsumer(WebsocketConsumer):
             'Content-Type': 'application/json'
         }
 
-        explore_response = requests.get(explore_data_endpoint, headers=headers)
+        current_location_response = requests.get(current_location_endpoint, headers=headers)
 
-        if explore_response.status_code == 200:
-            explore_data = explore_response.json()
+        if current_location_response.status_code == 200:
+            current_location_data = current_location_response.json() 
 
-            #print('EXPLORE ENDPOINT DATA: ', explore_data)
+
+            # added to help front end known when to refresh/NOT refresh nearby locations
+            current_location_origin_id = (
+                current_location_data.get('origin_location')
+            )
 
             current_location_visiting_id = (
-                explore_data.get('location_visiting_id')
+                current_location_data.get('location_visiting_id')
             )
 
             current_location_expired = (
-                explore_data.get('expired')
+                current_location_data.get('expired')
             )
 
             current_location_last_accessed = (
-                explore_data.get('last_accessed')
+                current_location_data.get('last_accessed')
             )    
 
             if current_location_expired or current_location_visiting_id is None or current_location_last_accessed is None:
@@ -416,18 +422,18 @@ class LocationUpdateConsumer(WebsocketConsumer):
             twin_location_id = None  
             explore_location_id = None
 
-            if explore_data.get('explore_location') is not None:
-                explore_location_id = explore_data['explore_location'].get('id')
+            if current_location_data.get('explore_location') is not None:
+                explore_location_id = current_location_data['explore_location'].get('id')
 
                 if explore_location_id and explore_location_id == current_location_visiting_id:
-                    explore_dict = explore_data.get('explore_location')
+                    explore_dict = current_location_data.get('explore_location')
 
                     # this is formatted for update_location method and should only be fetched 
                     # if there isn't already something in the cache
                     # update_location method will then cache it
                     event_data = {
                         'state': 'exploring',
-                        'is_twin_location': None,
+                        'origin_location': current_location_origin_id,
                         'location_id': current_location_visiting_id,
                         'name': explore_dict.get('name', 'Unknown'),   
                         'latitude': explore_dict.get('latitude', None),  
@@ -437,18 +443,18 @@ class LocationUpdateConsumer(WebsocketConsumer):
                     return None, event_data
                 return None, None
 
-            elif explore_data.get('twin_location') is not None:
-                twin_location_id = explore_data['twin_location'].get('id')
+            elif current_location_data.get('twin_location') is not None:
+                twin_location_id = current_location_data['twin_location'].get('id')
 
                 if twin_location_id and twin_location_id == current_location_visiting_id:
-                    twin_dict = explore_data.get('twin_location')
+                    twin_dict = current_location_data.get('twin_location')
 
                     # this is formatted for update_location method and should only be fetched 
                     # if there isn't already something in the cache
                     # update_location method will then cache it
                     event_data = {
                         'state': 'exploring', # make more accurate later
-                        'is_twin_location': 'yes',
+                        'origin_location': current_location_origin_id,
                         'location_id': current_location_visiting_id,
                         'name': twin_dict.get('name', 'Unknown'),  
                         'latitude': twin_dict.get('latitude', None),  
@@ -571,7 +577,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         if event is None:
             self.send(text_data=json.dumps({
                 'state': 'home',
-                'is_twin_location': None,
+                'origin_location': None,
                 'location_id': None,
                 'name': "You are home",
                 'latitude': None,
@@ -583,7 +589,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             cache_notif_location_update(
                 user_id=user_id,
                 state='home',
-                is_twin_location=None,
+                origin_location=None,
                 location_id=None,
                 name="You are home",
                 latitude=None,
@@ -593,7 +599,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         else:
             self.send(text_data=json.dumps({
                 'state': event.get('state', 'home'),
-                'is_twin_location': event.get('is_twin_location', None),
+                'origin_location': event.get('origin_location', None),
                 'location_id': event.get('location_id', None),
                 'name': event.get('name', 'Error'),
                 'latitude': event.get('latitude', None),
@@ -605,7 +611,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             cache_notif_location_update(
                 user_id=user_id,
                 state=event.get('state', 'home'),
-                is_twin_location=event.get('is_twin_location', None),
+                origin_location=event.get('origin_location', None),
                 location_id=event.get('location_id', None),
                 name=event.get('name', 'Error'),
                 latitude=event.get('latitude', None),

@@ -976,7 +976,7 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
             extra_coverage_cache_location_update(
                 user_id=user.id, 
                 state='exploring',
-                is_twin_location='yes',
+                origin_location=saved_instance.base_location.id,
                 location_id=saved_instance.twin_location.id,
                 name=saved_instance.twin_location.name, 
                 latitude=saved_instance.twin_location.latitude,
@@ -984,7 +984,7 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
                 last_accessed=last_accessed_str)
          
             try:
-                send_location_update_to_celery(user_id=user.id, state='exploring', is_twin_location='yes', location_id=saved_instance.twin_location.id, # = location_visiting_id
+                send_location_update_to_celery(user_id=user.id, state='exploring', origin_location=saved_instance.base_location.id, location_id=saved_instance.twin_location.id, # = location_visiting_id
                                                temperature=saved_instance.twin_location.temperature, 
                                                name=saved_instance.twin_location.name, 
                                                latitude=saved_instance.twin_location.latitude,
@@ -1012,7 +1012,7 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
             last_accessed_str = saved_instance.last_accessed.isoformat()        
             
             try:
-                send_location_update_to_celery(user_id=user.id, state='exploring', is_twin_location=None, location_id=saved_instance.explore_location.id, # = location_visiting_id
+                send_location_update_to_celery(user_id=user.id, state='exploring', origin_location=saved_instance.base_location.id, location_id=saved_instance.explore_location.id, # = location_visiting_id
                                                 temperature= None, 
                                                 name=saved_instance.explore_location.name, 
                                                 latitude=saved_instance.explore_location.latitude,
@@ -1110,7 +1110,7 @@ class ExpireCurrentLocationView(generics.UpdateAPIView):
             try:
                 send_location_update_to_celery(user_id=user.id, 
                     state='home',
-                    is_twin_location=None,
+                    origin_location=None,
                     location_id=None, # = location_visiting_id
                     temperature= None, 
                     name="You are home", 

@@ -256,6 +256,11 @@ class ClimateTwinExploreLocation(models.Model):
 
 class CurrentLocation(models.Model):
     user = models.OneToOneField(BadRainbowzUser, on_delete=models.CASCADE)
+
+    # twin location
+    base_location = models.ForeignKey(ClimateTwinLocation, on_delete=models.SET_NULL, null=True, blank=True, related_name='base_location_set') # needed because of the other climate twin model here, otherwise django will set the same name for both
+    
+    # CURRENT LOCATION (either explore or twin, other one will be empty):
     explore_location = models.ForeignKey(ClimateTwinDiscoveryLocation, on_delete=models.SET_NULL, null=True, blank=True)
     twin_location = models.ForeignKey(ClimateTwinLocation, on_delete=models.SET_NULL, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
