@@ -345,14 +345,21 @@ class CurrentLocation(models.Model):
         if explore_location and twin_location:
             raise ValidationError("Only one of explore_location or twin_location can be specified.")
  
+ 
+        defaults={
+            #'base_location': base_location, #I don't want to overwrite if nothing is passed in
+            'explore_location': explore_location,
+            'twin_location': twin_location,
+            'expired': False 
+        }
+
+        if base_location is not None:
+            defaults['base_location'] = base_location
+         
+
         current_location, created = cls.objects.update_or_create(
             user=user,
-            defaults={
-                'base_location': base_location,
-                'explore_location': explore_location,
-                'twin_location': twin_location,
-                'expired': False 
-            }
+            defaults=defaults
         )
 
         return current_location
