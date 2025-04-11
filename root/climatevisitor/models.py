@@ -336,7 +336,7 @@ class CurrentLocation(models.Model):
         return fields_dict
     
     @classmethod
-    def update_or_create_location(cls, user, explore_location=None, twin_location=None):
+    def update_or_create_location(cls, user, base_location=None, explore_location=None, twin_location=None):
         """
         Helper method to update or create the CurrentLocation for the user.
         It checks whether the user already has a current location and updates it or creates a new one.
@@ -349,6 +349,7 @@ class CurrentLocation(models.Model):
         current_location, created = cls.objects.update_or_create(
             user=user,
             defaults={
+                'base_location': base_location,
                 'explore_location': explore_location,
                 'twin_location': twin_location,
                 'expired': False  # Set expired as False, or adjust as needed
