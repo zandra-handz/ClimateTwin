@@ -2,7 +2,7 @@ from . import models
 from . import serializers
 from climatevisitor.tasks.tasks import send_gift_notification, send_gift_accepted_notification, send_clear_gift_notification, send_friend_request_notification, send_friend_request_accepted_notification, send_clear_friend_request_notification, send_clear_notification_cache
 
-from django.core.exceptions import ValidationError 
+from django.core.exceptions import ValidationError, PermissionDenied 
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth import update_session_auth_hash
@@ -236,6 +236,7 @@ class TreasuresView(generics.ListCreateAPIView):
         return models.Treasure.objects.filter(user=self.request.user)
     
 
+
 class TreasureView(generics.RetrieveAPIView, generics.DestroyAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -248,12 +249,15 @@ class TreasureView(generics.RetrieveAPIView, generics.DestroyAPIView):
 
     @swagger_auto_schema(operation_id='deleteUserTreasure', operation_description="Deletes treasure.")
     def delete(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
+        return super().delete(request, *args, **kwargs)
 
     def get_queryset(self):
-        return models.Treasure.objects.filter(user=self.request.user)
+        return models.Treasure.objects.all()  # return all, ownership check happens below
 
-
+    def perform_destroy(self, instance):
+        if instance.finder != self.request.user:
+            raise PermissionDenied("You are not allowed to delete this treasure.")
+        instance.delete()
 
 class UserProfileView(generics.ListCreateAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]

@@ -22,6 +22,7 @@ urlpatterns = [
     
     path('treasures/', views.TreasuresView.as_view(), name='treasures'),
     path('treasure/<int:pk>/', views.TreasureView.as_view(), name='treasure'),
+    path('treasure/<int:pk>/delete/', views.TreasureView.as_view(), name='delete-treasure'),
     path('inbox/items/', views.InboxView.as_view(), name='inbox-list'),
     path('inbox/item/<int:pk>/', views.InboxItemDetailView.as_view(), name='inbox-item-detail'),
     path('inbox/accept-friend-request/<int:item_view_id>/', views.FriendRequestDetailView.as_view(), name='accept-friend-request'),
@@ -34,7 +35,7 @@ urlpatterns = [
     path('send-gift-request/', views.SendGiftRequestView.as_view(), name='send-gift-request'),
     path('friends/', views.FriendProfilesView.as_view(), name='friends'),
     path('friend/<int:pk>/', views.FriendProfileView.as_view(), name='friend'),
-    path('delete-friend/<int:pk>/', views.DeleteFriendshipView.as_view(), name='delete-friend'),
+    path('friend/<int:pk>/delete/', views.DeleteFriendshipView.as_view(), name='delete-friend'),
     path('profile/', views.UserProfileView.as_view(), name='profile'),
     path('profile/update/<int:pk>/', views.UpdateUserProfileView.as_view(), name='update-profile'),
     path('settings/', views.UserSettingsView.as_view(), name='settings'),
