@@ -985,6 +985,7 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
          
             try:
                 send_location_update_to_celery(user_id=user.id, state='exploring', base_location=saved_instance.base_location.id, location_id=saved_instance.twin_location.id, # = location_visiting_id
+                                               location_same_as_last_update=None,
                                                temperature=saved_instance.twin_location.temperature, 
                                                name=saved_instance.twin_location.name, 
                                                latitude=saved_instance.twin_location.latitude,
@@ -1013,6 +1014,7 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
             
             try:
                 send_location_update_to_celery(user_id=user.id, state='exploring', base_location=saved_instance.base_location.id, location_id=saved_instance.explore_location.id, # = location_visiting_id
+                                                location_same_as_last_update=None,
                                                 temperature= None, 
                                                 name=saved_instance.explore_location.name, 
                                                 latitude=saved_instance.explore_location.latitude,
@@ -1111,6 +1113,7 @@ class ExpireCurrentLocationView(generics.UpdateAPIView):
                 send_location_update_to_celery(user_id=user.id, 
                     state='home',
                     base_location=None,
+                    location_same_as_last_update=None,
                     location_id=None, # = location_visiting_id
                     temperature= None, 
                     name="You are home", 

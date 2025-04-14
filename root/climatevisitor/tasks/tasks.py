@@ -310,6 +310,7 @@ def send_is_pending_location_update_to_celery(user_id):
                 'state': 'searching for twin',
                 'base_location': None,
                 'location_id': None,
+                'location_same_as_last_update': None,
                 'name': pending_message,
                 'temperature': None,
                 'latitude': None,
@@ -334,7 +335,7 @@ def send_is_pending_location_update_to_celery(user_id):
 
 
 @shared_task
-def send_location_update_to_celery(user_id, state, base_location, location_id, name, temperature, latitude, longitude, last_accessed):
+def send_location_update_to_celery(user_id, state, base_location, location_id, location_same_as_last_update, name, temperature, latitude, longitude, last_accessed):
      
     logger.info(f"Preparing to send location update to Celery with data: "
                 f"user_id: {user_id}, state: {state}, base_location: {base_location}, location_id: {location_id}, "
@@ -353,6 +354,7 @@ def send_location_update_to_celery(user_id, state, base_location, location_id, n
                 'state': state,
                 'base_location': base_location,
                 'location_id': location_id,
+                'location_same_as_last_update': location_same_as_last_update,
                 'name': name,
                 'temperature': temperature,
                 'latitude': latitude,
@@ -384,6 +386,7 @@ def extra_coverage_cache_location_update(user_id, state, base_location, location
         'state' : state,
         'base_location': base_location,
         'location_id': location_id,
+        'location_same_as_last_update': None,
         'name': name,
         'latitude': latitude,
         'longitude': longitude,
@@ -415,6 +418,7 @@ def save_current_location_to_backup_cache(user_id):
             'state': current_location_cache.get('state'),
             'base_location': current_location_cache.get('base_location'),
             'location_id': current_location_cache.get('location_id'),
+            'location_same_as_last_update': current_location_cache.get('location_same_as_last_update', None),
             'name': current_location_cache.get('name', 'Error getting location name'),  
             'latitude': current_location_cache.get('latitude'),
             'longitude': current_location_cache.get('longitude'),
@@ -444,6 +448,7 @@ def restore_location_from_backup_cache_and_send_update(user_id):
             'state': backup_location_cache.get('state'),
             'base_location': backup_location_cache.get('base_location'),
             'location_id': backup_location_cache.get('location_id'),
+            'location_same_as_last_update': backup_location_cache.get('location_same_as_last_update'),
             'name': backup_location_cache.get('name', 'Error getting location name'),  
             'latitude': backup_location_cache.get('latitude'),
             'longitude': backup_location_cache.get('longitude'),
@@ -462,6 +467,7 @@ def restore_location_from_backup_cache_and_send_update(user_id):
                     'state': backup_location_cache.get('state', 'Error getting location state'),
                     'base_location': backup_location_cache.get('base_location'),
                     'location_id': backup_location_cache.get('location_id'),
+                    'location_same_as_last_update': backup_location_cache.get('location_same_as_last_update'),
                     'name': backup_location_cache.get('name', 'Error getting location name'),  
                     'temperature': None,
                     'latitude': backup_location_cache.get('latitude'),
@@ -470,10 +476,10 @@ def restore_location_from_backup_cache_and_send_update(user_id):
                 }
             )
     
-            logger.info(f"Location update sent successfully for user_id: {user_id}, location_id: {location_id}")
+            logger.info(f"Location update sent successfully for user_id: {user_id}")
 
         except Exception as e: 
-            logger.error(f"Error in send_location_update_to_celery task for user_id: {user_id}, location_id: {location_id}. "
+            logger.error(f"Error in send_location_update_to_celery task for user_id: {user_id}. "
                         f"Error: {str(e)}")
             # tbh gpty gave this type of error to me and I'm not sure if it is necessary
             raise SuspiciousOperation(f"Error sending location update to Celery: {str(e)}")

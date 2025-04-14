@@ -68,6 +68,7 @@ def cache_and_push_notif_location_update(user_id, state, base_location, location
     cache_key = f"current_location_{user_id}"
     location_data = {
         'location_id': location_id,
+        'location_same_as_last_update': None,
         'state': state,
         'base_location': base_location,
         'name': name,
@@ -88,6 +89,7 @@ def cache_notif_location_update(user_id, state, base_location, location_id, name
         'location_id': location_id,
         'state': state,
         'base_location': base_location,
+        'location_same_as_last_update': None,
         'name': name,
         'latitude': latitude,
         'longitude': longitude,

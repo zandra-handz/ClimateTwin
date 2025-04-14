@@ -164,6 +164,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
                 send_location_update_to_celery(user_id=user_instance.id, state='searching for ruins',
                                             base_location=current_location.base_location.id,
                                             location_id=current_location.twin_location.id, # = location_visiting_id
+                                            location_same_as_last_update=None,
                                             temperature=current_location.twin_location.temperature, 
                                             name=current_location.twin_location.name, 
                                             latitude=current_location.twin_location.latitude, 
@@ -223,10 +224,13 @@ def run_climate_twin_algorithms_task(user_id, user_address):
         
                 
                 try: 
-        
+                    # THE ONLY TIME LOCATION_SAME_AS_UPDATE will be 'yes' ( and it still caches as None)
+                    # Currently this exists for the sole purpose of not causing an unnecessary rerender of FE App
+                    # based on the current design
                     send_location_update_to_celery(user_id=user_instance.id, state='exploring',
                             base_location=current_location.base_location.id,
                             location_id=current_location.twin_location.id, # = location_visiting_id
+                            location_same_as_last_update='yes',
                             temperature=current_location.twin_location.temperature, 
                             name=current_location.twin_location.name, 
                             latitude=current_location.twin_location.latitude, 
@@ -249,7 +253,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
     else:
         try:
             push_expiration_task_scheduled(user_id, f'Oops! Could not find a twin location. Please try searching again.')
-            send_location_update_to_celery(user_id=user_id, state='home', base_location=None, location_id=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
+            send_location_update_to_celery(user_id=user_id, state='home', base_location=None, location_same_as_last_update=None, location_id=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
         except Exception as e:
             print(f"Couldn't send returned home message.")
 
@@ -436,7 +440,7 @@ def process_expiration_task(user_id, last_accessed=None):
             print(f"User {user_id}'s location expired successfully.")
  
             try:
-                send_location_update_to_celery(user_id=user_id, state='home', base_location=None, location_id=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
+                send_location_update_to_celery(user_id=user_id, state='home', base_location=None, location_same_as_last_update=None, location_id=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
             except Exception as e:
                 print(f"Couldn't send returned home message.")
 
@@ -464,7 +468,7 @@ def process_immediate_expiration_task(user_id):
             print(f"User {user_id}'s current location confirmed expired, celery task is sending location update")
  
             try:
-                send_location_update_to_celery(user_id=user_id, state='home', base_location=None, location_id=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
+                send_location_update_to_celery(user_id=user_id, state='home', base_location=None, location_id=None, location_same_as_last_update=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
             except Exception as e:
                 print(f"Couldn't send returned home message.") 
         else:
