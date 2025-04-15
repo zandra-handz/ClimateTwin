@@ -100,14 +100,16 @@ def cache_notif_location_update(user_id, state, base_location, location_id, name
 
 
 
-def cache_and_push_notif_new_gift(user_id, user_username, recipient_id, inbox_item_id):
+def cache_and_push_notif_new_gift(user_id, user_username, recipient_id, inbox_item_id, gift_request_id):
     from django.core.cache import cache 
 
     cache_key = f"last_notification_{recipient_id}"
     new_gift_message = f'{user_username} sent you a treasure!'
     inbox_item_id = f'{inbox_item_id}'
+    gift_request_id = f'{gift_request_id}'
     data = {'notification': new_gift_message,
-            'inbox_item_id': inbox_item_id }
+            'inbox_item_id': inbox_item_id,
+             'gift_request_id': gift_request_id }
     cache.set(cache_key, data) #, timeout=3600) 
     send_push_notification(user_id, "ClimateTwin", new_gift_message)
 

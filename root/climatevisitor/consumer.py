@@ -489,9 +489,10 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
         notification_data = event['notification']
         inbox_item_id_data = event['inbox_item_id']
+        gift_request_id_data = event['gift_request_id']
         recipient_id = event['recipient_id']  
         cache.set(f"notification_{recipient_id}", notification_data) # no timeout , timeout=86400)
-        self.send(text_data=json.dumps({'notification': notification_data, 'inbox_item_id': inbox_item_id_data}))
+        self.send(text_data=json.dumps({'notification': notification_data, 'inbox_item_id': inbox_item_id_data, 'gift_request_id': gift_request_id_data}))
 
 
     def friend_notification(self, event):
