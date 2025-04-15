@@ -223,8 +223,15 @@ class UserVisit(models.Model):
 
 
 
+
+# may want to do something with treasures in the event current user deletes account
+# abandon them somewhere or put them into some category where they randomly appear for other users to collect?
+# we also may need to make a way to delete all associated treasures for legal purposes
+# or state somewhere that they won't be able to be deleted easily once given away
+# oooh give other users the ability to return any treasure back to the finder with a note
+# are we storing the history of the treasure being exchanged?
 class Treasure(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='treasures')
+    user = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name='treasures')
     finder = models.ForeignKey(
         get_user_model(),
         on_delete=models.SET_NULL,  # Set finder to NULL instead of deleting Treasure
@@ -246,8 +253,9 @@ class Treasure(models.Model):
 
     # Gift-related fields
     message = models.TextField(null=True, blank=True)
-    giver = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True, blank=True, related_name='sent_gifts')
-    recipient = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True, blank=True, related_name='received_gifts')
+    giver = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name='sent_gifts')
+    giver_name = models.CharField(max_length=50, default='')
+    recipient = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name='received_gifts')
     created_on = models.DateTimeField(auto_now_add=True)
     owned_since = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
@@ -293,12 +301,17 @@ class Treasure(models.Model):
         # Update the fields for gifting (not in use right now).
         self.message = message
         self.giver = giver
+      
         self.recipient = recipient
         self.pending = True
         self.save()
 
     def accept(self, message, recipient):
+
+        username = self.user.username if self.user else "Unknown"
+
         self.giver = self.user
+        self.giver_name = username
         self.user = recipient
         self.recipient = recipient 
         self.message = message
