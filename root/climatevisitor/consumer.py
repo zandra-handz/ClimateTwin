@@ -256,7 +256,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         last_notification = cache.get(f"last_notification_{self.user.id}")
         if last_notification:
             logger.info(f"Sending last_notification to user {self.user.id}: {last_notification}")
-            self.send(text_data=json.dumps({'notification': last_notification}))
+            self.send(text_data=json.dumps({last_notification}))
         else:
             logger.info("No notification in cache for this user")
 
@@ -488,9 +488,10 @@ class LocationUpdateConsumer(WebsocketConsumer):
         logger.debug(f"Received gift_notification event: {event}")
 
         notification_data = event['notification']
+        inbox_item_id_data = event['inbox_item_id']
         recipient_id = event['recipient_id']  
         cache.set(f"notification_{recipient_id}", notification_data) # no timeout , timeout=86400)
-        self.send(text_data=json.dumps({'notification': notification_data}))
+        self.send(text_data=json.dumps({'notification': notification_data, 'inbox_item_id': inbox_item_id_data}))
 
 
     def friend_notification(self, event):

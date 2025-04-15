@@ -721,7 +721,7 @@ class SendGiftRequestView(generics.CreateAPIView):
 
             print(gift_request.recipient.id)
  
-            send_gift_notification(request.user.id, request.user.username, gift_request.recipient.id)
+            send_gift_notification(request.user.id, request.user.username, gift_request.recipient.id, inbox_item.id)
 
         
 

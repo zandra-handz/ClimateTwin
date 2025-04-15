@@ -80,7 +80,7 @@ def reset_twin_location_search_progress_update(user_id):
 
 
 @shared_task
-def send_gift_notification(user_id, user_username, recipient_id):
+def send_gift_notification(user_id, user_username, recipient_id, inbox_item_id):
     logger.info(f"send_gift_notification triggered for user_id: {user_id}, recipient_id: {recipient_id}")
 
     channel_layer = get_channel_layer()
@@ -88,7 +88,7 @@ def send_gift_notification(user_id, user_username, recipient_id):
     
     logger.info(f"Attempting to send message to group: {group_name}")
 
-    cache_and_push_notif_new_gift(user_id, user_username, recipient_id)
+    cache_and_push_notif_new_gift(user_id, user_username, recipient_id, inbox_item_id)
 
     notification_message = f'{user_username} sent you a treasure!'
     # sending clear method will remove the notification, if I remember correctly
@@ -101,6 +101,7 @@ def send_gift_notification(user_id, user_username, recipient_id):
             {
                 'type': 'gift_notification',
                 'notification': notification_message,
+                'inbox_item_id': inbox_item_id,
             }
         )
         logger.info(f"Notification successfully sent to {group_name}")

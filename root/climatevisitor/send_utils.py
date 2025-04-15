@@ -100,12 +100,15 @@ def cache_notif_location_update(user_id, state, base_location, location_id, name
 
 
 
-def cache_and_push_notif_new_gift(user_id, user_username, recipient_id):
+def cache_and_push_notif_new_gift(user_id, user_username, recipient_id, inbox_item_id):
     from django.core.cache import cache 
 
     cache_key = f"last_notification_{recipient_id}"
     new_gift_message = f'{user_username} sent you a treasure!'
-    cache.set(cache_key, new_gift_message) #, timeout=3600) 
+    inbox_item_id = f'{inbox_item_id}'
+    data = {'notification': new_gift_message,
+            'inbox_item_id': inbox_item_id }
+    cache.set(cache_key, data) #, timeout=3600) 
     send_push_notification(user_id, "ClimateTwin", new_gift_message)
 
 
@@ -114,7 +117,9 @@ def cache_and_push_notif_accepted_gift(user_id, user_username, recipient_id):
 
     cache_key = f"last_notification_{recipient_id}"
     accepted_gift_message = f'{user_username} accepted the treasure you sent them :)'
-    cache.set(cache_key, accepted_gift_message) #, timeout=3600) 
+    data = { 'notification': accepted_gift_message
+    }
+    cache.set(cache_key, data) #, timeout=3600) 
     send_push_notification(user_id, "ClimateTwin", accepted_gift_message)
     
     
@@ -124,7 +129,8 @@ def cache_and_push_notif_friend_request(user_id, user_username, recipient_id):
 
     cache_key = f"last_notification_{recipient_id}"
     new_friend_request_message = f'{user_username} has sent you a friend request!'
-    cache.set(cache_key, new_friend_request_message) #, timeout=3600) 
+    data = {'notification': new_friend_request_message}
+    cache.set(cache_key, data) #, timeout=3600) 
     send_push_notification(user_id, "ClimateTwin", new_friend_request_message)
   
 
@@ -133,7 +139,8 @@ def cache_and_push_notif_friend_request_accepted(user_id, user_username, recipie
 
     cache_key = f"last_notification_{recipient_id}"
     accepted_friend_request_message = f'{user_username} accepted your friend request :)'
-    cache.set(cache_key, accepted_friend_request_message)
+    data = { 'notification': accepted_friend_request_message}
+    cache.set(cache_key, data)
     send_push_notification(user_id, "ClimateTwin", accepted_friend_request_message)
 
   
