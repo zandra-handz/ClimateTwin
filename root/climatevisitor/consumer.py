@@ -487,10 +487,10 @@ class LocationUpdateConsumer(WebsocketConsumer):
     def gift_notification(self, event):
         logger.debug(f"Received gift_notification event: {event}")
 
-        notification_data = event['notification']
-        inbox_item_id_data = event['inbox_item_id']
-        gift_request_id_data = event['gift_request_id']
-        recipient_id = event['recipient_id']  
+        notification_data = event.get('notification')
+        inbox_item_id_data = event.get('inbox_item_id', None)
+        gift_request_id_data = event.get('gift_request_id', None)
+        recipient_id = event.get('recipient_id')
         cache.set(f"notification_{recipient_id}", notification_data) # no timeout , timeout=86400)
         self.send(text_data=json.dumps({'notification': notification_data, 'inbox_item_id': inbox_item_id_data, 'gift_request_id': gift_request_id_data}))
 
@@ -499,10 +499,11 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
         logger.debug(f"Received update_location event: {event}")
 
-        notification_data = event['notification']
-        recipient_id = event['recipient_id'] 
-        inbox_item_id_data = event['inbox_item_id']
-        friend_request_id_data = event['friend_request_id']
+        notification_data = event.get('notification')
+        recipient_id = event.get('recipient_id')
+        inbox_item_id_data = event.get('inbox_item_id', None)
+        friend_request_id_data = event.get('friend_request_id', None)
+        
         cache.set(f"notification_{recipient_id}", notification_data) # no timeout, timeout=86400)
         self.send(text_data=json.dumps({'notification': notification_data, 'inbox_item_id': inbox_item_id_data, 'friend_request_id': friend_request_id_data}))
    
