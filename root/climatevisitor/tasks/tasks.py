@@ -139,7 +139,7 @@ def send_gift_accepted_notification(user_id, user_username, recipient_id):
      
 
 @shared_task
-def send_friend_request_notification(user_id, user_username, recipient_id):
+def send_friend_request_notification(user_id, user_username, recipient_id, friend_request_id):
     logger.info(f"send_friend_request_notification triggered for user_id: {user_id}, recipient_id: {recipient_id}")
 
     channel_layer = get_channel_layer()
@@ -149,7 +149,7 @@ def send_friend_request_notification(user_id, user_username, recipient_id):
 
     
     #Sending clear message will remove 
-    cache_and_push_notif_friend_request(user_id, user_username, recipient_id)
+    cache_and_push_notif_friend_request(user_id, user_username, recipient_id, friend_request_id)
 
     notification_message = f'User ID {user_id} wants to be friends!'
     
@@ -159,6 +159,7 @@ def send_friend_request_notification(user_id, user_username, recipient_id):
             {
                 'type': 'friend_notification',
                 'notification': notification_message,
+                'friend_request_id': friend_request_id
             }
         )
         logger.info(f"Notification successfully sent to {group_name}")

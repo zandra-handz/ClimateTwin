@@ -126,12 +126,12 @@ def cache_and_push_notif_accepted_gift(user_id, user_username, recipient_id):
     
     
 # I want to test treasures methods above first before implementing these
-def cache_and_push_notif_friend_request(user_id, user_username, recipient_id):
+def cache_and_push_notif_friend_request(user_id, user_username, recipient_id, friend_request_id):
     from django.core.cache import cache
 
     cache_key = f"last_notification_{recipient_id}"
     new_friend_request_message = f'{user_username} has sent you a friend request!'
-    data = {'notification': new_friend_request_message}
+    data = {'notification': new_friend_request_message, 'friend_request_id': friend_request_id}
     cache.set(cache_key, data) #, timeout=3600) 
     send_push_notification(user_id, "ClimateTwin", new_friend_request_message)
   

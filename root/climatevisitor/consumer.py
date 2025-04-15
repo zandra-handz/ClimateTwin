@@ -501,8 +501,9 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
         notification_data = event['notification']
         recipient_id = event['recipient_id'] 
+        friend_request_id_data = event['friend_request_id']
         cache.set(f"notification_{recipient_id}", notification_data) # no timeout, timeout=86400)
-        self.send(text_data=json.dumps({'notification': notification_data}))
+        self.send(text_data=json.dumps({'notification': notification_data, 'friend_request_id': friend_request_id_data}))
    
    
     def disconnect(self, close_code):
