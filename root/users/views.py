@@ -612,11 +612,14 @@ class FriendRequestDetailView(generics.RetrieveUpdateAPIView):
         
         elif rejected is not None: 
 
+            user = request.user
+            friend = instance.sender
+
             with transaction.atomic():
                 instance.delete()
 
             logger.info("Calling send_clear_friend_request_notification synchronously for testing...")
-            send_clear_friend_request_notification(request.user.id, friend.id)
+            send_clear_friend_request_notification(user.id, friend.id)
 
             return Response({'success': 'Friend request rejected successfully!'}, status=status.HTTP_200_OK)
 
