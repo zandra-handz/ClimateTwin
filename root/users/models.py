@@ -229,7 +229,12 @@ class UserVisit(models.Model):
 # or state somewhere that they won't be able to be deleted easily once given away
 # oooh give other users the ability to return any treasure back to the finder with a note
 # are we storing the history of the treasure being exchanged?
+
+
 class Treasure(models.Model):
+
+    # to reference the owner change records, use the related name 'treasure_owner_changes' of the treasure key on that model:
+    # owner_changes = treasure.treasure_owner_changes.all()
     user = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name='treasures')
     finder = models.ForeignKey(
         get_user_model(),
@@ -258,6 +263,9 @@ class Treasure(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     owned_since = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
+    total_unique_owners = models.PositiveIntegerField(default=1)
+    times_gifted = models.PositiveIntegerField(default=0)
+
     class Meta:
         ordering = ['-owned_since']
 
@@ -277,6 +285,8 @@ class Treasure(models.Model):
             return f"Given a {self.descriptor} from {self.location_name} on {owned_since}"
         else:
             return f"Found {self.descriptor} in {self.location_name} on {date_found}"
+        
+ 
 
     @classmethod
     def collect_item(cls, user, location_name, miles_traveled_to_collect, found_at_latitude, found_at_longitude, item_name, item_category, descriptor, description, add_data):
@@ -293,7 +303,8 @@ class Treasure(models.Model):
             item_category=item_category,
             descriptor=descriptor,
             description=description,
-            add_data=add_data
+            add_data=add_data,
+            # use defaults for unique_owners and times_gifted fields
         )
 
     def give_as_gift(self, message, giver, recipient):
@@ -305,37 +316,91 @@ class Treasure(models.Model):
         self.pending = True
         self.save()
 
+
     def accept(self, message, recipient):
+        previous_owner = self.user
+        username = previous_owner.username if previous_owner else "Unknown"
 
-        username = self.user.username if self.user else "Unknown"
-
-        self.giver = self.user
+        # Update current treasure ownership
+        self.giver = previous_owner
         self.giver_name = username
         self.user = recipient
-        self.recipient = recipient 
+        self.recipient = recipient
         self.message = message
-        self.owned_since = timezone.now() 
+        self.owned_since = timezone.now()
         self.pending = False
         self.save()
+ 
+        TreasureOwnerChangeRecord.objects.create(
+            treasure=self,
+            giver=previous_owner,
+            recipient=recipient
+        )
+ 
+        has_owned_before = TreasureOwnerChangeRecord.objects.filter(
+            treasure=self,
+            recipient=recipient
+        ).exclude(recipient=None).count() > 1  
+
+        if not has_owned_before: 
+            self.total_unique_owners += 1
+            self.save(update_fields=['total_unique_owners'])
+ 
+        self.times_gifted += 1
+        self.save(update_fields=['times_gifted'])
+
+ 
+
+    # def accept(self, message, recipient):
+
+    #     username = self.user.username if self.user else "Unknown"
+
+    #     self.giver = self.user
+    #     self.giver_name = username
+    #     self.user = recipient
+    #     self.recipient = recipient 
+    #     self.message = message
+    #     self.owned_since = timezone.now() 
+    #     self.pending = False
+    #     self.save()
 
     def discard(self):
         self.delete()
 
 
-class TreasureHistory(models.Model):
-    treasure = models.OneToOneField(Treasure, on_delete=models.CASCADE, related_name='treasure_history')
-    total_owners = models.PositiveIntegerField(default=1)
-    times_gifted = models.PositiveIntegerField(default=0)
-    created_on = models.DateTimeField(auto_now_add=True)
-    last_updated_at = models.DateTimeField(auto_now=True)
+# Decided to add this to the treasure itself instead, didn't seem to add much
+# class TreasureHistory(models.Model):
+#     treasure = models.OneToOneField(Treasure, on_delete=models.CASCADE, related_name='treasure_history')
+#     total_owners = models.PositiveIntegerField(default=1)
+#     times_gifted = models.PositiveIntegerField(default=0)
+#     created_on = models.DateTimeField(auto_now_add=True)
+#     last_updated_at = models.DateTimeField(auto_now=True)
 
+#     class Meta:
+#         verbose_name = "Treasure History"
+#         verbose_name_plural = "Treasure Histories"
+
+#     def __str__(self):
+#         return f"Treasure history for {self.treasure.descriptor}"
+
+# currently, updates wherever new treasure is accepted
 class TreasureOwnerChangeRecord(models.Model):
-    treasure_history = models.ForeignKey(TreasureHistory, on_delete=models.CASCADE, related_name='owner_changes')
+    # treasure_history = models.ForeignKey(TreasureHistory, on_delete=models.CASCADE, related_name='owner_changes')
     treasure = models.ForeignKey(Treasure, on_delete=models.CASCADE, related_name='treasure_owner_changes')
     giver = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name='treasure_given_record')
     recipient = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name='treasure_received_record')
     created_on = models.DateTimeField(auto_now_add=True)
     last_updated_at = models.DateTimeField(auto_now=True)
+
+    
+    class Meta:
+        verbose_name = "Treasure Owner Change Record"
+        verbose_name_plural = "Treasure Owner Change Records"
+
+    def __str__(self):
+        # In case I remove the treasure foreign key
+        return f"Treasure owner change record for {self.treasure_history.treasure.descriptor}"
+
    
 
 

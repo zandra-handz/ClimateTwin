@@ -9,7 +9,7 @@ admin.site.register(models.Inbox)
 admin.site.register(models.InboxItem)
 admin.site.register(models.Message)
 admin.site.register(models.Treasure) 
-admin.site.register(models.TreasureHistory)
+# admin.site.register(models.TreasureHistory)  # wasn't adding enough to justify existence, saving summary data to treasure instead
 admin.site.register(models.TreasureOwnerChangeRecord)
 admin.site.register(models.Friendship)
 admin.site.register(models.FriendProfile)

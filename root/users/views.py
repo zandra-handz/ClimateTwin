@@ -259,6 +259,51 @@ class TreasureView(generics.RetrieveAPIView, generics.DestroyAPIView):
             raise PermissionDenied("You are not allowed to delete this treasure.")
         instance.delete()
 
+# MODEL DOESN'T EXIST, I am just using the treasure itself to get the records and store summary
+# class TreasureHistoryOverView(generics.RetrieveAPIView):
+#     authentication_classes = [TokenAuthentication, JWTAuthentication]
+#     permission_classes = [IsAuthenticated]
+#     serializer_class = serializers.TreasureHistorySerializer
+#     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+#     queryset = models.TreasureHistory.objects.all()
+#    #  lookup_field = 'treasure_id'  #  don't NEED to because DRF sees the pk in the path
+
+#     @swagger_auto_schema(operation_id='viewTreasureHistoryOverView', operation_description="Gets a treasure's history overview.")
+#     def get(self, request, *args, **kwargs):
+#         return super().get(request, *args, **kwargs)
+    
+class TreasureOwnerChangeRecordsView(generics.ListCreateAPIView):
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = serializers.TreasureOwnerChangeRecordSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    @swagger_auto_schema(operation_id='listTreasureOwnerChanges', operation_description="Returns owner changes for treasure.")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+    
+    @swagger_auto_schema(operation_id='createTreasureOwnerChange', auto_schema=None)
+    def post(self, request, *args, **kwargs):
+        raise MethodNotAllowed('POST')
+
+    def get_queryset(self):
+        treasure_id = self.kwargs.get('treasure_id')
+        return models.TreasureOwnerChangeRecord.objects.filter(treasure_id=treasure_id)
+
+
+class TreasureOwnerChangeRecordView(generics.RetrieveAPIView):
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = serializers.TreasureOwnerChangeRecordSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+    queryset = models.TreasureOwnerChangeRecord.objects.all()
+   #  lookup_field = 'treasure_id'  #  don't NEED to because DRF sees the pk in the path
+
+    @swagger_auto_schema(operation_id='viewTreasureOwnerChangeRecord', operation_description="Gets an owner change record.")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+    
+
 class UserProfileView(generics.ListCreateAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -765,6 +810,8 @@ class GiftRequestDetailView(generics.RetrieveUpdateAPIView):
         if accepted is not None:
             user = request.user
             treasure = instance.treasure
+
+            # Saving the record in here 
             treasure.accept(recipient=user, message=request.data.get('message'))
 
             treasure.pending = False

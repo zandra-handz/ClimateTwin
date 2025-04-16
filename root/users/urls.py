@@ -22,6 +22,11 @@ urlpatterns = [
     
     path('treasures/', views.TreasuresView.as_view(), name='treasures'),
     path('treasure/<int:pk>/', views.TreasureView.as_view(), name='treasure'),
+    path('treasure/<int:treasure_id>/history/', views.TreasureOwnerChangeRecordsView.as_view(), name='treasure-history'),
+    path('treasure/owner-change-record/<int:pk>/', views.TreasureOwnerChangeRecordView.as_view(), name='treasure-owner-change-record'),
+
+    #path('treasure/<int:pk>/history/overview/', views.TreasureHistoryOverView.as_view(), name='treasure-history-overview'),
+    
     path('treasure/<int:pk>/delete/', views.TreasureView.as_view(), name='delete-treasure'),
     path('inbox/items/', views.InboxView.as_view(), name='inbox-list'),
     path('inbox/item/<int:pk>/', views.InboxItemDetailView.as_view(), name='inbox-item-detail'),
