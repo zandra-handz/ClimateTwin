@@ -784,6 +784,62 @@ class SendGiftRequestView(generics.CreateAPIView):
         return Response({'success': 'Gift request sent successfully.'}, status=status.HTTP_201_CREATED)
 
 
+class SendGiftRequestBackToFinderView(generics.CreateAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = serializers.GiftRequestSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    queryset = models.GiftRequest.objects.all()
+
+    @swagger_auto_schema(operation_id='createGiftBackToFinder')
+    def post(self, request, *args, **kwargs):
+        try:
+            treasure_pk = request.data.get('treasure')
+            treasure = models.Treasure.objects.get(pk=treasure_pk, user=request.user)
+ 
+            if not treasure.finder or treasure.finder == request.user:
+                raise ValidationError("This treasure cannot be sent -- either finder account does not exist, or you are the finder.")
+
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+
+            gift_request = serializer.save(
+                sender=request.user,
+                recipient=treasure.finder,  
+                treasure=treasure
+            )
+
+            gift_request_message = models.Message.objects.create(
+                sender=request.user,
+                recipient=gift_request.recipient,
+                content=request.data['message']
+            )
+            gift_request_message.content_object = gift_request
+            gift_request_message.save()
+
+            inbox_item = models.InboxItem.objects.create(user=gift_request.recipient, message=gift_request_message)
+            inbox_item.save()
+
+            send_gift_notification(
+                request.user.id,
+                request.user.username,
+                gift_request.recipient.id,
+                inbox_item.id,
+                gift_request.id
+            )
+
+            # Mark treasure as pending
+            treasure.pending = True
+            treasure.save(update_fields=["pending"])
+
+        except models.Treasure.DoesNotExist:
+            raise ValidationError("Treasure with the provided ID does not exist.")
+        except Exception as e:
+            raise ValidationError(str(e))
+
+        return Response({'success': 'Gift request sent back to original finder successfully.'}, status=status.HTTP_201_CREATED)
+    
 # Add line(s) to delete message as well when request object is deleted (2/22)
 class GiftRequestDetailView(generics.RetrieveUpdateAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]

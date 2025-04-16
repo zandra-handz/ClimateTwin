@@ -38,6 +38,7 @@ urlpatterns = [
     path('message/<int:pk>/', views.MessageView.as_view(), name='message-detail'),
     path('send-friend-request/', views.SendFriendRequestView.as_view(), name='send-friend-request'),
     path('send-gift-request/', views.SendGiftRequestView.as_view(), name='send-gift-request'),
+    path('send-gift-request-back-to-finder/', views.SendGiftRequestBackToFinderView.as_view(), name='send-gift-request-back-to-finder'),
     path('friends/', views.FriendProfilesView.as_view(), name='friends'),
     path('friend/<int:pk>/', views.FriendProfileView.as_view(), name='friend'),
     path('friend/<int:pk>/delete/', views.DeleteFriendshipView.as_view(), name='delete-friend'),
