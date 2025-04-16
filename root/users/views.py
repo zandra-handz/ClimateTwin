@@ -588,7 +588,7 @@ class FriendRequestDetailView(generics.RetrieveUpdateAPIView):
         accepted = request.data.get('is_accepted')
 
 
-        if accepted is not None:
+        if accepted is not None and accepted == True:
             user = request.user
             friend = instance.sender
             friendship = models.Friendship.objects.create(initiator=friend, reciprocator=user)
@@ -610,7 +610,7 @@ class FriendRequestDetailView(generics.RetrieveUpdateAPIView):
 
             return Response({'success': 'Friend request accepted successfully!'}, status=status.HTTP_200_OK)
         
-        if rejected is not None: 
+        elif rejected is not None: 
 
             with transaction.atomic():
                 instance.delete()

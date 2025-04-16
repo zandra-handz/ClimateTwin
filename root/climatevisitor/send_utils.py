@@ -125,8 +125,7 @@ def cache_and_push_notif_accepted_gift(user_id, user_username, recipient_id):
     send_push_notification(user_id, "ClimateTwin", accepted_gift_message)
     
     
-# I want to test treasures methods above first before implementing these
-# I want to test treasures methods above first before implementing these
+# I want to test treasures methods above first before implementing these 
 def cache_and_push_notif_friend_request(user_id, user_username, recipient_id, inbox_item_id, friend_request_id):
     from django.core.cache import cache
 
