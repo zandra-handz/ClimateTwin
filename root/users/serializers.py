@@ -52,6 +52,8 @@ class TreasureSerializer(serializers.ModelSerializer):
 
 
 class TreasureOwnerChangeRecordSerializer(serializers.ModelSerializer):
+    giver_username = serializers.CharField(source='giver.username', read_only=True)
+    recipient_username = serializers.CharField(source='recipient.username', read_only=True)
 
     class Meta(object):
         model = models.TreasureOwnerChangeRecord
