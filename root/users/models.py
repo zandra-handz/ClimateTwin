@@ -223,7 +223,6 @@ class UserVisit(models.Model):
 
 
 
-
 # may want to do something with treasures in the event current user deletes account
 # abandon them somewhere or put them into some category where they randomly appear for other users to collect?
 # we also may need to make a way to delete all associated treasures for legal purposes
@@ -322,7 +321,23 @@ class Treasure(models.Model):
     def discard(self):
         self.delete()
 
-    
+
+class TreasureHistory(models.Model):
+    treasure = models.OneToOneField(Treasure, on_delete=models.CASCADE, related_name='treasure_history')
+    total_owners = models.PositiveIntegerField(default=1)
+    times_gifted = models.PositiveIntegerField(default=0)
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_updated_at = models.DateTimeField(auto_now=True)
+
+class TreasureOwnerChangeRecord(models.Model):
+    treasure_history = models.ForeignKey(TreasureHistory, on_delete=models.CASCADE, related_name='owner_changes')
+    treasure = models.ForeignKey(Treasure, on_delete=models.CASCADE, related_name='treasure_owner_changes')
+    giver = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name='treasure_given_record')
+    recipient = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name='treasure_received_record')
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_updated_at = models.DateTimeField(auto_now=True)
+   
+
 
 class Inbox(models.Model): # not in use, will probably be used for inbox settings.
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, related_name='inbox')
