@@ -283,6 +283,26 @@ class GiftRequestSerializer(serializers.ModelSerializer):
     def validate(self, data):
         # Perform additional validation here if needed
         return data
+    
+
+class GiftRequestBackToFinderSerializer(serializers.ModelSerializer):
+    sender = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    treasure = serializers.PrimaryKeyRelatedField(queryset=models.Treasure.objects.all(), write_only=True)
+
+    # Removed recipient from the fields
+    class Meta:
+        model = models.GiftRequest
+        fields = ['id', 'special_type', 'sender', 'message', 'treasure']
+        read_only_fields = ['id']
+
+    def create(self, validated_data):
+        # Allow the view to set the recipient, which is handled in the view
+        validated_data['sender'] = self.context['request'].user
+        return super().create(validated_data)
+
+    def validate(self, data):
+        # Additional validation can go here if needed
+        return data
 
 
 class AcceptRejectGiftRequestSerializer(serializers.ModelSerializer):

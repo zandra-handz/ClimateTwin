@@ -787,7 +787,7 @@ class SendGiftRequestView(generics.CreateAPIView):
 class SendGiftRequestBackToFinderView(generics.CreateAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    serializer_class = serializers.GiftRequestSerializer
+    serializer_class = serializers.GiftRequestBackToFinderSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     queryset = models.GiftRequest.objects.all()
