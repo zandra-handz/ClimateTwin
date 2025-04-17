@@ -755,8 +755,7 @@ class CurrentExploreLocationView(generics.ListAPIView):
     ))
 
 @api_view(['POST'])
-@throttle_classes([AnonRateThrottle, UserRateThrottle])
-
+@throttle_classes([AnonRateThrottle, UserRateThrottle]) 
 @authentication_classes([TokenAuthentication, JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def collect(request):

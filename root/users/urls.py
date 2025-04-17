@@ -50,6 +50,9 @@ urlpatterns = [
     path('visited-place/<int:pk>/', views.UserVisitView.as_view(), name='visited-place'),
     path('summary/', views.UserSummaryView.as_view(), name='summary'),
     path('links/', views.UserLinksView.as_view(), name='links'),
+
+    path('clean-treasures-data/', views.clean_treasures_data, name='clean_treasures_data'),   
+    
     
 
 ] 

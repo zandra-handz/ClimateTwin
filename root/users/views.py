@@ -926,5 +926,53 @@ class UserLinksView(generics.ListAPIView):
 
     def get_queryset(self):
         return models.BadRainbowzUser.objects.filter(username=self.request.user.username)
+    
+
+
+
+@api_view(['POST'])
+@throttle_classes([AnonRateThrottle, UserRateThrottle]) 
+@authentication_classes([TokenAuthentication, JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def clean_treasures_data(request):
+    """
+    View to update existing treasures to newer designs.
+    """
+
+    if request.method == 'OPTIONS':
+        return Response(status=status.HTTP_200_OK)
+    
+    if request.method == 'POST':
+        user = request.user 
+
+        if not user or not user.is_superuser:
+            return Response({'Error': 'Not authorized'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        all_treasures = models.Treasure.objects.all()
+
+        if not all_treasures:
+            return Response({'detail': 'No treasures to check'}, status=status.HTTP_200_OK)
+
+        change_count = 0
+
+        total_treasures = len(all_treasures)
+        print(f'Total treasures in DB: {total_treasures}')
+
+        for treasure in all_treasures:
+            if treasure.finder is None and treasure.original_user is not None:
+                username = treasure.original_user
+                user_instance = models.BadRainbowzUser.objects.get(username=username)
+                treasure.finder = user_instance
+                treasure.save()
+                print(f"Added finder for treasure {treasure.descriptor or 'No descriptor given'}")
+
+                change_count += 1
+
+        return Response({'detail': f'{change_count} treasures updated with current clean logic!'}, status=status.HTTP_200_OK)
+ 
+    return Response({'Error': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+
 
 
