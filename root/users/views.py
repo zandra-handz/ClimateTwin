@@ -56,7 +56,7 @@ class DeleteUserView(generics.DestroyAPIView):
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
     def get_queryset(self):
-        return models.BadRainbowzUser.objects.filter(id=self.request.user.id)
+        return models.BadRainbowzUser.objects.filter(user=self.request.user)
     
     # def perform_destroy(self, instance):
     #     # Override if need to perform additional actions before deleting
