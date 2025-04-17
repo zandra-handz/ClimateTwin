@@ -55,13 +55,8 @@ class DeleteUserView(generics.DestroyAPIView):
     # No serializer class needed for just deleting 
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
-    def get_queryset(self):
-        return models.BadRainbowzUser.objects.filter(user=self.request.user)
-    
-    # def perform_destroy(self, instance):
-    #     # Override if need to perform additional actions before deleting
-    #     instance.delete()
-
+    def get_object(self):
+        return self.request.user 
 
 class ListUsersView(generics.ListAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication] 
