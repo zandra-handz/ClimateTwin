@@ -12,7 +12,7 @@ urlpatterns = [
     path('go/', views.go, name='go'),
     path('get-remaining-goes/', views.get_remaining_goes, name='get-remaining-goes'),
     path('launchpad-data/', views.MostRecentHomeLocationView.as_view(), name='most-recent-home-location'),
-    path('currently-visiting/', views.CurrentTwinLocationView.as_view(), name='currently-visiting-location'),
+    path('currently-visiting/', views.TwinLocationView.as_view(), name='currently-visiting-location'),
     
     path('currently-nearby/', views.DiscoveryLocationsView.as_view(), name='current-nearby-locations'),
     path('explore/', views.CreateExploreLocationView.as_view(), name='create-explore-location'),
@@ -32,8 +32,10 @@ urlpatterns = [
     # Access all data associated with user
     path('locations/home/', views.HomeLocationsView.as_view(), name='home-locations'),
     path('locations/home/<int:pk>/', views.HomeLocationView.as_view(), name='home-location'),
-    path('locations/twins/', views.TwinLocationsView.as_view(), name='twin-locations'),
-    path('locations/twin/<int:pk>/', views.TwinLocationView.as_view(), name='twin-location'),
+    # changed this model to a one to one
+    # path('locations/twins/', views.TwinLocationsView.as_view(), name='twin-locations'),
+    # path('locations/twin/<int:pk>/', views.TwinLocationView.as_view(), name='twin-location'),
+    
     path('locations/nearby/', views.DiscoveryLocationsView.as_view(), name='ancient-ruins-found'),
     path('locations/nearby/<int:pk>/', views.DiscoveryLocationView.as_view(), {'delete': 'destroy'}, name='delete-discovery-location'),
     path('locations/explored/', views.ExploreLocationsView.as_view(), name='explored-locations'),

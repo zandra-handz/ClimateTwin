@@ -93,8 +93,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
             user_instance, climate_places.climate_twin, weather_messages,
             home_location=home_location_instance
         )
-
-        climate_twin_location_instance.save()
+ 
 
         try:
             climate_twin_search_stats_instance = ClimateTwinSearchStats(

@@ -1,6 +1,6 @@
 from collections.abc import Mapping
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import models, transaction
 from users.models import BadRainbowzUser  
 
 
@@ -38,7 +38,8 @@ class HomeLocation(models.Model):
 
 
 class ClimateTwinLocation(models.Model):
-    user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
+    # user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(BadRainbowzUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, default="")
     explore_type = models.CharField(max_length=255, default="twin_location", editable=False)
     temperature = models.FloatField(default=0.0)
@@ -72,12 +73,11 @@ class ClimateTwinLocation(models.Model):
             self.explore_type = "twin_location"
         super().save(*args, **kwargs)
 
-
     @classmethod
     def create_from_dicts(cls, user, climate_twin, weather_messages, home_location=None):
         address = list(climate_twin.keys())[0]
         climate_data = climate_twin[address]
-        
+
         interaction = list(weather_messages.keys())[0]
         interaction_data = weather_messages[interaction]
 
@@ -93,25 +93,36 @@ class ClimateTwinLocation(models.Model):
         if home_location:
             data['home_location'] = home_location
 
-        # Create and return the instance
-        return cls(**data)
+        # Check if an existing ClimateTwinLocation instance exists for the user and name
+        instance, created = cls.objects.update_or_create(
+            user=user,
+            name=address,
+            defaults=data  # Update the fields with the new data if it exists
+        )
 
+        return instance
 
     class Meta:
-        ordering = ['-created_on']
-        
         verbose_name = "Location"
         verbose_name_plural = "Locations"
-
+        
+        # likely redundant due to the one-to-one relation
+    
+        ordering = ['-created_on']
         indexes = [
-            models.Index(fields=['-created_on']),  # Index for latest queries
+            models.Index(fields=['user']),  
         ]
 
     def __str__(self):
         return f"Location: {str(self.name)}, {self.pk}"
     
 
-    def delete(self, *args, **kwargs): 
+    def archive(self, *args, **kwargs):
+        """
+        Archive the current instance by creating an ArchivedTwinLocation object and then
+        nullify the associated fields or update as necessary.
+        """ 
+
         ArchivedTwinLocation.objects.create(
             user=self.user,
             name=self.name,
@@ -136,10 +147,32 @@ class ClimateTwinLocation(models.Model):
             pressure_interaction=self.pressure_interaction,
             humidity_interaction=self.humidity_interaction,
             stronger_wind_interaction=self.stronger_wind_interaction,
-         
         )
+ 
+        self.name = ""
+        self.temperature = 0.0
+        self.description = ""
+        self.wind_speed = 0.0
+        self.wind_direction = 0
+        self.humidity = 0
+        self.pressure = 0
+        self.cloudiness = 0
+        self.sunrise_timestamp = 0
+        self.sunset_timestamp = 0
+        self.latitude = 0.0
+        self.longitude = 0.0
+        self.home_location = None
+        self.wind_friends = ""
+        self.special_harmony = False
+        self.details = ""
+        self.experience = ""
+        self.wind_speed_interaction = ""
+        self.pressure_interaction = ""
+        self.humidity_interaction = ""
+        self.stronger_wind_interaction = ""
+ 
+        self.save(*args, **kwargs)
 
-        super().delete(*args, **kwargs)
 
 
 class ArchivedTwinLocation(models.Model):
@@ -201,7 +234,7 @@ class ClimateTwinDiscoveryLocation(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     last_accessed = models.DateTimeField(auto_now=True)
 
-    origin_location = models.ForeignKey(ClimateTwinLocation, on_delete=models.CASCADE, null=True, blank=True)
+    origin_location = models.ForeignKey(ClimateTwinLocation, on_delete=models.SET_NULL, null=True, blank=True)
 
 
     class Meta:
@@ -241,8 +274,7 @@ class ClimateTwinDiscoveryLocation(models.Model):
             wind_harmony=self.wind_harmony,
             street_view_image=self.street_view_image,
             created_on=self.created_on,
-            last_accessed=self.last_accessed,
-            origin_location=self.origin_location
+            last_accessed=self.last_accessed
         )
         print(f"[ARCHIVE] Discovery Location archived: {self.name} (ID: {self.pk})")
 
@@ -264,9 +296,8 @@ class ArchivedDiscoveryLocation(models.Model):
     wind_harmony = models.BooleanField(default=False)
     street_view_image = models.URLField(blank=True, null=True, default='')
     created_on = models.DateTimeField()
-    last_accessed = models.DateTimeField()
-    origin_location = models.ForeignKey(ClimateTwinLocation, on_delete=models.CASCADE, null=True, blank=True)
-
+    last_accessed = models.DateTimeField() 
+    
     class Meta:
         verbose_name = "Archived Discovery Location"
         verbose_name_plural = "Archived Discovery Locations"
@@ -276,8 +307,8 @@ class ArchivedDiscoveryLocation(models.Model):
 
 class ClimateTwinExploreLocation(models.Model):
     user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
-    explore_location = models.ForeignKey(ClimateTwinDiscoveryLocation, on_delete=models.CASCADE, null=True, blank=True)
-    twin_location = models.ForeignKey(ClimateTwinLocation, on_delete=models.CASCADE, null=True, blank=True)
+    explore_location = models.ForeignKey(ClimateTwinDiscoveryLocation, on_delete=models.SET_NULL, null=True, blank=True)
+    twin_location = models.ForeignKey(ClimateTwinLocation, on_delete=models.SET_NULL, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
     last_accessed = models.DateTimeField(auto_now=True)
     expired = models.BooleanField(default=False)
@@ -408,14 +439,18 @@ class CurrentLocation(models.Model):
         #     self.base_location.delete()
         #     self.base_location = None   
 
-        # OPTION TWO: DELETE JUST DISCOVERY AND HOME
+        # OPTION TWO: DELETE JUST DISCOVERY AND HOME AND TWIN INDIVIDUALLY
+        # doing this right now because I'm not sure if cascade will activate the individual delete methods
+        # and i want to make sure everything is done in right order
         if self.expired and self.base_location:
-            # MUST LOOP FOR IT TO USE THE MODEL DELETE METHOD AND ARCHIVE EACH LOCATION BEFORE DELETION
-            for discovery in ClimateTwinDiscoveryLocation.objects.filter(origin_location=self.base_location):
-                discovery.delete()
-
-            if self.base_location.home_location:
-                self.base_location.home_location.delete()
+            with transaction.atomic():   
+                # Loop over discovery locations and delete each one
+                for discovery in ClimateTwinDiscoveryLocation.objects.filter(origin_location=self.base_location):
+                    discovery.delete()
+ 
+                if self.base_location.home_location:
+                    self.base_location.home_location.delete()
+                self.base_location.archive()
 
         super().save(*args, **kwargs)
 

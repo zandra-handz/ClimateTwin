@@ -275,7 +275,7 @@ def get_remaining_goes(request):
 
         if user and not (user.is_staff or user.is_superuser): 
             today = timezone.now().date()
-            daily_count = models.ClimateTwinLocation.objects.filter(user=user, created_on__date=today).count()
+            daily_count = models.ArchivedTwinLocation.objects.filter(user=user, created_on__date=today).count()
             if daily_count >= 5:
                  return Response({'remaining_goes': '0'}, status=status.HTTP_200_OK)
           
@@ -330,46 +330,62 @@ class HomeLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
 
 
 
-class TwinLocationsView(generics.ListAPIView):
+# class TwinLocationsView(generics.ListAPIView):
+#     authentication_classes = [TokenAuthentication, JWTAuthentication]
+#     permission_classes = [IsAuthenticated]
+#     serializer_class = serializers.ClimateTwinLocationSerializer
+#     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+#     @swagger_auto_schema(operation_id='listTwinLocations', operation_description="Returns climate twin locations.")
+#     def get(self, request, *args, **kwargs):
+#         return super().get(request, *args, **kwargs)
+
+#     def get_queryset(self):
+#         return models.ClimateTwinLocation.objects.filter(user=self.request.user)
+
+
+# class TwinLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
+#     authentication_classes = [TokenAuthentication, JWTAuthentication]
+#     permission_classes = [IsAuthenticated]
+#     serializer_class = serializers.ClimateTwinLocationSerializer
+#     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+#     @swagger_auto_schema(operation_id='getTwinLocation', operation_description="Returns twin location.")
+#     def get(self, request, *args, **kwargs):
+#         return super().get(request, *args, **kwargs)
+
+#     @swagger_auto_schema(operation_id='updateTwinLocation', auto_schema=None)
+#     def put(self, request, *args, **kwargs):
+#         raise MethodNotAllowed('PUT')
+
+#     @swagger_auto_schema(operation_id='partialUpdateTwinLocation', auto_schema=None)
+#     def patch(self, request, *args, **kwargs):
+#         raise MethodNotAllowed('PATCH')
+
+#     @swagger_auto_schema(operation_id='deleteTwinLocation', operation_description="Deletes twin location.")
+#     def delete(self, request, *args, **kwargs):
+#         return super().destroy(request, *args, **kwargs)
+
+#     def get_queryset(self):
+#         return models.ClimateTwinLocation.objects.filter(user=self.request.user)
+
+
+class TwinLocationView(generics.RetrieveDestroyAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = serializers.ClimateTwinLocationSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
-    @swagger_auto_schema(operation_id='listTwinLocations', operation_description="Returns climate twin locations.")
+    @swagger_auto_schema(operation_id='getTwinLocation', operation_description="Returns the user's climate twin location.")
     def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
+        return self.retrieve(request, *args, **kwargs)
 
-    def get_queryset(self):
-        return models.ClimateTwinLocation.objects.filter(user=self.request.user)
-
-
-class TwinLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
-    authentication_classes = [TokenAuthentication, JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    serializer_class = serializers.ClimateTwinLocationSerializer
-    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
-
-    @swagger_auto_schema(operation_id='getTwinLocation', operation_description="Returns twin location.")
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-
-    @swagger_auto_schema(operation_id='updateTwinLocation', auto_schema=None)
-    def put(self, request, *args, **kwargs):
-        raise MethodNotAllowed('PUT')
-
-    @swagger_auto_schema(operation_id='partialUpdateTwinLocation', auto_schema=None)
-    def patch(self, request, *args, **kwargs):
-        raise MethodNotAllowed('PATCH')
-
-    @swagger_auto_schema(operation_id='deleteTwinLocation', operation_description="Deletes twin location.")
+    @swagger_auto_schema(operation_id='deleteTwinLocation', operation_description="Deletes the user's climate twin location.")
     def delete(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
+        return self.destroy(request, *args, **kwargs)
 
-    def get_queryset(self):
-        return models.ClimateTwinLocation.objects.filter(user=self.request.user)
-
-
+    def get_object(self):
+        return generics.get_object_or_404(models.ClimateTwinLocation, user=self.request.user)
 
 class CurrentTwinLocationView(generics.ListAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
@@ -1237,8 +1253,7 @@ def clean_old_discoveries_locations(request):
             wind_harmony=location.wind_harmony,
             street_view_image=location.street_view_image,
             created_on=location.created_on,
-            last_accessed=location.last_accessed,
-            origin_location=location.origin_location,
+            last_accessed=location.last_accessed
         )
 
         location.delete()
