@@ -67,6 +67,8 @@ class TreasureOwnerChangeRecordSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    created_on = serializers.CharField(source='user.created_on', read_only=True)
     most_recent_visit = serializers.SerializerMethodField()
     total_visits = serializers.SerializerMethodField()
 
