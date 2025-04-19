@@ -1201,7 +1201,10 @@ def clean_old_discoveries_locations(request):
 
     # Query the discovery locations (no need for pagination)
     all_discovery_locations = models.ClimateTwinDiscoveryLocation.objects.select_related('origin_location').all()
-
+    
+    total_locations = len(all_discovery_locations)
+    print(f'Total discovery locations in DB: {total_locations}')
+    
     if not all_discovery_locations.exists():
         return Response({'detail': 'No discovery locations to check.'}, status=status.HTTP_200_OK)
 
