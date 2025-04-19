@@ -7,6 +7,7 @@ urlpatterns = [
     path('get-current/', views.get_current_user, name='get-current-user'),
     path('get-all/', views.ListUsersView.as_view(), name='get-all-users'),
     path('get/', views.SearchUsersView.as_view(), name='search-users'), # /api/users/get/?search=johndoe
+    path('get/<int:user_id>/public-profile/', views.UserPublicProfileView.as_view(), name='public-profile'),
     path('sign-up/', views.CreateUserView.as_view(), name='sign_up'),
     path('send-reset-code/', views.RequestPasswordResetCodeView.as_view(), name='send-reset-code'),
     path('verify-reset-code/', views.PasswordResetCodeValidationView.as_view(), name='verify-reset-code'),

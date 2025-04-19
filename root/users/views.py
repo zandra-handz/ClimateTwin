@@ -298,6 +298,20 @@ class TreasureOwnerChangeRecordView(generics.RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
     
+class UserPublicProfileView(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = serializers.UserProfileSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    @swagger_auto_schema(operation_id='getUserPublicProfile', operation_description="Returns user's public profile.")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+    
+    def get_queryset(self):
+            user_id = self.kwargs.get('user_id')  
+            return models.UserProfile.objects.filter(user__id=user_id)
+        
 
 class UserProfileView(generics.ListCreateAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
