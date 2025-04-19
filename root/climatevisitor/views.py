@@ -1319,7 +1319,7 @@ def clean_old_twin_locations(request):
             pressure_interaction=location.pressure_interaction,
             humidity_interaction=location.humidity_interaction,
             stronger_wind_interaction=location.stronger_wind_interaction,
-            original_location=location  
+        
         )
 
         location.delete()
