@@ -1177,3 +1177,45 @@ class ClimateTwinSearchStatsView(generics.ListAPIView):
 
     def get_queryset(self):
         return models.ClimateTwinSearchStats.objects.filter(user=self.request.user)
+
+@api_view(['POST'])
+@throttle_classes([AnonRateThrottle, UserRateThrottle]) 
+@authentication_classes([TokenAuthentication, JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def clean_old_discoveries_locations(request):
+    """
+    View to update existing treasures to newer designs.
+    """
+
+    if request.method == 'OPTIONS':
+        return Response(status=status.HTTP_200_OK)
+    
+    if request.method == 'POST':
+        user = request.user 
+
+        if not user or not user.is_superuser:
+            return Response({'Error': 'Not authorized'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        all_discovery_locations = models.ClimateTwinDiscoveryLocation.objects.all()
+
+        if not all_discovery_locations:
+            return Response({'detail': 'No treasures to check'}, status=status.HTTP_200_OK)
+
+        deletion_count = 0
+
+        total_discovery_locations = len(all_discovery_locations)
+        print(f'Total discovery locations in DB: {total_discovery_locations}')
+
+        for location in total_discovery_locations:
+            if location.origin_location is not None:
+                twin_location = models.ClimateTwinLocation.objects.get(origin_location=location.origin_location)
+                if twin_location.base_location_set.expired == True:
+
+ 
+                    deletion_count += 1
+
+        return Response({'detail': f'DB contains {deletion_count} expired discovery locations!'}, status=status.HTTP_200_OK)
+ 
+    return Response({'Error': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+

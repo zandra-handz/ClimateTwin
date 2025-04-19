@@ -983,5 +983,3 @@ def clean_treasures_data(request):
 
 
 
-
-

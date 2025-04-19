@@ -77,8 +77,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.UserProfile
-        fields = "__all__"  
-        #extra_fields = ["most_recent_visit", "total_visits", "avatar"]  
+        fields = "__all__"   
 
     def get_avatar(self, obj):
 
