@@ -43,7 +43,7 @@ urlpatterns = [
     path('performance/compare/full-locations/current/', views.CurrentLocationMatchView.as_view(), name='compare-current-location'),
     path('performance/compare/key-data/', views.key_data, name='compare-key-data'),
 
-    path('api-token-auth/', obtain_auth_token)
+    path('api-token-auth/', obtain_auth_token),
 
 
     path('clean-discoveries-data/', views.clean_old_discoveries_locations, name='clean_discoveries_data'),   
