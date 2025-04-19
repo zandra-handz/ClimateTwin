@@ -1217,35 +1217,35 @@ def clean_old_discoveries_locations(request):
     archived_count = 0
 
     for location in discovery_locations_to_process:
-        origin = location.origin_location
-        current_location = origin.base_location_set.first()
+        # origin = location.origin_location
+        # current_location = origin.base_location_set.first()
 
-        if current_location and current_location.expired:
-            print(f"Archiving and deleting discovery location: {location.name} (ID: {location.pk})")
+        # if current_location and current_location.expired:
+        #     print(f"Archiving and deleting discovery location: {location.name} (ID: {location.pk})")
             
             # Archive the location
-            models.ArchivedDiscoveryLocation.objects.create(
-                user=location.user,
-                name=location.name,
-                explore_type=location.explore_type,
-                direction_degree=location.direction_degree,
-                direction=location.direction,
-                miles_away=location.miles_away,
-                location_id=location.location_id,
-                latitude=location.latitude,
-                longitude=location.longitude,
-                tags=location.tags,
-                wind_compass=location.wind_compass,
-                wind_agreement_score=location.wind_agreement_score,
-                wind_harmony=location.wind_harmony,
-                street_view_image=location.street_view_image,
-                created_on=location.created_on,
-                last_accessed=location.last_accessed,
-                origin_location=location.origin_location,
-            )
+        models.ArchivedDiscoveryLocation.objects.create(
+            user=location.user,
+            name=location.name,
+            explore_type=location.explore_type,
+            direction_degree=location.direction_degree,
+            direction=location.direction,
+            miles_away=location.miles_away,
+            location_id=location.location_id,
+            latitude=location.latitude,
+            longitude=location.longitude,
+            tags=location.tags,
+            wind_compass=location.wind_compass,
+            wind_agreement_score=location.wind_agreement_score,
+            wind_harmony=location.wind_harmony,
+            street_view_image=location.street_view_image,
+            created_on=location.created_on,
+            last_accessed=location.last_accessed,
+            origin_location=location.origin_location,
+        )
 
-            location.delete()
-            archived_count += 1
+        location.delete()
+        archived_count += 1
 
     print(f"Total archived and deleted discovery locations: {archived_count}")
     
