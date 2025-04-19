@@ -152,6 +152,31 @@ class ClimateTwinDiscoveryLocation(models.Model):
         super().save(*args, **kwargs)
 
 
+class ArchivedDiscoveryLocation(models.Model):
+    user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, default='Unnamed Ruin')
+    explore_type = models.CharField(max_length=255, default="discovery_location", editable=False)
+    direction_degree = models.FloatField(default=0.0)
+    direction = models.CharField(max_length=255, default='Unknown')
+    miles_away = models.FloatField(default=0.0)
+    location_id = models.CharField(max_length=255, default='')
+    latitude = models.FloatField(default=0.0)
+    longitude = models.FloatField(default=0.0)
+    tags = models.JSONField(default=dict)
+    wind_compass = models.CharField(max_length=255, default='')
+    wind_agreement_score = models.IntegerField(default=0)
+    wind_harmony = models.BooleanField(default=False)
+    street_view_image = models.URLField(blank=True, null=True, default='')
+    created_on = models.DateTimeField()
+    last_accessed = models.DateTimeField()
+    origin_location = models.ForeignKey(ClimateTwinLocation, on_delete=models.CASCADE, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Archived Discovery Location"
+        verbose_name_plural = "Archived Discovery Locations"
+
+    def __str__(self):
+        return f"Archived Location: {str(self.name)}, {self.pk}"
 
 class ClimateTwinExploreLocation(models.Model):
     user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
@@ -278,7 +303,7 @@ class CurrentLocation(models.Model):
          
 
     # ADD LOGIC HERE TO ARCHIVE DATA BEFORE DELETION?
-    
+
     def save(self, *args, **kwargs):
         self.clean()
 

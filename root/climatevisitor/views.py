@@ -1184,38 +1184,60 @@ class ClimateTwinSearchStatsView(generics.ListAPIView):
 @permission_classes([IsAuthenticated])
 def clean_old_discoveries_locations(request):
     """
-    View to update existing treasures to newer designs.
+    Admin view to archive and delete expired discovery locations.
     """
 
     if request.method == 'OPTIONS':
         return Response(status=status.HTTP_200_OK)
     
-    if request.method == 'POST':
-        user = request.user 
+    user = request.user 
 
-        if not user or not user.is_superuser:
-            return Response({'Error': 'Not authorized'}, status=status.HTTP_401_UNAUTHORIZED)
-        
-        all_discovery_locations = models.ClimateTwinDiscoveryLocation.objects.all()
+    if not user or not user.is_superuser:
+        return Response({'Error': 'Not authorized'}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    all_discovery_locations = models.ClimateTwinDiscoveryLocation.objects.select_related('origin_location').all()
 
-        if not all_discovery_locations:
-            return Response({'detail': 'No treasures to check'}, status=status.HTTP_200_OK)
+    if not all_discovery_locations.exists():
+        return Response({'detail': 'No discovery locations to check.'}, status=status.HTTP_200_OK)
 
-        deletion_count = 0
+    total_discovery_locations = len(all_discovery_locations)
+    print(f"Total discovery locations in DB: {total_discovery_locations}")
 
-        total_discovery_locations = len(all_discovery_locations)
-        print(f'Total discovery locations in DB: {total_discovery_locations}')
+    archived_count = 0
 
-        for location in all_discovery_locations:
-            if location.origin_location is not None:
-                twin_location = models.ClimateTwinLocation.objects.get(origin_location=location.origin_location)
-                if twin_location.base_location_set.expired == True:
+    for location in all_discovery_locations.iterator():
+        origin = location.origin_location
 
- 
-                    deletion_count += 1
+        if origin and origin.base_location_set.expired:
+            print(f"Archiving and deleting discovery location: {location.name} (ID: {location.pk})")
+            
+            # Archive the location
+            models.ArchivedDiscoveryLocation.objects.create(
+                user=location.user,
+                name=location.name,
+                explore_type=location.explore_type,
+                direction_degree=location.direction_degree,
+                direction=location.direction,
+                miles_away=location.miles_away,
+                location_id=location.location_id,
+                latitude=location.latitude,
+                longitude=location.longitude,
+                tags=location.tags,
+                wind_compass=location.wind_compass,
+                wind_agreement_score=location.wind_agreement_score,
+                wind_harmony=location.wind_harmony,
+                street_view_image=location.street_view_image,
+                created_on=location.created_on,
+                last_accessed=location.last_accessed,
+                origin_location=location.origin_location,
+            )
 
-        return Response({'detail': f'DB contains {deletion_count} expired discovery locations!'}, status=status.HTTP_200_OK)
- 
-    return Response({'Error': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+            location.delete()
+            archived_count += 1
 
+    print(f"Total archived and deleted discovery locations: {archived_count}")
+    
+    return Response({
+        'detail': f'Successfully archived and deleted {archived_count} expired discovery locations.'
+    }, status=status.HTTP_200_OK)
 
