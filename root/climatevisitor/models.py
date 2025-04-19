@@ -109,6 +109,38 @@ class ClimateTwinLocation(models.Model):
 
     def __str__(self):
         return f"Location: {str(self.name)}, {self.pk}"
+    
+
+    def delete(self, *args, **kwargs): 
+        ArchivedTwinLocation.objects.create(
+            user=self.user,
+            name=self.name,
+            explore_type=self.explore_type,
+            temperature=self.temperature,
+            description=self.description,
+            wind_speed=self.wind_speed,
+            wind_direction=self.wind_direction,
+            humidity=self.humidity,
+            pressure=self.pressure,
+            cloudiness=self.cloudiness,
+            sunrise_timestamp=self.sunrise_timestamp,
+            sunset_timestamp=self.sunset_timestamp,
+            latitude=self.latitude,
+            longitude=self.longitude,
+            home_location=self.home_location,
+            wind_friends=self.wind_friends,
+            special_harmony=self.special_harmony,
+            details=self.details,
+            experience=self.experience,
+            wind_speed_interaction=self.wind_speed_interaction,
+            pressure_interaction=self.pressure_interaction,
+            humidity_interaction=self.humidity_interaction,
+            stronger_wind_interaction=self.stronger_wind_interaction,
+         
+        )
+
+        super().delete(*args, **kwargs)
+
 
 class ArchivedTwinLocation(models.Model):
     user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
@@ -139,8 +171,7 @@ class ArchivedTwinLocation(models.Model):
 
     created_on = models.DateTimeField(auto_now_add=True)
     last_accessed = models.DateTimeField(auto_now=True)
-
-    original_location = models.ForeignKey(ClimateTwinLocation, on_delete=models.CASCADE)
+ 
 
     def __str__(self):
         return f"Archived Location: {self.name}, {self.pk}"
