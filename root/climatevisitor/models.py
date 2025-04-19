@@ -110,6 +110,45 @@ class ClimateTwinLocation(models.Model):
     def __str__(self):
         return f"Location: {str(self.name)}, {self.pk}"
 
+class ArchivedTwinLocation(models.Model):
+    user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, default="")
+    explore_type = models.CharField(max_length=255, default="twin_location", editable=False)
+    temperature = models.FloatField(default=0.0)
+    description = models.CharField(max_length=255, default="")
+    wind_speed = models.FloatField(default=0.0)
+    wind_direction = models.IntegerField(default=0)
+    humidity = models.IntegerField(default=0)
+    pressure = models.IntegerField(default=0)
+    cloudiness = models.IntegerField(default=0)
+    sunrise_timestamp = models.BigIntegerField(default=0)
+    sunset_timestamp = models.BigIntegerField(default=0)
+    latitude = models.FloatField(default=0.0)
+    longitude = models.FloatField(default=0.0)
+
+    home_location = models.ForeignKey(HomeLocation, on_delete=models.CASCADE, null=True, blank=True)
+
+    wind_friends = models.CharField(max_length=255, default="")
+    special_harmony = models.BooleanField(default=False)
+    details = models.TextField(default="")
+    experience = models.TextField(default="")
+    wind_speed_interaction = models.TextField(default="")
+    pressure_interaction = models.TextField(default="")
+    humidity_interaction = models.TextField(default="")
+    stronger_wind_interaction = models.CharField(max_length=255, default="")
+
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_accessed = models.DateTimeField(auto_now=True)
+
+    original_location = models.ForeignKey(ClimateTwinLocation, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Archived Location: {self.name}, {self.pk}"
+
+    class Meta:
+        verbose_name = "Archived Location"
+        verbose_name_plural = "Archived Locations"
+        ordering = ['-created_on']
 
 
 

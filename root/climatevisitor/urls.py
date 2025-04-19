@@ -13,6 +13,7 @@ urlpatterns = [
     path('get-remaining-goes/', views.get_remaining_goes, name='get-remaining-goes'),
     path('launchpad-data/', views.MostRecentHomeLocationView.as_view(), name='most-recent-home-location'),
     path('currently-visiting/', views.CurrentTwinLocationView.as_view(), name='currently-visiting-location'),
+    
     path('currently-nearby/', views.CurrentDiscoveryLocationsView.as_view(), name='current-nearby-locations'),
     path('explore/', views.CreateExploreLocationView.as_view(), name='create-explore-location'),
     path('explore/v2/', views.CreateOrUpdateCurrentLocationView.as_view(), name='create-or-update-current-location'),

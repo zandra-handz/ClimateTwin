@@ -14,3 +14,4 @@ admin.site.register(models.ClimateTwinSearchStats)
 
 
 admin.site.register(models.ArchivedDiscoveryLocation)
+admin.site.register(models.ArchivedTwinLocation)
