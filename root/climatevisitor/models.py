@@ -151,6 +151,32 @@ class ClimateTwinDiscoveryLocation(models.Model):
             self.explore_type = "discovery_location"
         super().save(*args, **kwargs)
 
+    # archives before deleting
+    # instance must be called individually not bulk for this method to get used
+    # def delete(self, *args, **kwargs):  
+
+    #     ArchivedDiscoveryLocation.objects.create(
+    #         user=self.user,
+    #         name=self.name,
+    #         explore_type=self.explore_type,
+    #         direction_degree=self.direction_degree,
+    #         direction=self.direction,
+    #         miles_away=self.miles_away,
+    #         location_id=self.location_id,
+    #         latitude=self.latitude,
+    #         longitude=self.longitude,
+    #         tags=self.tags,
+    #         wind_compass=self.wind_compass,
+    #         wind_agreement_score=self.wind_agreement_score,
+    #         wind_harmony=self.wind_harmony,
+    #         street_view_image=self.street_view_image,
+    #         created_on=self.created_on,
+    #         last_accessed=self.last_accessed,
+    #         origin_location=self.origin_location
+    #     )
+    #     print(f"[ARCHIVE] Discovery Location archived: {self.name} (ID: {self.pk})")
+
+    #     super().delete(*args, **kwargs)
 
 class ArchivedDiscoveryLocation(models.Model):
     user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
@@ -314,7 +340,9 @@ class CurrentLocation(models.Model):
 
         # OPTION TWO: DELETE JUST DISCOVERY AND HOME
         if self.expired and self.base_location:
-            ClimateTwinDiscoveryLocation.objects.filter(origin_location=self.base_location).delete()
+            # MUST LOOP FOR IT TO USE THE MODEL DELETE METHOD AND ARCHIVE EACH LOCATION BEFORE DELETION
+            for discovery in ClimateTwinDiscoveryLocation.objects.filter(origin_location=self.base_location):
+                discovery.delete()
 
             if self.base_location.home_location:
                 self.base_location.home_location.delete()

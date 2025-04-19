@@ -1208,7 +1208,9 @@ def clean_old_discoveries_locations(request):
     for location in all_discovery_locations.iterator():
         origin = location.origin_location
 
-        if origin and origin.base_location_set.expired:
+        current_location = origin.base_location_set.first()
+        if current_location and current_location.expired:
+ 
             print(f"Archiving and deleting discovery location: {location.name} (ID: {location.pk})")
             
             # Archive the location
