@@ -14,7 +14,7 @@ urlpatterns = [
     path('launchpad-data/', views.MostRecentHomeLocationView.as_view(), name='most-recent-home-location'),
     path('currently-visiting/', views.CurrentTwinLocationView.as_view(), name='currently-visiting-location'),
     
-    path('currently-nearby/', views.CurrentDiscoveryLocationsView.as_view(), name='current-nearby-locations'),
+    path('currently-nearby/', views.DiscoveryLocationsView.as_view(), name='current-nearby-locations'),
     path('explore/', views.CreateExploreLocationView.as_view(), name='create-explore-location'),
     path('explore/v2/', views.CreateOrUpdateCurrentLocationView.as_view(), name='create-or-update-current-location'),
     
@@ -47,7 +47,7 @@ urlpatterns = [
     path('api-token-auth/', obtain_auth_token),
 
 
-    path('clean-discoveries-data/', views.clean_old_discoveries_locations, name='clean_discoveries_data'),   
+    path('clean-discoveries-data/', views.clean_old_twin_locations, name='clean_discoveries_data'),   
     
 ]
  

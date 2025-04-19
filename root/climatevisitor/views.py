@@ -1186,6 +1186,10 @@ class ClimateTwinSearchStatsView(generics.ListAPIView):
 def clean_old_discoveries_locations(request):
     """
     Admin view to archive and delete a limited number of expired discovery locations.
+
+    WARNING: goes thru all of them regardless of if associated with expired / non expired current location
+    WARNING TWO: comment out delete method of discovery location model first or you will duplicate them 
+    may have done that. with the first 45k. should be 27k. mmh.
     """
 
     if request.method == 'OPTIONS':
@@ -1216,14 +1220,7 @@ def clean_old_discoveries_locations(request):
 
     archived_count = 0
 
-    for location in discovery_locations_to_process:
-        # origin = location.origin_location
-        # current_location = origin.base_location_set.first()
-
-        # if current_location and current_location.expired:
-        #     print(f"Archiving and deleting discovery location: {location.name} (ID: {location.pk})")
-            
-            # Archive the location
+    for location in discovery_locations_to_process: 
         models.ArchivedDiscoveryLocation.objects.create(
             user=location.user,
             name=location.name,
@@ -1251,4 +1248,85 @@ def clean_old_discoveries_locations(request):
     
     return Response({
         'detail': f'Successfully archived and deleted {archived_count} expired discovery locations.'
+    }, status=status.HTTP_200_OK)
+
+
+
+
+@api_view(['POST'])
+@throttle_classes([AnonRateThrottle, UserRateThrottle]) 
+@authentication_classes([TokenAuthentication, JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def clean_old_twin_locations(request):
+    """
+    Admin view to archive and delete a limited number of expired discovery locations.
+
+    WARNING: goes thru all of them regardless of if associated with expired / non expired current location
+    WARNING TWO: comment out delete method of discovery location model first or you will duplicate them 
+    may have done that. with the first 45k. should be 27k. mmh.
+    """
+
+    if request.method == 'OPTIONS':
+        return Response(status=status.HTTP_200_OK)
+    
+    user = request.user 
+
+    if not user or not user.is_superuser:
+        return Response({'Error': 'Not authorized'}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    # Set the number of items to process per request (e.g., 500)
+    items_to_process = 2000
+
+    # Query the discovery locations (no need for pagination)
+    all_twin_locations = models.ClimateTwinLocation.objects.all()
+    all_archived_locations = models.ArchivedTwinLocation.objects.all()
+    
+    total_locations = len(all_twin_locations)
+    total_archived_locations = len(all_archived_locations)
+    print(f'Total twin locations in DB: {total_locations}')
+    print(f'Total archived twin locations in DB: {total_archived_locations}')
+
+    if not all_twin_locations.exists():
+        return Response({'detail': 'No twin locations to check.'}, status=status.HTTP_200_OK)
+
+    # Process only the first 'items_to_process' discovery locations
+    twin_locations_to_process = all_twin_locations[:items_to_process]
+
+    archived_count = 0
+
+    for location in twin_locations_to_process: 
+        models.ArchivedTwinLocation.objects.create(
+            user=location.user,
+            name=location.name,
+            explore_type=location.explore_type,
+            temperature=location.temperature,
+            description=location.description,
+            wind_speed=location.wind_speed,
+            wind_direction=location.wind_direction,
+            humidity=location.humidity,
+            pressure=location.pressure,
+            cloudiness=location.cloudiness,
+            sunrise_timestamp=location.sunrise_timestamp,
+            sunset_timestamp=location.sunset_timestamp,
+            latitude=location.latitude,
+            longitude=location.longitude,
+            home_location=location.home_location,
+            wind_friends=location.wind_friends,
+            special_harmony=location.special_harmony,
+            details=location.details,
+            experience=location.experience,
+            wind_speed_interaction=location.wind_speed_interaction,
+            pressure_interaction=location.pressure_interaction,
+            humidity_interaction=location.humidity_interaction,
+            stronger_wind_interaction=location.stronger_wind_interaction,
+            original_location=location  
+        )
+
+        location.delete()
+        archived_count += 1
+
+    print(f"Total archived and deleted twin locations: {archived_count}")
+    
+    return Response({
+        'detail': f'Successfully archived and deleted {archived_count} expired twin locations.'
     }, status=status.HTTP_200_OK)
