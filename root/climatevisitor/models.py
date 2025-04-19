@@ -153,30 +153,30 @@ class ClimateTwinDiscoveryLocation(models.Model):
 
     # archives before deleting
     # instance must be called individually not bulk for this method to get used
-    # def delete(self, *args, **kwargs):  
+    def delete(self, *args, **kwargs):  
 
-    #     ArchivedDiscoveryLocation.objects.create(
-    #         user=self.user,
-    #         name=self.name,
-    #         explore_type=self.explore_type,
-    #         direction_degree=self.direction_degree,
-    #         direction=self.direction,
-    #         miles_away=self.miles_away,
-    #         location_id=self.location_id,
-    #         latitude=self.latitude,
-    #         longitude=self.longitude,
-    #         tags=self.tags,
-    #         wind_compass=self.wind_compass,
-    #         wind_agreement_score=self.wind_agreement_score,
-    #         wind_harmony=self.wind_harmony,
-    #         street_view_image=self.street_view_image,
-    #         created_on=self.created_on,
-    #         last_accessed=self.last_accessed,
-    #         origin_location=self.origin_location
-    #     )
-    #     print(f"[ARCHIVE] Discovery Location archived: {self.name} (ID: {self.pk})")
+        ArchivedDiscoveryLocation.objects.create(
+            user=self.user,
+            name=self.name,
+            explore_type=self.explore_type,
+            direction_degree=self.direction_degree,
+            direction=self.direction,
+            miles_away=self.miles_away,
+            location_id=self.location_id,
+            latitude=self.latitude,
+            longitude=self.longitude,
+            tags=self.tags,
+            wind_compass=self.wind_compass,
+            wind_agreement_score=self.wind_agreement_score,
+            wind_harmony=self.wind_harmony,
+            street_view_image=self.street_view_image,
+            created_on=self.created_on,
+            last_accessed=self.last_accessed,
+            origin_location=self.origin_location
+        )
+        print(f"[ARCHIVE] Discovery Location archived: {self.name} (ID: {self.pk})")
 
-    #     super().delete(*args, **kwargs)
+        super().delete(*args, **kwargs)
 
 class ArchivedDiscoveryLocation(models.Model):
     user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)

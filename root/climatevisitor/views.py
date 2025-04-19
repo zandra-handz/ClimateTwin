@@ -1178,13 +1178,14 @@ class ClimateTwinSearchStatsView(generics.ListAPIView):
     def get_queryset(self):
         return models.ClimateTwinSearchStats.objects.filter(user=self.request.user)
 
+
 @api_view(['POST'])
 @throttle_classes([AnonRateThrottle, UserRateThrottle]) 
 @authentication_classes([TokenAuthentication, JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def clean_old_discoveries_locations(request):
     """
-    Admin view to archive and delete expired discovery locations.
+    Admin view to archive and delete a limited number of expired discovery locations.
     """
 
     if request.method == 'OPTIONS':
@@ -1195,22 +1196,25 @@ def clean_old_discoveries_locations(request):
     if not user or not user.is_superuser:
         return Response({'Error': 'Not authorized'}, status=status.HTTP_401_UNAUTHORIZED)
     
+    # Set the number of items to process per request (e.g., 500)
+    items_to_process = 500
+
+    # Query the discovery locations (no need for pagination)
     all_discovery_locations = models.ClimateTwinDiscoveryLocation.objects.select_related('origin_location').all()
 
     if not all_discovery_locations.exists():
         return Response({'detail': 'No discovery locations to check.'}, status=status.HTTP_200_OK)
 
-    total_discovery_locations = len(all_discovery_locations)
-    print(f"Total discovery locations in DB: {total_discovery_locations}")
+    # Process only the first 'items_to_process' discovery locations
+    discovery_locations_to_process = all_discovery_locations[:items_to_process]
 
     archived_count = 0
 
-    for location in all_discovery_locations.iterator():
+    for location in discovery_locations_to_process:
         origin = location.origin_location
-
         current_location = origin.base_location_set.first()
+
         if current_location and current_location.expired:
- 
             print(f"Archiving and deleting discovery location: {location.name} (ID: {location.pk})")
             
             # Archive the location
@@ -1242,4 +1246,3 @@ def clean_old_discoveries_locations(request):
     return Response({
         'detail': f'Successfully archived and deleted {archived_count} expired discovery locations.'
     }, status=status.HTTP_200_OK)
-
