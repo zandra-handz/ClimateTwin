@@ -1197,7 +1197,7 @@ def clean_old_discoveries_locations(request):
         return Response({'Error': 'Not authorized'}, status=status.HTTP_401_UNAUTHORIZED)
     
     # Set the number of items to process per request (e.g., 500)
-    items_to_process = 500
+    items_to_process = 2000
 
     # Query the discovery locations (no need for pagination)
     all_discovery_locations = models.ClimateTwinDiscoveryLocation.objects.select_related('origin_location').all()
