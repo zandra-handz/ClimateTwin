@@ -53,7 +53,6 @@ urlpatterns = [
     path('links/', views.UserLinksView.as_view(), name='links'),
 
     path('clean-treasures-data/', views.clean_treasures_data, name='clean_treasures_data'),   
-    path('clean-treasures-data/', views.clean_treasures_data, name='clean_treasures_data'),   
-     
+    
 
 ] 

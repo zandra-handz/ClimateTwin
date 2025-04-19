@@ -1206,7 +1206,7 @@ def clean_old_discoveries_locations(request):
         total_discovery_locations = len(all_discovery_locations)
         print(f'Total discovery locations in DB: {total_discovery_locations}')
 
-        for location in total_discovery_locations:
+        for location in all_discovery_locations:
             if location.origin_location is not None:
                 twin_location = models.ClimateTwinLocation.objects.get(origin_location=location.origin_location)
                 if twin_location.base_location_set.expired == True:

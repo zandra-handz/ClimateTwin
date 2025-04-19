@@ -275,10 +275,27 @@ class CurrentLocation(models.Model):
     def clean(self):
         if self.explore_location and self.twin_location:
             raise ValidationError("Only one of explore_location or twin_location can be specified.")
+         
 
+    # ADD LOGIC HERE TO ARCHIVE DATA BEFORE DELETION?
+    
     def save(self, *args, **kwargs):
         self.clean()
+
+        # OPTION ONE: DELETE CLIMATE TWIN LOCATION WHICH WILL ALSO DELETE HOME AND DISCOVERY
+        # if self.expired and self.base_location:
+        #     self.base_location.delete()
+        #     self.base_location = None   
+
+        # OPTION TWO: DELETE JUST DISCOVERY AND HOME
+        if self.expired and self.base_location:
+            ClimateTwinDiscoveryLocation.objects.filter(origin_location=self.base_location).delete()
+
+            if self.base_location.home_location:
+                self.base_location.home_location.delete()
+
         super().save(*args, **kwargs)
+
 
     def to_dict(self, prefix='', processed_fields=None):
         if processed_fields is None:
