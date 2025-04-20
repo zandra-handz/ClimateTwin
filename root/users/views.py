@@ -359,22 +359,45 @@ class UpdateUserProfileView(generics.RetrieveUpdateAPIView, generics.DestroyAPIV
 
 
 
-class UserSettingsView(generics.ListCreateAPIView):
+# if this works well and does optimize,
+class UserSettingsView(generics.RetrieveUpdateAPIView):
+    """
+    Efficiently retrieve and update the authenticated user's settings.
+    """
     authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = serializers.UserSettingsSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
-    @swagger_auto_schema(operation_id='createUserSettings', operation_description="Creates user settings.")
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
-
     @swagger_auto_schema(operation_id='getUserSettings', operation_description="Returns user settings.")
     def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
+        return self.retrieve(request, *args, **kwargs)
 
-    def get_queryset(self):
-        return models.UserSettings.objects.filter(user=self.request.user)
+    @swagger_auto_schema(operation_id='updateUserSettings', operation_description="Updates user settings.")
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def get_object(self):
+        # Retrieves the settings instance for the authenticated user
+        return models.UserSettings.objects.get(user=self.request.user)
+    
+    
+# class UserSettingsView(generics.ListCreateAPIView):
+#     authentication_classes = [TokenAuthentication, JWTAuthentication]
+#     permission_classes = [IsAuthenticated]
+#     serializer_class = serializers.UserSettingsSerializer
+#     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+#     @swagger_auto_schema(operation_id='createUserSettings', operation_description="Creates user settings.")
+#     def post(self, request, *args, **kwargs):
+#         return super().post(request, *args, **kwargs)
+
+#     @swagger_auto_schema(operation_id='getUserSettings', operation_description="Returns user settings.")
+#     def get(self, request, *args, **kwargs):
+#         return super().get(request, *args, **kwargs)
+
+#     def get_queryset(self):
+#         return models.UserSettings.objects.filter(user=self.request.user)
 
 
 class ChangeUserSettingsView(generics.RetrieveUpdateAPIView):

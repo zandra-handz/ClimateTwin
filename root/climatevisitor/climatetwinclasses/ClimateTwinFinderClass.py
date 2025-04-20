@@ -71,6 +71,8 @@ class ClimateTwinFinder:
 
     def __init__(self, user_id_for_celery, address, units='imperial'):
 
+        reset_twin_location_search_progress_update(self.user_id_for_celery)
+
         self.api_key = open_map_api_key
         self.google_api_key = google_api_key
         self.preset_divider_for_point_gen_deviation = 6 #4
@@ -180,7 +182,8 @@ class ClimateTwinFinder:
         self.print_algorithm_data()
         self.log_algorithm_data()
 
-        reset_twin_location_search_progress_update(self.user_id_for_celery)
+        # leaving it at 100 I think until location is expired? moving it into there?
+        # reset_twin_location_search_progress_update(self.user_id_for_celery)
                            
 
 
