@@ -15,6 +15,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from django.db import models
 from django.dispatch import receiver
@@ -169,17 +170,45 @@ class UserProfile(models.Model):
         return f"Profile for {self.user.username}"
 
 
+# class Friendship(models.Model):
+#     initiator = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='friendships_started')
+#     reciprocator = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="friendships_accepted")
+#     created_on = models.DateTimeField(default=timezone.now)
+
+#     def __str__(self):
+#         date = self.created_on 
+#         date = format_date(date)
+
+#         return f"Friendship formed between {self.initiator} and {self.reciprocator} on {date}"
+
+
 class Friendship(models.Model):
     initiator = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='friendships_started')
-    reciprocator = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="friendships_accepted")
+    reciprocator = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='friendships_accepted')
     created_on = models.DateTimeField(default=timezone.now)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['initiator', 'reciprocator'],
+                name='unique_friendship_initiator_reciprocator'
+            ),
+        ]
+
+    def clean(self):
+        if self.initiator == self.reciprocator:
+            raise ValidationError("A user cannot be friends with themselves.")
+        
+        # Check for reverse friendships
+        if Friendship.objects.filter(initiator=self.reciprocator, reciprocator=self.initiator).exists():
+            raise ValidationError("Friendship already exists in reverse direction.")
+
+    def save(self, *args, **kwargs):
+        self.full_clean()  
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        date = self.created_on 
-        date = format_date(date)
-
-        return f"Friendship formed between {self.initiator} and {self.reciprocator} on {date}"
-
+        return f"Friendship formed between {self.initiator} and {self.reciprocator} on {format_date(self.created_on)}"
 
 class FriendProfile(models.Model):
     id = models.BigAutoField(primary_key=True)
