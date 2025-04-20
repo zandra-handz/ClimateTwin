@@ -58,5 +58,6 @@ urlpatterns = [
     path('users/token/', TokenObtainPairView.as_view(), name='get_token'),
     path('users/token/refresh/', TokenRefreshView.as_view(), name='refresh_token'),
 
-    
+    # Profiling URL added 4/20/2025
+    path('silk/', include('silk.urls', namespace='silk')),
 ]
