@@ -298,7 +298,7 @@ class TreasureOwnerChangeRecordView(generics.RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
     
-class UserPublicProfileView(generics.ListAPIView):
+class UserPublicProfileView(generics.RetrieveUpdateAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = serializers.UserProfileSerializer
@@ -308,9 +308,20 @@ class UserPublicProfileView(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
     
-    def get_queryset(self):
-            user_id = self.kwargs.get('user_id')  
-            return models.UserProfile.objects.filter(user__id=user_id)
+ 
+    def get_object(self):
+        user_id = self.kwargs.get('user_id')  
+        return (
+            models.UserProfile.objects
+            .select_related('user')
+            .prefetch_related(
+                Prefetch(
+                    'user__visits',
+                    queryset=models.UserVisit.objects.order_by('-visit_created_on')
+                )
+            )
+            .get(user__id=user_id)
+        )
         
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
