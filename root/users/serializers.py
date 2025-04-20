@@ -264,11 +264,11 @@ class MessageSerializer(serializers.ModelSerializer):
 
 
 class FriendRequestSerializer(serializers.ModelSerializer):
-    sender = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    sender = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = models.FriendRequest
-        fields = ['id', 'special_type', 'sender', 'message','recipient']
+        fields = ['id', 'special_type', 'sender', 'message', 'recipient']
         read_only_fields = ['id']
 
     def create(self, validated_data):
@@ -279,8 +279,10 @@ class FriendRequestSerializer(serializers.ModelSerializer):
         return data
 
 
+
 class GiftRequestSerializer(serializers.ModelSerializer):
-    sender = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    sender = serializers.PrimaryKeyRelatedField(read_only=True)
+    #sender = serializers.HiddenField(default=serializers.CurrentUserDefault())
     treasure = serializers.PrimaryKeyRelatedField(queryset=models.Treasure.objects.all(), write_only=True)
 
     class Meta:
@@ -298,13 +300,14 @@ class GiftRequestSerializer(serializers.ModelSerializer):
     
 
 class GiftRequestBackToFinderSerializer(serializers.ModelSerializer):
-    sender = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    sender = serializers.PrimaryKeyRelatedField(read_only=True)
+    #sender = serializers.HiddenField(default=serializers.CurrentUserDefault())
     treasure = serializers.PrimaryKeyRelatedField(queryset=models.Treasure.objects.all(), write_only=True)
 
     # Removed recipient from the fields
     class Meta:
         model = models.GiftRequest
-        fields = ['id', 'special_type', 'sender', 'message', 'treasure']
+        fields = ['id', 'special_type', 'sender', 'message', 'treasure', 'recipient']
         read_only_fields = ['id']
 
     def create(self, validated_data):
