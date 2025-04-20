@@ -95,8 +95,7 @@ class ClimateTwinLocation(models.Model):
 
         # Check if an existing ClimateTwinLocation instance exists for the user and name
         instance, created = cls.objects.update_or_create(
-            user=user,
-            name=address,
+            user=user, 
             defaults=data  # Update the fields with the new data if it exists
         )
 
@@ -297,7 +296,7 @@ class ArchivedDiscoveryLocation(models.Model):
     street_view_image = models.URLField(blank=True, null=True, default='')
     created_on = models.DateTimeField()
     last_accessed = models.DateTimeField() 
-    
+
     class Meta:
         verbose_name = "Archived Discovery Location"
         verbose_name_plural = "Archived Discovery Locations"
@@ -305,106 +304,7 @@ class ArchivedDiscoveryLocation(models.Model):
     def __str__(self):
         return f"Archived Location: {str(self.name)}, {self.pk}"
 
-class ClimateTwinExploreLocation(models.Model):
-    user = models.ForeignKey(BadRainbowzUser, on_delete=models.CASCADE)
-    explore_location = models.ForeignKey(ClimateTwinDiscoveryLocation, on_delete=models.SET_NULL, null=True, blank=True)
-    twin_location = models.ForeignKey(ClimateTwinLocation, on_delete=models.SET_NULL, null=True, blank=True)
-    created_on = models.DateTimeField(auto_now_add=True)
-    last_accessed = models.DateTimeField(auto_now=True)
-    expired = models.BooleanField(default=False)
 
-    class Meta:
-        ordering = ['-created_on']
-        verbose_name = "Explored Discovery Location"
-        verbose_name_plural = "Explored Discovery Locations"
-        indexes = [
-            models.Index(fields=['-created_on']),   
-            models.Index(fields=['user', '-created_on']),   
-        ]
-
-    def clean(self):
-        if self.explore_location and self.twin_location:
-            raise ValidationError("Only one of explore_location or twin_location can be specified.")
-
-    def save(self, *args, **kwargs):
-        self.clean()
-        super().save(*args, **kwargs)
-
-
-    def to_dict(self, prefix='', processed_fields=None):
-        if processed_fields is None:
-            processed_fields = set()
-
-        fields_dict = {}
-
-        # Include fields from the ClimateTwinExploreDiscoveryLocation model
-        for field in self._meta.fields:
-            field_name = field.name
-
-            if field_name in processed_fields:
-                continue
-
-            field_value = getattr(self, field_name)
-
-            if isinstance(field_value, Mapping):
-                # Handle nested dictionary
-                processed_fields.add(field_name)
-                nested_dict = field_value
-                for nested_key, nested_value in nested_dict.items():
-                    nested_field_name = f'{field_name}__{nested_key}'
-                    fields_dict[f'{prefix}{nested_field_name}'] = str(nested_value)
-            else:
-                fields_dict[f'{prefix}{field_name}'] = str(field_value)
-
-        # Include fields from the related ClimateTwinDiscoveryLocation model
-        if self.explore_location:
-            for field in self.explore_location._meta.fields:
-                field_name = field.name
-
-                if field_name in processed_fields:
-                    continue
-
-                field_value = getattr(self.explore_location, field_name)
-
-                if isinstance(field_value, Mapping):
-                    # If the field value is a dictionary, gather its keys and values
-                    processed_fields.add(field_name)
-                    nested_dict = field_value
-                    for nested_key, nested_value in nested_dict.items():
-                        nested_field_name = f'{field_name}__{nested_key}'
-                        fields_dict[f'{prefix}explore_location__{nested_field_name}'] = str(nested_value)
-                else:
-                    fields_dict[f'{prefix}explore_location__{field_name}'] = str(field_value)
-
-        # Include fields from the related ClimateTwinLocation model
-        if self.twin_location:
-            for field in self.twin_location._meta.fields:
-                field_name = field.name
-
-                if field_name in processed_fields:
-                    continue
-
-                field_value = getattr(self.twin_location, field_name)
-
-                if isinstance(field_value, Mapping):
-                    # If the field value is a dictionary, gather its keys and values
-                    processed_fields.add(field_name)
-                    nested_dict = field_value
-                    for nested_key, nested_value in nested_dict.items():
-                        nested_field_name = f'{field_name}__{nested_key}'
-                        fields_dict[f'{prefix}twin_location__{nested_field_name}'] = str(nested_value)
-                else:
-                    fields_dict[f'{prefix}twin_location__{field_name}'] = str(field_value)
-
-        return fields_dict
-
-
-    def __str__(self):
-        if self.explore_location:
-            return f"Explored Discovery Location: {str(self.explore_location)}, {self.pk}"
-        if self.twin_location:
-            return f"Explored Discovery Location: {str(self.twin_location)}, {self.pk}"
-    
 
 class CurrentLocation(models.Model):
     user = models.OneToOneField(BadRainbowzUser, on_delete=models.CASCADE)

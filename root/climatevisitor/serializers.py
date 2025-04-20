@@ -46,43 +46,11 @@ class ClimateTwinDiscoveryLocationCreateSerializer(serializers.ModelSerializer):
 
 
 
-
-
-
-class ClimateTwinExploreDiscoveryLocationSerializer(serializers.ModelSerializer):
  
-    class Meta:
-        model = models.ClimateTwinExploreLocation
-        fields = '__all__'
-        read_only_fields = ['user']  # Mark the user field as read-only
-
-    def create(self, validated_data):
-        # Automatically associate the user with the object during creation
-        validated_data['user'] = self.context['request'].user
-        return super().create(validated_data)
-    
-    def update(self, instance, validated_data):
-        # Custom update logic, if necessary
-        instance = super().update(instance, validated_data)
-        return instance
-    
 
 
     
-
-class ClimateTwinExploreDiscoveryLocationWithObjectsSerializer(serializers.ModelSerializer):
-
-    explore_location = ClimateTwinDiscoveryLocationSerializer(read_only=True)  # Nested object
-    twin_location = ClimateTwinLocationSerializer(read_only=True)  # Nested object
-    class Meta:
-        model = models.ClimateTwinExploreLocation
-        fields = '__all__'
-        read_only_fields = ['user']  # Mark the user field as read-only
-
-    def create(self, validated_data):
-        # Automatically associate the user with the object during creation
-        validated_data['user'] = self.context['request'].user
-        return super().create(validated_data)
+ 
     
 
     

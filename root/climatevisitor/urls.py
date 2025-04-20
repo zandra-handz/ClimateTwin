@@ -15,10 +15,9 @@ urlpatterns = [
     path('currently-visiting/', views.TwinLocationView.as_view(), name='currently-visiting-location'),
     
     path('currently-nearby/', views.DiscoveryLocationsView.as_view(), name='current-nearby-locations'),
-    path('explore/', views.CreateExploreLocationView.as_view(), name='create-explore-location'),
+   
     path('explore/v2/', views.CreateOrUpdateCurrentLocationView.as_view(), name='create-or-update-current-location'),
     
-    path('currently-exploring/', views.CurrentExploreLocationView.as_view(), name='currently-exploring'),
     path('currently-exploring/v2/', views.CurrentLocationView.as_view(), name='currently-exploring-v2'),
    
     path('collect/', views.collect, name='collect-treasure'),
@@ -38,12 +37,7 @@ urlpatterns = [
     
     path('locations/nearby/', views.DiscoveryLocationsView.as_view(), name='ancient-ruins-found'),
     path('locations/nearby/<int:pk>/', views.DiscoveryLocationView.as_view(), {'delete': 'destroy'}, name='delete-discovery-location'),
-    path('locations/explored/', views.ExploreLocationsView.as_view(), name='explored-locations'),
-    path('explore-location/<int:pk>/', views.ExploreLocationView.as_view(), name='explored-location'),
-
-    # View data related to algorithm performance
-    path('performance/compare/full-locations/', views.MatchPerformanceView.as_view(), name='compare-locations'),
-    path('performance/compare/full-locations/current/', views.CurrentLocationMatchView.as_view(), name='compare-current-location'),
+    
     path('performance/compare/key-data/', views.key_data, name='compare-key-data'),
 
     path('api-token-auth/', obtain_auth_token),

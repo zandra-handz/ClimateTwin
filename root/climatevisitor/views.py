@@ -438,82 +438,6 @@ class MostRecentHomeLocationView(generics.ListAPIView):
             return None
         
 
-
-class CurrentLocationMatchView(generics.ListAPIView):
-    authentication_classes = [TokenAuthentication, JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    serializer_class = serializers.ClimateTwinLocationSerializer
-    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
-
-    @swagger_auto_schema(operation_id='getCurrentLocationMatch', operation_description="Returns the most recent location match.")
-    def get(self, request, *args, **kwargs):
-        latest_location = self.get_latest_location()
-        if not latest_location:
-            return Response({'detail': 'You are not visiting anywhere right now.'}, status=status.HTTP_404_NOT_FOUND)
-
-        # Fetch associated home location data if it exists
-        home_location_data = None
-        if latest_location.home_location:
-            home_location_serializer = serializers.HomeLocationSerializer(latest_location.home_location)
-            home_location_data = home_location_serializer.data
-
-        # Serialize the most recent twin location along with its associated home location data
-        serializer = self.get_serializer(latest_location)
-        data = serializer.data
-        if home_location_data:
-            data['home_location'] = home_location_data
-
-        return Response(data)
-
-    def get_latest_location(self):
-        user = self.request.user
-        latest_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-created_on').first()
-
-        # Check if the latest location exists and if it was created within the last two hours
-        if latest_location and (timezone.now() - latest_location.created_on).total_seconds() < 3600: #7200 
-            return latest_location
-        else:
-            return None
-        
-
- 
-
-class MatchPerformanceView(generics.ListAPIView):
-    authentication_classes = [TokenAuthentication, JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    serializer_class = serializers.ClimateTwinLocationSerializer
-    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
-
-    @swagger_auto_schema(operation_id='listLocationMatches', operation_description="Returns all location matches.")
-    def get(self, request, *args, **kwargs):
-        twin_locations = self.get_all_locations()
-        if not twin_locations:
-            return Response({'detail': 'You have not visited any twin locations yet.'}, status=status.HTTP_404_NOT_FOUND)
-
-        # Serialize each twin location along with its associated home location data if it exists
-        data = []
-        for location in twin_locations:
-            # Fetch associated home location data if it exists
-            home_location_data = None
-            if location.home_location:
-                home_location_serializer = serializers.HomeLocationSerializer(location.home_location)
-                home_location_data = home_location_serializer.data
-
-            # Serialize the twin location along with its associated home location data
-            serializer = self.get_serializer(location)
-            location_data = serializer.data
-            if home_location_data:
-                location_data['home_location'] = home_location_data
-            data.append(location_data)
-
-        return Response(data)
-
-    def get_all_locations(self):
-        user = self.request.user
-        twin_locations = models.ClimateTwinLocation.objects.filter(user=user)
-        return twin_locations
-
-
 class DiscoveryLocationsView(generics.ListCreateAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -613,150 +537,7 @@ class CurrentDiscoveryLocationsView(generics.ListAPIView):
 
 
 
-class CreateExploreLocationView(generics.CreateAPIView):
-    authentication_classes = [TokenAuthentication, JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    serializer_class = serializers.ClimateTwinExploreDiscoveryLocationSerializer
-    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
-    
-    @swagger_auto_schema(operation_id='createExploreLocation', operation_description="Creates explore location.")
-    def post(self, request, *args, **kwargs): 
-
-        user = request.user 
-        explore_location_pk = request.data.get('explore_location')
-        twin_location_pk = request.data.get('twin_location')
-
-
-        if twin_location_pk:
-
-            try:
-                twin_location = models.ClimateTwinLocation.objects.get(pk=twin_location_pk, user=user)
-            except models.ClimateTwinLocation.DoesNotExist:
-                return Response({'error': 'The twin location does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
-
-            # Check if the twin location is the most recently saved one for the user
-            most_recent_twin_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-created_on').first()
-            if most_recent_twin_location != twin_location:
-                return Response({'error': 'The specified twin location is not the most recently saved one.'}, status=status.HTTP_400_BAD_REQUEST)
-
-            # Check if the twin location was created within the last two hours
-            if (timezone.now() - twin_location.created_on).total_seconds() >= 3600: # 7200
-                return Response({'error': 'The twin location must have been created within the last two hours.'}, status=status.HTTP_400_BAD_REQUEST)
-        
-            # try:
-            #     send_location_update_to_celery(user_id=user.id, temperature=twin_location.temperature, name=twin_location.name, latitude=twin_location.latitude, longitude=twin_location.longitude)
-            # except Exception as e:
-            #     return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
-            return super().post(request, *args, **kwargs)
-
-        else:
-
-            try:
-                explore_location = models.ClimateTwinDiscoveryLocation.objects.get(pk=explore_location_pk, user=user)
-
-            except models.ClimateTwinDiscoveryLocation.DoesNotExist: 
-                return Response({'error': 'The explore location does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
-
-            if (timezone.now() - explore_location.created_on).total_seconds() >= 3600: # 7200
-
-                return Response({'error': 'The explore location must have been created within the last two hours.'}, status=status.HTTP_400_BAD_REQUEST)
-        
-    
-            return super().post(request, *args, **kwargs)
-
-
-    def get_queryset(self):
-        return models.ClimateTwinExploreLocation.objects.filter(user=self.request.user)
-
-    def perform_create(self, serializer):
-        serializer.save(user_id=self.request.user.id)  # Save user ID implicitly
-
-
-
-class ExploreLocationsView(generics.ListAPIView):
-    authentication_classes = [TokenAuthentication, JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    serializer_class = serializers.ClimateTwinExploreDiscoveryLocationSerializer
-    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
-
-    @swagger_auto_schema(operation_id='listExploreLocations', operation_description="Returns explore locations.")
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-
-    def get_queryset(self):
-        return models.ClimateTwinExploreLocation.objects.filter(user=self.request.user)
-
-
-
-class ExploreLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
-    authentication_classes = [TokenAuthentication, JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    serializer_class = serializers.ClimateTwinExploreDiscoveryLocationSerializer
-    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
-
-    @swagger_auto_schema(operation_id='getExploreLocation', operation_description="Returns explore location.")
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-
-    @swagger_auto_schema(operation_id='updateExploreLocation', auto_schema=None)
-    def put(self, request, *args, **kwargs):
-        raise MethodNotAllowed('PUT')
-
-    @swagger_auto_schema(operation_id='partialUpdateExploreLocation', operation_description="Updates the expired field.")
-    def patch(self, request, *args, **kwargs):
-        # Fetch the instance to update
-        instance = self.get_object()
-
-        # You can update the expired field here if it's part of the request body
-        expired_value = request.data.get('expired', None)
-        if expired_value is not None:
-            instance.expired = expired_value
-            instance.save()
-
-        # Return the updated instance
-        return self.retrieve(request, *args, **kwargs)
-    @swagger_auto_schema(operation_id='deleteExploreLocation', operation_description="Deletes explore location.")
-    def delete(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
-
-    def get_queryset(self):
-        return models.ClimateTwinExploreLocation.objects.filter(user=self.request.user)
-
-
-class CurrentExploreLocationView(generics.ListAPIView):
-    authentication_classes = [TokenAuthentication, JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    serializer_class = serializers.ClimateTwinExploreDiscoveryLocationWithObjectsSerializer
-    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
-
-    @swagger_auto_schema(operation_id='getCurrentExploreDiscoverLocation', operation_description="Returns the most recent explore location.")
-    def get(self, request, *args, **kwargs):
-        latest_location = self.get_latest_explore_location(request.user)
-        if not latest_location:
-            return Response({'detail': 'You are not exploring any locations right now. Pick an explore location to collect treasure!'}, status=status.HTTP_200_OK)
-        serializer = self.get_serializer(latest_location)
-        return Response(serializer.data)
-
-    def get_latest_explore_location(self, user):
-        most_recent_climate_twin_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-created_on').first()
-        if not most_recent_climate_twin_location:
-            return None
-        
-        latest_location = models.ClimateTwinExploreLocation.objects.filter(user=user).order_by('-created_on').first()
-        
-        if latest_location:
-            if latest_location.explore_location:
-                explore_location = latest_location.explore_location
-                if explore_location.origin_location_id == most_recent_climate_twin_location.pk and \
-                (timezone.now() - latest_location.created_on).total_seconds() < 3600: # 7200 
-                    return latest_location
-            if latest_location.twin_location:
-                if latest_location.twin_location.id == most_recent_climate_twin_location.pk and \
-                (timezone.now() - latest_location.created_on).total_seconds() < 3600: # 7200
-                    return latest_location
-        
-        return None
+ 
 
 
 @swagger_auto_schema(method='post', operation_id='collectTreasure', request_body=openapi.Schema(
@@ -781,34 +562,7 @@ def collect(request):
     if request.method == 'OPTIONS':
         return Response(status=status.HTTP_200_OK)
 
-    if request.method == 'GET':
-        user = request.user 
-
-        try:
-            # Retrieve the most recently created ClimateTwinExploreDiscoveryLocation instance by the user
-            latest_explore_location = models.ClimateTwinExploreLocation.objects.filter(user=user).latest('created_on')
-            
-            if latest_explore_location.explore_location:
-                location_id = latest_explore_location.explore_location.id
-                location = models.ClimateTwinDiscoveryLocation.objects.get(id=location_id)
-                serializer = serializers.ClimateTwinDiscoveryLocationSerializer(location)
-
-            elif latest_explore_location.twin_location:
-                location_id = latest_explore_location.twin_location.id
-                location = models.ClimateTwinLocation.objects.get(id=location_id)
-                serializer = serializers.ClimateTwinLocationSerializer(location)
-
-
-            else:
-                return Response({'error': 'invalid or missing location.'}, status=status.HTTP_200_OK)
-            
-            serialized_data = serializer.data
-
-            return Response({'key_value_pairs': serialized_data, 'message': 'Select an item and add a note.'}, status=status.HTTP_200_OK)
-
-        except models.ClimateTwinExploreLocation.DoesNotExist:
-            return Response({'detail': 'Explore location not found for the user.'}, status=status.HTTP_404_NOT_FOUND)
-
+   
     if request.method == 'POST':
         user = request.user 
         descriptor = request.data.get('descriptor', None)
@@ -894,11 +648,6 @@ def item_choices(request):
         try:
             latest_explore_location = models.CurrentLocation.objects.get(user=user)
 
-            # Created_on is indexed field
-           # latest_climate_twin_location = models.ClimateTwinLocation.objects.filter(user=user).order_by('-created_on').first()
- 
-            
-
             if not latest_explore_location.expired and (latest_explore_location.twin_location or latest_explore_location.explore_location):
 
                 if (timezone.now() - latest_explore_location.last_accessed).total_seconds() < 3600: # changed to 1 hr for testing 7200
@@ -906,21 +655,11 @@ def item_choices(request):
                     return Response({'choices': location_dict, 'message': 'choose one.'}, status=status.HTTP_200_OK)
             
                 latest_explore_location.expired = True
-                latest_explore_location.save()
-
-            # if not latest_explore_location.expired and latest_explore_location.explore_location:
-
-            #     if latest_explore_location.explore_location.origin_location_id == latest_climate_twin_location.pk and \
-            #     (timezone.now() - latest_explore_location.last_accessed).total_seconds() < 3600: # changed to 1 hr for testing 7200
-
-            #         location_dict = latest_explore_location.to_dict()
-            #         return Response({'choices': location_dict, 'message': 'choose one.'}, status=status.HTTP_200_OK)
-
-
+                latest_explore_location.save() 
                 
             return Response({'detail': 'You must be at an explore site to collect a treasure.'}, status=status.HTTP_200_OK)
 
-        except models.ClimateTwinExploreLocation.DoesNotExist:
+        except models.CurrentLocation.DoesNotExist:
             return Response({'detail': 'Explore location not found for the user.'}, status=status.HTTP_404_NOT_FOUND)
         
     return Response({'detail': 'Method not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
