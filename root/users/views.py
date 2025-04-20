@@ -727,11 +727,13 @@ class FriendProfilesView(generics.ListAPIView):
     @swagger_auto_schema(operation_id='listFriendProfiles', operation_description="Returns friend profiles.")
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
-
-    def get_queryset(self):
-        return models.FriendProfile.objects.filter(user=self.request.user)
     
-
+    def get_queryset(self):
+        return (
+            models.FriendProfile.objects
+            .filter(user=self.request.user)
+            .select_related('friend', 'friend__profile')  # Optimizes FK lookups in serializer
+        )
 
 class FriendProfileView(generics.RetrieveUpdateAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]

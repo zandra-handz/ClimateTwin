@@ -288,7 +288,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
 #     return "Request sent for processing"
 
 
-@shared_task(bind=True, max_retries=3)
+@shared_task(bind=True, max_retries=0) # I changed this 4/20/2025
 def process_climate_twin_request(self, user_id, user_address):
     logger.info("Task to process climate twin request received.")
     print("Task to process climate twin request sent.")

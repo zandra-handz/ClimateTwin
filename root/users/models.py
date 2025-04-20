@@ -191,6 +191,9 @@ class FriendProfile(models.Model):
 
     class Meta:
         ordering = ['-created_on']
+        indexes = [
+            models.Index(fields=['user']),  
+        ]
 
         verbose_name = "User friendship"
         verbose_name_plural = "User friendships"
