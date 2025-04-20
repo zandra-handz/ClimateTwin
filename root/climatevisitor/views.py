@@ -7,7 +7,9 @@ from .climatetwinclasses.ClimateEncounterClass import ClimateEncounter
 from .climatetwinclasses.ClimateObjectClass import ClimateObject
 from .climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
 from climatevisitor.send_utils import check_and_set_twin_search_lock, remove_twin_search_lock
- 
+from climatevisitor.profile_funcs import log_view_time, TimedAPIView
+
+
 from .tasks.algorithms_task import process_climate_twin_request, schedule_expiration_task, process_immediate_expiration_task
 from .tasks.tasks import send_location_update_to_celery, extra_coverage_cache_location_update, send_is_pending_location_update_to_celery
 # send_is_pending_location_update_to_celery is in process_climate_twin_request
@@ -35,7 +37,6 @@ from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from users.models import Treasure, TreasureOwnerChangeRecord
 
-from profile_funcs import log_view_time, TimedAPIView
 
 # Create your views here.
 @swagger_auto_schema(operation_id='index')
