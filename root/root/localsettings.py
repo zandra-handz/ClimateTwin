@@ -112,6 +112,7 @@ INSTALLED_APPS = [
     #'djoser.urls.authtoken',
     'templated_email',
     'drf_yasg',
+    'silk'
 ]
 
 

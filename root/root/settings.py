@@ -118,6 +118,7 @@ INSTALLED_APPS = [
     #'djoser.urls.authtoken',
     'templated_email',
     'drf_yasg',
+    'silk',
 ]
 
 
@@ -229,6 +230,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'silk.middleware.silkyMiddleware',
 ]
 
 ROOT_URLCONF = 'root.urls'

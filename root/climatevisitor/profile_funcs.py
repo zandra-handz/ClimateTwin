@@ -12,7 +12,7 @@ def log_view_time(func):
     def wrapper(*args, **kwargs):
         # Figure out if this is a method or a function
         sig = signature(func)
-        is_method = 'self' in sig.parameterspip
+        is_method = 'self' in sig.parameters  # Corrected line
 
         start = time.time()
         response = func(*args, **kwargs)
@@ -24,8 +24,6 @@ def log_view_time(func):
             logger.info(f"{func.__name__} took {end - start:.3f}s")
         return response
     return wrapper
-
-
 
 class TimedAPIView:
     def dispatch(self, request, *args, **kwargs):
