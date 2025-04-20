@@ -454,9 +454,11 @@ class DiscoveryLocationsView(generics.ListCreateAPIView):
         raise MethodNotAllowed('POST')
 
     def get_queryset(self):
-        return models.ClimateTwinDiscoveryLocation.objects.filter(user=self.request.user)
-    
-
+        return (
+            models.ClimateTwinDiscoveryLocation.objects
+            .filter(user=self.request.user)
+            .select_related('origin_location')  
+        )
 
 class DiscoveryLocationView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]

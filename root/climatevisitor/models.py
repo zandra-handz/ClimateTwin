@@ -238,8 +238,8 @@ class ClimateTwinDiscoveryLocation(models.Model):
 
     class Meta:
         ordering = ['-id']
-        indexes = [
-            models.Index(fields=['origin_location']),
+        indexes = [ 
+            models.Index(fields=['user']),   
         ]
         verbose_name = "Discovery Location"
         verbose_name_plural = "Discovery Locations"
