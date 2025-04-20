@@ -123,23 +123,34 @@ class UserSettingsSerializer(serializers.ModelSerializer):
         model = models.UserSettings
         fields = "__all__"
 
+
+class UserSharedDataSerializer(serializers.ModelSerializer):
+
+    class Meta(object):
+        model = models.UserSharedData
+        fields = "__all__"
+
 class BadRainbowzUserSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer(required=False)
     settings = UserSettingsSerializer(required=False)
+    shared_data = UserSharedDataSerializer(required=False)
 
     class Meta:
         model = models.BadRainbowzUser 
-        fields = ['id', 'created_on', 'password', 'is_banned_user', 'is_subscribed_user', 'is_superuser', 'subscription_expiration_date', 'username', 'email', 'app_setup_complete', 'is_test_user', 'phone_number', 'addresses', 'profile', 'settings']
+        fields = ['id', 'created_on', 'password', 'is_banned_user', 'is_subscribed_user', 'is_superuser', 'subscription_expiration_date', 'username', 'email', 'app_setup_complete', 'is_test_user', 'phone_number', 'addresses', 'profile', 'settings', 'shared_data']
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
         profile_data = validated_data.pop('profile', {})
         settings_data = validated_data.pop('settings', {})
+        shared_data_data = validated_data.pop('shared_data', {})
         user = models.BadRainbowzUser.objects.create_user(**validated_data)
         if profile_data:
             models.UserProfile.objects.create(user=user, **profile_data)
         if settings_data:
             models.UserSettings.objects.create(user=user, **settings_data)
+        if shared_data_data:
+            models.UserSharedData.objects.create(user=user, **settings_data)
         return user
 
 class PasswordResetCodeValidationSerializer(serializers.Serializer):

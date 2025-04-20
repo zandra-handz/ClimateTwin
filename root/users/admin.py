@@ -14,6 +14,7 @@ admin.site.register(models.TreasureOwnerChangeRecord)
 admin.site.register(models.Friendship)
 admin.site.register(models.FriendProfile)
 admin.site.register(models.UserSettings)
+admin.site.register(models.UserSharedData)
 admin.site.register(models.UserProfile)
 admin.site.register(models.UserVisit)
 

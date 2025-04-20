@@ -401,7 +401,8 @@ class UserSettingsView(generics.RetrieveUpdateAPIView):
         # Retrieves the settings instance for the authenticated user
         return models.UserSettings.objects.get(user=self.request.user)
     
-    
+
+
 # class UserSettingsView(generics.ListCreateAPIView):
 #     authentication_classes = [TokenAuthentication, JWTAuthentication]
 #     permission_classes = [IsAuthenticated]
@@ -442,6 +443,59 @@ class ChangeUserSettingsView(generics.RetrieveUpdateAPIView):
         return models.UserSettings.objects.filter(user=self.request.user)
     
 
+class UserSharedDataView(generics.RetrieveUpdateAPIView):
+    """
+    Efficiently retrieve and update the authenticated user's shared data.
+    """
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = serializers.UserSharedDataSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    @swagger_auto_schema(operation_id='getUserSharedData', operation_description="Returns user shared data.")
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    @swagger_auto_schema(operation_id='updateUserSharedData', operation_description="Updates user shared data.")
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def get_object(self): 
+        return models.UserSharedData.objects.get(user=self.request.user)
+    
+
+
+
+class UserPendingRequestsView(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated] 
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+    
+    def get(self, request, *args, **kwargs):
+            user = request.user
+
+            # Get pending friend requests where user is sender or recipient
+            pending_friend_requests = models.FriendRequest.objects.filter(
+                Q(sender=user) | Q(recipient=user),
+                is_accepted=False, # shouldn't need these instances get deleted when accepted
+                is_rejected=False # shouldn't need, these instances get deleted when accepted
+            )
+
+            # Get pending gift requests where user is sender or recipient
+            pending_gift_requests = models.GiftRequest.objects.filter(
+                Q(sender=user) | Q(recipient=user),
+                is_accepted=False, # shouldn't need, these instances get deleted when accepted
+                is_rejected=False # shouldn't need, these instances get deleted when accepted
+            )
+ 
+            friend_data = serializers.FriendRequestSerializer(pending_friend_requests, many=True, context={'request': request}).data
+            gift_data = serializers.GiftRequestSerializer(pending_gift_requests, many=True, context={'request': request}).data
+
+            return Response({
+                "pending_friend_requests": friend_data,
+                "pending_gift_requests": gift_data,
+            })
+    
 class UserVisitsView(generics.ListAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]

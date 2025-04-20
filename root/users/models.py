@@ -126,11 +126,28 @@ class BadRainbowzUser(AbstractUser):
         if created:
             UserProfile.objects.create(user=self)
             UserSettings.objects.create(user=self)
+            UserSharedData.objects.create(user=self)
 
     # def create_user_profile_and_settings(sender, instance, created, **kwargs):
     #     if created:
     #         UserProfile.objects.create(user=instance)
     #         UserSettings.objects.create(user=instance)
+
+
+# data that other users can trigger saving-to
+# i want to keep separate
+class UserSharedData(models.Model):
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, related_name='shared_data')
+    created_on = models.DateTimeField(default=timezone.now)
+    last_updated_at = models.DateTimeField(auto_now=True)
+    
+    
+    class Meta:
+        verbose_name = "User shared data"
+        verbose_name_plural = "User shared data"
+
+    def __str__(self):
+        return f"Shared data for {self.user.username}"
 
 
 class UserSettings(models.Model):
@@ -147,6 +164,7 @@ class UserSettings(models.Model):
 
     manual_dark_mode = models.BooleanField(null=True, blank=True)
     expo_push_token = models.CharField(max_length=255, null=True, blank=True) 
+  
 
     class Meta:
         verbose_name = "User settings"
