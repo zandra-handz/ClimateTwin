@@ -71,7 +71,7 @@ class ClimateTwinFinder:
 
     def __init__(self, user_id_for_celery, address, units='imperial'):
 
-        reset_twin_location_search_progress_update(self.user_id_for_celery)
+        reset_twin_location_search_progress_update(user_id_for_celery)
 
         self.api_key = open_map_api_key
         self.google_api_key = google_api_key
