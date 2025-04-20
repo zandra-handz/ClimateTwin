@@ -313,31 +313,31 @@ class UserPublicProfileView(generics.ListAPIView):
             return models.UserProfile.objects.filter(user__id=user_id)
         
 
-class UserProfileView(generics.ListCreateAPIView):
+class UserProfileView(generics.RetrieveUpdateAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = serializers.UserProfileSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
-    
-    @swagger_auto_schema(operation_id='createUserProfile', operation_description="Creates user profile.")
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
 
     @swagger_auto_schema(operation_id='getUserProfile', operation_description="Returns user profile.")
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
-    def get_queryset(self):
+    @swagger_auto_schema(operation_id='updateUserProfile', operation_description="Updates user profile.")
+    def put(self, request, *args, **kwargs):
+        return super().put(request, *args, **kwargs)
+
+    def get_object(self):
         return (
             models.UserProfile.objects
-            .filter(user=self.request.user)
-            .select_related('user')  # speeds up access to user fields
+            .select_related('user')
             .prefetch_related(
                 Prefetch(
                     'user__visits',
-                    queryset=models.UserVisit.objects.order_by('-visit_created_on')  # for .first()
+                    queryset=models.UserVisit.objects.order_by('-visit_created_on')
                 )
             )
+            .get(user=self.request.user)
         )
     
 class UpdateUserProfileView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
