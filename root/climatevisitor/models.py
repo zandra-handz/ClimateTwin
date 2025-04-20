@@ -54,7 +54,7 @@ class ClimateTwinLocation(models.Model):
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
 
-    home_location = models.ForeignKey(HomeLocation, on_delete=models.CASCADE, null=True, blank=True)
+    home_location = models.ForeignKey(HomeLocation, on_delete=models.SET_NULL, null=True, blank=True)
 
     wind_friends = models.CharField(max_length=255, default="")
     special_harmony = models.BooleanField(default=False)
@@ -190,7 +190,7 @@ class ArchivedTwinLocation(models.Model):
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
 
-    home_location = models.ForeignKey(HomeLocation, on_delete=models.CASCADE, null=True, blank=True)
+    home_location = models.ForeignKey(HomeLocation, on_delete=models.SET_NULL, null=True, blank=True)
 
     wind_friends = models.CharField(max_length=255, default="")
     special_harmony = models.BooleanField(default=False)
