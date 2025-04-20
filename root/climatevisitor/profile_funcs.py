@@ -12,7 +12,7 @@ def log_view_time(func):
     def wrapper(*args, **kwargs):
         # Figure out if this is a method or a function
         sig = signature(func)
-        is_method = 'self' in sig.parameters
+        is_method = 'self' in sig.parameterspip
 
         start = time.time()
         response = func(*args, **kwargs)
