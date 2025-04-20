@@ -451,6 +451,9 @@ class InboxItem(models.Model):
 
     class Meta:
         ordering = ['-created_on']
+        indexes = [
+            models.Index(fields=['user']),  
+        ]
 
     def __str__(self):
 

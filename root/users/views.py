@@ -460,7 +460,7 @@ class InboxView(generics.ListAPIView):
     serializer_class = serializers.InboxSerializer
     throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
 
-    queryset = models.Inbox.objects.all()
+ 
 
     @swagger_auto_schema(operation_id='getInboxItems', operation_description="Returns inbox items.")
     def get(self, request, *args, **kwargs):
@@ -468,10 +468,17 @@ class InboxView(generics.ListAPIView):
         serializer = serializers.InboxItemSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    # prefetches based on serializer; I don't entirely understand how this works or how well, yet
     def get_queryset(self):
-        return models.InboxItem.objects.filter(user=self.request.user)
-
-
+        return (
+            models.InboxItem.objects
+            .filter(user=self.request.user)
+            .select_related(
+                'message',
+                'message__sender',
+                'message__content_type'  
+            )
+        )
 
 class InboxItemDetailView(generics.RetrieveDestroyAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
