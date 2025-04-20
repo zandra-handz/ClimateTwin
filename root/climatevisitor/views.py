@@ -35,7 +35,7 @@ from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from users.models import Treasure, TreasureOwnerChangeRecord
 
-
+from profile_funcs import log_view_time, TimedAPIView
 
 # Create your views here.
 @swagger_auto_schema(operation_id='index')
@@ -555,6 +555,7 @@ class CurrentDiscoveryLocationsView(generics.ListAPIView):
 @throttle_classes([AnonRateThrottle, UserRateThrottle]) 
 @authentication_classes([TokenAuthentication, JWTAuthentication])
 @permission_classes([IsAuthenticated])
+@log_view_time
 def collect(request):
     """
     Creates a treasure item from the user's current exploration site and saves as a Treasure instance belonging to user.
@@ -632,6 +633,7 @@ def collect(request):
 @throttle_classes([AnonRateThrottle, UserRateThrottle])
 @authentication_classes([TokenAuthentication, JWTAuthentication])
 @permission_classes([IsAuthenticated])
+@log_view_time
 def item_choices(request):
     """
     Returns all data from the user's most recently chosen exploration site that can be used as the item base to build an item. 
@@ -699,7 +701,7 @@ def key_data(request):
 
 
 
-class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
+class CreateOrUpdateCurrentLocationView(TimedAPIView, generics.CreateAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = serializers.CurrentLocationSerializer
@@ -818,7 +820,8 @@ class CreateOrUpdateCurrentLocationView(generics.CreateAPIView):
         serializer.save(user_id=self.request.user.id)  # Save user ID implicitly
 
 
-class ExpireCurrentLocationView(generics.UpdateAPIView):
+
+class ExpireCurrentLocationView(TimedAPIView, generics.UpdateAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = serializers.CurrentLocationSerializer
@@ -838,6 +841,7 @@ class ExpireCurrentLocationView(generics.UpdateAPIView):
 
         return self.update_or_create_location(user, explore_location=None, twin_location=None, lifetime=0)
 
+  
     def update_or_create_location(self, user, explore_location=None, twin_location=None, lifetime=0):
         """
         Updates or creates the CurrentLocation for the user and sets it to expire immediately.
@@ -876,7 +880,7 @@ class ExpireCurrentLocationView(generics.UpdateAPIView):
         return Response(self.get_serializer(current_location).data, status=status.HTTP_200_OK)
 
 
-class CurrentLocationView(generics.GenericAPIView):
+class CurrentLocationView(TimedAPIView, generics.GenericAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = serializers.CurrentLocationWithObjectsSerializer
@@ -915,7 +919,7 @@ class ClimateTwinStatsPagination(PageNumberPagination):
     max_page_size = 100   
 
 
-class ClimateTwinSearchStatsView(generics.ListAPIView):
+class ClimateTwinSearchStatsView(TimedAPIView, generics.ListAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = serializers.ClimateTwinSearchStatsSerializer
