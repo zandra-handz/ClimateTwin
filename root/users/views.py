@@ -7,7 +7,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth import update_session_auth_hash
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from django_filters.rest_framework import DjangoFilterBackend # for user search
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -328,8 +328,17 @@ class UserProfileView(generics.ListCreateAPIView):
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        return models.UserProfile.objects.filter(user=self.request.user)
-    
+        return (
+            models.UserProfile.objects
+            .filter(user=self.request.user)
+            .select_related('user')  # speeds up access to user fields
+            .prefetch_related(
+                Prefetch(
+                    'user__visits',
+                    queryset=models.UserVisit.objects.order_by('-visit_created_on')  # for .first()
+                )
+            )
+        )
     
 class UpdateUserProfileView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
