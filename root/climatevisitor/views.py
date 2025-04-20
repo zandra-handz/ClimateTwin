@@ -854,11 +854,7 @@ class ExpireCurrentLocationView(generics.UpdateAPIView):
         if current_location.expired: #check to make sure location was successfully expired, I don't want socket cache to be able
             # to fall out of sync with DB
 
-            # Deleting home location will cascade-delete all the other locations except for the current location
-            # To save data, we will need to save more stuff to the uservisits. 
-            home_location = models.HomeLocation.objects.filter(user=user.id).first()
-            if home_location:
-                home_location.delete()
+
             
             # Do I need to remove the lock if it is successfully getting deleted now in the process climate twin request task?
             remove_twin_search_lock(user.id)
