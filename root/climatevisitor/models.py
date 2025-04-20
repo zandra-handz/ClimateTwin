@@ -347,10 +347,12 @@ class CurrentLocation(models.Model):
                 # Loop over discovery locations and delete each one
                 for discovery in ClimateTwinDiscoveryLocation.objects.filter(origin_location=self.base_location):
                     discovery.delete()
+
+                self.base_location.archive()
  
                 if self.base_location.home_location:
                     self.base_location.home_location.delete()
-                self.base_location.archive()
+            
 
         super().save(*args, **kwargs)
 
