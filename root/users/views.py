@@ -741,7 +741,7 @@ class FriendProfilesView(generics.ListAPIView):
         return (
             models.FriendProfile.objects
             .filter(user=self.request.user)
-            .select_related('friend', 'friend__profile')  # Optimizes FK lookups in serializer
+            .select_related('friend', 'friend__profile', 'friend__profile__user')  # Optimizes FK lookups in serializer
         )
 
 class FriendProfileView(generics.RetrieveUpdateAPIView):
