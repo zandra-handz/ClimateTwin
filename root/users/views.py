@@ -75,6 +75,9 @@ class SearchUsersView(generics.ListAPIView):
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     search_fields = ['username', 'email'] 
 
+    def get_queryset(self):
+        return models.BadRainbowzUser.objects.exclude(id=self.request.user.id)
+
     
 
 @swagger_auto_schema(operation_id='activateUser', auto_schema=None)
