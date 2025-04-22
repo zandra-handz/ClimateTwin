@@ -263,6 +263,42 @@ class MessageSerializer(serializers.ModelSerializer):
         return None
 
 
+class FriendRequestWithUserObjectSerializer(serializers.ModelSerializer):
+    sender = BadRainbowzUserSerializer(required=True)
+    recipient = BadRainbowzUserSerializer(required=True)
+
+    class Meta:
+        model = models.FriendRequest
+        fields = ['id', 'special_type', 'sender', 'message', 'recipient']
+        read_only_fields = ['id']
+
+    def create(self, validated_data):
+        validated_data['sender'] = self.context['request'].user
+        return super().create(validated_data)
+
+    def validate(self, data):
+        return data
+
+
+
+class GiftRequestWithUserObjectSerializer(serializers.ModelSerializer):
+    sender = BadRainbowzUserSerializer(required=True)
+    recipient = BadRainbowzUserSerializer(required=True)
+    treasure = serializers.PrimaryKeyRelatedField(queryset=models.Treasure.objects.all(), write_only=True)
+
+    class Meta:
+        model = models.GiftRequest
+        fields = ['id', 'special_type', 'sender', 'message', 'treasure', 'recipient']
+        read_only_fields = ['id']
+
+    def create(self, validated_data):
+        validated_data['sender'] = self.context['request'].user
+        return super().create(validated_data)
+
+    def validate(self, data):
+        # Perform additional validation here if needed
+        return data
+
 class FriendRequestSerializer(serializers.ModelSerializer):
     sender = serializers.PrimaryKeyRelatedField(read_only=True)
 

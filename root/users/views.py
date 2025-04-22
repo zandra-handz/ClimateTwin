@@ -491,8 +491,8 @@ class UserPendingRequestsView(generics.ListAPIView):
                 is_rejected=False # shouldn't need, these instances get deleted when accepted
             )
  
-            friend_data = serializers.FriendRequestSerializer(pending_friend_requests, many=True, context={'request': request}).data
-            gift_data = serializers.GiftRequestSerializer(pending_gift_requests, many=True, context={'request': request}).data
+            friend_data = serializers.FriendRequestWithUserObjectSerializer(pending_friend_requests, many=True, context={'request': request}).data
+            gift_data = serializers.GiftRequestWithUserObjectSerializer(pending_gift_requests, many=True, context={'request': request}).data
 
             return Response({
                 "pending_friend_requests": friend_data,
