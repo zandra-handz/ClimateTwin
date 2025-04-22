@@ -263,9 +263,12 @@ class MessageSerializer(serializers.ModelSerializer):
         return None
 
 
-class FriendRequestWithUserObjectSerializer(serializers.ModelSerializer):
-    sender = BadRainbowzUserSerializer(required=True)
-    recipient = BadRainbowzUserSerializer(required=True)
+class FriendRequestWithAddedDataSerializer(serializers.ModelSerializer):
+    sender = serializers.PrimaryKeyRelatedField(read_only=True)
+    sender_username = serializers.CharField(source='sender.username', read_only=True)
+    sender_avatar = serializers.CharField(source='sender.profile.avatar', read_only=True)
+    recipient_username = serializers.CharField(source='recipient.username', read_only=True)
+    recipient_avatar = serializers.CharField(source='recipient.profile.avatar', read_only=True)
 
     class Meta:
         model = models.FriendRequest
@@ -281,9 +284,13 @@ class FriendRequestWithUserObjectSerializer(serializers.ModelSerializer):
 
 
 
-class GiftRequestWithUserObjectSerializer(serializers.ModelSerializer):
-    sender = BadRainbowzUserSerializer(required=True)
-    recipient = BadRainbowzUserSerializer(required=True)
+class GiftRequestWithAddedDataSerializer(serializers.ModelSerializer):
+    sender = serializers.PrimaryKeyRelatedField(read_only=True)
+    sender_username = serializers.CharField(source='sender.username', read_only=True)
+    sender_avatar = serializers.CharField(source='sender.profile.avatar', read_only=True)
+    recipient_username = serializers.CharField(source='recipient.username', read_only=True)
+    recipient_avatar = serializers.CharField(source='recipient.profile.avatar', read_only=True)
+
     treasure = serializers.PrimaryKeyRelatedField(queryset=models.Treasure.objects.all(), write_only=True)
 
     class Meta:
