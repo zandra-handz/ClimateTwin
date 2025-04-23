@@ -300,7 +300,7 @@ class GiftRequestWithAddedDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.GiftRequest
         fields = [
-            'id', 'special_type', 'sender', 'message', 'recipient',
+            'id', 'special_type', 'sender', 'message', 'treasure', 'recipient',
             'sender_username', 'sender_avatar',
             'recipient_username', 'recipient_avatar'
         ]
