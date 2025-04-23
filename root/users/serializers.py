@@ -272,7 +272,11 @@ class FriendRequestWithAddedDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.FriendRequest
-        fields = ['id', 'special_type', 'sender', 'message', 'recipient']
+        fields = [
+            'id', 'special_type', 'sender', 'message', 'recipient',
+            'sender_username', 'sender_avatar',
+            'recipient_username', 'recipient_avatar'
+        ]
         read_only_fields = ['id']
 
     def create(self, validated_data):
@@ -295,7 +299,11 @@ class GiftRequestWithAddedDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.GiftRequest
-        fields = ['id', 'special_type', 'sender', 'message', 'treasure', 'recipient']
+        fields = [
+            'id', 'special_type', 'sender', 'message', 'recipient',
+            'sender_username', 'sender_avatar',
+            'recipient_username', 'recipient_avatar'
+        ]
         read_only_fields = ['id']
 
     def create(self, validated_data):
