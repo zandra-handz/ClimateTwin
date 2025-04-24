@@ -13,6 +13,8 @@ class ClimateObject:
         self.sunset_timestamp = climate_data['sunset_timestamp']
         self.latitude = climate_data['latitude']
         self.longitude = climate_data['longitude']
+        self.country = climate_data['country']
+        self.city_name = climate_data['city_name']
 
 
     def __str__(self):

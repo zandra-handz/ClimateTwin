@@ -24,6 +24,8 @@ class HomeLocation(models.Model):
     sunset_timestamp = models.BigIntegerField(default=0)
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
+    country = models.CharField(max_length=150, default="")
+    city_name = models.CharField(max_length=150, default="")
     created_on = models.DateTimeField(auto_now_add=True)
 
     class Meta:

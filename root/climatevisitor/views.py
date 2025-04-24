@@ -655,12 +655,12 @@ def item_choices(request):
 
             if not latest_explore_location.expired and (latest_explore_location.twin_location or latest_explore_location.explore_location):
 
-                if (timezone.now() - latest_explore_location.last_accessed).total_seconds() < 3600: # changed to 1 hr for testing 7200
-                    location_dict = latest_explore_location.to_dict()
-                    return Response({'choices': location_dict, 'message': 'choose one.'}, status=status.HTTP_200_OK)
+                # if (timezone.now() - latest_explore_location.last_accessed).total_seconds() < 3600: # changed to 1 hr for testing 7200
+                location_dict = latest_explore_location.to_dict()
+                return Response({'choices': location_dict, 'message': 'choose one.'}, status=status.HTTP_200_OK)
             
-                latest_explore_location.expired = True
-                latest_explore_location.save() 
+                # latest_explore_location.expired = True
+                # latest_explore_location.save() 
                 
             return Response({'detail': 'You must be at an explore site to collect a treasure.'}, status=status.HTTP_200_OK)
 
