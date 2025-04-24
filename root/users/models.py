@@ -295,8 +295,8 @@ class Treasure(models.Model):
     original_user = models.CharField(max_length=50, default='')
     miles_traveled_to_collect = models.FloatField(default=0.0)
     location_name = models.CharField(max_length=255)
-    location_country = models.CharField(max_length=255, default='')
-    location_city_name = models.CharField(max_length=255, default='')
+    location_country = models.CharField(max_length=255, null=True, blank=True)
+    location_city_name = models.CharField(max_length=255, null=True, blank=True)
     found_at_latitude = models.FloatField(default=0.0)
     found_at_longitude = models.FloatField(default=0.0)
     descriptor = models.CharField(max_length=50, default="Mystery Item")  #type of item found, must be entered
