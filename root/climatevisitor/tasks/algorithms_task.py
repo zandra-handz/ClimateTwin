@@ -196,8 +196,8 @@ def run_climate_twin_algorithms_task(user_id, user_address):
                                 "location_id": ruin['id'],
                                 "latitude": ruin['latitude'],
                                 "longitude": ruin['longitude'],
-                                "country": (ruin['country']),
-                                "city_name": (ruin['city_name']),
+                                "country": ruin['country'],
+                                "city_name": ruin['city_name'],
                                 # not using state (yet)
                                 "state": (ruin['state']),
                                 "tags": ruin["tags"],

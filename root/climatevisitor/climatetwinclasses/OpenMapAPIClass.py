@@ -179,7 +179,7 @@ class OpenMapAPI:
                     if location_info.get('state'):
                         ruin_info['state'] = location_info['state']
                     if location_info.get('city'):
-                        ruin_info['city_name'] = location_info['city']
+                        ruin_info['city_name'] = location_info['city' or None]
 
                     index_to_insert = bisect_left([entry['distance_miles'] for entry in data], distance)
                     data.insert(index_to_insert, ruin_info)
@@ -398,9 +398,9 @@ class OpenMapAPI:
                 "miles_away": round(ruin['distance_miles']),
                 "id": ruin['id'],
                 "latitude": ruin['lat'],
-                "longitude": (ruin['lon']),
-                "country": (ruin['country']),
-                "city_name": (ruin['city_name']),
+                "longitude": ruin['lon'],
+                "country": ruin['country'],
+                "city_name": ruin['city_name' or None],
                 # not using state (yet)
                 "state": (ruin['state']),
                 "tags": tags,
