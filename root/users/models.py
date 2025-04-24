@@ -358,9 +358,10 @@ class Treasure(models.Model):
         )
 
     def give_as_gift(self, message, giver, recipient):
-        # Update the fields for gifting (not in use right now).
+        # Update the fields for gifting (not in use right now and may be outdated at this point).
         self.message = message
         self.giver = giver
+        
       
         self.recipient = recipient
         self.pending = True

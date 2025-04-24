@@ -1067,6 +1067,8 @@ def clean_old_twin_locations(request):
             sunset_timestamp=location.sunset_timestamp,
             latitude=location.latitude,
             longitude=location.longitude,
+            country=location.country or None,
+            city_name=location.city_name or None,
             home_location=location.home_location,
             wind_friends=location.wind_friends,
             special_harmony=location.special_harmony,

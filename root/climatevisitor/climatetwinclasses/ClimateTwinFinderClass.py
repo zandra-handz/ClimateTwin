@@ -108,6 +108,8 @@ class ClimateTwinFinder:
         self.climate_twin_temperature = 0
         self.climate_twin_lat = 0
         self.climate_twin_lon = 0
+        self.climate_twin_country = None
+        self.climate_twin_city_name = None
         self.dataset_for_countries = None
         self.dataset_for_cities = None
  
@@ -224,6 +226,8 @@ class ClimateTwinFinder:
         # print(f"Home temp: {self.home_climate[self.address]['temperature']}")
         print(f"Home temperatire: {self.home_temperature}")
         print(f"Twin address: {self.climate_twin_address}")
+        print(f"Twin country: {self.climate_twin_country}")
+        print(f"Twin city name: {self.climate_twin_city_name}")
         print(f"Twin temperature: {self.climate_twin_temperature}") 
         print(f"OpenWeatherMap calls: {self.key_count}")
         print(f"GoogleMap calls: {self.google_key_count}")
@@ -250,6 +254,8 @@ class ClimateTwinFinder:
         # logger.info(f"Home temp: {self.home_climate[self.address]['temperature']}")
         logger.info(f"Home temperatire: {self.home_temperature}")
         logger.info(f"Twin address: {self.climate_twin_address}")
+        logger.info(f"Twin country: {self.climate_twin_country}")
+        logger.info(f"Twin city name: {self.climate_twin_city_name}")
         logger.info(f"Twin temperature: {self.climate_twin_temperature}")
 
         logger.info(f"OpenWeatherMap calls: {self.key_count}")
@@ -305,6 +311,8 @@ class ClimateTwinFinder:
             cloudiness = data["clouds"]["all"]
             sunrise_timestamp = data["sys"]["sunrise"]
             sunset_timestamp = data["sys"]["sunset"]
+            country = data["sys"].get("country")
+            city_name = data.get("name")
 
             info = {
                 'temperature': temperature,
@@ -318,6 +326,8 @@ class ClimateTwinFinder:
                 'sunset_timestamp': sunset_timestamp,
                 'latitude': lat,
                 'longitude': lon,
+                'country' : country or None,
+                'city_name' : city_name or None,
             }
 
             return info
@@ -649,6 +659,8 @@ class ClimateTwinFinder:
                     if temperature_difference < 2:
                         # Process and add the new entry to self.similar_places
                         new_entry = {
+
+                            # weather is my own data format so all these keys should exist whether or not they have values
                             'name': [f'climate twin candidate'],
                             'temperature': weather['temperature'],
                             'description': weather['description'],
@@ -660,7 +672,9 @@ class ClimateTwinFinder:
                             'sunrise_timestamp': weather['sunrise_timestamp'],
                             'sunset_timestamp': weather['sunset_timestamp'],
                             'latitude': weather['latitude'],
-                            'longitude': weather['longitude']
+                            'longitude': weather['longitude'],
+                            'country' : weather['country'],
+                            'city_name': weather['city_name']
                         }
                         self.final_candidates_count = self.process_new_entry(new_entry)
 
@@ -744,7 +758,9 @@ class ClimateTwinFinder:
                 'sunrise_timestamp': [],
                 'sunset_timestamp': [],
                 'latitude': [],
-                'longitude': []
+                'longitude': [],
+                'country': [],
+                'city_name': []
             }
 
         for key, value in new_entry.items():
@@ -756,32 +772,7 @@ class ClimateTwinFinder:
 
         return len(self.similar_places['name'])
             
-
-    
-
-    # def process_new_entry(self, new_entry): 
-    #     if not isinstance(new_entry, dict):
-    #         raise ValueError("Expected new_entry to be a dictionary.")
  
-    #     if not isinstance(getattr(self, "similar_places", None), dict):
-    #         self.similar_places = {
-    #             'name': [], 'temperature': [], 'description': [],
-    #             'wind_speed': [], 'wind_direction': [], 'humidity': [],
-    #             'pressure': [], 'cloudiness': [], 'sunrise_timestamp': [],
-    #             'sunset_timestamp': [], 'latitude': [], 'longitude': []
-    #         }
- 
-    #     for key, value in new_entry.items():
-    #         key = str(key)   
-
-    #         if key not in self.similar_places or not isinstance(self.similar_places[key], list):
-    #             self.similar_places[key] = []  
-
-    #         self.similar_places[key].append(value)
-
-
-
-
 
     # should get moved into send_utils 
     def send_search_progress_update(self, percentage):
@@ -859,15 +850,20 @@ class ClimateTwinFinder:
                 places_semifinalists['name'], places_semifinalists['temperature'], places_semifinalists['description'],
                 places_semifinalists['wind_speed'], places_semifinalists['wind_direction'], places_semifinalists['humidity'],
                 places_semifinalists['pressure'], places_semifinalists['cloudiness'], places_semifinalists['sunrise_timestamp'],
-                places_semifinalists['sunset_timestamp'], places_semifinalists['latitude'], places_semifinalists['longitude']):
+                places_semifinalists['sunset_timestamp'], places_semifinalists['latitude'], places_semifinalists['longitude'],
+                places_semifinalists['country'], places_semifinalists['city_name']):
 
             if humidity == closest_humidity:
                 results = self.reverse_geocode(latitude, longitude)
                 country = results['country']
                 if country is None: 
                     return False
+                
                 location_name = results['location_name'] 
                 city = results['city'] 
+
+            if not places_semifinalists.city_name:
+                print(f"No city name for semifinalist, replacing with reverse_geocode result '{city or None}'")
 
                 if " " in location_name:
                     code, address = location_name.split(" ", 1)
@@ -892,7 +888,9 @@ class ClimateTwinFinder:
                     'sunrise_timestamp': sunrise_timestamp,
                     'sunset_timestamp': sunset_timestamp,
                     'latitude': latitude,
-                    'longitude': longitude
+                    'longitude': longitude,
+                    'country' : country or None,
+                    'city_name' : city or None,
                 }
 
                 #this return ensures only one location; comment out to allow for multiple
@@ -903,6 +901,8 @@ class ClimateTwinFinder:
                 self.climate_twin_temperature = temp
                 self.climate_twin_lat = latitude
                 self.climate_twin_lon = longitude
+                self.climate_twin_country = country or None
+                self.climate_twin_city_name = city or None
 
                 # moved to parent algorithms_task to send AFTER this instance is saved and after it is then saved as current explore location
                # will ONLY be sending explore locations as location updates (except for 'is home' and potentially 'is in flight')
