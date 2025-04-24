@@ -1077,17 +1077,27 @@ def clean_treasures_data(request):
         print(f'Total treasures in DB: {total_treasures}')
 
         for treasure in all_treasures:
-            if treasure.finder is None and treasure.original_user is not None:
-                username = treasure.original_user
-                user_instance = models.BadRainbowzUser.objects.get(username=username)
-                treasure.finder = user_instance
+
+            if not treasure.giver_name:
+                treasure.giver_name = treasure.giver.username
                 treasure.save()
-                print(f"Added finder for treasure {treasure.descriptor or 'No descriptor given'}")
+                print(f"Added giver_name {treasure.giver_name} for treasure {treasure.descriptor or 'No descriptor given'}")
+
+
+            # UPDATED NEW FINDER FIELD WITH FINDER USING THE ORIGINAL_USER STRING USERNAME
+            # if treasure.finder is None and treasure.original_user is not None:
+            #     username = treasure.original_user
+            #     user_instance = models.BadRainbowzUser.objects.get(username=username)
+            #     treasure.finder = user_instance
+            #     treasure.save()
+            #     print(f"Added finder for treasure {treasure.descriptor or 'No descriptor given'}")
 
                 change_count += 1
 
-        return Response({'detail': f'{change_count} treasures updated with current clean logic!'}, status=status.HTTP_200_OK)
+        return Response({'detail': f'{change_count} treasures updated with current giver username!'}, status=status.HTTP_200_OK)
  
+        # return Response({'detail': f'{change_count} treasures updated with current clean logic!'}, status=status.HTTP_200_OK)
+
     return Response({'Error': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
