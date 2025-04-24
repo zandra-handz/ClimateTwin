@@ -311,13 +311,13 @@ class FriendRequestWithAddedDataSerializer(serializers.ModelSerializer):
 
 class GiftRequestWithAddedDataSerializer(serializers.ModelSerializer):
     sender = serializers.PrimaryKeyRelatedField(read_only=True)
-    sender_username = serializers.CharField(source='sender.username', read_only=True)
-    sender_avatar = serializers.CharField(source='sender.profile.avatar', read_only=True)
+    sender_username = serializers.CharField(source='sender.username', read_only=True) 
     recipient_username = serializers.CharField(source='recipient.username', read_only=True)
-    recipient_avatar = serializers.CharField(source='recipient.profile.avatar', read_only=True)
+    sender_avatar = serializers.SerializerMethodField(read_only=True)
+    recipient_avatar = serializers.SerializerMethodField(read_only=True)
 
     treasure = serializers.PrimaryKeyRelatedField(queryset=models.Treasure.objects.all(), write_only=True)
-
+    treasure_data = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = models.GiftRequest
         fields = [
@@ -326,6 +326,31 @@ class GiftRequestWithAddedDataSerializer(serializers.ModelSerializer):
             'recipient_username', 'recipient_avatar'
         ]
         read_only_fields = ['id']
+
+    def get_treasure_data(self, obj): 
+        return TreasureSerializer(obj.treasure).data
+    
+
+    def get_sender_avatar(self, obj):
+        avatar = getattr(obj.sender.profile, 'avatar', None)
+        if not avatar:
+            return None
+        try:
+            url = avatar.url
+        except ValueError:
+            return None
+        return url.replace('http://', 'https://') if url.startswith('http://') else url
+
+    def get_recipient_avatar(self, obj):
+        avatar = getattr(obj.recipient.profile, 'avatar', None)
+        if not avatar:
+            return None
+        try:
+            url = avatar.url
+        except ValueError:
+            return None
+        return url.replace('http://', 'https://') if url.startswith('http://') else url
+
 
     def create(self, validated_data):
         validated_data['sender'] = self.context['request'].user
