@@ -31,6 +31,10 @@ from rest_framework.views import APIView
 from django.views.decorators.csrf import csrf_exempt
 
 
+# for treasure cleaning to add data to new fields 'country', 'state', and 'city_name'
+from climatevisitor.climatetwinclasses.OpenMapAPIClass import OpenMapAPI
+
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -1084,6 +1088,10 @@ def clean_treasures_data(request):
                 print(f"Added giver_name {treasure.giver_name} for treasure {treasure.descriptor or 'No descriptor given'}")
 
 
+
+
+
+
             # UPDATED NEW FINDER FIELD WITH FINDER USING THE ORIGINAL_USER STRING USERNAME
             # if treasure.finder is None and treasure.original_user is not None:
             #     username = treasure.original_user
@@ -1091,6 +1099,10 @@ def clean_treasures_data(request):
             #     treasure.finder = user_instance
             #     treasure.save()
             #     print(f"Added finder for treasure {treasure.descriptor or 'No descriptor given'}")
+
+
+
+
 
                 change_count += 1
 

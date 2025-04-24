@@ -166,9 +166,9 @@ class ClimateTwinLocation(models.Model):
         self.sunset_timestamp = 0
         self.latitude = 0.0
         self.longitude = 0.0
-        self.country = None
-        self.city_name = None
-        self.home_location = None
+        self.country = ""
+        self.city_name = ""
+        self.home_location = ""
         self.wind_friends = ""
         self.special_harmony = False
         self.details = ""
