@@ -295,6 +295,8 @@ class Treasure(models.Model):
     original_user = models.CharField(max_length=50, default='')
     miles_traveled_to_collect = models.FloatField(default=0.0)
     location_name = models.CharField(max_length=255)
+    location_country = models.CharField(max_length=255, default='')
+    location_city_name = models.CharField(max_length=255, default='')
     found_at_latitude = models.FloatField(default=0.0)
     found_at_longitude = models.FloatField(default=0.0)
     descriptor = models.CharField(max_length=50, default="Mystery Item")  #type of item found, must be entered
@@ -339,13 +341,15 @@ class Treasure(models.Model):
  
 
     @classmethod
-    def collect_item(cls, user, location_name, miles_traveled_to_collect, found_at_latitude, found_at_longitude, item_name, item_category, descriptor, description, add_data):
+    def collect_item(cls, user, location_name, location_country, location_city_name, miles_traveled_to_collect, found_at_latitude, found_at_longitude, item_name, item_category, descriptor, description, add_data):
         
         return cls.objects.create(
             user=user,
             finder=user,
             original_user=user,
             location_name=location_name,
+            location_country=location_country,
+            location_city_name=location_city_name,
             miles_traveled_to_collect=miles_traveled_to_collect,
             found_at_latitude=found_at_latitude,
             found_at_longitude=found_at_longitude,

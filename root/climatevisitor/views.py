@@ -608,6 +608,8 @@ def collect(request):
                 treasure_instance = Treasure.collect_item(
                     user=user,
                     location_name=location_dict[location_type + 'name'],
+                    location_country=[location_type + 'country'],
+                    location_city_name=[location_type + 'city_name'],
                     miles_traveled_to_collect=location_dict[location_type + 'miles_away'],
                     found_at_latitude=location_dict[location_type + 'latitude'],
                     found_at_longitude=location_dict[location_type + 'longitude'],
