@@ -1082,7 +1082,8 @@ def clean_treasures_data(request):
 
         for treasure in all_treasures:
 
-            if not treasure.location_country:
+                                                                             # need to fix ooooone treasure lol
+            if not treasure.location_country or treasure.location_country == "['explore_location__country']":
                 results = OpenMapAPI.reverse_geocode(treasure.found_at_latitude, treasure.found_at_longitude)
                 print(results)
 
