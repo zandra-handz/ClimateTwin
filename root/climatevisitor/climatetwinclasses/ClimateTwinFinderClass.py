@@ -846,7 +846,7 @@ class ClimateTwinFinder:
         if closest_humidity is None:
             return  
 
-        for name, temp, desc, wind_speed, wind_direction, humidity, pressure, cloudiness, sunrise_timestamp, sunset_timestamp, latitude, longitude in zip(
+        for name, temp, desc, wind_speed, wind_direction, humidity, pressure, cloudiness, sunrise_timestamp, sunset_timestamp, latitude, longitude, country, city_name in zip(
                 places_semifinalists['name'], places_semifinalists['temperature'], places_semifinalists['description'],
                 places_semifinalists['wind_speed'], places_semifinalists['wind_direction'], places_semifinalists['humidity'],
                 places_semifinalists['pressure'], places_semifinalists['cloudiness'], places_semifinalists['sunrise_timestamp'],
