@@ -237,6 +237,8 @@ class ClimateTwinDiscoveryLocation(models.Model):
     longitude = models.FloatField(default=0.0)
     country = models.CharField(max_length=150, default="")
     city_name = models.CharField(max_length=150, default="")
+    # not using (yet?), state works with OWM reverse geocode call in ruins, but am using google reverse call in twin
+    state = models.CharField(max_length=150, default="")
     tags = models.JSONField(default=dict)
     wind_compass = models.CharField(max_length=255, default='')
     wind_agreement_score = models.IntegerField(default=0)

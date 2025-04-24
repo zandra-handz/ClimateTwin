@@ -93,6 +93,38 @@ class OpenMapAPI:
 
         #return geodesic((lat1, lon1), (lat2, lon2)).miles
         return distance
+    
+
+    # testing
+    # if this endpoint doesn't work, can use the Google reverse_geocode in ClimateTwinFinder
+    # conversely if this does work, consider using this in ClimateTwinFinder 
+    @staticmethod
+    def reverse_geocode(lat, lon):
+        try:
+            response = requests.get(
+                'https://nominatim.openstreetmap.org/reverse',
+                params={
+                    'format': 'json',
+                    'lat': lat,
+                    'lon': lon,
+                    'zoom': 10,
+                    'addressdetails': 1
+                },
+                headers={
+                    'User-Agent': 'OpenMapAPI/1.0'
+                }
+            )
+            response.raise_for_status()
+            data = response.json()
+            address = data.get('address', {})
+            return {
+                'country': address.get('country'),
+                'state': address.get('state'),
+                'city': address.get('city') or address.get('town') or address.get('village')
+            }
+        except Exception as e:
+            print(f"Reverse geocoding failed for ({lat}, {lon}): {e}")
+            return {}
 
     @staticmethod
     def find_ancient_ruins(latitude, longitude, radius, num_results=None):
@@ -115,39 +147,81 @@ class OpenMapAPI:
                 # Convert XML data to a list of dictionaries with distance and direction information
                 data = []
 
+
                 for node in nodes:
+                    lat = float(node.attrib['lat'])
+                    lon = float(node.attrib['lon'])
+
                     tags = {tag.attrib['k']: tag.attrib['v'] for tag in node.findall('tag')}
 
-                    # Calculate distance for each ruin
-                    distance = OpenMapAPI.haversine_distance(
-                        float(node.attrib['lat']), float(node.attrib['lon']), latitude, longitude
-                    )
+                    distance = OpenMapAPI.haversine_distance(lat, lon, latitude, longitude)
 
-                    direction_rad = atan2(
-                        float(node.attrib['lon']) - longitude, float(node.attrib['lat']) - latitude
-                    )
+                    direction_rad = atan2(lon - longitude, lat - latitude)
                     direction_deg = (degrees(direction_rad) + 360) % 360
-
-                    # Convert direction_deg to direction_word
                     direction = OpenMapAPI.get_direction_word(direction_deg)
 
-                    index_to_insert = bisect_left([entry['distance_miles'] for entry in data], distance)
-                    data.insert(index_to_insert, {
+                    # Add reverse geocoded location info
+                    location_info = OpenMapAPI.reverse_geocode(lat, lon)
+                    # time.sleep(1)  # Respect API rate limits
+
+                    ruin_info = {
                         'id': node.attrib['id'],
-                        'lat': node.attrib['lat'],
-                        'lon': node.attrib['lon'],
+                        'lat': lat,
+                        'lon': lon,
                         'tags': tags,
                         'distance_miles': distance,
                         'direction_deg': direction_deg,
-                        'direction': direction  # Add direction word information
-                    })
+                        'direction': direction,
+                    }
 
-                    # Sort the data list based on 'distance_miles'
+                    if location_info.get('country'):
+                        ruin_info['country'] = location_info['country']
+                    if location_info.get('state'):
+                        ruin_info['state'] = location_info['state']
+                    if location_info.get('city'):
+                        ruin_info['city_name'] = location_info['city']
+
+                    index_to_insert = bisect_left([entry['distance_miles'] for entry in data], distance)
+                    data.insert(index_to_insert, ruin_info)
+
                     data.sort(key=lambda x: x['distance_miles'])
 
-                    # Check if the desired number of results is reached
                     if num_results is not None and len(data) >= num_results:
                         break
+
+                # for node in nodes:
+                #     tags = {tag.attrib['k']: tag.attrib['v'] for tag in node.findall('tag')}
+
+                #     # Calculate distance for each ruin
+                #     distance = OpenMapAPI.haversine_distance(
+                #         float(node.attrib['lat']), float(node.attrib['lon']), latitude, longitude
+                #     )
+
+                #     direction_rad = atan2(
+                #         float(node.attrib['lon']) - longitude, float(node.attrib['lat']) - latitude
+                #     )
+                #     direction_deg = (degrees(direction_rad) + 360) % 360
+
+                #     # Convert direction_deg to direction_word
+                #     direction = OpenMapAPI.get_direction_word(direction_deg)
+
+                #     index_to_insert = bisect_left([entry['distance_miles'] for entry in data], distance)
+                #     data.insert(index_to_insert, {
+                #         'id': node.attrib['id'],
+                #         'lat': node.attrib['lat'],
+                #         'lon': node.attrib['lon'],
+                #         'tags': tags,
+                #         'distance_miles': distance,
+                #         'direction_deg': direction_deg,
+                #         'direction': direction  # Add direction word information
+                #     })
+
+                #     # Sort the data list based on 'distance_miles'
+                #     data.sort(key=lambda x: x['distance_miles'])
+
+                #     # Check if the desired number of results is reached
+                #     if num_results is not None and len(data) >= num_results:
+                #         break
 
                 print("Distances before sorting:")
                 for entry in data:
@@ -325,6 +399,10 @@ class OpenMapAPI:
                 "id": ruin['id'],
                 "latitude": ruin['lat'],
                 "longitude": (ruin['lon']),
+                "country": (ruin['country']),
+                "city_name": (ruin['city_name']),
+                # not using state (yet)
+                "state": (ruin['state']),
                 "tags": tags,
                 "wind_compass": (wind_compass_info['status']),
                 "wind_agreement_score": (round(wind_compass_info['wind_agreement_score'])),
