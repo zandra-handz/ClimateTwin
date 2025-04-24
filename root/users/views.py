@@ -1086,6 +1086,13 @@ def clean_treasures_data(request):
                 results = OpenMapAPI.reverse_geocode(treasure.found_at_latitude, treasure.found_at_longitude)
                 print(results)
 
+                treasure.location_country = results.get('country') # get() will return None if nothing
+                # skipping state rn
+                treasure.location_state = results.get('state')
+                treasure.location_city_name = results.get('city_name')
+
+                treasure.save()
+
             # if treasure.giver and not treasure.giver_name:
             #     treasure.giver_name = treasure.giver.username
             #     treasure.save()

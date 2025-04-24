@@ -110,6 +110,7 @@ class ClimateTwinFinder:
         self.climate_twin_lon = 0
         self.climate_twin_country = None
         self.climate_twin_city_name = None
+        self.climate_twin_state = None
         self.dataset_for_countries = None
         self.dataset_for_cities = None
  
@@ -228,6 +229,7 @@ class ClimateTwinFinder:
         print(f"Twin address: {self.climate_twin_address}")
         print(f"Twin country: {self.climate_twin_country}")
         print(f"Twin city name: {self.climate_twin_city_name}")
+        print(f"Twin state: {self.climate_twin_state}")
         print(f"Twin temperature: {self.climate_twin_temperature}") 
         print(f"OpenWeatherMap calls: {self.key_count}")
         print(f"GoogleMap calls: {self.google_key_count}")
@@ -255,7 +257,8 @@ class ClimateTwinFinder:
         logger.info(f"Home temperatire: {self.home_temperature}")
         logger.info(f"Twin address: {self.climate_twin_address}")
         logger.info(f"Twin country: {self.climate_twin_country}")
-        logger.info(f"Twin city name: {self.climate_twin_city_name}")
+        logger.info(f"Twin city name: {self.climate_twin_state}")
+        logger.info(f"Twin state: {self.climate_twin_city_name}")
         logger.info(f"Twin temperature: {self.climate_twin_temperature}")
 
         logger.info(f"OpenWeatherMap calls: {self.key_count}")
@@ -313,6 +316,7 @@ class ClimateTwinFinder:
             sunset_timestamp = data["sys"]["sunset"]
             country = data["sys"].get("country")
             city_name = data.get("name")
+            # state comes from reverse_geocode only
 
             info = {
                 'temperature': temperature,
@@ -802,6 +806,39 @@ class ClimateTwinFinder:
 
 
 
+    # def reverse_geocode(self, latitude, longitude):
+    #     base_url = "https://maps.googleapis.com/maps/api/geocode/json"
+    #     params = {
+    #         "latlng": f"{latitude},{longitude}",
+    #         "key": self.google_api_key,
+    #     }
+
+    #     response = requests.get(base_url, params=params)
+    #     self.google_key_count += 1
+    #     data = response.json()
+
+    #     if response.status_code == 200:
+    #         # Check if the response contains any results
+    #         if data["status"] == "OK" and len(data.get("results", [])) > 0:
+    #             # Extract the formatted address (location name) from the first result
+    #             location_name = data["results"][0]["formatted_address"]
+
+    #             # Extract the city name
+    #             city = next((component["long_name"] for result in data["results"] for component in result.get("address_components", []) if "locality" in component["types"]), None)
+
+    #             # Extract the country name from the address components
+    #             country = next((component["long_name"] for result in data["results"] for component in result.get("address_components", []) if "country" in component["types"]), None)
+
+    #             return {
+    #                 "location_name": location_name,
+    #                 "city": city,
+    #                 "country": country
+    #             }
+    #     else:
+    #         print(f"Error: {data['status']} - {data.get('error_message', 'Unknown error')}")
+
+    #     return None
+
     def reverse_geocode(self, latitude, longitude):
         base_url = "https://maps.googleapis.com/maps/api/geocode/json"
         params = {
@@ -822,18 +859,23 @@ class ClimateTwinFinder:
                 # Extract the city name
                 city = next((component["long_name"] for result in data["results"] for component in result.get("address_components", []) if "locality" in component["types"]), None)
 
+                # Extract the state name
+                state = next((component["long_name"] for result in data["results"] for component in result.get("address_components", []) if "administrative_area_level_1" in component["types"]), None)
+
                 # Extract the country name from the address components
                 country = next((component["long_name"] for result in data["results"] for component in result.get("address_components", []) if "country" in component["types"]), None)
 
                 return {
                     "location_name": location_name,
                     "city": city,
+                    "state": state,
                     "country": country
                 }
         else:
             print(f"Error: {data['status']} - {data.get('error_message', 'Unknown error')}")
 
         return None
+
 
 
 
@@ -861,6 +903,7 @@ class ClimateTwinFinder:
                 
                 location_name = results['location_name'] 
                 city = results['city'] 
+                state = results['state']
 
                 if not places_semifinalists['city_name']:
                     print(f"No city name for semifinalist, replacing with reverse_geocode result '{city or None}'")
@@ -893,6 +936,7 @@ class ClimateTwinFinder:
                     'longitude': longitude,
                     'country' : country or None,
                     'city_name' : city or None,
+                    'state': state or None,
                 }
 
                 #this return ensures only one location; comment out to allow for multiple
@@ -905,6 +949,7 @@ class ClimateTwinFinder:
                 self.climate_twin_lon = longitude
                 self.climate_twin_country = country or None
                 self.climate_twin_city_name = city or None
+                self.climate_twin_state = state or None
 
                 # moved to parent algorithms_task to send AFTER this instance is saved and after it is then saved as current explore location
                # will ONLY be sending explore locations as location updates (except for 'is home' and potentially 'is in flight')

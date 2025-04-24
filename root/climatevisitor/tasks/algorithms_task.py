@@ -187,27 +187,27 @@ def run_climate_twin_algorithms_task(user_id, user_address):
                     # Not strictly necessary to check if dict, because function sets an empty dict at beginning
                     if isinstance(nearby_ruins, dict): # added 4/3/2025
                         for name, ruin in nearby_ruins.items():
+
                             formatted_ruin = {
                                 "name": name,
                                 "user": user_instance.id,
-                                "direction_degree": ruin['direction_deg'],
+                                "direction_degree": ruin.get('direction_deg'), 
                                 "direction": ruin.get('direction'),
-                                "miles_away": round(ruin['miles_away']),
-                                "location_id": ruin['id'],
-                                "latitude": ruin['latitude'],
-                                "longitude": ruin['longitude'],
-                                "country": ruin['country'],
-                                "city_name": ruin['city_name'],
-                                # not using state (yet)
-                                "state": (ruin['state']),
-                                "tags": ruin["tags"],
-                                "wind_compass": ruin['wind_compass'],
-                                "wind_agreement_score": (round(ruin['wind_agreement_score'])),
-                                "wind_harmony": ruin['wind_harmony'],
+                                "miles_away": round(ruin.get('miles_away', 0)),  
+                                "location_id": ruin.get('id'),
+                                "latitude": ruin.get('latitude'),
+                                "longitude": ruin.get('longitude'),
+                                "country": ruin.get('country'),
+                                "city_name": ruin.get('city_name'),
+                                "state": ruin.get('state'),
+                                "tags": ruin.get("tags", []),  
+                                "wind_compass": ruin.get('wind_compass'),
+                                "wind_agreement_score": round(ruin.get('wind_agreement_score', 0)),  
+                                "wind_harmony": ruin.get('wind_harmony'),
                                 "street_view_image": ruin.get("street_view_image", ''),
                                 "origin_location": climate_twin_location_instance.id,
-                            }
-
+                            } 
+                            
                             serializer = serializers.ClimateTwinDiscoveryLocationCreateSerializer(data=formatted_ruin)
                             if serializer.is_valid():
                                 discovery_location_instance = serializer.save(

@@ -223,14 +223,9 @@ class OpenMapAPI:
                 #     if num_results is not None and len(data) >= num_results:
                 #         break
 
-                print("Distances before sorting:")
-                for entry in data:
-                    print(f"ID: {entry['id']}, Distance: {entry['distance_miles']} miles")
-
-                # Print distances after sorting
-                print("Distances after sorting:")
-                for entry in data:
-                    print(f"ID: {entry['id']}, Distance: {entry['distance_miles']} miles")
+                print(f"Total discovery locations found: {len(data)}")
+                # for entry in data: 
+                #     print(f"ID: {entry['id']}, Distance: {entry['distance_miles']} miles")
 
                 return data
 
