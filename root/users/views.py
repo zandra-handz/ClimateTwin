@@ -1083,7 +1083,7 @@ def clean_treasures_data(request):
         for treasure in all_treasures:
 
             if not treasure.location_country:
-                results = OpenMapAPI.reverse_geocode(treasure.latitude, treasure.longitude)
+                results = OpenMapAPI.reverse_geocode(treasure.found_at_latitude, treasure.found_at_longitude)
                 print(results)
 
             # if treasure.giver and not treasure.giver_name:
