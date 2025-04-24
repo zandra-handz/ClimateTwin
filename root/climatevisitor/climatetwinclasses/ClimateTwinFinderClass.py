@@ -326,8 +326,8 @@ class ClimateTwinFinder:
                 'sunset_timestamp': sunset_timestamp,
                 'latitude': lat,
                 'longitude': lon,
-                'country' : country or '',
-                'city_name' : city_name or '',
+                'country' : country or None,
+                'city_name' : city_name or None,
             }
 
             return info
@@ -863,7 +863,7 @@ class ClimateTwinFinder:
                 city = results['city'] 
 
                 if not places_semifinalists['city_name']:
-                    print(f"No city name for semifinalist, replacing with reverse_geocode result '{city or ''}'")
+                    print(f"No city name for semifinalist, replacing with reverse_geocode result '{city or None}'")
                 else: 
                     city = city_name
 
@@ -891,8 +891,8 @@ class ClimateTwinFinder:
                     'sunset_timestamp': sunset_timestamp,
                     'latitude': latitude,
                     'longitude': longitude,
-                    'country' : country or '',
-                    'city_name' : city or '',
+                    'country' : country or None,
+                    'city_name' : city or None,
                 }
 
                 #this return ensures only one location; comment out to allow for multiple
@@ -903,8 +903,8 @@ class ClimateTwinFinder:
                 self.climate_twin_temperature = temp
                 self.climate_twin_lat = latitude
                 self.climate_twin_lon = longitude
-                self.climate_twin_country = country or ''
-                self.climate_twin_city_name = city or ''
+                self.climate_twin_country = country or None
+                self.climate_twin_city_name = city or None
 
                 # moved to parent algorithms_task to send AFTER this instance is saved and after it is then saved as current explore location
                # will ONLY be sending explore locations as location updates (except for 'is home' and potentially 'is in flight')

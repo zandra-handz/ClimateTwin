@@ -24,8 +24,8 @@ class HomeLocation(models.Model):
     sunset_timestamp = models.BigIntegerField(default=0)
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
-    country = models.CharField(max_length=150, default="")
-    city_name = models.CharField(max_length=150, default="")
+    country = models.CharField(max_length=150, null=True, blank=True)
+    city_name = models.CharField(max_length=150, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -56,8 +56,8 @@ class ClimateTwinLocation(models.Model):
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
 
-    country = models.CharField(max_length=150, default="")
-    city_name = models.CharField(max_length=150, default="")
+    country = models.CharField(max_length=150, null=True, blank=True)
+    city_name = models.CharField(max_length=150, null=True, blank=True)
     home_location = models.ForeignKey(HomeLocation, on_delete=models.SET_NULL, null=True, blank=True)
 
     wind_friends = models.CharField(max_length=255, default="")
@@ -166,8 +166,8 @@ class ClimateTwinLocation(models.Model):
         self.sunset_timestamp = 0
         self.latitude = 0.0
         self.longitude = 0.0
-        self.country = ""
-        self.city_name = ""
+        self.country = None
+        self.city_name = None
         self.home_location = None
         self.wind_friends = ""
         self.special_harmony = False
@@ -197,8 +197,8 @@ class ArchivedTwinLocation(models.Model):
     sunset_timestamp = models.BigIntegerField(default=0)
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
-    country = models.CharField(max_length=150, default="")
-    city_name = models.CharField(max_length=150, default="")
+    country = models.CharField(max_length=150, null=True, blank=True)
+    city_name = models.CharField(max_length=150, null=True, blank=True)
 
     home_location = models.ForeignKey(HomeLocation, on_delete=models.SET_NULL, null=True, blank=True)
 
@@ -235,10 +235,10 @@ class ClimateTwinDiscoveryLocation(models.Model):
     location_id = models.CharField(max_length=255, default='')
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
-    country = models.CharField(max_length=150, default="")
-    city_name = models.CharField(max_length=150, default="")
+    country = models.CharField(max_length=150, null=True, blank=True)
+    city_name = models.CharField(max_length=150, null=True, blank=True)
     # not using (yet?), state works with OWM reverse geocode call in ruins, but am using google reverse call in twin
-    state = models.CharField(max_length=150, default="")
+    state = models.CharField(max_length=150, null=True, blank=True)
     tags = models.JSONField(default=dict)
     wind_compass = models.CharField(max_length=255, default='')
     wind_agreement_score = models.IntegerField(default=0)
