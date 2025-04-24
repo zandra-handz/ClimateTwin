@@ -1078,7 +1078,7 @@ def clean_treasures_data(request):
 
         for treasure in all_treasures:
 
-            if not treasure.giver_name:
+            if treasure.giver and not treasure.giver_name:
                 treasure.giver_name = treasure.giver.username
                 treasure.save()
                 print(f"Added giver_name {treasure.giver_name} for treasure {treasure.descriptor or 'No descriptor given'}")
