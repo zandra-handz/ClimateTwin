@@ -862,8 +862,10 @@ class ClimateTwinFinder:
                 location_name = results['location_name'] 
                 city = results['city'] 
 
-            if not places_semifinalists['city_name']:
-                print(f"No city name for semifinalist, replacing with reverse_geocode result '{city or None}'")
+                if not places_semifinalists['city_name']:
+                    print(f"No city name for semifinalist, replacing with reverse_geocode result '{city or None}'")
+                else: 
+                    city = city_name
 
                 if " " in location_name:
                     code, address = location_name.split(" ", 1)
