@@ -1082,10 +1082,14 @@ def clean_treasures_data(request):
 
         for treasure in all_treasures:
 
-            if treasure.giver and not treasure.giver_name:
-                treasure.giver_name = treasure.giver.username
-                treasure.save()
-                print(f"Added giver_name {treasure.giver_name} for treasure {treasure.descriptor or 'No descriptor given'}")
+            if not treasure.location_country:
+                results = OpenMapAPI.reverse_geocode(treasure.latitude, treasure.longitude)
+                print(results)
+
+            # if treasure.giver and not treasure.giver_name:
+            #     treasure.giver_name = treasure.giver.username
+            #     treasure.save()
+            #     print(f"Added giver_name {treasure.giver_name} for treasure {treasure.descriptor or 'No descriptor given'}")
 
 
 
@@ -1106,7 +1110,10 @@ def clean_treasures_data(request):
 
                 change_count += 1
 
-        return Response({'detail': f'{change_count} treasures updated with current giver username!'}, status=status.HTTP_200_OK)
+
+        return Response({'detail': f'Found {change_count} treasures without a country field'}, status=status.HTTP_200_OK)
+ 
+        # return Response({'detail': f'{change_count} treasures updated with current giver username!'}, status=status.HTTP_200_OK)
  
         # return Response({'detail': f'{change_count} treasures updated with current clean logic!'}, status=status.HTTP_200_OK)
 
