@@ -108,16 +108,20 @@ class ClimateTwinConsumer(WebsocketConsumer):
             return user #jwt_token
 
         except Exception as jwt_error:
-            print(f"JWT authentication failed: {jwt_error}")
+            print(f"JWT authentication in ClimateTwinConsumer failed: {jwt_error}")
 
             try:
                 user, _ = self.authenticate_with_drf_token(user_token)
                 if user is None:
-                    raise AuthenticationFailed("Invalid DRF token")
-                return user #user_token
-            except AuthenticationFailed:
-                self.close(code=4001)  # Close WebSocket on auth failure
-                return None 
+                    print("DRF token in ClimateTwinConsumer invalid: no user returned")
+                    self.close(code=4001)
+                    return None  
+                return user  
+            
+            except Exception as drf_error:
+                print(f"DRF token authentication in ClimateTwinConsumer failed: {drf_error}")
+                self.close(code=4001) 
+                return None  
 
 
    
@@ -133,7 +137,8 @@ class ClimateTwinConsumer(WebsocketConsumer):
             auth = TokenAuthentication()
             user, token = auth.authenticate_credentials(user_token)
             return user, token
-        except AuthenticationFailed:
+        except Exception as e:
+            print(f"authenticate_with_drf_token in ClimateTwinConsumer failed: {e}")
             return None, None
 
     def get_user(self, access_token):
@@ -141,8 +146,10 @@ class ClimateTwinConsumer(WebsocketConsumer):
             user_id = access_token['user_id']
             user = self.get_user_model().objects.get(id=user_id)
             return user, access_token
-        except:
+        except Exception as e:
+            print(f"get_user in ClimateTwinConsumer failed: {e}")
             return None, None
+
   
 
     @staticmethod
@@ -643,7 +650,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
         user_token = parse_qs(auth).get('user_token', [None])[0]
 
         if not user_token:
-            print("No token provided")
+            print("No token provided in LocationUpdateConsumer")
             self.close(code=4001)  # Custom WebSocket close code for auth failure
             return None, None
 
@@ -655,18 +662,18 @@ class LocationUpdateConsumer(WebsocketConsumer):
             return user, jwt_token
 
         except Exception as jwt_error:
-            print(f"JWT authentication failed: {jwt_error}")
+            print(f"JWT authentication in LocationUpdateConsumer failed: {jwt_error}")
 
 
             try:
                 user, _ = self.authenticate_with_drf_token(user_token)
                 if user is None:
-                    print("DRF token invalid: no user returned")
+                    print("DRF token in LocationUpdateConsumer invalid: no user returned")
                     self.close(code=4001)
                     return None, None
                 return user, user_token
             except Exception as drf_error:
-                print(f"DRF token authentication failed: {drf_error}")
+                print(f"DRF token authentication in LocationUpdateConsumer failed: {drf_error}")
                 self.close(code=4001)  # Close WebSocket on auth failure
                 return None, None
 
@@ -683,7 +690,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
             user, token = auth.authenticate_credentials(user_token)
             return user, token
         except Exception as e:
-            print(f"authenticate_with_drf_token failed: {e}")
+            print(f"authenticate_with_drf_token in LocationUpdateConsumer failed: {e}")
             return None, None
 
     def get_user(self, access_token):
@@ -694,7 +701,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
             user_id = access_token['user_id']
             user = self.get_user_model().objects.get(id=user_id)
             return user, access_token
-        except Exception:
+        except Exception as e:
+            print(f"get_user in LocationUpdateConsumer failed: {e}")
             return None, None
 
     @staticmethod
