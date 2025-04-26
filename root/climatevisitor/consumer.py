@@ -661,7 +661,9 @@ class LocationUpdateConsumer(WebsocketConsumer):
             try:
                 user, _ = self.authenticate_with_drf_token(user_token)
                 if user is None:
-                    raise AuthenticationFailed("Invalid DRF token")
+                    print("DRF token invalid: no user returned")
+                    self.close(code=4001)
+                    return None, None
                 return user, user_token
             except Exception as drf_error:
                 print(f"DRF token authentication failed: {drf_error}")
