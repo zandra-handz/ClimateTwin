@@ -663,7 +663,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 if user is None:
                     raise AuthenticationFailed("Invalid DRF token")
                 return user, user_token
-            except AuthenticationFailed:
+            except Exception as drf_error:
+                print(f"DRF token authentication failed: {drf_error}")
                 self.close(code=4001)  # Close WebSocket on auth failure
                 return None, None
 
@@ -679,7 +680,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
             auth = TokenAuthentication()
             user, token = auth.authenticate_credentials(user_token)
             return user, token
-        except AuthenticationFailed:
+        except Exception as e:
+            print(f"authenticate_with_drf_token failed: {e}")
             return None, None
 
     def get_user(self, access_token):
