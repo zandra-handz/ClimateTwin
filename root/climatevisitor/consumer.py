@@ -51,7 +51,8 @@ class ClimateTwinConsumer(WebsocketConsumer):
 
 
         if not self.user:
-            return
+            raise DenyConnection("Authentication failed")
+            # return
  
         self.group_name = f'climate_updates_{self.user.id}'
 
@@ -98,7 +99,7 @@ class ClimateTwinConsumer(WebsocketConsumer):
 
         if not user_token:
             print("No token provided to ClimateTwinConsumer")
-            self.close(code=4001)  
+            # self.close(code=4001)  
             return None 
 
         try:
@@ -115,13 +116,13 @@ class ClimateTwinConsumer(WebsocketConsumer):
                 user, _ = self.authenticate_with_drf_token(user_token)
                 if user is None:
                     print("DRF token in ClimateTwinConsumer invalid: no user returned")
-                    self.close(code=4001)
+                    # self.close(code=4001)
                     return None  
                 return user  
             
             except Exception as drf_error:
                 print(f"DRF token authentication in ClimateTwinConsumer failed: {drf_error}")
-                self.close(code=4001) 
+                # self.close(code=4001) 
                 return None  
 
 
