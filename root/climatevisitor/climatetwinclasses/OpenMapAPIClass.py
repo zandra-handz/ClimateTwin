@@ -174,12 +174,9 @@ class OpenMapAPI:
                         'direction': direction,
                     }
 
-                    if location_info.get('country'):
-                        ruin_info['country'] = location_info['country']
-                    if location_info.get('state'):
-                        ruin_info['state'] = location_info['state']
-                    if location_info.get('city'):
-                        ruin_info['city_name'] = location_info['city']
+                    ruin_info['country'] = location_info.get('country', None)
+                    ruin_info['state'] = location_info.get('state', None)
+                    ruin_info['city_name'] = location_info.get('city', None)
 
                     index_to_insert = bisect_left([entry['distance_miles'] for entry in data], distance)
                     data.insert(index_to_insert, ruin_info)
@@ -388,21 +385,37 @@ class OpenMapAPI:
                 harmony_check = False
 
             formatted_ruin = {
-                "direction_deg": ruin['direction_deg'],
+                "direction_deg": ruin.get('direction_deg', None),
                 "direction": ruin.get('direction', 'Unknown'),
-                "miles_away": round(ruin['distance_miles']),
-                "id": ruin['id'],
-                "latitude": ruin['lat'],
-                "longitude": ruin['lon'],
-                "country": ruin['country'],
-                "city_name": ruin['city_name' or None],
-                # not using state (yet)
-                "state": (ruin['state']),
+                "miles_away": round(ruin.get('distance_miles', 0)),
+                "id": ruin.get('id', None),
+                "latitude": ruin.get('lat', None),
+                "longitude": ruin.get('lon', None),
+                "country": ruin.get('country', None),
+                "city_name": ruin.get('city_name', None),
+                "state": ruin.get('state', None),
                 "tags": tags,
-                "wind_compass": (wind_compass_info['status']),
-                "wind_agreement_score": (round(wind_compass_info['wind_agreement_score'])),
+                "wind_compass": wind_compass_info.get('status', None),
+                "wind_agreement_score": round(wind_compass_info.get('wind_agreement_score', 0)),
                 "wind_harmony": harmony_check
             }
+
+            # formatted_ruin = {
+            #     "direction_deg": ruin['direction_deg'],
+            #     "direction": ruin.get('direction', 'Unknown'),
+            #     "miles_away": round(ruin['distance_miles']),
+            #     "id": ruin['id'],
+            #     "latitude": ruin['lat'],
+            #     "longitude": ruin['lon'],
+            #     "country": ruin['country'],
+            #     "city_name": ruin['city_name' or None],
+            #     # not using state (yet)
+            #     "state": (ruin['state']),
+            #     "tags": tags,
+            #     "wind_compass": (wind_compass_info['status']),
+            #     "wind_agreement_score": (round(wind_compass_info['wind_agreement_score'])),
+            #     "wind_harmony": harmony_check
+            # }
 
             # Add street view image to the formatted_ruin dictionary if available
             if street_view_image:
