@@ -1,4 +1,5 @@
 from asgiref.sync import async_to_sync
+from channels.exceptions import DenyConnection
 from channels.generic.websocket import WebsocketConsumer
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
@@ -169,8 +170,8 @@ class LocationUpdateConsumer(WebsocketConsumer):
         self.user, self.token = self.authenticate_user()
 
         if not self.user or not self.token:
-            # If authentication failed, WebSocket is already closed inside authenticate_user()
-            return
+            raise DenyConnection("Authentication failed")
+           
 
         channel_id = self.user.id
         self.group_name = f'location_update_{channel_id}'
@@ -651,7 +652,7 @@ class LocationUpdateConsumer(WebsocketConsumer):
 
         if not user_token:
             print("No token provided in LocationUpdateConsumer")
-            self.close(code=4001)  # Custom WebSocket close code for auth failure
+            #self.close(code=4001)  # Custom WebSocket close code for auth failure
             return None, None
 
         try:
@@ -669,12 +670,12 @@ class LocationUpdateConsumer(WebsocketConsumer):
                 user, _ = self.authenticate_with_drf_token(user_token)
                 if user is None:
                     print("DRF token in LocationUpdateConsumer invalid: no user returned")
-                    self.close(code=4001)
+                    #self.close(code=4001)
                     return None, None
                 return user, user_token
             except Exception as drf_error:
                 print(f"DRF token authentication in LocationUpdateConsumer failed: {drf_error}")
-                self.close(code=4001)  # Close WebSocket on auth failure
+                #self.close(code=4001)  # Close WebSocket on auth failure
                 return None, None
 
 
