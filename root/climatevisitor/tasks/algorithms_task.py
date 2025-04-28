@@ -359,9 +359,9 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_s
         cache.set(cache_key, True, timeout=int(timeout_seconds))
 
         # FOR DEBUGGING
-        # push_expiration_task_scheduled(user_id, timeout_seconds)
+        push_expiration_task_scheduled(user_id, last_accessed)
 
-        process_impending_expiration_warning_task.apply_async((user_id, expiration_time, last_accessed,), countdown=3000)
+        process_impending_expiration_warning_task.apply_async((user_id, expiration_time, last_accessed,), countdown=2940) # 660 seconds / 11 minutes 
         
 
 
@@ -414,20 +414,23 @@ def process_expiration_task(user_id, last_accessed=None):
 
     try: 
         current_location = CurrentLocation.objects.get(user_id=user_id)
- 
-        if current_location.expired:
-            logger.info(f"User {user_id}'s current location is already expired.")
-            print(f"User {user_id}'s current location is already expired.")
 
-            # Deleting home location will cascade-delete all the other locations except for the current location
-            # To save data, we will need to save more stuff to the uservisits. 
-            home_location = HomeLocation.objects.filter(user=user_id).first()
-            if home_location:
-                home_location.delete()
-                
-            return "Location is already expired."
- 
         if last_accessed == current_location.last_accessed:
+ 
+            if current_location.expired:
+                logger.info(f"User {user_id}'s current location is already expired.")
+                print(f"User {user_id}'s current location is already expired.")
+                push_expiration_task_scheduled(user_id, "Current location is already expired")
+                
+
+                # Deleting home location will cascade-delete all the other locations except for the current location
+                # To save data, we will need to save more stuff to the uservisits. 
+                home_location = HomeLocation.objects.filter(user=user_id).first()
+                if home_location:
+                    home_location.delete()
+                    
+                return "Location is already expired."
+  
             current_location.expired = True
             current_location.save()
 
@@ -445,11 +448,13 @@ def process_expiration_task(user_id, last_accessed=None):
             try:
                 send_location_update_to_celery(user_id=user_id, state='home', base_location=None, location_same_as_last_update=None, location_id=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
             except Exception as e:
+                push_expiration_task_scheduled(user_id, "Couldn't send returned home message")
                 print(f"Couldn't send returned home message.")
 
         else:
             logger.info(f"Expiration task no longer applicable -- location has changed.")
             print(f"Expiration task no longer applicable -- location has changed.")
+            push_expiration_task_scheduled(user_id, "Expiration task no longer applicable -- location has changed")
 
     except CurrentLocation.DoesNotExist:
         logger.error(f"CurrentLocation for user {user_id} does not exist.")
