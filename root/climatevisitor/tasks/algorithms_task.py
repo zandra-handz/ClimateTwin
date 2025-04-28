@@ -446,7 +446,7 @@ def process_expiration_task(user_id, last_accessed=None):
             print(f"User {user_id}'s location expired successfully.")
  
             try:
-                send_location_update_to_celery(user_id=user_id, state='home', base_location=None, location_same_as_last_update=None, location_id=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
+                send_location_update_to_celery(user_id=user_id, state='home', base_location=None, location_id=None, location_same_as_last_update=None, name="You are home", temperature=None, latitude=None, longitude=None, last_accessed=None)
             except Exception as e:
                 push_expiration_task_scheduled(user_id, "Couldn't send returned home message")
                 print(f"Couldn't send returned home message.")
