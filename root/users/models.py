@@ -316,6 +316,8 @@ class Treasure(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     owned_since = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
+    searchable = models.BooleanField(default=True)
+
     total_unique_owners = models.PositiveIntegerField(default=1)
     times_gifted = models.PositiveIntegerField(default=0)
 
@@ -360,7 +362,7 @@ class Treasure(models.Model):
             descriptor=descriptor,
             description=description,
             add_data=add_data,
-            # use defaults for unique_owners and times_gifted fields
+            # use defaults for unique_owners and times_gifted and searchable fields
         )
 
     def give_as_gift(self, message, giver, recipient):

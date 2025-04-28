@@ -22,6 +22,7 @@ urlpatterns = [
     # path('password/reset/confirm/<uid>/<token>', views.PasswordReset.as_view({'get': 'reset_password'}), name='reset-password'),
     
     path('treasures/', views.TreasuresView.as_view(), name='treasures'),
+    path('treasures/get/', views.SearchTreasuresView.as_view(), name='search-treasures'),
     path('treasure/<int:pk>/', views.TreasureView.as_view(), name='treasure'),
     path('treasure/<int:treasure_id>/history/', views.TreasureOwnerChangeRecordsView.as_view(), name='treasure-history'),
     path('treasure/owner-change-record/<int:pk>/', views.TreasureOwnerChangeRecordView.as_view(), name='treasure-owner-change-record'),

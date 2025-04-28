@@ -73,7 +73,7 @@ class ListUsersView(generics.ListAPIView):
 class SearchUsersView(generics.ListAPIView):
     pagination_class = UserSearchPagination
     authentication_classes = [TokenAuthentication, JWTAuthentication] 
-    queryset = models.BadRainbowzUser.objects.all()
+    # queryset = models.BadRainbowzUser.objects.all() # being overwritten below
     serializer_class = serializers.BadRainbowzUserSerializer
     permission_classes = [IsAuthenticated] 
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
@@ -217,7 +217,24 @@ def clear_notification_cache(request):
     
     return Response({'error': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+class TreasureSearchPagination(PageNumberPagination):
+    page_size = 10  
+    page_size_query_param = 'page_size'
+    max_page_size = 100
 
+
+class SearchTreasuresView(generics.ListAPIView):
+    pagination_class = TreasureSearchPagination
+    authentication_classes = [TokenAuthentication, JWTAuthentication] 
+
+    serializer_class = serializers.TreasureSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    search_fields = ['descriptor', 'location_name', 'country', 'city_name', 'state'] 
+
+    def get_queryset(self):
+        return models.Treasure.objects.exclude(searchable=False)
+    
   
 
 class TreasuresView(generics.ListCreateAPIView):
