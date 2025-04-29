@@ -80,7 +80,7 @@ def reset_twin_location_search_progress_update(user_id):
 
 
 @shared_task
-def send_gift_notification(user_id, user_username, recipient_id, inbox_item_id, gift_request_id):
+def send_gift_notification(user_id, user_username, recipient_id, inbox_item_id, gift_request_id, gift_id):
     logger.info(f"send_gift_notification triggered for user_id: {user_id}, recipient_id: {recipient_id}")
 
     channel_layer = get_channel_layer()
@@ -88,7 +88,7 @@ def send_gift_notification(user_id, user_username, recipient_id, inbox_item_id, 
     
     logger.info(f"Attempting to send message to group: {group_name}")
 
-    cache_and_push_notif_new_gift(user_id, user_username, recipient_id, inbox_item_id, gift_request_id)
+    cache_and_push_notif_new_gift(user_id, user_username, recipient_id, inbox_item_id, gift_request_id, gift_id)
 
     notification_message = f'{user_username} sent you a treasure!'
     # sending clear method will remove the notification, if I remember correctly
@@ -102,7 +102,8 @@ def send_gift_notification(user_id, user_username, recipient_id, inbox_item_id, 
                 'type': 'gift_notification',
                 'notification': notification_message,
                 'inbox_item_id': inbox_item_id,
-                'gift_request_id': gift_request_id
+                'gift_request_id': gift_request_id,
+                'gift_id': gift_id
             }
         )
         logger.info(f"Notification successfully sent to {group_name}")
@@ -369,6 +370,43 @@ def send_location_update_to_celery(user_id, state, base_location, location_id, l
 
        
         logger.info(f"Location update sent successfully for user_id: {user_id}, location_id: {location_id}")
+
+    except Exception as e:
+        logger.warning(f"No active connection for user_id: {user_id}, or failed to send via channel layer. Error: {str(e)}")
+
+    
+    # Push notification is inside this
+    cache_and_push_notif_location_update(user_id, state, base_location, location_id, name, latitude, longitude, last_accessed)
+    
+    logger.info(f"Location update complete for user_id: {user_id}, location_id: {location_id}")
+
+@shared_task
+def send_home_location_update_to_celery(user_id):
+     
+ 
+    try:
+        channel_layer = get_channel_layer()
+
+        group_name = f'location_update_{user_id}'
+
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                'type': 'update_location',
+                'state': 'home',
+                'base_location': None,
+                'location_id': None,
+                'location_same_as_last_update': None,
+                'name': 'You are home',
+                'temperature': None,
+                'latitude': None,
+                'longitude': None,
+                'last_accessed': None,
+            }
+        )
+
+       
+        logger.info(f"Home location update sent successfully for user_id: {user_id}")
 
     except Exception as e:
         logger.warning(f"No active connection for user_id: {user_id}, or failed to send via channel layer. Error: {str(e)}")

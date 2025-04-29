@@ -905,10 +905,9 @@ class SendGiftRequestView(generics.CreateAPIView):
             inbox_item = models.InboxItem.objects.create(user=gift_request.recipient, message=gift_request_message)
             inbox_item.save()
 
-
-            print(gift_request.recipient.id)
  
-            send_gift_notification(request.user.id, request.user.username, gift_request.recipient.id, inbox_item.id, gift_request.id)
+ 
+            send_gift_notification(request.user.id, request.user.username, gift_request.recipient.id, inbox_item.id, gift_request.id, treasure.id)
 
         
 
@@ -965,7 +964,8 @@ class SendGiftRequestBackToFinderView(generics.CreateAPIView):
                 request.user.username,
                 gift_request.recipient.id,
                 inbox_item.id,
-                gift_request.id
+                gift_request.id,
+                treasure.id
             )
 
             # Mark treasure as pending

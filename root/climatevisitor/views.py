@@ -11,7 +11,7 @@ from climatevisitor.profile_funcs import log_view_time, TimedAPIView
 
 
 from .tasks.algorithms_task import process_climate_twin_request, schedule_expiration_task, process_immediate_expiration_task
-from .tasks.tasks import send_location_update_to_celery, extra_coverage_cache_location_update, send_is_pending_location_update_to_celery
+from .tasks.tasks import send_location_update_to_celery, send_home_location_update_to_celery, extra_coverage_cache_location_update, send_is_pending_location_update_to_celery
 # send_is_pending_location_update_to_celery is in process_climate_twin_request
 from .climatetwinclasses.OpenMapAPIClass import OpenMapAPI
 from asgiref.sync import sync_to_async
@@ -885,16 +885,7 @@ class ExpireCurrentLocationView(TimedAPIView, generics.UpdateAPIView):
             remove_twin_search_lock(user.id)
 
             try:
-                send_location_update_to_celery(user_id=user.id, 
-                    state='home',
-                    base_location=None,
-                    location_same_as_last_update=None,
-                    location_id=None, # = location_visiting_id
-                    temperature= None, 
-                    name="You are home", 
-                    latitude=None,
-                    longitude=None, 
-                    last_accessed=None)
+                send_home_location_update_to_celery(user_id=user.id)
             except Exception as e:
                 print(f"Error sending go-home location update to Celery: {str(e)}")  # Print the error to the console/log
 
