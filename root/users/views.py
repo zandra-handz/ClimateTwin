@@ -230,7 +230,7 @@ class SearchTreasuresView(generics.ListAPIView):
     serializer_class = serializers.TreasureSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
-    search_fields = ['descriptor', 'location_name', 'country', 'city_name', 'state'] 
+    search_fields = ['descriptor', 'original_user', 'location_name', 'location_state'] # can add more but will make search slower
 
     def get_queryset(self):
         return models.Treasure.objects.exclude(searchable=False)
