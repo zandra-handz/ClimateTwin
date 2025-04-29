@@ -390,16 +390,18 @@ def process_impending_expiration_warning_task(user_id, expiration_time=None, las
     try:
         current_location = CurrentLocation.objects.get(user_id=user_id)
 
-        location_name = 'location'
+        if current_location.expired:
+            return "No location exp warning message necessary, location already expired."
+        
+
+        location_name = 'No location'
 
         if current_location.twin_location:
             location_name = current_location.twin_location.name
         elif current_location.explore_location:
             location_name = current_location.explore_location.name
             
-        if current_location.expired:
-            return "No location exp warning message necessary, location already expired."
-        
+
         if last_accessed == current_location.last_accessed: 
 
             minutes_remaining = max(0, int((expiration_time - timezone.now()).total_seconds() / 60))
@@ -419,8 +421,7 @@ def process_expiration_task(user_id, last_accessed=None):
         current_location = CurrentLocation.objects.get(user_id=user_id)
 
         if last_accessed == current_location.last_accessed:
- 
-            # it can only become expired by saving it, which will delete the home location already
+  
             if current_location.expired:
                 logger.info(f"User {user_id}'s current location is already expired.")
                 print(f"User {user_id}'s current location is already expired.")
@@ -452,7 +453,7 @@ def process_expiration_task(user_id, last_accessed=None):
             logger.info(f"User {user_id}'s location expired successfully.")
             
             # FOR DEBUGGING
-            #push_expiration_task_executed(user_id)
+            push_expiration_task_executed(user_id)
             print(f"User {user_id}'s location expired successfully.")
  
             try:

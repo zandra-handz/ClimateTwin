@@ -75,6 +75,8 @@ class ClimateTwinLocation(models.Model):
     last_accessed = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
+        # if being created for first time
+        # this field should not ever change
         if not self.pk:
             self.explore_type = "twin_location"
         super().save(*args, **kwargs)
@@ -165,6 +167,7 @@ class ClimateTwinLocation(models.Model):
 
  
         self.name = ""
+
         self.temperature = 0.0
         self.description = ""
         self.wind_speed = 0.0
@@ -368,13 +371,23 @@ class CurrentLocation(models.Model):
         # OPTION TWO: DELETE JUST DISCOVERY AND HOME AND TWIN INDIVIDUALLY
         # doing this right now because I'm not sure if cascade will activate the individual delete methods
         # and i want to make sure everything is done in right order
+
+
+
+    
         if self.expired and self.base_location:
             with transaction.atomic():   
+
+                
                 # Loop over discovery locations and delete each one
                 for discovery in ClimateTwinDiscoveryLocation.objects.filter(origin_location=self.base_location):
                     discovery.delete()
 
                 self.base_location.archive()
+
+
+                self.explore_location = None 
+                
  
                 # moved to the archive method to properly delete, since archive method sets base_location.home_location to None
                 # if self.base_location.home_location:
