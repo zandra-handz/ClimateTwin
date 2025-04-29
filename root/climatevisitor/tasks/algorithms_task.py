@@ -430,9 +430,11 @@ def process_expiration_task(user_id, last_accessed=None):
                 # Deleting home location will cascade-delete all the other locations except for the current location
                 # To save data, we will need to save more stuff to the uservisits. 
                 
-                home_location = HomeLocation.objects.filter(user=user_id).first()
-                if home_location:
-                    home_location.delete()
+
+                # IN CLIMATETWIN ARCHIVE METHOD NOW
+                # home_location = HomeLocation.objects.filter(user=user_id).first()
+                # if home_location:
+                #     home_location.delete()
                     
                 return "Location is already expired."
   
@@ -442,7 +444,7 @@ def process_expiration_task(user_id, last_accessed=None):
             # Deleting home location will cascade-delete all the other locations except for the current location
             # To save data, we will need to save more stuff to the uservisits. 
            
-           # DONE IN SAVE NOW
+            # IN CLIMATETWIN ARCHIVE METHOD NOW
             # home_location = HomeLocation.objects.filter(user=user_id).first()
             # if home_location:
             #     home_location.delete()
