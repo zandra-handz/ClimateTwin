@@ -744,7 +744,7 @@ class CreateOrUpdateCurrentLocationView(TimedAPIView, generics.CreateAPIView):
                 return Response({'error': 'The twin location does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
            
             # instead of self.update, otherwise can't access newly saved object when sending update to celery
-            saved_instance = models.CurrentLocation.update_or_create_location(user, twin_location=twin_location)
+            saved_instance = models.CurrentLocation.update_or_create_location(user, twin_location=twin_location, base_location=twin_location)
 
 
             

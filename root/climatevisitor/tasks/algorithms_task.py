@@ -324,7 +324,7 @@ def process_climate_twin_request(self, user_id, user_address):
 
 
 @shared_task(bind=True, max_retries=3)
-def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_socket_update=False): #default
+def schedule_expiration_task(self, user_id, duration_seconds=3600): #default
     
     # FOR DEBUGGING:
     # push_expiration_task_scheduled(user_id, 'INITIATED')
@@ -332,7 +332,7 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_s
         current_location = CurrentLocation.objects.get(user_id=user_id)
  
  
-        if current_location.expired and not always_send_socket_update:
+        if current_location.expired:
             logger.info(f"User {user_id}'s current location is already expired.")
             return "Location is already expired."
         print(f"User {user_id}'s current location is not expired.")
@@ -359,7 +359,10 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600, always_send_s
         cache.set(cache_key, True, timeout=int(timeout_seconds))
 
         # FOR DEBUGGING
-        push_expiration_task_scheduled(user_id, last_accessed)
+        # push_expiration_task_scheduled(user_id, last_accessed)
+
+        process_impending_expiration_warning_task.apply_async((user_id, expiration_time, last_accessed,), countdown=60) # 660 seconds / 11 minutes 
+        
 
         process_impending_expiration_warning_task.apply_async((user_id, expiration_time, last_accessed,), countdown=2940) # 660 seconds / 11 minutes 
         
@@ -417,6 +420,7 @@ def process_expiration_task(user_id, last_accessed=None):
 
         if last_accessed == current_location.last_accessed:
  
+            # it can only become expired by saving it, which will delete the home location already
             if current_location.expired:
                 logger.info(f"User {user_id}'s current location is already expired.")
                 print(f"User {user_id}'s current location is already expired.")
@@ -425,6 +429,7 @@ def process_expiration_task(user_id, last_accessed=None):
 
                 # Deleting home location will cascade-delete all the other locations except for the current location
                 # To save data, we will need to save more stuff to the uservisits. 
+                
                 home_location = HomeLocation.objects.filter(user=user_id).first()
                 if home_location:
                     home_location.delete()
@@ -436,9 +441,12 @@ def process_expiration_task(user_id, last_accessed=None):
 
             # Deleting home location will cascade-delete all the other locations except for the current location
             # To save data, we will need to save more stuff to the uservisits. 
-            home_location = HomeLocation.objects.filter(user=user_id).first()
-            if home_location:
-                home_location.delete()
+           
+           # DONE IN SAVE NOW
+            # home_location = HomeLocation.objects.filter(user=user_id).first()
+            # if home_location:
+            #     home_location.delete()
+
             logger.info(f"User {user_id}'s location expired successfully.")
             
             # FOR DEBUGGING

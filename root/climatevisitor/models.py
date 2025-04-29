@@ -156,6 +156,13 @@ class ClimateTwinLocation(models.Model):
             humidity_interaction=self.humidity_interaction,
             stronger_wind_interaction=self.stronger_wind_interaction,
         )
+
+
+
+        # Moved here from CurrentLocation save method which calls this archive method
+        if self.home_location:
+            self.home_location.delete()
+
  
         self.name = ""
         self.temperature = 0.0
@@ -369,8 +376,9 @@ class CurrentLocation(models.Model):
 
                 self.base_location.archive()
  
-                if self.base_location.home_location:
-                    self.base_location.home_location.delete()
+                # moved to the archive method to properly delete, since archive method sets base_location.home_location to None
+                # if self.base_location.home_location:
+                #     self.base_location.home_location.delete()
             
 
         super().save(*args, **kwargs)
