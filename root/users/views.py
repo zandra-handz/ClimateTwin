@@ -227,7 +227,7 @@ class SearchTreasuresView(generics.ListAPIView):
     pagination_class = TreasureSearchPagination
     authentication_classes = [TokenAuthentication, JWTAuthentication] 
 
-    serializer_class = serializers.TreasureSerializer
+    serializer_class = serializers.TreasureSearchableSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     search_fields = ['descriptor', 'original_user', 'location_name', 'location_state'] # can add more but will make search slower

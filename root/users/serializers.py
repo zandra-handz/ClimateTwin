@@ -34,6 +34,14 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
 
 
+class TreasureSearchableSerializer(serializers.ModelSerializer):
+    user_username = serializers.CharField(source='user.username', read_only=True)
+
+    class Meta(object):
+        model = models.Treasure
+        fields = "__all__"
+
+
 
 
 class TreasureSerializer(serializers.ModelSerializer):
