@@ -161,7 +161,8 @@ def send_friend_request_notification(user_id, user_username, recipient_id, inbox
                 'type': 'friend_notification',
                 'notification': notification_message,
                 'inbox_item_id': inbox_item_id,
-                'friend_request_id': friend_request_id
+                'friend_request_id': friend_request_id,
+                'friend_id' : user_id
             }
         )
         logger.info(f"Notification successfully sent to {group_name}")

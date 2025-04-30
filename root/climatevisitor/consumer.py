@@ -499,9 +499,10 @@ class LocationUpdateConsumer(WebsocketConsumer):
         notification_data = event.get('notification')
         inbox_item_id_data = event.get('inbox_item_id', None)
         gift_request_id_data = event.get('gift_request_id', None)
+        gift_id_data = event.get('gift_id', None)
         recipient_id = event.get('recipient_id')
         cache.set(f"notification_{recipient_id}", notification_data) # no timeout , timeout=86400)
-        self.send(text_data=json.dumps({'notification': notification_data, 'inbox_item_id': inbox_item_id_data, 'gift_request_id': gift_request_id_data}))
+        self.send(text_data=json.dumps({'notification': notification_data, 'inbox_item_id': inbox_item_id_data, 'gift_request_id': gift_request_id_data, 'gift_id': gift_id_data}))
 
 
     def friend_notification(self, event):
@@ -512,9 +513,10 @@ class LocationUpdateConsumer(WebsocketConsumer):
         recipient_id = event.get('recipient_id')
         inbox_item_id_data = event.get('inbox_item_id', None)
         friend_request_id_data = event.get('friend_request_id', None)
+        friend_id_data = event.get('friend_id', None)
         
         cache.set(f"notification_{recipient_id}", notification_data) # no timeout, timeout=86400)
-        self.send(text_data=json.dumps({'notification': notification_data, 'inbox_item_id': inbox_item_id_data, 'friend_request_id': friend_request_id_data}))
+        self.send(text_data=json.dumps({'notification': notification_data, 'inbox_item_id': inbox_item_id_data, 'friend_request_id': friend_request_id_data, 'friend_id': friend_id_data}))
    
    
     def disconnect(self, close_code):
