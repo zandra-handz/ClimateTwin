@@ -343,10 +343,10 @@ def send_is_pending_location_update_to_celery(user_id):
 @shared_task
 def send_location_update_to_celery(user_id, state, base_location, location_id, location_same_as_last_update, name, temperature, latitude, longitude, last_accessed):
      
-    logger.info(f"Preparing to send location update to Celery with data: "
-                f"user_id: {user_id}, state: {state}, base_location: {base_location}, location_id: {location_id}, "
-                f"name: {name}, temperature: {temperature}, latitude: {latitude}, "
-                f"longitude: {longitude}, last_accessed: {last_accessed}")
+    # logger.info(f"Preparing to send location update to Celery with data: "
+    #             f"user_id: {user_id}, state: {state}, base_location: {base_location}, location_id: {location_id}, "
+    #             f"name: {name}, temperature: {temperature}, latitude: {latitude}, "
+    #             f"longitude: {longitude}, last_accessed: {last_accessed}")
 
     try:
         channel_layer = get_channel_layer()
@@ -383,6 +383,18 @@ def send_location_update_to_celery(user_id, state, base_location, location_id, l
 
 @shared_task
 def send_home_location_update_to_celery(user_id):
+
+    state = 'home'
+    base_location = None
+    location_id = None
+    location_same_as_last_update = None
+    name = 'You are home'
+    temperature = None
+    latitude = None
+    longitude = None
+    last_accessed = None
+
+    
      
  
     try:
@@ -394,29 +406,26 @@ def send_home_location_update_to_celery(user_id):
             group_name,
             {
                 'type': 'update_location',
-                'state': 'home',
-                'base_location': None,
-                'location_id': None,
-                'location_same_as_last_update': None,
-                'name': 'You are home',
-                'temperature': None,
-                'latitude': None,
-                'longitude': None,
-                'last_accessed': None,
+                'state': state,
+                'base_location': base_location,
+                'location_id': location_id,
+                'location_same_as_last_update': location_same_as_last_update,
+                'name': name,
+                #  'temperature': None,   not include in consumer at this time
+                'latitude': latitude,
+                'longitude': longitude,
+                'last_accessed': last_accessed,
             }
-        )
-
+        ) 
        
         logger.info(f"Home location update sent successfully for user_id: {user_id}")
 
     except Exception as e:
         logger.warning(f"No active connection for user_id: {user_id}, or failed to send via channel layer. Error: {str(e)}")
 
-    
-    # Push notification is inside this
     cache_and_push_notif_location_update(user_id, state, base_location, location_id, name, latitude, longitude, last_accessed)
     
-    logger.info(f"Location update complete for user_id: {user_id}, location_id: {location_id}")
+    logger.info(f"Location update complete for user_id: {user_id}")
  
 
 # Not a Celery task but goes with them
@@ -512,7 +521,7 @@ def restore_location_from_backup_cache_and_send_update(user_id):
                     'location_id': backup_location_cache.get('location_id'),
                     'location_same_as_last_update': backup_location_cache.get('location_same_as_last_update'),
                     'name': backup_location_cache.get('name', 'Error getting location name'),  
-                    'temperature': None,
+                    # 'temperature': None,
                     'latitude': backup_location_cache.get('latitude'),
                     'longitude': backup_location_cache.get('longitude'),
                     'last_accessed': backup_location_cache.get('last_accessed')

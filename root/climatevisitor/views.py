@@ -6,7 +6,7 @@ from celery.result import AsyncResult
 from .climatetwinclasses.ClimateEncounterClass import ClimateEncounter
 from .climatetwinclasses.ClimateObjectClass import ClimateObject
 from .climatetwinclasses.ClimateTwinFinderClass import ClimateTwinFinder
-from climatevisitor.send_utils import check_and_set_twin_search_lock, remove_twin_search_lock
+from climatevisitor.send_utils import check_and_set_twin_search_lock, remove_twin_search_lock, push_expiration_task_scheduled
 from climatevisitor.profile_funcs import log_view_time, TimedAPIView
 
 
@@ -750,15 +750,22 @@ class CreateOrUpdateCurrentLocationView(TimedAPIView, generics.CreateAPIView):
             
             last_accessed_str = saved_instance.last_accessed.isoformat()
 
-            extra_coverage_cache_location_update(
-                user_id=user.id, 
-                state='exploring',
-                base_location=saved_instance.base_location.id,
-                location_id=saved_instance.twin_location.id,
-                name=saved_instance.twin_location.name, 
-                latitude=saved_instance.twin_location.latitude,
-                longitude=saved_instance.twin_location.longitude, 
-                last_accessed=last_accessed_str)
+            try:
+
+                extra_coverage_cache_location_update(
+                    user_id=user.id, 
+                    state='exploring',
+                    base_location=saved_instance.base_location.id,
+                    location_id=saved_instance.twin_location.id,
+                    name=saved_instance.twin_location.name, 
+                    latitude=saved_instance.twin_location.latitude,
+                    longitude=saved_instance.twin_location.longitude, 
+                    last_accessed=last_accessed_str)
+                
+            except Exception as e:
+                # FOR DEBUGGING
+                push_expiration_task_scheduled(user.id, f'Could not cache new location: {e}')
+                
          
             try:
                 send_location_update_to_celery(user_id=user.id, state='exploring', base_location=saved_instance.base_location.id, location_id=saved_instance.twin_location.id, # = location_visiting_id
@@ -770,6 +777,7 @@ class CreateOrUpdateCurrentLocationView(TimedAPIView, generics.CreateAPIView):
                                                 last_accessed=last_accessed_str)
             except Exception as e:
                 print(f"Error sending location update to Celery: {str(e)}")  # Print the error to the console/log
+                push_expiration_task_scheduled(user.id, f'Could not send new location to celery: {e}')
     
                 return Response({'error': f'Error sending location update to Celery: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             schedule_expiration_task.apply_async(args=[user.id])
