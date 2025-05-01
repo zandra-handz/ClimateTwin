@@ -181,7 +181,7 @@ def run_climate_twin_algorithms_task(user_id, user_address):
 
                 osm_api = OpenMapAPI()
                 try:
-                    osm_results = osm_api.find_ancient_ruins(climate_twin_weather_profile.latitude, climate_twin_weather_profile.longitude, radius=100000, num_results=15)
+                    osm_results = osm_api.find_ancient_ruins(climate_twin_weather_profile.latitude, climate_twin_weather_profile.longitude, radius=100000 )
                     nearby_ruins = osm_api.format_ruins_with_wind_compass_for_post(osm_results, climate_twin_weather_profile.wind_direction)
 
                     # Not strictly necessary to check if dict, because function sets an empty dict at beginning

@@ -127,7 +127,7 @@ class OpenMapAPI:
             return {}
 
     @staticmethod
-    def find_ancient_ruins(latitude, longitude, radius, num_results=None):
+    def find_ancient_ruins(latitude, longitude, radius=60000, num_results=8): # radius is in meters, 60000 = 37 miles # radius was prev 100000 meters and in parent, num was 15 and in parent
         overpass_query = f"node(around:{radius},{latitude},{longitude})['historic'='ruins'];out;"
 
         params = {
