@@ -360,8 +360,7 @@ def schedule_expiration_task(self, user_id, duration_seconds=3600): #default
 
         # FOR DEBUGGING
         # push_expiration_task_scheduled(user_id, last_accessed)
-
-        process_impending_expiration_warning_task.apply_async((user_id, expiration_time, last_accessed,), countdown=60) # 660 seconds / 11 minutes 
+        # process_impending_expiration_warning_task.apply_async((user_id, expiration_time, last_accessed,), countdown=60) # 660 seconds / 11 minutes 
         
 
         process_impending_expiration_warning_task.apply_async((user_id, expiration_time, last_accessed,), countdown=2940) # 660 seconds / 11 minutes 
@@ -425,7 +424,7 @@ def process_expiration_task(user_id, last_accessed=None):
             if current_location.expired:
                 logger.info(f"User {user_id}'s current location is already expired.")
                 print(f"User {user_id}'s current location is already expired.")
-                push_expiration_task_scheduled(user_id, "Current location is already expired")
+               # push_expiration_task_scheduled(user_id, "Current location is already expired")
                 
 
                 # Deleting home location will cascade-delete all the other locations except for the current location
@@ -459,13 +458,13 @@ def process_expiration_task(user_id, last_accessed=None):
             try:
                 send_home_location_update_to_celery(user_id=user_id)
             except Exception as e:
-                push_expiration_task_scheduled(user_id, "Couldn't send returned home message")
+                # push_expiration_task_scheduled(user_id, "Couldn't send returned home message")
                 print(f"Couldn't send returned home message.")
 
         else:
             logger.info(f"Expiration task no longer applicable -- location has changed.")
             print(f"Expiration task no longer applicable -- location has changed.")
-            push_expiration_task_scheduled(user_id, "Expiration task no longer applicable -- location has changed")
+            # push_expiration_task_scheduled(user_id, "Expiration task no longer applicable -- location has changed")
 
     except CurrentLocation.DoesNotExist:
         logger.error(f"CurrentLocation for user {user_id} does not exist.")
