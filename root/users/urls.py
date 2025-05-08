@@ -22,7 +22,7 @@ urlpatterns = [
     # path('password/reset/confirm/<uid>/<token>', views.PasswordReset.as_view({'get': 'reset_password'}), name='reset-password'),
     
     path('treasures/', views.TreasuresView.as_view(), name='treasures'),
-    path('treasures-with-requests/', views.TreasuresAndTreasureRequestsView.as_view(), name='treasures'),
+    path('treasures-and-requests/', views.TreasuresAndTreasureRequestsView.as_view(), name='treasures-and-requests'),
     path('treasures/get/', views.SearchTreasuresView.as_view(), name='search-treasures'),
     path('treasure/<int:pk>/', views.TreasureView.as_view(), name='treasure'),
     path('treasure/<int:treasure_id>/history/', views.TreasureOwnerChangeRecordsView.as_view(), name='treasure-history'),
@@ -43,6 +43,8 @@ urlpatterns = [
     path('send-gift-request/', views.SendGiftRequestView.as_view(), name='send-gift-request'),
     path('send-gift-request-back-to-finder/', views.SendGiftRequestBackToFinderView.as_view(), name='send-gift-request-back-to-finder'),
     path('friends/', views.FriendProfilesView.as_view(), name='friends'),
+    path('friends-and-requests/', views.FriendProfilesAndRequestsView.as_view(), name='friends-and-requests'),
+    
     path('friend/<int:pk>/', views.FriendProfileView.as_view(), name='friend'),
     path('friend/<int:pk>/delete/', views.DeleteFriendshipView.as_view(), name='delete-friend'),
     path('profile/', views.UserProfileView.as_view(), name='profile'),

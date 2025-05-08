@@ -864,6 +864,38 @@ class FriendProfilesView(generics.ListAPIView):
             .select_related('friend', 'friend__profile', 'friend__profile__user')  # Optimizes FK lookups in serializer
         )
 
+
+class FriendProfilesAndRequestsView(generics.ListAPIView):
+        authentication_classes = [TokenAuthentication, JWTAuthentication]
+        permission_classes = [IsAuthenticated] 
+        throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+        
+    
+
+        def get(self, request, *args, **kwargs):
+            user = request.user
+
+            friends = models.FriendProfile.objects.filter(user=self.request.user).select_related('friend', 'friend__profile', 'friend__profile__user')  
+            friends_data = serializers.FriendProfileSerializer(friends, many=True, context={'request': request}).data
+            
+            # Get pending friend requests where user is sender or recipient
+            pending_friend_requests = models.FriendRequest.objects.filter(
+                Q(sender=user) | Q(recipient=user),
+                is_accepted=False, # shouldn't need these instances get deleted when accepted
+                is_rejected=False # shouldn't need, these instances get deleted when accepted
+            )
+ 
+ 
+            friend_requests_data = serializers.FriendRequestWithAddedDataSerializer(pending_friend_requests, many=True, context={'request': request}).data
+    
+            return Response({
+                "pending_friend_requests": friend_requests_data, 
+                "friends" : friends_data
+            })
+
+
+
+
 class FriendProfileView(generics.RetrieveUpdateAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
