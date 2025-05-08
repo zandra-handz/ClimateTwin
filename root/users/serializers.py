@@ -51,6 +51,16 @@ class TreasureSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+
+class TreasuresAndTreasureRequestsSerializer(serializers.ModelSerializer):
+
+
+
+    class Meta(object):
+        model = models.Treasure
+        fields = "__all__"
+
+
 # Decided to just associate the logs with the treasure and not a treasure history model too
 # class TreasureHistorySerializer(serializers.ModelSerializer):
 

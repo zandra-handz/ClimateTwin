@@ -489,6 +489,37 @@ class UserSharedDataView(generics.RetrieveUpdateAPIView):
     
 
 
+class TreasuresAndTreasureRequestsView(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    # serializer_class = serializers.TreasuresAndTreasureRequestsSerializer
+    throttle_classes = [throttling.AnonRateThrottle, throttling.UserRateThrottle]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+
+        treasures = models.Treasure.objects.filter(user=user)
+
+        treasures_data = serializers.TreasureSerializer(treasures, many=True, context={'request': request}).data
+
+
+        pending_gift_requests = models.GiftRequest.objects.filter(
+            Q(sender=user) | Q(recipient=user),
+            is_accepted=False, # shouldn't need, these instances get deleted when accepted
+            is_rejected=False # shouldn't need, these instances get deleted when accepted
+        ) 
+        gift_data = serializers.GiftRequestWithAddedDataSerializer(pending_gift_requests, many=True, context={'request': request}).data
+
+        return Response({ 
+            "pending_gift_requests": gift_data,
+            "treasures": treasures_data,
+        })
+
+
+
+    
+
+
 
 class UserPendingRequestsView(generics.ListAPIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication]
